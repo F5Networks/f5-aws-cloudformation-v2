@@ -1,0 +1,10 @@
+---
+# Autoscale BIGIQ Example Test
+aws-autoscale-bigiq-example-test:
+    test-url: "file://cloud-tools/automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/bigiq/daily_test.yaml"
+    run: "all"
+    parameters-files:
+        # using ami lookup to deploy in us-east-2
+        # - "cloud-tools/automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/prepub_parameters.yaml"
+        # using custom ami id to deploy in us-west-1
+        # - "cloud-tools/automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/prepub_parameters1.yaml"

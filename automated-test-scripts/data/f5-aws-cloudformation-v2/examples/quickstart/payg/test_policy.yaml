@@ -1,0 +1,9 @@
+---
+# Quickstart PAYG Tests - 1, 2, 3nic 
+aws-quickstart-payg-example-test:
+    test-url: "file://cloud-tools/automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/daily_test.yaml"
+    run: "all"
+    parameters-files:
+       - "cloud-tools/automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/prepub_parameters1.yaml"
+       - "cloud-tools/automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/prepub_parameters2.yaml"
+       - "cloud-tools/automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/prepub_parameters3.yaml"

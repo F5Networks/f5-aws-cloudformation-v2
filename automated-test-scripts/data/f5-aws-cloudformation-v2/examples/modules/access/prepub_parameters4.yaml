@@ -1,0 +1,10 @@
+CREATE AMI ROLE: 'false'
+LICENSE TYPE: payg
+PUBLIC IP: 'true'
+REGION: us-east-2
+S3 BUCKET: <STACK NAME>
+SOLUTION TYPE: secret
+STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
+TEMPLATE NAME: access
+TEMPLATE URL: 'file://$PWD/examples/modules/access/access.yaml'
+UNIQUESTRING: dew<DEWPOINT JOB ID>

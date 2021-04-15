@@ -1,0 +1,30 @@
+.idea
+.vscode
+*.swp
+*.swo
+*.bak
+*~
+*.log
+# ignore local pem
+pem*
+# ignore env files
+env.sh
+# ignore local test scripts
+test.sh
+*temp
+# ignore make envionmental files
+env.sh
+# local makefiles for local config variables
+*temp_s3
+.pytest_cache
+# ignore credentials file(s)
+*.credentials.json
+*_creds.json
+# ignore compiled python
+venv/
+*.pyc
+*.DS.Store*
+*.DS_Store*
+*__pycache__*
+# node modules
+node_modules/

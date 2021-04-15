@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This template represents an example of a linked deployment of the Access template
+Resources:
+  Access:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: >-
+        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/master/examples/modules/access/access.yaml
+      Parameters:
+        bigIqSecretArn: ''
+        createAmiRole: 'true'
+        createBigIqRoles: 'false'
+        s3Bucket: example-s3-bucket-name
+        secretArn: ''
+        solutionType: failover
+        uniqueString: myBIGIP
+Outputs:
+  stackName:
+    Value: !GetAtt Access.Outputs.stackName
+  bigIpInstanceProfile:
+    Value: !GetAtt Access.Outputs.bigIpInstanceProfile
+  lambdaAmiExecutionRole:
+    Value: !GetAtt Access.Outputs.lambdaAmiExecutionRole
+  copyZipsRole:
+    Value: !GetAtt Access.Outputs.copyZipsRole
+  bigIqNotificationRole:
+    Value: !GetAtt Access.Outputs.bigIqNotificationRole
