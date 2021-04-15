@@ -1,0 +1,8 @@
+# Application Module Tests 
+aws-cloudformation-application-module-test:
+    test-url: "file://cloud-tools/automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/application/daily_test.yaml"
+    run: "all"
+    parameters-files:
+        # Test with security Group
+        - "cloud-tools/automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/application/prepub_parameters.yaml"
+        - "cloud-tools/automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/application/prepub_parameters1.yaml"

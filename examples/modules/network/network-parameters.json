@@ -1,0 +1,14 @@
+[
+    { "ParameterKey": "cost", "ParameterValue": "f5cost" },
+    { "ParameterKey": "environment", "ParameterValue": "f5env" },
+    { "ParameterKey": "group", "ParameterValue": "f5group" },
+    { "ParameterKey": "application", "ParameterValue": "f5app" },
+    { "ParameterKey": "numAzs", "ParameterValue": "2" },
+    { "ParameterKey": "numSubnets", "ParameterValue": "3" },
+    { "ParameterKey": "owner", "ParameterValue": "f5owner" },
+    { "ParameterKey": "setPublicSubnet1", "ParameterValue": "false" },
+    { "ParameterKey": "subnetMask", "ParameterValue": "24" },
+    { "ParameterKey": "uniqueString", "ParameterValue": "myBIGIP" },
+    { "ParameterKey": "vpcCidr", "ParameterValue": "10.0.0.0/16" },
+    { "ParameterKey": "vpcTenancy", "ParameterValue": "default" }
+]

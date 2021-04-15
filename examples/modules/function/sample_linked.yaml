@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This template represents an example of a linked deployment of the Function template
+Resources:
+  Function:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: >-
+        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/master/examples/modules/function/function.yaml
+      Parameters:
+        amiLookupRole: ''
+        bigIqAddress: ''
+        bigIqAddressType: public
+        bigIqLicensePool: ''
+        bigIqSecretArn: ''
+        bigIqSecurityGroupId: ''
+        bigIqSubnetId: ''
+        bigIqTenant: ''
+        bigIqUsername: ''
+        bigIqUtilitySku: ''
+        copyZipsRole: ''
+        createAmiLookupFunction: 'false'
+        createRevokeFunction: 'false'
+        lambdaAccessRole: ''
+        lambdaS3BucketName: f5-aws-bigiq-revoke
+        lambdaS3Key: main/
+Outputs:
+  stackName:
+    Value: !GetAtt Function.Outputs.stackName
+  lambdaARN:
+    Value: !GetAtt Function.Outputs.lambdaARN
+  snsTopic:
+    Value: !GetAtt Function.Outputs.snsTopic

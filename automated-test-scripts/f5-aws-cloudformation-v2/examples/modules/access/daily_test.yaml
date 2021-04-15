@@ -1,0 +1,18 @@
+---
+name: AWS Examples - Access
+onStart:
+- ../../../common/create_s3_bucket.sh
+- ../../../common/create_secret.sh
+- ./create_stack.sh
+- ../../../common/verify_create.sh
+- ./tests/verify_iam_role.sh
+- ./tests/verify_iam_instance_profile.sh
+- ./tests/verify_lambda_iam_policy.sh
+- ../../../common/delete_stack.sh
+- ../../../common/verify_stack_deleted.sh
+- ../../../common/delete_s3_bucket.sh
+onFail:
+- ../../../common/delete_stack.sh
+- ../../../common/verify_stack_deleted.sh
+- ../../../common/delete_s3_bucket.sh
+- ../../../common/delete_secret.sh

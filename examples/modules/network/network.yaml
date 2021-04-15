@@ -1,0 +1,3936 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  This template creates a Multi-AZ, multi-subnet VPC infrastructure with managed
+  NAT gateways in the private subnets for each Availability Zone. **WARNING** This
+  template creates AWS resources. You will be billed for the AWS resources used
+  if you create a stack from this template. QS(0027)
+Conditions:
+  usEast1: !Equals
+    - !Ref 'AWS::Region'
+    - us-east-1
+  az2: !Or
+    - !Equals
+      - !Ref numAzs
+      - '2'
+    - !Condition az3
+  az3: !Or
+    - !Equals
+      - !Ref numAzs
+      - '3'
+    - !Condition az4
+  az4: !Equals
+    - !Ref numAzs
+    - '4'
+  naclPrivateA: !And
+    - !Or
+      - !Equals
+        - !Ref setPublicSubnet1
+        - 'false'
+      - !Condition subnet2A
+    - !Condition subnet1A
+  naclPrivateB: !And
+    - !Or
+      - !Equals
+        - !Ref setPublicSubnet1
+        - 'false'
+      - !Condition subnet2B
+    - !Condition az2
+  naclPrivateC: !And
+    - !Or
+      - !Equals
+        - !Ref setPublicSubnet1
+        - 'false'
+      - !Condition subnet2C
+    - !Condition az3
+  naclPrivateD: !And
+    - !Or
+      - !Equals
+        - !Ref setPublicSubnet1
+        - 'false'
+      - !Condition subnet2D
+    - !Condition az4
+  subnet1PrivateA: !And
+    - !Equals
+      - !Ref setPublicSubnet1
+      - 'false'
+    - !Condition subnet1A
+  subnet1PrivateB: !And
+    - !Equals
+      - !Ref setPublicSubnet1
+      - 'false'
+    - !Condition az2
+  subnet1PrivateC: !And
+    - !Equals
+      - !Ref setPublicSubnet1
+      - 'false'
+    - !Condition az3
+  subnet1PrivateD: !And
+    - !Equals
+      - !Ref setPublicSubnet1
+      - 'false'
+    - !Condition az4
+  subnet1A: !Or
+    - !Equals
+      - !Ref numSubnets
+      - '2'
+    - !Condition subnet2A
+  subnet1B: !Or
+    - !And
+      - !Equals
+        - !Ref numSubnets
+        - '2'
+      - !Condition az2
+    - !Condition subnet2B
+  subnet1C: !Or
+    - !And
+      - !Equals
+        - !Ref numSubnets
+        - '2'
+      - !Condition az3
+    - !Condition subnet2C
+  subnet1D: !Or
+    - !And
+      - !Equals
+        - !Ref numSubnets
+        - '2'
+      - !Condition az4
+    - !Condition subnet2D
+  subnet2A: !Or
+    - !Equals
+      - !Ref numSubnets
+      - '3'
+    - !Condition subnet3A
+  subnet2B: !Or
+    - !And
+      - !Equals
+        - !Ref numSubnets
+        - '3'
+      - !Condition az2
+    - !Condition subnet3B
+  subnet2C: !Or
+    - !And
+      - !Equals
+        - !Ref numSubnets
+        - '3'
+      - !Condition az3
+    - !Condition subnet3C
+  subnet2D: !Or
+    - !And
+      - !Equals
+        - !Ref numSubnets
+        - '3'
+      - !Condition az4
+    - !Condition subnet3D
+  subnet3A: !Or
+    - !Equals
+      - !Ref numSubnets
+      - '4'
+    - !Condition subnet4A
+  subnet3B: !Or
+    - !And
+      - !Equals
+        - !Ref numSubnets
+        - '4'
+      - !Condition az2
+    - !Condition subnet4B
+  subnet3C: !Or
+    - !And
+      - !Equals
+        - !Ref numSubnets
+        - '4'
+      - !Condition az3
+    - !Condition subnet4C
+  subnet3D: !Or
+    - !And
+      - !Equals
+        - !Ref numSubnets
+        - '4'
+      - !Condition az4
+    - !Condition subnet4D
+  subnet4A: !Or
+    - !Equals
+      - !Ref numSubnets
+      - '5'
+    - !Condition subnet5A
+  subnet4B: !Or
+    - !And
+      - !Equals
+        - !Ref numSubnets
+        - '5'
+      - !Condition az2
+    - !Condition subnet5B
+  subnet4C: !Or
+    - !And
+      - !Equals
+        - !Ref numSubnets
+        - '5'
+      - !Condition az3
+    - !Condition subnet5C
+  subnet4D: !Or
+    - !And
+      - !Equals
+        - !Ref numSubnets
+        - '5'
+      - !Condition az4
+    - !Condition subnet5D
+  subnet5A: !Or
+    - !Equals
+      - !Ref numSubnets
+      - '6'
+    - !Condition subnet6A
+  subnet5B: !Or
+    - !And
+      - !Equals
+        - !Ref numSubnets
+        - '6'
+      - !Condition az2
+    - !Condition subnet6B
+  subnet5C: !Or
+    - !And
+      - !Equals
+        - !Ref numSubnets
+        - '6'
+      - !Condition az3
+    - !Condition subnet6C
+  subnet5D: !Or
+    - !And
+      - !Equals
+        - !Ref numSubnets
+        - '6'
+      - !Condition az4
+    - !Condition subnet6D
+  subnet6A: !Or
+    - !Equals
+      - !Ref numSubnets
+      - '7'
+    - !Condition subnet7A
+  subnet6B: !Or
+    - !And
+      - !Equals
+        - !Ref numSubnets
+        - '7'
+      - !Condition az2
+    - !Condition subnet7B
+  subnet6C: !Or
+    - !And
+      - !Equals
+        - !Ref numSubnets
+        - '7'
+      - !Condition az3
+    - !Condition subnet7C
+  subnet6D: !Or
+    - !And
+      - !Equals
+        - !Ref numSubnets
+        - '7'
+      - !Condition az4
+    - !Condition subnet7D
+  subnet7A: !Equals
+    - !Ref numSubnets
+    - '8'
+  subnet7B: !And
+    - !Equals
+      - !Ref numSubnets
+      - '8'
+    - !Condition az2
+  subnet7C: !And
+    - !Equals
+      - !Ref numSubnets
+      - '8'
+    - !Condition az3
+  subnet7D: !And
+    - !Equals
+      - !Ref numSubnets
+      - '8'
+    - !Condition az4
+Mappings:
+  subnetMap:
+    '1':
+      '1': '1,0'
+      '2': '2,0,1'
+      '3': '3,0,1,2'
+      '4': '4,0,1,2,3'
+      '5': '5,0,1,2,3,4'
+      '6': '6,0,1,2,3,4,5'
+      '7': '7,0,1,2,3,4,5,6'
+      '8': '8,0,1,2,3,4,5,6,7'
+    '2':
+      '1': '2,0,x,x,x,x,x,x,x,1'
+      '2': '4,0,1,x,x,x,x,x,x,2,3'
+      '3': '6,0,1,2,x,x,x,x,x,3,4,5'
+      '4': '8,0,1,2,3,x,x,x,x,4,5,6,7'
+      '5': '10,0,1,2,3,4,x,x,x,5,6,7,8,9'
+      '6': '12,0,1,2,3,4,5,x,x,6,7,8,9,10,11'
+      '7': '14,0,1,2,3,4,5,6,x,7,8,9,10,11,12,13'
+      '8': '16,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15'
+    '3':
+      '1': '3,0,x,x,x,x,x,x,x,1,x,x,x,x,x,x,x,2'
+      '2': '6,0,1,x,x,x,x,x,x,2,3,x,x,x,x,x,x,4,5'
+      '3': '9,0,1,2,x,x,x,x,x,3,4,5,x,x,x,x,x,6,7,8'
+      '4': '12,0,1,2,3,x,x,x,x,4,5,6,7,x,x,x,x,8,9,10,11'
+      '5': '15,0,1,2,3,4,x,x,x,5,6,7,8,9,x,x,x,10,11,12,13,14'
+      '6': '18,0,1,2,3,4,5,x,x,6,7,8,9,10,11,x,x,12,13,14,15,16,17'
+      '7': '21,0,1,2,3,4,5,6,x,7,8,9,10,11,12,13,x,14,15,16,17,18,19,20'
+      '8': '24,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23'
+    '4':
+      '1': '4,0,x,x,x,x,x,x,x,1,x,x,x,x,x,x,x,2,x,x,x,x,x,x,x,3'
+      '2': '8,0,1,x,x,x,x,x,x,2,3,x,x,x,x,x,x,4,5,x,x,x,x,x,x,6,7'
+      '3': '12,0,1,2,x,x,x,x,x,3,4,5,x,x,x,x,x,6,7,8,x,x,x,x,x,9,10,11'
+      '4': '16,0,1,2,3,x,x,x,x,4,5,6,7,x,x,x,x,8,9,10,11,x,x,x,x,12,13,14,15'
+      '5': '20,0,1,2,3,4,x,x,x,5,6,7,8,9,x,x,x,10,11,12,13,14,x,x,x,15,16,17,18,19'
+      '6': >-
+        24,0,1,2,3,4,5,x,x,6,7,8,9,10,11,x,x,12,13,14,15,16,17,x,x,18,19,20,21,22,23
+      '7': >-
+        28,0,1,2,3,4,5,6,x,7,8,9,10,11,12,13,x,14,15,16,17,18,19,20,x,21,22,23,24,25,26,27
+      '8': >-
+        32,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
+    maskTocidrBits:
+      '17': 15
+      '18': 14 
+      '19': 13
+      '20': 12
+      '21': 11
+      '22': 10
+      '23': 9
+      '24': 8
+      '25': 7
+      '26': 6
+      '27': 5
+      '28': 4
+Metadata:
+  'AWS::CloudFormation::Interface':
+    ParameterGroups:
+      - Label:
+          default: Availability Zone Configuration
+        Parameters:
+          - numAzs
+      - Label:
+          default: Network Configuration
+        Parameters:
+          - vpcCidr
+          - vpcTenancy
+          - numSubnets
+          - subnetMask
+          - setPublicSubnet1
+      - Label:
+          default: Resource Tags
+        Parameters:
+          - cost
+          - environment
+          - group
+          - owner
+    ParameterLabels:
+      application:
+        default: application tag
+      cost:
+        default: cost tag
+      environment:
+        default: environment tag
+      group:
+        default: group tag
+      numAzs:
+        default: Number of Availability Zones
+      numSubnets:
+        default: Number of Subnets
+      owner:
+        default: owner Tag
+      setPublicSubnet1:
+        default: Set Subnet1 Public
+      subnetMask:
+        default: Subnet Mask
+      uniqueString:
+        default: Unique String
+      vpcCidr:
+        default: VPC CIDR
+      vpcTenancy:
+        default: VPC Tenancy
+  Version: 1.0.0
+Outputs:
+  stackName:
+    Description: network nested stack name
+    Value: !Ref "AWS::StackName"
+  natEipA:
+    Condition: naclPrivateA
+    Description: NAT IP Address for subnets A
+    Value: !Ref 'natEipA'
+    Export:
+      Name: !Sub '${AWS::StackName}-natEipA'
+  natEipB:
+    Condition: naclPrivateB
+    Description: NAT IP Address for subnets B
+    Value: !Ref 'natEipB'
+    Export:
+      Name: !Sub '${AWS::StackName}-natEipB'
+  natEipC:
+    Condition: naclPrivateC
+    Description: NAT IP Address for subnets C
+    Value: !Ref 'natEipC'
+    Export:
+      Name: !Sub '${AWS::StackName}-natEipC'
+  natEipD:
+    Condition: naclPrivateD
+    Description: NAT IP Address for subnets D
+    Value: !Ref 'natEipD'
+    Export:
+      Name: !Sub '${AWS::StackName}-natEipD'
+  vpcId:
+    Description: VPC ID
+    Value: !Ref vpc
+    Export:
+      Name: !Sub '${AWS::StackName}-vpcId'
+  vpcCidr:
+    Description: Ipv4 CIDR associated to VPC
+    Value: !GetAtt vpc.CidrBlock
+    Export:
+      Name: !Sub '${AWS::StackName}-vpcIpv4idr'
+  vpcIpv6Cidr:
+    Description: Ipv6 CIDR associated to VPC
+    Value: !Join
+      - ','
+      - !GetAtt vpc.Ipv6CidrBlocks
+    Export:
+      Name: !Sub '${AWS::StackName}-vpcIpv6idr'
+  subnetsA:
+    Description: Comma seperated list of subnet ids for AZ A
+    Value: !If [ subnet7A, !Join [',', [ !Ref subnet0A, !Ref subnet1A, !Ref subnet2A, !Ref subnet3A, !Ref subnet4A, !Ref subnet5A, !Ref subnet6A, !Ref subnet7A ]], !If [ subnet6A, !Join [',', [ !Ref subnet0A, !Ref subnet1A, !Ref subnet2A, !Ref subnet3A, !Ref subnet4A, !Ref subnet5A, !Ref subnet6A]], !If [ subnet5A, !Join [',', [ !Ref subnet0A, !Ref subnet1A, !Ref subnet2A, !Ref subnet3A, !Ref subnet4A, !Ref subnet5A ]], !If [ subnet4A, !Join [',', [ !Ref subnet0A, !Ref subnet1A, !Ref subnet2A, !Ref subnet3A, !Ref subnet4A ]], !If [ subnet3A, !Join [',', [ !Ref subnet0A, !Ref subnet1A, !Ref subnet2A, !Ref subnet3A]], !If [ subnet2A, !Join [',', [ !Ref subnet0A, !Ref subnet1A, !Ref subnet2A]], !If [ subnet1A, !Join [',', [ !Ref subnet0A, !Ref subnet1A ]], !Ref subnet0A ]]]]]]]
+    Export:
+      Name: !Sub '${AWS::StackName}-subnetsA'
+  subnetsB:
+    Description: List of subnet ids for AZ B
+    Condition: az2
+    Value: !If [ subnet7B, !Join [',', [ !Ref subnet0B, !Ref subnet1B, !Ref subnet2B, !Ref subnet3B, !Ref subnet4B, !Ref subnet5B, !Ref subnet6B, !Ref subnet7B ]], !If [ subnet6B, !Join [',', [ !Ref subnet0B, !Ref subnet1B, !Ref subnet2B, !Ref subnet3B, !Ref subnet4B, !Ref subnet5B, !Ref subnet6B]], !If [ subnet5B, !Join [',', [ !Ref subnet0B, !Ref subnet1B, !Ref subnet2B, !Ref subnet3B, !Ref subnet4B, !Ref subnet5B ]], !If [ subnet4B, !Join [',', [ !Ref subnet0B, !Ref subnet1B, !Ref subnet2B, !Ref subnet3B, !Ref subnet4B ]], !If [ subnet3B, !Join [',', [ !Ref subnet0B, !Ref subnet1B, !Ref subnet2B, !Ref subnet3B]], !If [ subnet2B, !Join [',', [ !Ref subnet0B, !Ref subnet1B, !Ref subnet2B]], !If [ subnet1B, !Join [',', [ !Ref subnet0B, !Ref subnet1B ]], !Ref subnet0B ]]]]]]]
+    Export:
+      Name: !Sub '${AWS::StackName}-subnetsB'
+  subnetsC:
+    Description: List of subnet ids for AZ C
+    Condition: az3
+    Value: !If [ subnet7C, !Join [',', [ !Ref subnet0C, !Ref subnet1C, !Ref subnet2C, !Ref subnet3C, !Ref subnet4C, !Ref subnet5C, !Ref subnet6C, !Ref subnet7C ]], !If [ subnet6C, !Join [',', [ !Ref subnet0C, !Ref subnet1C, !Ref subnet2C, !Ref subnet3C, !Ref subnet4C, !Ref subnet5C, !Ref subnet6C]], !If [ subnet5C, !Join [',', [ !Ref subnet0C, !Ref subnet1C, !Ref subnet2C, !Ref subnet3C, !Ref subnet4C, !Ref subnet5C ]], !If [ subnet4C, !Join [',', [ !Ref subnet0C, !Ref subnet1C, !Ref subnet2C, !Ref subnet3C, !Ref subnet4C ]], !If [ subnet3C, !Join [',', [ !Ref subnet0C, !Ref subnet1C, !Ref subnet2C, !Ref subnet3C]], !If [ subnet2C, !Join [',', [ !Ref subnet0C, !Ref subnet1C, !Ref subnet2C]], !If [ subnet1C, !Join [',', [ !Ref subnet0C, !Ref subnet1C ]], !Ref subnet0C ]]]]]]]
+    Export:
+      Name: !Sub '${AWS::StackName}-subnetsC'
+  subnetsD:
+    Description: List of subnet ids for AZ D
+    Condition: az4
+    Value: !If [ subnet7D, !Join [',', [ !Ref subnet0D, !Ref subnet1D, !Ref subnet2D, !Ref subnet3D, !Ref subnet4D, !Ref subnet5D, !Ref subnet6D, !Ref subnet7D ]], !If [ subnet6D, !Join [',', [ !Ref subnet0D, !Ref subnet1D, !Ref subnet2D, !Ref subnet3D, !Ref subnet4D, !Ref subnet5D, !Ref subnet6D]], !If [ subnet5D, !Join [',', [ !Ref subnet0D, !Ref subnet1D, !Ref subnet2D, !Ref subnet3D, !Ref subnet4D, !Ref subnet5D ]], !If [ subnet4D, !Join [',', [ !Ref subnet0D, !Ref subnet1D, !Ref subnet2D, !Ref subnet3D, !Ref subnet4D ]], !If [ subnet3D, !Join [',', [ !Ref subnet0D, !Ref subnet1D, !Ref subnet2D, !Ref subnet3D]], !If [ subnet2D, !Join [',', [ !Ref subnet0D, !Ref subnet1D, !Ref subnet2D]], !If [ subnet1D, !Join [',', [ !Ref subnet0D, !Ref subnet1D ]], !Ref subnet0D ]]]]]]]
+    Export:
+      Name: !Sub '${AWS::StackName}-subnetsD'
+  publicSubnetRouteTableId:
+    Description: Public subnets route table Id
+    Value: !Ref publicSubnetRouteTable
+    Export:
+      Name: !Sub '${AWS::StackName}-publicSubnetRouteId'
+  privateRouteTableIdA:
+    Condition: naclPrivateA
+    Description: Private subnets A route table Id
+    Value: !Ref privateRouteTableA
+    Export:
+      Name: !Sub '${AWS::StackName}-privateSubnetRouteIdA'
+  privateRouteTableIdB:
+    Condition: naclPrivateB
+    Description: Private subnets B route table Id
+    Value: !Ref privateRouteTableB
+    Export:
+      Name: !Sub '${AWS::StackName}-privateSubnetRouteIdB'
+  privateRouteTableIdC:
+    Condition: naclPrivateC
+    Description: Private subnets C route table Id
+    Value: !Ref privateRouteTableC
+    Export:
+      Name: !Sub '${AWS::StackName}-privateSubnetRouteIdC'
+  privateRouteTableIdD:
+    Condition: naclPrivateD
+    Description: Private subnets D route table Id
+    Value: !Ref privateRouteTableD
+    Export:
+      Name: !Sub '${AWS::StackName}-privateSubnetRouteIdD'
+Parameters:
+  application:
+    Default: f5app
+    Description: Application Tag.
+    Type: String
+  cost:
+    Default: f5cost
+    Description: Cost Center Tag.
+    Type: String
+  environment:
+    Default: f5env
+    Description: Environment Tag.
+    Type: String
+  group:
+    Default: f5group
+    Description: Group Tag.
+    Type: String
+  numAzs:
+    Default: 2
+    Description: Number of Availability Zones to use in the VPC. Region must support number of availability  zones entered. Min 1 Max 4.
+    MaxValue: 4
+    MinValue: 1
+    Type: Number
+  numSubnets:
+    Default: 3
+    Description: Indicate the number of subnets to create.
+    MaxValue: 8
+    MinValue: 1
+    Type: Number
+  owner:
+    Default: f5owner
+    Description: Owner Tag.
+    Type: String
+  setPublicSubnet1:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+    Description: Value of true sets subnet1 in each AZ as a public subnet, value of false sets subnet1 as private network.
+    Type: String
+  subnetMask:
+    ConstraintDescription: 'Subnet mask must be in value of 16-28. Total number of subnets created from VPC must be greater than or equal to number of regions multiplied by number of subnets. Example: 4 AZ with 8 subnets requires VPC supernetting support 32 subnets.'
+    Default: 24
+    Description: Mask for subnets. Valid values include 16-28. Note supernetting of VPC occurs based on mask provided; therefore, number of networks must be >= to the number of subnets created. Mask for subnets. Valid values include 16-28.
+    MaxValue: 28
+    MinValue: 16
+    Type: Number
+  uniqueString:
+    AllowedPattern: ^[a-zA-Z][a-zA-Z0-9]{1,11}$
+    ConstraintDescription: Must Contain between 1 and 12 alphanumeric characters with first character as a letter.
+    Default: myBIGIP
+    Description: Unique String used when creating object names or Tags.
+    Type: String
+  vpcCidr:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    Default: 10.0.0.0/16
+    Description: CIDR block for the VPC.
+    Type: String
+  vpcTenancy:
+    AllowedValues:
+      - default
+      - dedicated
+    Default: default
+    Description: The allowed tenancy of instances launched into the VPC. Valid values include 'default' or 'dedicated'.
+    Type: String
+Resources:
+  vpc:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: !Ref vpcCidr
+      InstanceTenancy: !Ref vpcTenancy
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - VPC
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  dhcpOptions:
+    Type: 'AWS::EC2::DHCPOptions'
+    Properties:
+      DomainName: !If
+        - usEast1
+        - ec2.internal
+        - !Join
+          - ''
+          - - !Ref 'AWS::Region'
+            - .compute.internal
+      DomainNameServers:
+        - AmazonProvidedDNS
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - DHCP Options
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  vpcDhcpOptionsAssociation:
+    Type: 'AWS::EC2::VPCDHCPOptionsAssociation'
+    Properties:
+      VpcId: !Ref vpc
+      DhcpOptionsId: !Ref dhcpOptions
+  ipv6CidrBlock:
+    Type: AWS::EC2::VPCCidrBlock
+    Properties:
+      AmazonProvidedIpv6CidrBlock: true
+      VpcId: !Ref vpc
+  internetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Internet Gateway
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  vpcGatewayAttachment:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref vpc
+      InternetGatewayId: !Ref internetGateway
+  subnet0A:
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 1
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 1
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '0'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 0A
+        - Key: Network
+          Value: Public
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+      MapPublicIpOnLaunch: true
+  subnet1A:
+    Condition: subnet1A
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 2
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 2
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '0'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 1A
+        - Key: Network
+          Value: !If
+            - subnet1PrivateA
+            - Private
+            - Public
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+      MapPublicIpOnLaunch: !Ref setPublicSubnet1
+  subnet2A:
+    Condition: subnet2A
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 3
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 3
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '0'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 2A
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet3A:
+    Condition: subnet3A
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 4
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 4
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '0'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 3A
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet4A:
+    Condition: subnet4A
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 5
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 5
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '0'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 4A
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet5A:
+    Condition: subnet5A
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 6
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 6
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '0'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 5A
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet6A:
+    Condition: subnet6A
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 7
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 7
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '0'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 6A
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet7A:
+    Condition: subnet7A
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 8
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 8
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '0'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 7A
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet0B:
+    Condition: az2
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 9
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 9
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '1'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 0B
+        - Key: Network
+          Value: Public
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+      MapPublicIpOnLaunch: true
+  subnet1B:
+    Condition: subnet1B
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 10
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 10
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '1'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 1B
+        - Key: Network
+          Value: !If
+            - subnet1PrivateB
+            - Private
+            - Public
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+      MapPublicIpOnLaunch: !Ref setPublicSubnet1
+  subnet2B:
+    Condition: subnet2B
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 11
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 11
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '1'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 2B
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet3B:
+    Condition: subnet3B
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 12
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 12
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '1'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 3B
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet4B:
+    Condition: subnet4B
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 13
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 13
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '1'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 4B
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet5B:
+    Condition: subnet5B
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 14
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 14
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '1'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 5B
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet6B:
+    Condition: subnet6B
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 15
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 15
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '1'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 6B
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet7B:
+    Condition: subnet7B
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 16
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 16
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '1'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 7B
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet0C:
+    Condition: az3
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 17
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 17
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '2'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 0C
+        - Key: Network
+          Value: Public
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+      MapPublicIpOnLaunch: true
+  subnet1C:
+    Condition: subnet1C
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 18
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 18
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '2'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 1C
+        - Key: Network
+          Value: !If
+            - subnet1PrivateC
+            - Private
+            - Public
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+      MapPublicIpOnLaunch: !Ref setPublicSubnet1
+  subnet2C:
+    Condition: subnet2C
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 19
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 19
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '2'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 2C
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet3C:
+    Condition: subnet3C
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 20
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 20
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '2'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 3C
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet4C:
+    Condition: subnet4C
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 21
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 21
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '2'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 4C
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet5C:
+    Condition: subnet5C
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 22
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 22
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '2'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 5C
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet6C:
+    Condition: subnet6C
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 23
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 23
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '2'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 6C
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet7C:
+    Condition: subnet7C
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 24
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 24
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '2'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 7C
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet0D:
+    Condition: az4
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 25
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 25
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '3'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 0D
+        - Key: Network
+          Value: Public
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+      MapPublicIpOnLaunch: true
+  subnet1D:
+    Condition: subnet1D
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 26
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 26
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '3'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 1D
+        - Key: Network
+          Value: !If
+            - subnet1PrivateD
+            - Private
+            - Public
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+      MapPublicIpOnLaunch: !Ref setPublicSubnet1
+  subnet2D:
+    Condition: subnet2D
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 27
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 27
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '3'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 2D
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+      MapPublicIpOnLaunch: true
+  subnet3D:
+    Condition: subnet3D
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 28
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 28
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '3'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 3D
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet4D:
+    Condition: subnet4D
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 29
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 29
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '3'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 4D
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet5D:
+    Condition: subnet5D
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 30
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 30
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '3'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 5D
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet6D:
+    Condition: subnet6D
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 31
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 31
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '3'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 6D
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  subnet7D:
+    Condition: subnet7D
+    DependsOn: ipv6CidrBlock
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref vpc
+      CidrBlock: !Select
+        - !Select
+          - 32
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !GetAtt
+              - vpc
+              - CidrBlock
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - !FindInMap
+              - subnetMap
+              - maskTocidrBits
+              - !Ref subnetMask
+      Ipv6CidrBlock: !Select
+        - !Select
+          - 32
+          - !Split
+            - ','
+            - !FindInMap
+              - subnetMap
+              - !Ref numAzs
+              - !Ref numSubnets
+        - 'Fn::Cidr':
+            - !Select
+              - 0
+              - !GetAtt
+                - vpc
+                - Ipv6CidrBlocks
+            - !Select
+              - 0
+              - !Split
+                - ','
+                - !FindInMap
+                  - subnetMap
+                  - !Ref numAzs
+                  - !Ref numSubnets
+            - 64
+      AvailabilityZone: !Select
+        - '3'
+        - !GetAZs
+          Ref: 'AWS::Region'
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Subnet 7D
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  publicSubnetRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref vpc
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Public Subnets Route Table
+        - Key: Network
+          Value: Public
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  publicSubnetRoute:
+    DependsOn: vpcGatewayAttachment
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref publicSubnetRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref internetGateway
+  subnet0ARouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet0A
+      RouteTableId: !Ref publicSubnetRouteTable
+  subnet0BRouteTableAssociation:
+    Condition: az2
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet0B
+      RouteTableId: !Ref publicSubnetRouteTable
+  subnet0CRouteTableAssociation:
+    Condition: az3
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet0C
+      RouteTableId: !Ref publicSubnetRouteTable
+  subnet0DRouteTableAssociation:
+    Condition: az4
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet0D
+      RouteTableId: !Ref publicSubnetRouteTable
+  privateRouteTableA:
+    Condition: naclPrivateA
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref vpc
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Private SubnetA Route Table
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  privateSubnetsRouteA:
+    Condition: naclPrivateA
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref privateRouteTableA
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref natGatewayA
+  privateSubnetsNetworkAclA:
+    Condition: naclPrivateA
+    Type: 'AWS::EC2::NetworkAcl'
+    Properties:
+      VpcId: !Ref vpc
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - NACL Private Subnets A
+        - Key: Network
+          Value: NACL Protected
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  privateSubnetsNetworkAclEntryInboundA:
+    Condition: naclPrivateA
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: false
+      NetworkAclId: !Ref privateSubnetsNetworkAclA
+      Protocol: -1
+      RuleAction: allow
+      RuleNumber: 100
+  privateSubnetsNetworkIpv6AclEntryInboundA:
+    Condition: naclPrivateA
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      Ipv6CidrBlock: ::/0
+      Egress: false
+      NetworkAclId: !Ref privateSubnetsNetworkAclA
+      Protocol: -1
+      RuleAction: allow
+      RuleNumber: 101
+  privateSubnetsNetworkAclEntryOutboundA:
+    Condition: naclPrivateA
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: true
+      NetworkAclId: !Ref privateSubnetsNetworkAclA
+      Protocol: -1
+      RuleAction: allow
+      RuleNumber: 100
+  privateSubnetsNetworkIpv6AclEntryOutboundA:
+    Condition: naclPrivateA
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      Ipv6CidrBlock: ::/0
+      Egress: true
+      NetworkAclId: !Ref privateSubnetsNetworkAclA
+      Protocol: -1
+      RuleAction: allow
+      RuleNumber: 101
+  privateSubnet1ANetworkAclAssociation:
+    Condition: subnet1PrivateA
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet1A
+      NetworkAclId: !Ref privateSubnetsNetworkAclA
+  privateSubnet2ANetworkAclAssociation:
+    Condition: subnet2A
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet2A
+      NetworkAclId: !Ref privateSubnetsNetworkAclA
+  privateSubnet3ANetworkAclAssociation:
+    Condition: subnet3A
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet3A
+      NetworkAclId: !Ref privateSubnetsNetworkAclA
+  privateSubnet4ANetworkAclAssociation:
+    Condition: subnet4A
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet4A
+      NetworkAclId: !Ref privateSubnetsNetworkAclA
+  privateSubnet5ANetworkAclAssociation:
+    Condition: subnet5A
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet5A
+      NetworkAclId: !Ref privateSubnetsNetworkAclA
+  privateSubnet6ANetworkAclAssociation:
+    Condition: subnet6A
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet6A
+      NetworkAclId: !Ref privateSubnetsNetworkAclA
+  privateSubnet7ANetworkAclAssociation:
+    Condition: subnet7A
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet7A
+      NetworkAclId: !Ref privateSubnetsNetworkAclA
+  privateRouteTableB:
+    Condition: naclPrivateB
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref vpc
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Private SubnetB Route Table
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  privateSubnetsRouteB:
+    Condition: naclPrivateB
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref privateRouteTableB
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref natGatewayB
+  privateSubnetsNetworkAclB:
+    Condition: naclPrivateB
+    Type: 'AWS::EC2::NetworkAcl'
+    Properties:
+      VpcId: !Ref vpc
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - NACL Private Subnets B
+        - Key: Network
+          Value: NACL Protected
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  privateSubnetsNetworkAclEntryInboundB:
+    Condition: naclPrivateB
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: false
+      NetworkAclId: !Ref privateSubnetsNetworkAclB
+      Protocol: -1
+      RuleAction: allow
+      RuleNumber: 100
+  privateSubnetsNetworkIpv6AclEntryInboundB:
+    Condition: naclPrivateB
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      Ipv6CidrBlock: ::/0
+      Egress: false
+      NetworkAclId: !Ref privateSubnetsNetworkAclB
+      Protocol: -1
+      RuleAction: allow
+      RuleNumber: 101
+  privateSubnetsNetworkAclEntryOutboundB:
+    Condition: naclPrivateB
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: true
+      NetworkAclId: !Ref privateSubnetsNetworkAclB
+      Protocol: -1
+      RuleAction: allow
+      RuleNumber: 100
+  privateSubnetsNetworkIpv6AclEntryOutboundB:
+    Condition: naclPrivateB
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      Ipv6CidrBlock: ::/0
+      Egress: true
+      NetworkAclId: !Ref privateSubnetsNetworkAclB
+      Protocol: -1
+      RuleAction: allow
+      RuleNumber: 101
+  privateSubnet1BNetworkAclAssociation:
+    Condition: subnet1PrivateB
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet1B
+      NetworkAclId: !Ref privateSubnetsNetworkAclB
+  privateSubnet2BNetworkAclAssociation:
+    Condition: subnet2B
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet2B
+      NetworkAclId: !Ref privateSubnetsNetworkAclB
+  privateSubnet3BNetworkAclAssociation:
+    Condition: subnet3B
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet3B
+      NetworkAclId: !Ref privateSubnetsNetworkAclB
+  privateSubnet4BNetworkAclAssociation:
+    Condition: subnet4B
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet4B
+      NetworkAclId: !Ref privateSubnetsNetworkAclB
+  privateSubnet5BNetworkAclAssociation:
+    Condition: subnet5B
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet5B
+      NetworkAclId: !Ref privateSubnetsNetworkAclB
+  privateSubnet6BNetworkAclAssociation:
+    Condition: subnet6B
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet6B
+      NetworkAclId: !Ref privateSubnetsNetworkAclB
+  privateSubnet7BNetworkAclAssociation:
+    Condition: subnet7B
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet7B
+      NetworkAclId: !Ref privateSubnetsNetworkAclB
+  privateRouteTableC:
+    Condition: naclPrivateC
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref vpc
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Private SubnetC Route Table
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  privateSubnetsRouteC:
+    Condition: naclPrivateC
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref privateRouteTableC
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref natGatewayC
+  privateSubnetsNetworkAclC:
+    Condition: naclPrivateC
+    Type: 'AWS::EC2::NetworkAcl'
+    Properties:
+      VpcId: !Ref vpc
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - NACL Private Subnets C
+        - Key: Network
+          Value: NACL Protected
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  privateSubnetsNetworkAclEntryInboundC:
+    Condition: naclPrivateC
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: false
+      NetworkAclId: !Ref privateSubnetsNetworkAclC
+      Protocol: -1
+      RuleAction: allow
+      RuleNumber: 100
+  privateSubnetsNetworkIpv6AclEntryInboundC:
+    Condition: naclPrivateC
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      Ipv6CidrBlock: ::/0
+      Egress: false
+      NetworkAclId: !Ref privateSubnetsNetworkAclC
+      Protocol: -1
+      RuleAction: allow
+      RuleNumber: 101
+  privateSubnetsNetworkAclEntryOutboundC:
+    Condition: naclPrivateC
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: true
+      NetworkAclId: !Ref privateSubnetsNetworkAclC
+      Protocol: -1
+      RuleAction: allow
+      RuleNumber: 100
+  privateSubnetsNetworkIpv6AclEntryOutboundC:
+    Condition: naclPrivateC
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      Ipv6CidrBlock: ::/0
+      Egress: true
+      NetworkAclId: !Ref privateSubnetsNetworkAclC
+      Protocol: -1
+      RuleAction: allow
+      RuleNumber: 101
+  privateSubnet1CNetworkAclAssociation:
+    Condition: subnet1PrivateC
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet1C
+      NetworkAclId: !Ref privateSubnetsNetworkAclC
+  privateSubnet2CNetworkAclAssociation:
+    Condition: subnet2C
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet2C
+      NetworkAclId: !Ref privateSubnetsNetworkAclC
+  privateSubnet3CNetworkAclAssociation:
+    Condition: subnet3C
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet3C
+      NetworkAclId: !Ref privateSubnetsNetworkAclC
+  privateSubnet4CNetworkAclAssociation:
+    Condition: subnet4C
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet4C
+      NetworkAclId: !Ref privateSubnetsNetworkAclC
+  privateSubnet5CNetworkAclAssociation:
+    Condition: subnet5C
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet5C
+      NetworkAclId: !Ref privateSubnetsNetworkAclC
+  privateSubnet6CNetworkAclAssociation:
+    Condition: subnet6C
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet6C
+      NetworkAclId: !Ref privateSubnetsNetworkAclC
+  privateSubnet7CNetworkAclAssociation:
+    Condition: subnet7C
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet7C
+      NetworkAclId: !Ref privateSubnetsNetworkAclC
+  privateRouteTableD:
+    Condition: naclPrivateD
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref vpc
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Private SubnetD Route Table
+        - Key: Network
+          Value: Private
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  privateSubnetsRouteD:
+    Condition: naclPrivateD
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref privateRouteTableD
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref natGatewayD
+  privateSubnetsNetworkAclD:
+    Condition: naclPrivateD
+    Type: 'AWS::EC2::NetworkAcl'
+    Properties:
+      VpcId: !Ref vpc
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - NACL Private Subnets D
+        - Key: Network
+          Value: NACL Protected
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  privateSubnetsNetworkAclEntryInboundD:
+    Condition: naclPrivateD
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: false
+      NetworkAclId: !Ref privateSubnetsNetworkAclD
+      Protocol: -1
+      RuleAction: allow
+      RuleNumber: 100
+  privateSubnetsNetworkIpv6AclEntryInboundD:
+    Condition: naclPrivateD
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      Ipv6CidrBlock: ::/0
+      Egress: false
+      NetworkAclId: !Ref privateSubnetsNetworkAclD
+      Protocol: -1
+      RuleAction: allow
+      RuleNumber: 101
+  privateSubnetsNetworkAclEntryOutboundD:
+    Condition: naclPrivateD
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      CidrBlock: 0.0.0.0/0
+      Egress: true
+      NetworkAclId: !Ref privateSubnetsNetworkAclD
+      Protocol: -1
+      RuleAction: allow
+      RuleNumber: 100
+  privateSubnetsNetworkIpv6AclEntryOutboundD:
+    Condition: naclPrivateD
+    Type: 'AWS::EC2::NetworkAclEntry'
+    Properties:
+      Ipv6CidrBlock: ::/0
+      Egress: true
+      NetworkAclId: !Ref privateSubnetsNetworkAclD
+      Protocol: -1
+      RuleAction: allow
+      RuleNumber: 101
+  privateSubnet1DNetworkAclAssociation:
+    Condition: subnet1PrivateD
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet1D
+      NetworkAclId: !Ref privateSubnetsNetworkAclD
+  privateSubnet2DNetworkAclAssociation:
+    Condition: subnet2D
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet2D
+      NetworkAclId: !Ref privateSubnetsNetworkAclD
+  privateSubnet3DNetworkAclAssociation:
+    Condition: subnet3D
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet3D
+      NetworkAclId: !Ref privateSubnetsNetworkAclD
+  privateSubnet4DNetworkAclAssociation:
+    Condition: subnet4D
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet4D
+      NetworkAclId: !Ref privateSubnetsNetworkAclD
+  privateSubnet5DNetworkAclAssociation:
+    Condition: subnet5D
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet5D
+      NetworkAclId: !Ref privateSubnetsNetworkAclD
+  privateSubnet6DNetworkAclAssociation:
+    Condition: subnet6D
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet6D
+      NetworkAclId: !Ref privateSubnetsNetworkAclD
+  privateSubnet7DNetworkAclAssociation:
+    Condition: subnet7D
+    Type: 'AWS::EC2::SubnetNetworkAclAssociation'
+    Properties:
+      SubnetId: !Ref subnet7D
+      NetworkAclId: !Ref privateSubnetsNetworkAclD
+  subnet1ARouteTableAssociation:
+    Condition: subnet1A
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet1A
+      RouteTableId: !If
+        - subnet1PrivateA
+        - !Ref privateRouteTableA
+        - !Ref publicSubnetRouteTable
+  subnet1BRouteTableAssociation:
+    Condition: subnet1B
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet1B
+      RouteTableId: !If
+        - subnet1PrivateB
+        - !Ref privateRouteTableB
+        - !Ref publicSubnetRouteTable
+  subnet1CRouteTableAssociation:
+    Condition: subnet1C
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet1C
+      RouteTableId: !If
+        - subnet1PrivateC
+        - !Ref privateRouteTableC
+        - !Ref publicSubnetRouteTable
+  subnet1DRouteTableAssociation:
+    Condition: subnet1D
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet1D
+      RouteTableId: !If
+        - subnet1PrivateD
+        - !Ref privateRouteTableD
+        - !Ref publicSubnetRouteTable
+  subnet2ARouteTableAssociation:
+    Condition: subnet2A
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet2A
+      RouteTableId: !Ref privateRouteTableA
+  subnet2BRouteTableAssociation:
+    Condition: subnet2B
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet2B
+      RouteTableId: !Ref privateRouteTableB
+  subnet2CRouteTableAssociation:
+    Condition: subnet2C
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet2C
+      RouteTableId: !Ref privateRouteTableC
+  subnet2DRouteTableAssociation:
+    Condition: subnet2D
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet2D
+      RouteTableId: !Ref privateRouteTableD
+  subnet3ARouteTableAssociation:
+    Condition: subnet3A
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet3A
+      RouteTableId: !Ref privateRouteTableA
+  subnet3BRouteTableAssociation:
+    Condition: subnet3B
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet3B
+      RouteTableId: !Ref privateRouteTableB
+  subnet3CRouteTableAssociation:
+    Condition: subnet3C
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet3C
+      RouteTableId: !Ref privateRouteTableC
+  subnet3DRouteTableAssociation:
+    Condition: subnet3D
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet3D
+      RouteTableId: !Ref privateRouteTableD
+  subnet4ARouteTableAssociation:
+    Condition: subnet4A
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet4A
+      RouteTableId: !Ref privateRouteTableA
+  subnet4BRouteTableAssociation:
+    Condition: subnet4B
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet4B
+      RouteTableId: !Ref privateRouteTableB
+  subnet4CRouteTableAssociation:
+    Condition: subnet4C
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet4C
+      RouteTableId: !Ref privateRouteTableC
+  subnet4DRouteTableAssociation:
+    Condition: subnet4D
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet4D
+      RouteTableId: !Ref privateRouteTableD
+  subnet5ARouteTableAssociation:
+    Condition: subnet5A
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet5A
+      RouteTableId: !Ref privateRouteTableA
+  subnet5BRouteTableAssociation:
+    Condition: subnet5B
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet5B
+      RouteTableId: !Ref privateRouteTableB
+  subnet5CRouteTableAssociation:
+    Condition: subnet5C
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet5C
+      RouteTableId: !Ref privateRouteTableC
+  subnet5DRouteTableAssociation:
+    Condition: subnet5D
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet5D
+      RouteTableId: !Ref privateRouteTableD
+  subnet6ARouteTableAssociation:
+    Condition: subnet6A
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet6A
+      RouteTableId: !Ref privateRouteTableA
+  subnet6BRouteTableAssociation:
+    Condition: subnet6B
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet6B
+      RouteTableId: !Ref privateRouteTableB
+  subnet6CRouteTableAssociation:
+    Condition: subnet6C
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet6C
+      RouteTableId: !Ref privateRouteTableC
+  subnet6DRouteTableAssociation:
+    Condition: subnet6D
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet6D
+      RouteTableId: !Ref privateRouteTableD
+  subnet7ARouteTableAssociation:
+    Condition: subnet7A
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet7A
+      RouteTableId: !Ref privateRouteTableA
+  subnet7BRouteTableAssociation:
+    Condition: subnet7B
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet7B
+      RouteTableId: !Ref privateRouteTableB
+  subnet7CRouteTableAssociation:
+    Condition: subnet7C
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet7C
+      RouteTableId: !Ref privateRouteTableC
+  subnet7DRouteTableAssociation:
+    Condition: subnet7D
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref subnet7D
+      RouteTableId: !Ref privateRouteTableD
+  natEipA:
+    Condition: naclPrivateA
+    DependsOn: vpcGatewayAttachment
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - EIP NAT Gateway A
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  natEipB:
+    Condition: naclPrivateB
+    DependsOn: vpcGatewayAttachment
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - EIP NAT Gateway B
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  natEipC:
+    Condition: naclPrivateC
+    DependsOn: vpcGatewayAttachment
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - EIP NAT Gateway C
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  natEipD:
+    Condition: naclPrivateD
+    DependsOn: vpcGatewayAttachment
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - EIP NAT Gateway D
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  natGatewayA:
+    Condition: naclPrivateA
+    DependsOn: vpcGatewayAttachment
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !GetAtt
+        - natEipA
+        - AllocationId
+      SubnetId: !Ref subnet0A
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Nat Gateway Subnets A
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  natGatewayB:
+    Condition: naclPrivateB
+    DependsOn: vpcGatewayAttachment
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !GetAtt
+        - natEipB
+        - AllocationId
+      SubnetId: !Ref subnet0B
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Nat Gateway Subnets B
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  natGatewayC:
+    Condition: naclPrivateC
+    DependsOn: vpcGatewayAttachment
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !GetAtt
+        - natEipC
+        - AllocationId
+      SubnetId: !Ref subnet0C
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Nat Gateway Subnets C
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  natGatewayD:
+    Condition: naclPrivateD
+    DependsOn: vpcGatewayAttachment
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !GetAtt
+        - natEipD
+        - AllocationId
+      SubnetId: !Ref subnet0D
+      Tags:
+        - Key: Name
+          Value: !Join
+            - '-'
+            - - !Ref uniqueString
+              - Nat Gateway Subnets D
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner

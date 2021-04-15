@@ -1,0 +1,11 @@
+# Dag Module Tests
+azure-arm-access-module-test:
+    test-url: "file://cloud-tools/automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/dag/daily_test.yaml"
+    run: "all"
+    parameters-files:
+# Provision External and Internal Load Balancer with Public IP
+        - "cloud-tools/automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/dag/prepub_parameters.yaml"
+# Provision ony External Load Balancer With Public IP
+        - "cloud-tools/automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/dag/prepub_parameters1.yaml"
+# Provision only Internal Load Balancer 
+        - "cloud-tools/automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/dag/prepub_parameters2.yaml"

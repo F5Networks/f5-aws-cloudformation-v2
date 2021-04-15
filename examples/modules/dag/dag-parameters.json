@@ -1,0 +1,21 @@
+[
+    { "ParameterKey": "application", "ParameterValue": "f5app" },
+    { "ParameterKey": "cost", "ParameterValue": "f5cost" },
+    { "ParameterKey": "createAppSecurityGroup", "ParameterValue": "true" },
+    { "ParameterKey": "environment", "ParameterValue": "f5env" },
+    { "ParameterKey": "externalSubnetAz1", "ParameterValue": "" },
+    { "ParameterKey": "externalSubnetAz2", "ParameterValue": "" },
+    { "ParameterKey": "group", "ParameterValue": "f5group" },
+    { "ParameterKey": "internalSubnetAz1", "ParameterValue": "" },
+    { "ParameterKey": "internalSubnetAz2", "ParameterValue": "" },
+    { "ParameterKey": "numberPublicExternalIpAddresses", "ParameterValue": "1" },
+    { "ParameterKey": "numberPublicMgmtIpAddresses", "ParameterValue": "1" },
+    { "ParameterKey": "owner", "ParameterValue": "f5owner" },
+    { "ParameterKey": "provisionExternalBigipLoadBalancer", "ParameterValue": "false" },
+    { "ParameterKey": "provisionInternalBigipLoadBalancer", "ParameterValue": "false" },
+    { "ParameterKey": "restrictedSrcAddressApp", "ParameterValue": "" },
+    { "ParameterKey": "restrictedSrcAddressMgmt", "ParameterValue": "" },
+    { "ParameterKey": "restrictedSrcPort", "ParameterValue": "8443" },
+    { "ParameterKey": "uniqueString", "ParameterValue": "myBIGIP" },
+    { "ParameterKey": "vpc", "ParameterValue": "false" }
+]
