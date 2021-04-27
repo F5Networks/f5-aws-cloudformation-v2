@@ -60,6 +60,7 @@ Metadata:
           - restrictedSrcAddressMgmt
           - restrictedSrcAddressApp
           - restrictedSrcPort
+          - vpcCidr
       - Label:
           default: External Elastic Load Balancer
         Parameters:
@@ -212,16 +213,6 @@ Outputs:
     Value: !GetAtt
       - BigipManagementEipAddress04
       - AllocationId
-  bigIpExternalEipAddress00:
-    Description: Elastic IP 00 for BIG-IP External Interface with primary IP
-    Condition: createExternalPublicIP01
-    Value: !Ref BigipExternalEipAddress00
-  bigIpExternalEipAllocationId00:
-    Description: Allocation Id for Elastic IP 00 for BIG-IP External Interface with primary IP
-    Condition: createExternalPublicIP01
-    Value: !GetAtt
-      - BigipExternalEipAddress00
-      - AllocationId
   bigIpExternalEipAddress01:
     Description: Elastic IP 01 for BIG-IP External Interface
     Condition: createExternalPublicIP01
@@ -370,6 +361,12 @@ Parameters:
     ConstraintDescription: Must Contain between 1 and 12 alphanumeric characters with first character as a letter.
     Default: myBIGIP
     Description: Unique String used when creating object names or Tags.
+    Type: String
+  vpcCidr:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    Default: 10.0.0.0/16
+    Description: CIDR block for the VPC.
     Type: String
   vpc:
     Description: REQUIRED - VPC ID.
@@ -653,32 +650,6 @@ Resources:
         - Key: Owner
           Value: !Ref owner
     Type: 'AWS::EC2::EIP'
-  BigipExternalEipAddress00:
-    Condition: createExternalPublicIP01
-    Properties:
-      Domain: vpc
-      Tags:
-        - Key: Name
-          Value: !Join
-            - ''
-            - - !Ref uniqueString
-              - '-BigipExtEIP00'
-        - Key: Application
-          Value: !Ref application
-        - Key: cost
-          Value: !Ref cost
-        - Key: Environment
-          Value: !Ref environment
-        - Key: Group
-          Value: !Ref group
-        - Key: Name
-          Value: !Join
-            - ''
-            - - 'EIP:'
-              - !Ref 'AWS::StackName'
-        - Key: Owner
-          Value: !Ref owner
-    Type: 'AWS::EC2::EIP'
   BigipExternalEipAddress01:
     Condition: createExternalPublicIP01
     Properties:
@@ -866,16 +837,24 @@ Resources:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
-          CidrIp: !Ref restrictedSrcAddressMgmt
+          CidrIp: !Ref restrictedSrcAddressApp
         - IpProtocol: tcp
           FromPort: 443
           ToPort: 443
-          CidrIp: !Ref restrictedSrcAddressMgmt
+          CidrIp: !Ref restrictedSrcAddressApp
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: !Ref vpcCidr
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: !Ref vpcCidr
       Tags:
         - Key: Name
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-ApplicationlSecurityGroup'
+              - '-ApplicationSecurityGroup'
         - Key: Application
           Value: !Ref application

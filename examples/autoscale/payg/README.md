@@ -16,13 +16,24 @@
     - [Template Outputs](#template-outputs)
   - [Deploying this Solution](#deploying-this-solution)
     - [Deploying via the AWS Launch Stack Button](#deploying-via-the-aws-launch-stack-button)
-    - [Deploying via the AWS CLI](#deploying-via-the-aws-cli)
+    - [Deploying via the AWS CLI]](#deploying-via-the-aws-cli)
     - [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment)
   - [Validation](#validation)
     - [Validating the Deployment](#validating-the-deployment)
+    - [Accessing the BIG-IP](#accessing-the-big-ip)
+      - [SSH](#ssh)
+      - [WebUI](#webui)
+    - [Further Exploring](#further-exploring)
+      - [WebUI](#webui-1)
+      - [SSH](#ssh-1)
     - [Testing the WAF Service](#testing-the-waf-service)
   - [Updating this Solution](#updating-this-solution)
   - [Deleting this Solution](#deleting-this-solution)
+      - [Deleting this Solution using the AWS Console](#deleting-this-solution-using-the-aws-console)
+      - [Deleting this Solution using the AWS CLI](#deleting-this-solution-using-the-aws-cli)
+    - [Delete CloudWatch Log groups created by Lambda functions](#delete-cloudwatch-log-groups-created-by-lambda-functions)
+      - [Deleting Log Groups using the AWS Console](#deleting-log-groups-using-the-aws-console)
+      - [Deleting Log groups using the AWS CLI](#deleting-log-groups-using-the-aws-cli)
   - [Troubleshooting Steps](#troubleshooting-steps)
   - [Security](#security)
   - [BIG-IP Versions](#big-ip-versions)
@@ -88,7 +99,7 @@ This solution leverages more traditional Auto Scale configuration management pra
       - Additional cloud services like [VPC endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints.html) can be used to address calls to native services traversing the Internet.
   - See [Security](#security) section for more details. 
 
-- If you have cloned this repository in order to modify the templates or BIG-IP config files and published to your own location (NOTE: Cloudformation can only reference S3 locations for templates and not generic URLs like from github), you can use the **s3BucketName**,  **s3BucketRegion** and **artifactLocation** input parameters to specify the new location of the customized templates and the **bigIpRuntimeInitConfig** input parameter to specify the new location of the BIG-IP Runtime-Init config. See main [/examples/README.md](../README.md#cloud-configuration) for more template customization details. See [Changing the BIG-IP Deployment](#changing-the-bigip-deployment) for more BIG-IP customization details.  
+- If you have cloned this repository in order to modify the templates or BIG-IP config files and published to your own location (NOTE: Cloudformation can only reference S3 locations for templates and not generic URLs like from github), you can use the **s3BucketName**,  **s3BucketRegion** and **artifactLocation** input parameters to specify the new location of the customized templates and the **bigIpRuntimeInitConfig** input parameter to specify the new location of the BIG-IP Runtime-Init config. See main [/examples/README.md](../../README.md#cloud-configuration) for more template customization details. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details.  
 
 - In this solution, the BIG-IP VE has the [LTM](https://f5.com/products/big-ip/local-traffic-manager-ltm) and [ASM](https://f5.com/products/big-ip/application-security-manager-asm) modules enabled to provide advanced traffic management and web application security functionality. 
 
@@ -118,7 +129,7 @@ This solution leverages more traditional Auto Scale configuration management pra
 | group | No | Group Tag. |
 | imageName | No | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. imageName is required when not using a customImageId. | 
 | instanceType | No | Enter valid instance type. |
-| loggingS3BucketName | No | The name of the existing S3 bucket where BIG-IP logs will be sent. See [Changing the BIG-IP Deployment](#changing-the-bigip-deployment) for more BIG-IP customization details. |
+| loggingS3BucketName | No | The name of the existing S3 bucket where BIG-IP logs will be sent. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details. |
 | metricNameSpace | Yes | CloudWatch namespace used for custom metrics. This should match the namespace defined in your telemetry services declaration within bigipRuntimInitConfig. |
 | notificationEmail | Yes | Valid email address to send Auto Scaling event notifications. |
 | numAzs | No | Number of Availability Zones to use in the VPC. Region must support number of availability  zones entered. Min 1 Max 4 |
@@ -143,8 +154,8 @@ This solution leverages more traditional Auto Scale configuration management pra
 
 | Name | Description | Type |
 | --- | --- | --- |
-| appAutoScaleGroup | Application Auto Scale Group Name|  String |
-| bigIpAutoScaleGroup | BIG-IP Auto Scale Group Name |  String |
+| appAutoScaleGroupName | Application Auto Scale Group Name|  String |
+| bigIpAutoScaleGroupName | BIG-IP Auto Scale Group Name |  String |
 | wafExternalDnsName | WAF External DNS Name |  String |
 | wafExternalHttpsUrl | WAF External HTTPS URL |  String |
 | wafInternalDnsName | WAF Internal DNS Name |  String |

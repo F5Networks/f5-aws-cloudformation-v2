@@ -12,7 +12,6 @@
     { "ParameterKey": "instanceType", "ParameterValue": "m5.xlarge" },
     { "ParameterKey": "licenseType", "ParameterValue": "payg" },
     { "ParameterKey": "numAzs", "ParameterValue": "1" },
-    { "ParameterKey": "numberPublicExternalIpAddresses", "ParameterValue": "2" },
     { "ParameterKey": "numNics", "ParameterValue": "3" },
     { "ParameterKey": "numSubnets", "ParameterValue": "4" },
     { "ParameterKey": "owner", "ParameterValue": "f5owner" },
@@ -23,6 +22,5 @@
     { "ParameterKey": "sshKey", "ParameterValue": "" },
     { "ParameterKey": "throughput", "ParameterValue": "25Mbps" },
     { "ParameterKey": "uniqueString", "ParameterValue": "myBIGIP" },
-    { "ParameterKey": "usePublicMgmtAddress", "ParameterValue": "true" },
     { "ParameterKey": "version", "ParameterValue": "15-1-2-1-0010" }
 ]

@@ -24,21 +24,25 @@ dag_stack_output=$(aws cloudformation describe-stacks --region <REGION> --stack-
 
 case <NUM SECONDARY PRIVATE IP> in
 1)
-    declare -a publicEip=("bigIpManagementEipAddress01" "bigIpExternalEipAddress00" "bigIpExternalEipAddress01") ;;
+    declare -a publicEip=("bigIpManagementEipAddress01" "bigIpExternalEipAddress01") ;;
 2)
-    declare -a publicEip=("bigIpManagementEipAddress01" "bigIpManagementEipAddress02" "bigIpExternalEipAddress00" "bigIpExternalEipAddress01" "bigIpExternalEipAddress02") ;;
+    declare -a publicEip=("bigIpManagementEipAddress01" "bigIpManagementEipAddress02" "bigIpExternalEipAddress01" "bigIpExternalEipAddress02") ;;
 3)
-    declare -a publicEip=("bigIpManagementEipAddress01" "bigIpManagementEipAddress02" "bigIpManagementEipAddress03" "bigIpExternalEipAddress00" "bigIpExternalEipAddress01" "bigIpExternalEipAddress02" "bigIpExternalEipAddress03") ;;
+    declare -a publicEip=("bigIpManagementEipAddress01" "bigIpManagementEipAddress02" "bigIpManagementEipAddress03" "bigIpExternalEipAddress01" "bigIpExternalEipAddress02" "bigIpExternalEipAddress03") ;;
 4)
-    declare -a publicEip=("bigIpManagementEipAddress01" "bigIpManagementEipAddress02" "bigIpManagementEipAddress03" "bigIpManagementEipAddress04" "bigIpExternalEipAddress00" "bigIpExternalEipAddress01" "bigIpExternalEipAddress02" "bigIpExternalEipAddress03" "bigIpExternalEipAddress04") ;;
+    declare -a publicEip=("bigIpManagementEipAddress01" "bigIpManagementEipAddress02" "bigIpManagementEipAddress03" "bigIpManagementEipAddress04" "bigIpExternalEipAddress01" "bigIpExternalEipAddress02" "bigIpExternalEipAddress03" "bigIpExternalEipAddress04") ;;
 *)
     declare -a publicEip ;;
 esac
 
 
+echo $publicEip
+
+
 # Run array's through function
 spacer=$'\n============\n'
 response=$(verify_public_eip "${dag_stack_output}" "publicEip")
+echo $response
 if echo $response | grep -q "FAILED"; then
     echo "TEST FAILED ${spacer}${response}"
 else

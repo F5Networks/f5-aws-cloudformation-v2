@@ -15,6 +15,7 @@
     { "ParameterKey": "provisionInternalBigipLoadBalancer", "ParameterValue": "false" },
     { "ParameterKey": "restrictedSrcAddressApp", "ParameterValue": "" },
     { "ParameterKey": "restrictedSrcAddressMgmt", "ParameterValue": "" },
+    { "ParameterKey": "vpcCidr", "ParameterValue": "" },
     { "ParameterKey": "restrictedSrcPort", "ParameterValue": "8443" },
     { "ParameterKey": "uniqueString", "ParameterValue": "myBIGIP" },
     { "ParameterKey": "vpc", "ParameterValue": "false" }

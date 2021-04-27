@@ -39,6 +39,17 @@ Conditions:
       - !Equals
         - !Ref mgmtSubnetId
         - ''
+  noExternalServiceIPs: !And
+    - !Condition is1Nic
+    - !Equals
+      - !Join ['', !Ref externalServiceIps]
+      - ''
+  hasExternalServiceIPs: !And
+    - !Condition is1Nic
+    - !Not
+      - !Equals
+        - !Join ['', !Ref externalServiceIps]
+        - ''
   useMgmtSecondary: !Or
     - !Condition useDynamicExternalIpAddr
     - !Condition useStaticExternalIpAddr
@@ -499,12 +510,27 @@ Resources:
     Properties:
       Description: Management Interface for the BIG-IP
       SecondaryPrivateIpAddressCount: !If
-        - useMgmtSecondary
-        - 0
+        - noExternalServiceIPs
         - !Ref numSecondaryPrivateIpAddress
+        - !Ref 'AWS::NoValue'
       GroupSet:
         - !Ref mgmtSecurityGroupId
-      PrivateIpAddress: !Ref mgmtSelfIp
+      PrivateIpAddress: !If 
+        - is1Nic
+        - !If
+          - noExternalServiceIPs
+          - !Ref mgmtSelfIp
+          - !Ref 'AWS::NoValue'
+        - !Ref mgmtSelfIp
+      PrivateIpAddresses: !If 
+        - hasExternalServiceIPs
+        - - Primary: true
+            PrivateIpAddress: !Ref mgmtSelfIp
+          - Primary: false
+            PrivateIpAddress: !Select
+              - '0'
+              - !Ref externalServiceIps
+        - !Ref 'AWS::NoValue'
       SubnetId: !Ref mgmtSubnetId
     Type: 'AWS::EC2::NetworkInterface'
   BigipStaticExternalInterface:
@@ -859,15 +885,7 @@ Resources:
             - |
               # Execute Runtime-init
             - |
-              for i in {1..5}; do
-            - |2
-                [[ $i -ne 1 ]] && sleep 10
-            - |2
-                f5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf
-            - |2
-                [[ $? -eq 0 ]] && break
-            - |
-              done
+              f5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf
             - |+
 
             - '[[ $? -eq 0 ]] && /opt/aws/bin/cfn-signal -e 0 --stack '

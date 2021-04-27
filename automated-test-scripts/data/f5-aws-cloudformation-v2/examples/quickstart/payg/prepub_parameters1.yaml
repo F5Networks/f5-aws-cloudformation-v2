@@ -4,10 +4,9 @@ BIGIP INSTANCE TYPE: m5.2xlarge
 BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.2.1-1.gz.run'
 BIGIP USER: quickstart
 CUSTOM IMAGE: ''
-DOCKER IMAGE: 'f5devcentral/f5-demo-app:1.0.1'
+DOCKER IMAGE: 'f5devcentral/f5-demo-app:latest'
 LICENSE TYPE: payg
 NIC COUNT: 1
-NUM EXT IP ADDRESS: 2
 PUBLIC MGMT: 'true'
 REGION: us-east-2
 # Ok to use example runtime for payg, nothing to replace in  config.

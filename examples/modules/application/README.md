@@ -57,6 +57,7 @@ This template deploys a simple example application. It launches a CentOS Linux V
 | setAppPublicIp | No | To create a Public IP and connect it to the application. |
 | sshKey | Yes | Name of an existing EC2 KeyPair to enable SSH access to the instance. |
 | staticIp | No | The private IP address to apply as primary private address. |
+| uniqueString | Yes | Unique String used when creating object names or Tags. |
 | vpc | Yes | Common VPC for whole deployment. |
 
 ### Template Outputs

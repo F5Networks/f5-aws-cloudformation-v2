@@ -24,7 +24,7 @@ ParameterKey=provisionExternalBigipLoadBalancer,ParameterValue=<PROVISION EXTERN
 ParameterKey=provisionInternalBigipLoadBalancer,ParameterValue=<PROVISION INTERNAL LB> \
 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0 \
 ParameterKey=restrictedSrcAddressMgmt,ParameterValue=0.0.0.0/0 \
-ParameterKey=uniqueString,ParameterValue=<DEWPOINT JOB ID> \
+ParameterKey=vpcCidr,ParameterValue=10.0.0.0/16 \
 ParameterKey=uniqueString,ParameterValue=<UNIQUESTRING> \
 ParameterKey=vpc,ParameterValue=$vpcId"
 echo "Parameters:$parameters"

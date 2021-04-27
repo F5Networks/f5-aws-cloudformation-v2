@@ -7,7 +7,6 @@ CUSTOM IMAGE: ''
 DOCKER IMAGE: 'f5devcentral/f5-demo-app:1.0.1'
 LICENSE TYPE: payg
 NIC COUNT: 1
-NUM EXT IP ADDRESS: 2
 PUBLIC MGMT: 'true'
 REGION: us-east-2
 # Ok to use example runtime for payg, nothing to replace in config.

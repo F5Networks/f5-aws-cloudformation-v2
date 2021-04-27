@@ -68,10 +68,6 @@ cat <<EOF > parameters.json
         "ParameterValue": "<LICENSE TYPE>"
     },
     { 
-        "ParameterKey": "numberPublicExternalIpAddresses",
-        "ParameterValue": "<NUM EXT IP ADDRESS>"
-    },
-    { 
         "ParameterKey": "numNics",
         "ParameterValue": "<NIC COUNT>"
     },
@@ -102,10 +98,6 @@ cat <<EOF > parameters.json
     { 
         "ParameterKey": "uniqueString",
         "ParameterValue": "<UNIQUESTRING>"
-    },
-    { 
-        "ParameterKey": "usePublicMgmtAddress",
-        "ParameterValue": "<PUBLIC MGMT>"
     },
     { 
         "ParameterKey": "version",
