@@ -75,7 +75,7 @@ extension_services:
           myNtp:
             class: NTP
             servers:
-              - 0.pool.ntp.org
+              - 169.254.169.253
             timezone: UTC
           myProvisioning:
             class: Provision

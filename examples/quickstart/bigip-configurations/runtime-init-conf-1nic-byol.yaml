@@ -65,7 +65,7 @@ extension_services:
           myNtp:
             class: NTP
             servers:
-              - 0.pool.ntp.org
+              - 169.254.169.253
             timezone: UTC
           myProvisioning:
             class: Provision
@@ -110,7 +110,7 @@ extension_services:
             serviceMain:
               class: Service_HTTP
               virtualAddresses:
-                - 0.0.0.0
+                - 10.0.0.101
               snat: auto
               policyWAF:
                 use: WAFPolicy
@@ -127,7 +127,7 @@ extension_services:
             serviceMain:
               class: Service_HTTPS
               virtualAddresses:
-                - 0.0.0.0
+                - 10.0.0.101
               snat: auto
               policyWAF:
                 use: WAFPolicy

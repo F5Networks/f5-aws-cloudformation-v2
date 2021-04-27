@@ -1,23 +1,23 @@
 # Network Module Tests 
 aws-network-module-test:
-    test-url: "file://cloud-tools/automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/network/daily_test.yaml"
+    test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/network/daily_test.yaml"
     run: "all"
     parameters-files:
 # Use defaults to create networks (all private nets, 2AZ, 2 subnets)
-        - "cloud-tools/automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/prepub_parameters.yaml"
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/prepub_parameters.yaml"
 # Use  to create networks (subnet0 set to public, 1AZ, 1 subnets)
-        - "cloud-tools/automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/prepub_parameters1.yaml"
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/prepub_parameters1.yaml"
 # Use to create networks (subnet1 set to public, 2AZ, 2 subnets)
-        - "cloud-tools/automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/prepub_parameters2.yaml"
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/prepub_parameters2.yaml"
 # Use to create networks (subnet0/subnet1 set to public, 3AZ, 2 subnets)
-        - "cloud-tools/automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/prepub_parameters3.yaml"
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/prepub_parameters3.yaml"
 # Use to create networks (subnet0/subnet1 set to public, 4AZ, 4 subnets)
-        - "cloud-tools/automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/prepub_parameters4.yaml"
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/prepub_parameters4.yaml"
 # Use to create networks (subnet0 set to public, 1AZ, 5 subnets)
-        - "cloud-tools/automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/prepub_parameters5.yaml"
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/prepub_parameters5.yaml"
 # Use to create networks (subnet1 set to public, 2AZ, 6 subnets)
-        - "cloud-tools/automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/prepub_parameters6.yaml"
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/prepub_parameters6.yaml"
 # Use to create networks (subnet0/subnet1 set to public, 3AZ, 7 subnets)
-        - "cloud-tools/automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/prepub_parameters7.yaml"
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/prepub_parameters7.yaml"
 # Use to create networks  (all private subnets, 4AZ, 8 subnets)
-        - "cloud-tools/automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/prepub_parameters8.yaml"
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/prepub_parameters8.yaml"

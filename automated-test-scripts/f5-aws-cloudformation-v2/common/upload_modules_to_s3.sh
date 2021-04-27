@@ -10,4 +10,4 @@ bucket_name=`echo <STACK NAME>|cut -c -60|tr '[:upper:]' '[:lower:]'| sed 's:-*$
 artifact_location=$(cat /$PWD/examples/quickstart/quickstart.yaml | yq -r .Parameters.artifactLocation.Default)
 echo "artifact_location=$artifact_location"
 
-aws s3 cp --region <REGION> /$PWD/examples/ s3://"$bucket_name"/"$artifact_location" --recursive --exclude "/$PWD/images/" --acl public-read 2>&1
+aws s3 cp --region <REGION> /$PWD/examples/ s3://"$bucket_name"/"$artifact_location" --recursive --exclude "/$PWD/f5-aws-cloudformation-v2/images/" --acl public-read 2>&1

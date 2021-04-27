@@ -243,13 +243,13 @@ Parameters:
     Type: String
   lowCpuThreshold:
     ConstraintDescription: Select a value between 0 to 100
-    Default: 0
+    Default: 20
     Description: Low CPU Percentage threshold to begin scaling down BIG-IP VE instances.
     MaxValue: 100
     MinValue: 0
     Type: Number
   metricNameSpace:
-    Default: bigip-throughput
+    Default: f5-scaling-metrics
     Description: CloudWatch namespace used for custom metrics. This should match the namespace defined in your telemetry services declaration within bigipRuntimInitConfig.
     Type: String
   notificationEmail:
@@ -269,11 +269,11 @@ Parameters:
     Description: Whether or not to provision Public IP Addresses for the BIG-IP Network Interfaces. By Default no Public IP addresses are provisioned.
     Type: String
   scaleDownBytesThreshold:
-    Default: 10000
+    Default: 10000000
     Description: Incoming bytes threshold to begin scaling down BIG-IP VE instances.
     Type: Number
   scaleUpBytesThreshold:
-    Default: 35000
+    Default: 20000000
     Description: Incoming bytes threshold to begin scaling up BIG-IP VE instances.
     Type: Number
   scalingMaxSize:
@@ -415,7 +415,7 @@ Resources:
         minute
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 1
-      MetricName: F5_system_networkInterfaces_1.0_counters.bitsIn
+      MetricName: F5_throughputIn_sys/performance/throughput/In_Current
       Namespace: !Ref metricNameSpace
       Period: 60
       Statistic: Average
@@ -552,13 +552,12 @@ Resources:
       AlarmActions:
         - !Ref BigipScaleDownPolicy
       AlarmDescription: >-
-        CPU usage percentage below average threshold after 10 successive
-        interval of 5 minutes
+        CPU usage percentage below average threshold after 10 datapoints over 10 minutes
       ComparisonOperator: LessThanThreshold
       EvaluationPeriods: 10
       MetricName: F5_system_cpu
       Namespace: !Ref metricNameSpace
-      Period: 300
+      Period: 60
       Statistic: Average
       Threshold: !Ref lowCpuThreshold
     Type: 'AWS::CloudWatch::Alarm'
@@ -569,13 +568,12 @@ Resources:
       AlarmActions:
         - !Ref BigipScaleDownPolicy
       AlarmDescription: >-
-        Throughput below average threshold for 10 successive intervals of 5
-        minutes
+        Throughput below average threshold for after 10 datapoints over 10 minutes
       ComparisonOperator: LessThanThreshold
       EvaluationPeriods: 10
-      MetricName: F5_system_networkInterfaces_1.0_counters.bitsIn
+      MetricName: F5_throughputIn_sys/performance/throughput/In_Current
       Namespace: !Ref metricNameSpace
-      Period: 300
+      Period: 60
       Statistic: Average
       Threshold: !Ref scaleDownBytesThreshold
     Type: 'AWS::CloudWatch::Alarm'

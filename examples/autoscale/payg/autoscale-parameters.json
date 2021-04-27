@@ -27,6 +27,7 @@
   { "ParameterKey": "provisionPublicIPApp", "ParameterValue": "false" },
   { "ParameterKey": "restrictedSrcAddressApp", "ParameterValue": "" },
   { "ParameterKey": "restrictedSrcAddressMgmt", "ParameterValue": "" },
+  { "ParameterKey": "vpcCidr", "ParameterValue": "" },
   { "ParameterKey": "s3BucketName", "ParameterValue": "f5-cft" },
   { "ParameterKey": "s3BucketRegion", "ParameterValue": "us-east-2" },
   { "ParameterKey": "setPublicSubnet0", "ParameterValue": "false" },

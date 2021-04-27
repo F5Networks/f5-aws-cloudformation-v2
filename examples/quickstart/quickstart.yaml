@@ -16,46 +16,12 @@ Conditions:
   3nic: !Equals
     - 3
     - !Ref numNics
-  externalIpAddresses0: !Equals
-    - 0
-    - !Ref numberPublicExternalIpAddresses
-  externalIpAddresses1: !Equals
-    - 1
-    - !Ref numberPublicExternalIpAddresses
-  externalIpAddresses2: !Equals
-    - 2
-    - !Ref numberPublicExternalIpAddresses
-  externalIpAddresses3: !Equals
-    - 3
-    - !Ref numberPublicExternalIpAddresses
-  externalIpAddresses4: !Equals
-    - 4
-    - !Ref numberPublicExternalIpAddresses
-  appUrl1: !Or
-    - !Condition externalIpAddresses1
-    - !Condition appUrl2
-  appUrl2: !Or
-    - !Condition externalIpAddresses2
-    - !Condition appUrl3
-  appUrl3: !Or
-    - !Condition externalIpAddresses3
-    - !Condition appUrl4
-  appUrl4: !Condition externalIpAddresses4
   isPaygLicensing: !Equals
     - payg
     - !Ref licenseType
-  mgmtUrl443: !And
-    - !Condition 2nic
-    - !Condition usePublicMgmtAddress
-  mgmtUrl8443: !And
-    - !Condition 1nic
-    - !Condition usePublicMgmtAddress
   noCustomImageId: !Equals
     - ''
     - !Ref customImageId
-  usePublicMgmtAddress: !Equals
-    - 'true'
-    - !Ref usePublicMgmtAddress
 Mappings:
   AWSBigipThroughput:
     1000Mbps:
@@ -453,8 +419,6 @@ Metadata:
           - restrictedSrcAddressMgmt
           - restrictedSrcAddressApp
           - sshKey
-          - usePublicMgmtAddress
-          - numberPublicExternalIpAddresses
       - Label:
           default: BIG-IP Configuration
         Parameters:
@@ -508,9 +472,7 @@ Metadata:
       numNics:
         default: Interfaces
       numSubnets:
-        default: Subnets
-      numberPublicExternalIpAddresses:
-        default: Public IP Addresses
+        default: Subnets 
       owner:
         default: Owner
       restrictedSrcAddressApp:
@@ -527,8 +489,6 @@ Metadata:
         default: BIG-IP VE throughput (PAYG)
       uniqueString:
         default: Unique String
-      usePublicMgmtAddress:
-        default: Public Management Interface
       version:
         default: BIG-IP Version
   Version: 1.0.0
@@ -549,48 +509,26 @@ Outputs:
       - - 'ssh admin@'
         - !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
   bigIpManagementUrl443:
-    Condition: mgmtUrl443
+    Condition: 2nic
     Description: url to management address. WARNING - For eval purposes only. Production should never have Management interface exposed to Internet.
     Value: !Join
       - ''
       - - 'https://'
         - !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
   bigIpManagementUrl8443:
-    Condition: mgmtUrl8443
+    Condition: 1nic
     Description: url to management address. WARNING - For eval purposes only. Production should never have Management interface exposed to Internet.
     Value: !Join
       - ''
       - - 'https://'
         - !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
         - ':8443'
-  vip1PublicUrl:
-    Condition: appUrl1
-    Description: url to public vip 1 address
-    Value: !Join
-      - ''
-      - - 'https://'
-        - !GetAtt [Dag, Outputs.bigIpExternalEipAddress01]
-  vip2PublicUrl:
-    Condition: appUrl2
-    Description: url to public vip 2 address
+  vipPublicUrl:
+    Description: url to public vip address
     Value: !Join
       - ''
       - - 'https://'
         - !GetAtt [Dag, Outputs.bigIpExternalEipAddress02]
-  vip3PublicUrl:
-    Condition: appUrl3
-    Description: url to public vip 3 address
-    Value: !Join
-      - ''
-      - - 'https://'
-        - !GetAtt [Dag, Outputs.bigIpExternalEipAddress03]
-  vip4PublicUrl:
-    Condition: appUrl4
-    Description: url to public vip 4 address
-    Value: !Join
-      - ''
-      - - 'https://'
-        - !GetAtt [Dag, Outputs.bigIpExternalEipAddress04]
 Parameters:
   appContainerName:
     Default: 'f5devcentral/f5-demo-app:latest'
@@ -698,16 +636,6 @@ Parameters:
     Default: 4
     Description: Indicate the number of subnets to create.
     Type: Number
-  numberPublicExternalIpAddresses:
-    AllowedValues:
-      - 0
-      - 1
-      - 2
-      - 3
-      - 4
-    Default: 1
-    Description: Number of external public ip address to create.
-    Type: Number
   owner:
     Default: f5owner
     Description: Owner Tag.
@@ -755,13 +683,6 @@ Parameters:
     Default: myBIGIP
     Description: Unique String used when creating object names or Tags.
     Type: String
-  usePublicMgmtAddress:
-    AllowedValues:
-      - 'true'
-      - 'false'
-    Default: 'false'
-    Description: 'Value of true sets management interface with public address. In most production environments this would be set to false.'
-    Type: String
   version:
     AllowedValues:
       - 16-0-1-1006
@@ -789,6 +710,7 @@ Resources:
         restrictedSrcAddress: !Ref restrictedSrcAddressApp
         sshKey: !Ref sshKey
         staticIp: "10.0.3.4"
+        uniqueString: !Ref uniqueString
         vpc: !GetAtt
           - Network
           - Outputs.vpcId
@@ -802,22 +724,21 @@ Resources:
             S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}-${AWS::Region}', !Ref s3BucketName]
       Parameters:
         bigIpRuntimeInitConfig: !Ref bigIpRuntimeInitConfig
-        bigIpRuntimeInitPackageUrl: !Ref bigIpRuntimeInitPackageUrl
-        externalPrimaryPublicId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId00]
-        externalPublicIpIds: !If [externalIpAddresses4, !Join [',', [!GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01], !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId02], !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId03], !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId04]]], !If [externalIpAddresses3, !Join [',', [!GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01], !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId02], !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId03]]], !If [externalIpAddresses2, !Join [',', [!GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01], !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId02]]], !If [externalIpAddresses1, !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01], '']]]]
+        externalPrimaryPublicId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01]
+        externalPublicIpIds: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId02]
         externalSecurityGroupId: !If [2nic, !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup], !Ref 'AWS::NoValue']
         externalSelfIp: !If [2nic, "10.0.1.11", !Ref 'AWS::NoValue']
-        externalServiceIps: !If [1nic, "10.0.0.101,10.0.0.102", "10.0.1.101,10.0.1.102"]
+        externalServiceIps: !If [1nic, "10.0.0.101", "10.0.1.101"]
         externalSubnetId: !If [2nic, !Select [1, !Split [',', !GetAtt [Network, Outputs.subnetsA]]], !Ref 'AWS::NoValue']
         imageId: !If [noCustomImageId, !If [isPaygLicensing, !FindInMap [!FindInMap [VERSION, !Ref version, REGIONMAP], !Ref 'AWS::Region', !FindInMap [AWSBigipThroughput, !Ref throughput, !Ref imageName]], !FindInMap [!FindInMap [VERSION, !Ref version, REGIONMAP], !Ref 'AWS::Region', AllTwoBootLocations]], !Ref customImageId]
         instanceType: !Ref instanceType
         internalSelfIp: !If [3nic, "10.0.2.11", !Ref 'AWS::NoValue']
         internalSubnetId: !If [3nic, !Select [2, !Split [',', !GetAtt [Network, Outputs.subnetsA]]], !Ref 'AWS::NoValue']
-        mgmtPublicIpId: !If [usePublicMgmtAddress, !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId01], !Ref 'AWS::NoValue']
+        mgmtPublicIpId: !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId01]
         mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup]
         mgmtSelfIp: "10.0.0.11"
         mgmtSubnetId: !Select [0, !Split [',', !GetAtt [Network, Outputs.subnetsA]]]
-        numSecondaryPrivateIpAddress: !Ref numberPublicExternalIpAddresses
+        numSecondaryPrivateIpAddress: 1
         sshKey: !Ref sshKey
   Dag:
     Type: 'AWS::CloudFormation::Stack'
@@ -833,12 +754,13 @@ Resources:
         createAppSecurityGroup: 'true'
         environment: !Ref environment
         group: !Ref group
-        numberPublicExternalIpAddresses: !Ref numberPublicExternalIpAddresses
-        numberPublicMgmtIpAddresses: !If [usePublicMgmtAddress, 1, 0]
+        numberPublicExternalIpAddresses: 2
+        numberPublicMgmtIpAddresses: 1
         restrictedSrcAddressApp: !Ref restrictedSrcAddressApp
         restrictedSrcAddressMgmt: !Ref restrictedSrcAddressMgmt
         restrictedSrcPort: !If [1nic, 8443, 443]
         uniqueString: !Ref uniqueString
+        vpcCidr: 10.0.0.0/16
         vpc: !GetAtt
           - Network
           - Outputs.vpcId
@@ -856,7 +778,7 @@ Resources:
         group: !Ref group
         numAzs: !Ref numAzs
         numSubnets: !Ref numSubnets
-        setPublicSubnet1: !Ref usePublicMgmtAddress
+        setPublicSubnet1: 'true'
         subnetMask: 24
         uniqueString: !Ref uniqueString
         vpcCidr: 10.0.0.0/16

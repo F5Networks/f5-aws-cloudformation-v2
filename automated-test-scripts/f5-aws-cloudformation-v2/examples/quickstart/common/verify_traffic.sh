@@ -4,9 +4,10 @@
 #  replayTimeout = 5
 
 flag=PASS
-dnsAppname=$(aws cloudformation describe-stacks --stack-name <STACK NAME> --region <REGION> | jq -r '.Stacks[].Outputs[] | select (.OutputKey=="vip1PublicUrl") | .OutputValue')
+dnsAppname=$(aws cloudformation describe-stacks --stack-name <STACK NAME> --region <REGION> | jq -r '.Stacks[].Outputs[] | select (.OutputKey=="vipPublicUrl") | .OutputValue')
 
 echo "Executing HTTPS calls to Application"
+
 httpsResponse=$(curl -sk $dnsAppname)
 echo "Validating HTTPS call:"
 if ! echo $httpsResponse | grep "Demo"; then

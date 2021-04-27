@@ -25,28 +25,28 @@ echo $eip_stack_output
 
 case <PRIVATE IP TYPE> in
 STATIC)
-    declare -a eipAssociatation=("BigipVipEipAssociation" "BigipVipEipAssociation1")  ;;
+    declare -a eipAssociation=("BigipVipEipAssociation" "BigipVipEipAssociation1")  ;;
 DYNAMIC)
     case <NUM SECONDARY PRIVATE IP> in
     1)
-        declare -a eipAssociatation=("BigipVipEipAssociation" "BigipVipEipAssociation1") ;;
+        declare -a eipAssociation=("BigipVipEipAssociation" "BigipVipEipAssociation1") ;;
     2)
-        declare -a eipAssociatation=("BigipVipEipAssociation" "BigipVipEipAssociation1" "BigipVipEipAssociation2") ;;
+        declare -a eipAssociation=("BigipVipEipAssociation" "BigipVipEipAssociation1" "BigipVipEipAssociation2") ;;
     3)
-        declare -a eipAssociatation=("BigipVipEipAssociation" "BigipVipEipAssociation1" "BigipVipEipAssociation2" "BigipVipEipAssociation3") ;;
+        declare -a eipAssociation=("BigipVipEipAssociation" "BigipVipEipAssociation1" "BigipVipEipAssociation2" "BigipVipEipAssociation3") ;;
     4)
-        declare -a eipAssociatation=("BigipVipEipAssociation" "BigipVipEipAssociation1" "BigipVipEipAssociation2" "BigipVipEipAssociation3" "BigipVipEipAssociation4") ;;
+        declare -a eipAssociation=("BigipVipEipAssociation" "BigipVipEipAssociation1" "BigipVipEipAssociation2" "BigipVipEipAssociation3" "BigipVipEipAssociation4") ;;
     *)
-        declare -a eipAssociatation ;;
+        declare -a eipAssociation ;;
     esac ;;
 esac
 
 if [[ '<PUBLIC IP>' == 'true' ]]; then
-    eipAssociatation+=("BigipManagementEipAssociation")
+    eipAssociation+=("BigipManagementEipAssociation")
 fi
 # Run array's through function
 spacer=$'\n============\n'
-response=$(verify_eip_association "${eip_stack_output}" "eipAssociatation")
+response=$(verify_eip_association "${eip_stack_output}" "eipAssociation")
 if echo $response | grep -q "FAILED"; then
     echo "TEST FAILED ${spacer}${response}"
 else

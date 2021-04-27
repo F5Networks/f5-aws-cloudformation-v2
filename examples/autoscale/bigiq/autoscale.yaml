@@ -211,7 +211,7 @@ Outputs:
     Value: !GetAtt
       - AmiInfo
       - Id
-  bigIpAutoscaleGroup:
+  bigIpAutoscaleGroupName:
     Value: !GetAtt
       - BigipAutoscale
       - Outputs.bigIpAutoscaleGroup
@@ -370,7 +370,7 @@ Parameters:
     Description: The name of the existing S3 bucket where BIG-IP logs will be sent.
     Type: String
   metricNameSpace:
-    Default: bigip-throughput
+    Default: f5-scaling-metrics
     Description: CloudWatch namespace used for custom metrics. This should match the namespace defined in your telemetry services declaration within bigipRuntimInitConfig.
     Type: String
   notificationEmail:
@@ -702,6 +702,7 @@ Resources:
               - Outputs.subnetsB
         restrictedSrcAddressApp: !Ref restrictedSrcAddressApp
         restrictedSrcAddressMgmt: !Ref restrictedSrcAddressMgmt
+        vpcCidr: !Ref vpcCidr
         provisionExternalBigipLoadBalancer: !Ref provisionExternalBigipLoadBalancer
         provisionInternalBigipLoadBalancer: !Ref provisionInternalBigipLoadBalancer
         application: !Ref application
