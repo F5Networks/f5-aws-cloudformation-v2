@@ -1,0 +1,25 @@
+# Daily Scheduled test plan
+
+# AWS Standalone test
+#aws-standalone-test:
+#    test-url: "https://gitswarm.f5net.com/cloudsolutions/f5-cloud-factory/raw/master/automated-test-scripts/f5-aws-cloudformation/supported/standalone/daily_test_byol_or_payg.yaml"
+#    run: "random"
+#    random-num-of-tests: 1
+#    parameters-files:
+#        - "data/f5-aws-cloudformation/supported/standalone/1nic/existing-stack/payg/parameters.yaml"
+#        - "data/f5-aws-cloudformation/supported/standalone/1nic/existing-stack/payg/prepub_parameters.yaml"
+#        - "data/f5-aws-cloudformation/supported/standalone/1nic/existing-stack/payg/parameters.yaml"
+#        - "data/f5-aws-cloudformation/supported/standalone/1nic/existing-stack/payg/parameters.yaml"
+##Azure test example
+#azure-standalone-test:
+#  test-url: "https://gitswarm.f5net.com/cloudsolutions/f5-cloud-factory/raw/ESECLDTPLT-1012/automated-test-scripts/f5-azure-arm-templates/supported/standalone/daily_test.yaml"
+#  run: "all"
+#  parameters-files:
+#    - "data/azure/standalone_2nic_payg.yaml"
+
+#GCP test example
+gcp-standalone-test:
+  test-url: "https://gitswarm.f5net.com/cloudsolutions/f5-cloud-factory/raw/master/automated-test-scripts/f5-google-gdm-templates/supported/standalone/daily_test.yaml"
+  run: "all"
+  parameters-files:
+        - "data/f5-google-gdm-templates/supported/standalone/1nic/existing-stack/payg/parameters.yaml"

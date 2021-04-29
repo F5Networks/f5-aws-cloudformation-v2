@@ -1,0 +1,13 @@
+#cloud-config
+
+package_update: true
+package_upgrade: true
+
+runcmd:
+  - yum update -y
+  - yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+  - yum install -y aws-cfn-bootstrap
+  - yum -y install docker
+  - docker run --name f5demo -p 80:80 -p 443:443 -d f5devcentral/f5-demo-app:latest
+
+final_message: "The system is finally up, after $UPTIME seconds"

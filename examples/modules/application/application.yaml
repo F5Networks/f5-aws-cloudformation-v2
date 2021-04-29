@@ -1,0 +1,389 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  This template deploys all components to support the application, with the
+  exception of those related to BIG-IP.  An autoscaling group for the
+  application is created. Disclaimer: More realistic application template would
+  take AMI ID as input, with AMI ID being be artifact of a build pipe line.
+Conditions:
+  useAppSecurityGroupId: !Not
+    - !Equals
+      - !Ref appSecurityGroupId
+      - ''
+  useStaticIp: !Not
+    - !Equals
+      - !Ref staticIp
+      - ''
+  useCustomImage: !Not
+    - !Equals
+      - !Ref customAppImageId
+      - ''
+  useAppPublicIp: !Equals
+    - 'true'
+    - !Ref setAppPublicIp
+  Standalone: !Equals
+    - 'false'
+    - !Ref createAutoscaleGroup
+  Autoscale: !Equals
+      - 'true'
+      - !Ref createAutoscaleGroup
+Mappings:
+  imageRegionMap:
+    us-east-2:
+      AMI: ami-0a75b786d9a7f8144
+    us-east-1:
+      AMI: ami-06cf02a98a61f9f5e
+    us-west-1:
+      AMI: ami-02676464a065c9c05
+    us-west-2:
+      AMI: ami-0a248ce88bcc7bd23
+    af-south-1:
+      AMI: ami-03bfd033c9d776adc
+    ap-east-1:
+      AMI: ami-09a8f7cf3b1b73e57
+    ap-south-1:
+      AMI: ami-0dd861ee19fd50a16
+    ap-northeast-1:
+      AMI: ami-0d09d267328197c99
+    ap-northeast-2:
+      AMI: ami-0cf8e67d10c823f2e
+    ap-southeast-1:
+      AMI: ami-056251cdd6fd1c8eb
+    ap-southeast-2:
+      AMI: ami-05f50d9ec7e4c3b02
+    ca-central-1:
+      AMI: ami-0252eebc56636a56b
+    eu-central-1:
+      AMI: ami-095e1a4d3d632d215
+    eu-west-1:
+      AMI: ami-0d4002a13019b7703
+    eu-west-2:
+      AMI: ami-0aa3620fadad9198e
+    eu-west-3:
+      AMI: ami-04552009264cbe9f4
+    eu-south-1:
+      AMI: ami-0a84267606bcea16b
+    eu-north-1:
+      AMI: ami-026f0eb2e8006617d
+    me-south-1:
+      AMI: ami-0c49e56e4c204cc4c
+    sa-east-1:
+      AMI: ami-0c52a0227804a4318
+Metadata:
+  'AWS::CloudFormation::Interface':
+    ParameterGroups:
+      - Label:
+          default: Application Settings
+        Parameters:
+          - appContainerName
+          - appSecurityGroupId
+          - applicationSubnet
+          - applicationSubnets
+          - createAutoscaleGroup
+          - customAppImageId
+          - instanceType
+          - restrictedSrcAddress
+          - scalingMaxSize
+          - scalingMinSize
+          - setAppPublicIp
+          - sshKey
+          - staticIp
+          - vpc
+    ParameterLabels:
+      application:
+        default: Application
+      cost:
+        default: Cost Center
+      environment:
+        default: Environment
+      group:
+        default: Group
+      owner:
+        default: Owner
+      appContainerName:
+        default: Application docker image name
+      appSecurityGroupId:
+        default: The resource ID of a security group to apply to the application
+      applicationSubnet:
+        default: Application Subnet ID used in case of standalone application
+      applicationSubnets:
+        default: Application Subnet IDs
+      createAutoscaleGroup:
+        default: The ARN of the AWS secret containing the password used during BIG-IP licensing via BIG-IQ
+      instanceType:
+        default: Must be a valid EC2 instance type for BIG-IP
+      restrictedSrcAddress:
+        default: The IP address range used to SSH and access management GUI on the EC2 instances
+      scalingMaxSize:
+        default: Maximum number of BIG-IP instances (2-100) that can be created in the Auto Scale Group
+      scalingMinSize:
+        default: Minimum number of BIG-IP instances (1-99) you want available in the Auto Scale Group
+      setAppPublicIp:
+        default: To create a Public IP and connect it to the application
+      sshKey:
+        default: Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines
+      staticIp:
+        default: The private IP address to apply as primary private address
+      uniqueString:
+        default: Unique string
+      vpc:
+        default: VPC ID
+  Version: 1.0.0
+Outputs:
+  stackName:
+    Description: application nested stack name
+    Value: !Ref "AWS::StackName"
+  appAutoscaleGroupName:
+    Condition: Autoscale
+    Value: !Ref appAutoscaleGroup
+  appInstanceId:
+    Condition: Standalone
+    Description: Application server instance-id
+    Value: !Ref AppInstance
+Parameters:
+  appContainerName:
+    Default: f5devcentral/f5-demo-app:latest
+    Description: Application docker image name
+    Type: String
+  appSecurityGroupId:
+    Default: ''
+    Description: The resource ID of a security group to apply to the application.
+    Type: String
+  application:
+    Default: f5app
+    Description: Application Tag.
+    MaxLength: 50
+    Type: String
+  applicationSubnet:
+    Default: ''
+    Description: Application Subnet ID used in case of standalone application
+    Type: String
+  applicationSubnets:
+    Default: ''
+    Description: Application Subnet IDs
+    Type: CommaDelimitedList
+  cost:
+    Default: f5cost
+    Description: Cost Center Tag.
+    Type: String
+  createAutoscaleGroup:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+    Description: Choose true to create the application instances in an autoscaling configuration.
+    Type: String
+  customAppImageId:
+    Default: ''
+    Description: Provide Custom Image AMI ID you wish to deploy.
+    Type: String
+  environment:
+    Default: f5env
+    MaxLength: 50
+    Type: String
+  group:
+    Default: f5group
+    MaxLength: 50
+    Type: String
+  instanceType:
+    AllowedValues:
+      - t2.small
+    ConstraintDescription: Must be a valid EC2 instance type for BIG-IP
+    Default: t2.small
+    Description: Enter valid instance type.
+    Type: String
+  owner:
+    Default: f5owner
+    MaxLength: 50
+    Type: String
+  restrictedSrcAddress:
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
+    Description: REQUIRED - The IP address range used to SSH and access management GUI on the EC2 instances.
+    MaxLength: '18'
+    MinLength: '9'
+    Type: String
+  scalingMaxSize:
+    ConstraintDescription: Must be a number between 2-100
+    Default: 2
+    Description: Maximum number of BIG-IP instances (2-100) that can be created in the Auto Scale Group.
+    MaxValue: 100
+    MinValue: 2
+    Type: Number
+  scalingMinSize:
+    ConstraintDescription: Must be a number between 1-99
+    Default: 1
+    Description: Minimum number of BIG-IP instances (1-99) you want available in the Auto Scale Group.
+    MaxValue: 99
+    MinValue: 1
+    Type: Number
+  setAppPublicIp:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+    Description: To create a Public IP and connect it to the application.
+    Type: String
+  sshKey:
+    Description: REQUIRED - Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines.
+    Type: AWS::EC2::KeyPair::KeyName
+  staticIp:
+    Default: ''
+    Description: The private IP address to apply as primary private address. The address must reside in the subnet provided in the subnetId parameter. ***NOTE:*** When set to empty string, DHCP will be used for allocating ip address.
+    Type: String
+  uniqueString:
+    AllowedPattern: ^[a-zA-Z][a-zA-Z0-9]{1,11}$
+    ConstraintDescription: Must Contain between 1 and 12 alphanumeric characters with first character as a letter.
+    Default: myBIGIP
+    Description: Unique String used when creating object names or Tags.
+    Type: String
+  vpc:
+    Description: REQUIRED - VPC ID.
+    Type: AWS::EC2::VPC::Id
+Resources:
+  AppInstance:
+    Condition: Standalone
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId:
+        !If
+        - useCustomImage
+        - !Ref customAppImageId
+        - !FindInMap
+          - imageRegionMap
+          - !Ref 'AWS::Region'
+          - AMI
+      InstanceType: !Ref instanceType
+      KeyName: !Ref sshKey
+      NetworkInterfaces:
+        !If
+        - useStaticIp
+        - 
+          - AssociatePublicIpAddress: !Ref setAppPublicIp
+            DeviceIndex: "0"
+            SubnetId: !Ref applicationSubnet
+            GroupSet:
+              - !If
+                - useAppSecurityGroupId
+                - 
+                  !Ref appSecurityGroupId
+                - !Ref AWS::NoValue
+            PrivateIpAddress: !Ref staticIp
+        - 
+          - AssociatePublicIpAddress: !Ref setAppPublicIp
+            DeviceIndex: "0"
+            SubnetId: !Ref applicationSubnet
+            GroupSet:
+              - !If
+                - useAppSecurityGroupId
+                - 
+                  !Ref appSecurityGroupId
+                - !Ref AWS::NoValue
+      UserData: !Base64
+        'Fn::Join':
+          - ''
+          - - |
+              #!/bin/bash
+            - |
+              yum -y install docker
+            - |
+              service docker start
+            - 'docker run --name f5demo -p 80:80 -p 443:443 -d '
+            - !Ref appContainerName
+            - |+
+      Tags:
+        - Key: Application
+          Value: !Ref application
+        - Key: cost
+          Value: !Ref cost
+        - Key: Environment
+          Value: !Ref environment
+        - Key: Group
+          Value: !Ref group
+        - Key: Owner
+          Value: !Ref owner
+  appLaunchConfig:
+    Condition: Autoscale
+    Type: 'AWS::AutoScaling::LaunchConfiguration'
+    Metadata:
+      'AWS::CloudFormation::Init':
+        config:
+          commands:
+            010-install-libs:
+              command: !Join
+                - ''
+                - - yum update -y;
+                  - yum install -y epel-release;
+                  - >-
+                    yum install -y
+                    https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.amzn1.noarch.rpm;
+                  - >-
+                    ln -s /usr/local/lib/python2.7/site-packages/cfnbootstrap
+                    /usr/lib/python2.7/site-packages/cfnbootstrap;
+    Properties:
+      ImageId: !FindInMap
+        - imageRegionMap
+        - !Ref 'AWS::Region'
+        - AMI
+      InstanceType: !Ref instanceType
+      AssociatePublicIpAddress: !Ref setAppPublicIp
+      KeyName: !Ref sshKey
+      SecurityGroups:
+        - !If
+          - useAppSecurityGroupId
+          - !Ref appSecurityGroupId
+          - !Ref AWS::NoValue
+      UserData: !Base64
+        'Fn::Join':
+          - ''
+          - - |
+              #!/bin/bash
+            - |
+              yum -y install docker
+            - |
+              service docker start
+            - 'docker run --name f5demo -p 80:80 -p 443:443 -d '
+            - !Ref appContainerName
+            - |+
+
+  appAutoscaleGroup:
+    Condition: Autoscale
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    Properties:
+      Tags:
+        - Key: Name
+          PropagateAtLaunch: true
+          Value: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-Application'
+        - Key: Application
+          PropagateAtLaunch: true
+          Value: !Ref application
+        - Key: cost
+          PropagateAtLaunch: true
+          Value: !Ref cost
+        - Key: Environment
+          PropagateAtLaunch: true
+          Value: !Ref environment
+        - Key: Group
+          PropagateAtLaunch: true
+          Value: !Ref group
+        - Key: Owner
+          PropagateAtLaunch: true
+          Value: !Ref owner
+        - Key: POC
+          PropagateAtLaunch: true
+          Value: F5APP
+      VPCZoneIdentifier: !Ref applicationSubnets
+      Cooldown: '600'
+      HealthCheckGracePeriod: 120
+      LaunchConfigurationName: !Ref appLaunchConfig
+      MaxSize: !Ref scalingMaxSize
+      MinSize: !Ref scalingMinSize
+      MetricsCollection:
+        - Granularity: 1Minute
+    UpdatePolicy:
+      AutoScalingRollingUpdate:
+        MaxBatchSize: 1
+        MinInstancesInService: 1
+        PauseTime: PT3M

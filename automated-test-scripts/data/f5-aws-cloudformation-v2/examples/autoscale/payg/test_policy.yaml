@@ -1,0 +1,12 @@
+---
+# Autoscale PAYG Example Test
+aws-autoscale-payg-example-test:
+    test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/payg/daily_test.yaml"
+    run: "all"
+    parameters-files:
+        # using ami lookup to deploy in us-east-2
+       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/prepub_parameters.yaml"
+        # using custom ami id to deploy in us-east-1
+       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/prepub_parameters1.yaml"
+        # using ami lookup to deploy in region us-west-1 
+       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/prepub_parameters2.yaml"

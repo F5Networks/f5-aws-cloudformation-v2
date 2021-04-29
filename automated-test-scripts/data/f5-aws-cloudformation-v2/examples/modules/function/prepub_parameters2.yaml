@@ -1,0 +1,20 @@
+---
+# Run Lambda Test:no functions created
+BIGIQ ADDRESS TYPE: public
+CREATE AMI LOOKUP FUNCTION: 'false'
+CREATE AMI ROLE: 'true'
+CREATE REVOKE FUNCTION: 'false'
+LICENSE TYPE: bigiq
+REGION: us-west-2
+SOLUTION TYPE: autoscale
+STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
+TEMPLATE NAME: function
+TEMPLATE URL: 'file://$PWD/examples/modules/function/function.yaml'
+TENANT: dewdrop-test
+UNIQUESTRING: dew<DEWPOINT JOB ID>
+# Access Stack Parameters
+ACCESS STACK NAME: dewdrop-<ACCESS TEMPLATE NAME>-<DEWPOINT JOB ID>
+ACCESS TEMPLATE NAME: access
+ACCESS TEMPLATE URL: 'file://$PWD/examples/modules/access/access.yaml'
+ACCESS SOLUTION TYPE: standard
+S3 BUCKET: ''

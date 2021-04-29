@@ -1,0 +1,55 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  This template represents an example of a linked deployment of the Network template
+Resources:
+  Network:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: >-
+        https://cdn.f5.com/product/cloudsolutions/f5-aws-cloudformation-v2/master/examples/modules/network/network.yaml
+      Parameters:
+        numAzs: 2
+        numSubnets: 2
+        owner: f5owner
+        setPublicSubnet1: 'false'
+        subnetMask: 24
+        uniqueString: myBIGIP
+        vpcCidr: 10.0.0.0/16
+        vpcTenancy: default
+Outputs:
+  stackName:
+    Value: !GetAtt Network.Outputs.stackName
+  natEipA:
+    Value: !GetAtt Network.Outputs.network-natEipA
+  natEipB:
+    Value: !GetAtt Network.Outputs.network-natEipB
+  natEipC:
+    Value: !GetAtt Network.Outputs.network-natEipC
+  natEipD:
+    Value: !GetAtt Network.Outputs.network-natEipD
+  vpcId:
+    Value: !GetAtt Network.Outputs.network-vpcId
+  vpcCidr:
+    Value: !GetAtt Network.Outputs.network-vpcCidr
+  vpcIpv6Cidr:
+    Value: !GetAtt Network.Outputs.network-vpcIpv6Cidr
+  subnetsA:
+    Value: !GetAtt Network.Outputs.network-subnetsA
+  subnetsB:
+    Value: !GetAtt Network.Outputs.network-subnetsB
+  subnetsC:
+    Value: !GetAtt Network.Outputs.network-subnetsC
+  subnetsD:
+    Value: !GetAtt Network.Outputs.network-subnetsD
+  publicSubnetRouteTableId:
+    Value: !GetAtt Network.Outputs.network-publicSubnetRouteTableId
+  privateRouteTableIdA:
+    Value: !GetAtt Network.Outputs.network-privateRouteTableIdA
+  privateRouteTableIdB:
+    Value: !GetAtt Network.Outputs.network-privateRouteTableIdB
+  privateRouteTableIdC:
+    Value: !GetAtt Network.Outputs.network-privateRouteTableIdC
+  privateRouteTableIdD:
+    Value: !GetAtt Network.Outputs.network-privateRouteTableIdD
+  subnet0A:
+    Value: !Select [0, !Split [ ",", !GetAtt Network.Outputs.network-subnetsA ]]
