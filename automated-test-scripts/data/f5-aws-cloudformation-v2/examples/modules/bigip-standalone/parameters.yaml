@@ -37,7 +37,7 @@ STACK TYPE: existing-stack
 SUBNET1 PUBLIC: 'true'
 SUBNETMASK: 24
 TEMPLATE NAME: bigip-standalone
-TEMPLATE URL: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/master/examples/modules/bigip-standalone/bigip-standalone.yaml'
+TEMPLATE URL: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/main/examples/modules/bigip-standalone/bigip-standalone.yaml'
 TENANCY: default
 TIMEZONE: US/Pacific
 UNIQUESTRING: dew<DEWPOINT JOB ID>

@@ -1,15 +1,15 @@
 ---
-# Run Lambda Test:create revoke function using public BIG-IQ, utility license, us-east-1, and create ami function
-BIGIQ ADDRESS: 6.6.6.6
-BIGIQ ADDRESS TYPE: public
+# Run Lambda Test:create revoke function using private BIG-IQ, utility license, us-west-1
+BIGIQ ADDRESS: 192.168.1.1
+BIGIQ ADDRESS TYPE: private
 BIGIQ LICENSE POOL: production
 BIGIQ PASSWORD: B!giq2017
 BIGIQ UTILITY SKU: F5-BIG-MSP-BT-1G
-CREATE AMI LOOKUP FUNCTION: 'true'
+CREATE AMI LOOKUP FUNCTION: 'false'
 CREATE AMI ROLE: 'true'
 CREATE REVOKE FUNCTION: 'true'
 LICENSE TYPE: bigiq
-REGION: us-east-1
+REGION: us-west-1
 SOLUTION TYPE: autoscale
 STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
 TEMPLATE NAME: function
