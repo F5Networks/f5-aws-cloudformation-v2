@@ -1,0 +1,17 @@
+# Access Module Tests 
+azure-arm-access-module-test:
+    test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/access/daily_test.yaml"
+    run: "all"
+    parameters-files:
+# Provision secret IAM role for BIGIP, Lambda BIGIQ, Lambda AMI-LOOKUP
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/access/prepub_parameters.yaml"
+# Provision secretS3 IAM role for BIGIP, Lambda BIGIQ
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/access/prepub_parameters1.yaml"
+# Provision s3 IAM role for BIGIP
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/access/prepub_parameters2.yaml"
+# Provision failover IAM role for BIGIP, Lambda AMI-LOOKUP 
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/access/prepub_parameters3.yaml"
+# Provision secret IAM role for BIGIP
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/access/prepub_parameters4.yaml"
+# Provision standard IAM role for BIGIP, Lambda AMI-LOOKUP 
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/access/prepub_parameters5.yaml"

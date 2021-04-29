@@ -1,0 +1,518 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >- 
+  Template to deploy BIG-IQ license revocation function and/or ami lookup function
+Conditions:
+  createAmiLookup: !Equals
+    - 'true'
+    - !Ref createAmiLookupFunction
+  createRevoke: !Equals
+    - 'true'
+    - !Ref createRevokeFunction
+  noVpc: !Equals
+    - public
+    - !Ref bigIqAddressType
+Metadata:
+  'AWS::CloudFormation::Interface':
+    ParameterGroups:
+      - Label:
+          default: Lambda Location
+        Parameters:
+          - lambdaS3BucketName
+          - lambdaS3Key
+      - Label:
+          default: BIG-IQ Information
+        Parameters:
+          - bigIqAddress
+          - bigIqAddressType
+          - bigIqUsername
+          - bigIqSecretArn
+          - bigIqLicensePool
+          - bigIqUtilitySku
+          - bigIqSecurityGroupId
+          - bigIqSubnetId
+      - Label:
+          default: TAGS
+        Parameters:
+          - application
+          - environment
+          - group
+          - owner
+          - cost
+    ParameterLabels:
+      application:
+        default: Application
+      cost:
+        default: Cost Center
+      environment:
+        default: Environment
+      group:
+        default: Group
+      owner:
+        default: Owner
+  Version: 1.0.0
+Outputs:
+  stackName:
+    Description: function nested stack name
+    Value: !Ref "AWS::StackName"
+  lambdaARN:
+    Condition: createAmiLookup
+    Description: LambdaARN
+    Export:
+      Name: !Sub "${AWS::StackName}-LambdaARN"
+    Value: !GetAtt AMIInfoFunction.Arn
+  snsTopic:
+    Condition: createRevoke
+    Description: SNS topic Autoscale should notify
+    Value: !Ref SNSTopic
+Parameters:
+  amiLookupRole:
+    Default: ''
+    Description: The ARN of the IAM role to assign to the ami lookup function.
+    Type: String
+  application:
+    Default: f5app
+    Description: Application Tag.
+    Type: String
+  bigIqAddress:
+    Default: ''
+    Description: 'The IP address (or hostname) for the BIG-IQ used when licensing the BIG-IP.  Note: The AWS function created by this template will make a REST call to the BIG-IQ (already existing) to revoke a license assignment when a BIG-IP instance is deallocated. This value should match the BIG-IQ address specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter.'
+    Type: String
+  bigIqAddressType:
+    AllowedValues:
+      - private
+      - public
+    ConstraintDescription: Must be either private or public
+    Default: private
+    Description: 'The type (public or private) of IP address or hostname for the BIG-IQ to be used when licensing the BIG-IP.  Note: When using a private IP address or hostname, you must provide values for the bigIqSecurityGroupId and bigIqSubnetId parameters.'
+    Type: String
+  bigIqLicensePool:
+    Default: ''
+    Description: The BIG-IQ license pool to use during BIG-IP licensing via BIG-IQ.
+    Type: String
+  bigIqSecretArn:
+    Default: ''
+    Description: The ARN of the AWS secret containing the password used during BIG-IP licensing via BIG-IQ.
+    Type: String
+  bigIqSecurityGroupId:
+    Default: ''
+    Description: The ID of the security group where BIG-IQ is deployed. You must provide a value for this parameter when using a private BIG-IP address.
+    Type: String
+  bigIqSubnetId:
+    Default: ''
+    Description: The ID of the subnet where BIG-IQ is deployed. You must provide a value for this parameter when using a private BIG-IP address.
+    Type: String
+  bigIqTenant:
+    Default: ''
+    Description: The BIG-IQ tenant used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ tenant specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter.
+    Type: String
+  bigIqUsername:
+    Default: ''
+    Description: The BIG-IQ username used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ username specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter.
+    Type: String
+  bigIqUtilitySku:
+    Default: ''
+    Description: The BIG-IQ utility license SKU used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ utility SKU specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter.
+    Type: String
+  copyZipsRole:
+    Default: ''
+    Description: The ARN of the IAM role to assign to the BIG-IQ CopyZips function.
+    Type: String
+  cost:
+    Default: f5cost
+    Description: Cost Center Tag.
+    Type: String
+  createAmiLookupFunction:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+    Description: Choose true to creates ami lookup serverless function.
+    Type: String
+  createRevokeFunction:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+    Description: Choose true to creates bigiq revoke license serverless function.
+    Type: String
+  environment:
+    Default: f5env
+    Description: Environment Tag.
+    Type: String
+  group:
+    Default: f5group
+    Description: Group Tag.
+    Type: String
+  lambdaAccessRole:
+    Default: ''
+    Description: The ARN of the IAM role to assign to the BIG-IQ LambdaBigIqRevoke function.
+    Type: String
+  lambdaS3BucketName:
+    Default: f5-aws-bigiq-revoke
+    Description: The name of the S3 bucket where the lambdaBigiqRevoke lambda function is located.
+    Type: String
+  lambdaS3Key:
+    Default: main/
+    Description: The top-level key in the lambda S3 bucket where the lambda function is located.
+    Type: String
+  owner:
+    Default: f5owner
+    Description: Owner Tag.
+    Type: String
+Resources:
+  AMIInfoFunction:
+    Condition: createAmiLookup
+    Properties:
+      Code:
+        ZipFile: !Sub |
+          import json
+          import boto3
+          from botocore.vendored import requests
+          from botocore.config import Config
+
+          ec2_client = boto3.client('ec2')
+          def lambda_handler(event, context):
+              # immediate response to CF Stack DELETE Action
+          # Set Region
+              #boto_config = Config(
+              #    region_name = event['ResourceProperties']['Region']
+              #)
+              #ec2_client = boto3.client('ec2', config=boto_config)
+              responseStatus = 'SUCCESS'
+              responseData = {}
+              if event['RequestType'] == 'Delete':
+                  sendResponse(event, context, responseStatus, responseData)
+              else:
+                # find the most recent AMI version
+                print("Using values Filter:" + event['ResourceProperties']['OSName'] + "Region:" + event['ResourceProperties']['Region'] + "OwnerId:" + event['ResourceProperties']['OwnerId'])
+                ami_response = ec2_client.describe_images(Filters=[{'Name': 'description', 'Values': [event['ResourceProperties']['OSName']]}],Owners=[event['ResourceProperties']['OwnerId']])
+                if not ami_response['Images']:
+                    print(f'AMIs for {val} have not been found on AWS Marketplace.')
+                    responseStatus = 'FAILED'
+                    responseData = {'Failed': f'AMIs for {val} have not been found on AWS Marketplace.'}
+                    sendResponse(event, context, responseStatus, responseData)
+                else:
+                    latest_ami_id = ''
+                    latest_ami_name = ''
+                    latest_ami_creation_date = ''
+                    for ami in ami_response['Images']:
+                        aim_id = ami['ImageId']
+                        ami_name = ami['Name']
+                        ami_creation_date = ami['CreationDate']
+                        if ami_creation_date > latest_ami_creation_date:
+                            latest_ami_creation_date = ami_creation_date
+                            latest_ami_name = ami_name
+                            latest_ami_id = aim_id
+                    print(f'The latest AMI is {latest_ami_id} {latest_ami_name} with creation date {latest_ami_creation_date}')
+                    # Response to CF Stack CREATE or UPDATE Action
+                    responseData["Id"] = latest_ami_id
+                    sendResponse(event, context, responseStatus, responseData)
+          # send response to the pre-signed S3 URL
+          def sendResponse(event, context, responseStatus, responseData):
+              responseBody = {'Status': responseStatus,
+                              'Reason': 'See the details in CloudWatch Log Stream: ' + context.log_stream_name,
+                              'PhysicalResourceId': context.log_stream_name,
+                              'StackId': event['StackId'],
+                              'RequestId': event['RequestId'],
+                              'LogicalResourceId': event['LogicalResourceId'],
+                              'Data': responseData}
+              print ('RESPONSE BODY:\n' + json.dumps(responseBody))
+              try:
+                  req = requests.put(event['ResponseURL'], data=json.dumps(responseBody))
+                  if req.status_code != 200:
+                      print(req.text)
+                      raise Exception('Received non 200 response while sending response to CF Stack.')
+                  return
+              except requests.exceptions.RequestException as e:
+                  print(e)
+                  raise
+          if __name__ == '__main__':
+              lambda_handler('event', 'handler')
+      Handler: !Join
+        - ''
+        - - index
+          - .lambda_handler
+      Role: !Ref amiLookupRole
+      Runtime: python3.7
+      Timeout: 30
+    Type: 'AWS::Lambda::Function'
+  LambdaZipsBucket:
+    Condition: createRevoke
+    Type: AWS::S3::Bucket
+    Properties:
+      Tags:
+        - Key: Application
+          Value: !Ref application
+        - Key: cost
+          Value: !Ref cost
+        - Key: Environment
+          Value: !Ref environment
+        - Key: Group
+          Value: !Ref group
+        - Key: Owner
+          Value: !Ref owner
+  CopyZipsFunction:
+    Condition: createRevoke
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Runtime: python2.7
+      Role: !Ref copyZipsRole
+      Timeout: 240
+      Code:
+        ZipFile: |
+          import json
+          import logging
+          import threading
+          import boto3
+          import cfnresponse
+
+
+          def copy_objects(source_bucket, dest_bucket, prefix, objects):
+              s3 = boto3.client('s3')
+              for o in objects:
+                  key = prefix + o
+                  copy_source = {
+                      'Bucket': source_bucket,
+                      'Key': key
+                  }
+                  print('copy_source: %s' % copy_source)
+                  print('dest_bucket = %s'%dest_bucket)
+                  print('key = %s' %key)
+                  s3.copy_object(CopySource=copy_source, Bucket=dest_bucket,
+                        Key=key)
+
+
+          def delete_objects(bucket, prefix, objects):
+              s3 = boto3.client('s3')
+              objects = {'Objects': [{'Key': prefix + o} for o in objects]}
+              s3.delete_objects(Bucket=bucket, Delete=objects)
+
+
+          def timeout(event, context):
+              logging.error('Execution is about to time out, sending failure response to CloudFormation')
+              cfnresponse.send(event, context, cfnresponse.FAILED, {}, None)
+
+
+          def handler(event, context):
+              # make sure we send a failure to CloudFormation if the function
+              # is going to timeout
+              timer = threading.Timer((context.get_remaining_time_in_millis()
+                        / 1000.00) - 0.5, timeout, args=[event, context])
+              timer.start()
+
+              print('Received event: %s' % json.dumps(event))
+              status = cfnresponse.SUCCESS
+              try:
+                  source_bucket = event['ResourceProperties']['SourceBucket']
+                  dest_bucket = event['ResourceProperties']['DestBucket']
+                  prefix = event['ResourceProperties']['Prefix']
+                  objects = event['ResourceProperties']['Objects']
+                  if event['RequestType'] == 'Delete':
+                      delete_objects(dest_bucket, prefix, objects)
+                  else:
+                      copy_objects(source_bucket, dest_bucket, prefix, objects)
+              except Exception as e:
+                  logging.error('Exception: %s' % e, exc_info=True)
+                  status = cfnresponse.FAILED
+              finally:
+                  timer.cancel()
+                  cfnresponse.send(event, context, status, {}, None)
+      Tags:
+        - Key: Application
+          Value: !Ref application
+        - Key: cost
+          Value: !Ref cost
+        - Key: Environment
+          Value: !Ref environment
+        - Key: Group
+          Value: !Ref group
+        - Key: Owner
+          Value: !Ref owner
+  CopyZipsLogGroup:
+    Condition: createRevoke
+    DependsOn: CopyZipsFunction
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${CopyZipsFunction}"
+  CopyZips:
+    Condition: createRevoke
+    Type: Custom::CopyZips
+    Properties:
+      ServiceToken: !GetAtt
+        - CopyZipsFunction
+        - Arn
+      DestBucket: !Ref 'LambdaZipsBucket'
+      SourceBucket: !Ref 'lambdaS3BucketName'
+      Prefix: !Ref 'lambdaS3Key'
+      Objects:
+        - v1.1.0/lambda_bigiq_revoke.zip
+      Tags:
+        - Key: Application
+          Value: !Ref application
+        - Key: cost
+          Value: !Ref cost
+        - Key: Environment
+          Value: !Ref environment
+        - Key: Group
+          Value: !Ref group
+        - Key: Owner
+          Value: !Ref owner
+  LambdaInvokePermission:
+    Condition: createRevoke
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      FunctionName: !GetAtt
+        - LambdaBigIqRevoke
+        - Arn
+      Principal: sns.amazonaws.com
+      SourceArn: !Ref SNSTopic
+    Type: 'AWS::Lambda::Permission'
+  SNSTopic:
+    Condition: createRevoke
+    Properties:
+      Subscription:
+        - Endpoint: !GetAtt
+            - LambdaBigIqRevoke
+            - Arn
+          Protocol: lambda
+    Type: 'AWS::SNS::Topic'
+  LambdaBigIqRevoke:
+    Condition: createRevoke
+    DependsOn: CopyZips
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: revoke.lambda_handler
+      MemorySize: 1536
+      Role: !Ref lambdaAccessRole
+      Code:
+        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Key: !Sub '${lambdaS3Key}v1.1.0/lambda_bigiq_revoke.zip'
+      Runtime: python3.7
+      Environment:
+        Variables:
+          BIGIQ_ADDRESS: !Ref bigIqAddress
+          BIGIQ_LICENSE_POOL: !Ref bigIqLicensePool
+          BIGIQ_USERNAME: !Ref bigIqUsername
+          BIGIQ_SECRET_ARN: !Ref bigIqSecretArn
+          TENANT: !Ref bigIqTenant
+          BIGIQ_UTILITY_SKU: !Ref bigIqUtilitySku
+          F5_DISABLE_SSL_WARNINGS: False
+      Timeout: 300
+      TracingConfig:
+        Mode: Active
+      VpcConfig:
+        SecurityGroupIds:
+          - !If
+            - noVpc
+            - !Ref 'AWS::NoValue'
+            - !Ref bigIqSecurityGroupId
+        SubnetIds:
+          - !If
+            - noVpc
+            - !Ref 'AWS::NoValue'
+            - !Ref bigIqSubnetId
+      Tags:
+        - Key: Application
+          Value: !Ref application
+        - Key: cost
+          Value: !Ref cost
+        - Key: Environment
+          Value: !Ref environment
+        - Key: Group
+          Value: !Ref group
+        - Key: Owner
+          Value: !Ref owner
+  LambdaLogGroup:
+    Condition: createRevoke
+    DependsOn: LambdaBigIqRevoke
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${LambdaBigIqRevoke}"
+  DeploymentCleanup:
+    Condition: createRevoke
+    Type: Custom::DeploymentCleanup
+    Properties:
+      ServiceToken: !GetAtt
+        - LambdaDeploymentCleanup
+        - Arn
+      region: !Ref 'AWS::Region'
+      bucketName: !Ref LambdaZipsBucket
+      Tags:
+        - Key: Application
+          Value: !Ref application
+        - Key: cost
+          Value: !Ref cost
+        - Key: Environment
+          Value: !Ref environment
+        - Key: Group
+          Value: !Ref group
+        - Key: Owner
+          Value: !Ref owner
+  LambdaDeploymentCleanup:
+    Condition: createRevoke
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        ZipFile: !Sub |
+          #!/usr/bin/python
+
+          from __future__ import print_function
+          import os,sys,time
+          import botocore
+          import boto3
+          import cfnresponse
+          import json
+          import logging
+
+          logger = logging.getLogger()
+          logger.setLevel(logging.INFO)
+
+          def handler(event, context):
+              logger.debug('Received event: %s' % json.dumps(event,indent=2))
+              try:
+                region      = event['ResourceProperties']['region']
+                bucket_name = event['ResourceProperties']['bucketName']
+
+                if event['RequestType'] == 'Create' or event['RequestType'] == 'Update':
+                  # Tell CFT custom resource was successfully created and handled
+                  cfnresponse.send(event, context, cfnresponse.SUCCESS, {}, None )
+                elif event['RequestType'] == 'Delete':
+                  try:
+                    s3_client = boto3.client('s3', region_name=region )
+                  except botocore.exceptions.ClientError as e:
+                    logger.error('Received client error: %s' % str(e))
+                    sys.exit("Exiting...")
+
+                  s3 = boto3.resource('s3')
+
+                  # Delete items in S3 Bucket so CFT can delete it
+                  bucket = s3.Bucket(bucket_name)
+                  if bucket.objects.all().delete():
+                    logger.info('SUCCESS: Deleting Bucket Contents: %s' % bucket_name)
+                    # bucket.delete()
+                    cfnresponse.send(event, context, cfnresponse.SUCCESS, {}, None)
+                  else:
+                    logger.error('FAILED: Deleting Bucket Contents: %s' % bucket_name)
+                    cfnresponse.send(event, context, cfnresponse.FAILED, {}, None)
+                else:
+                  logger.error('FAILED: Unknown request type: %s' % event['RequestType'])
+                  cfnresponse.send(event, context, cfnresponse.FAILED, {}, None)
+              except Exception as e:
+                  logger.error('Exception in handling the request, %s' % str(e))
+                  cfnresponse.send(event, context, cfnresponse.FAILED, {}, None)
+      Environment:
+        Variables:
+          region: !Ref 'AWS::Region'
+          bucketName: !Ref LambdaZipsBucket
+      Handler: index.handler
+      MemorySize: 1536
+      Role: !Ref copyZipsRole
+      Runtime: python2.7
+      Timeout: 300
+  CleanupLogGroup:
+    Condition: createRevoke
+    DependsOn: LambdaDeploymentCleanup
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${LambdaDeploymentCleanup}"

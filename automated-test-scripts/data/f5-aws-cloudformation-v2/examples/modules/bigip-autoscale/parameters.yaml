@@ -1,0 +1,51 @@
+ACCESS: 0.0.0.0/0
+BIGIP AMI: ami-0872dfb40409f5945
+BIGIP IMAGE NAME: AdvancedWaf
+BIGIP INSTANCE TYPE: m5.2xlarge
+BIGIP MGMT PORT: 8443
+BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.2.1-1.gz.run'
+CIDR: 10.0.0.0/16
+CREATE AMI LOOKUP FUNCTION: 'false'
+CREATE AMI ROLE: 'true'
+CREATE APP SECURITY GROUP: 'true'
+NETWORK STACK NAME: dewdrop-<NETWORK TEMPLATE NAME>-<DEWPOINT JOB ID>
+NETWORK TEMPLATE NAME: network
+NETWORK TEMPLATE URL: 'file://$PWD/examples/modules/network/network.yaml'
+NIC COUNT: 1
+NTP SERVER: 0.us.pool.ntp.org
+NUMBER AZS: 2
+NUMBER SUBNETS: 2
+PRIVATE IP TYPE: STATIC
+ACCESS TEMPLATE URL: file://$PWD/examples/modules/access/access.yaml
+ACCESS TEMPLATE NAME: access
+ACCESS STACK NAME: dewdrop-<ACCESS TEMPLATE NAME>-<DEWPOINT JOB ID>
+ACCESS SOLUTION TYPE: secretS3
+DAG TEMPLATE URL: file://$PWD/examples/modules/dag/dag.yaml
+DAG TEMPLATE NAME: dag
+DAG STACK NAME: dewdrop-<DAG TEMPLATE NAME>-<DEWPOINT JOB ID>
+PROVISION EXTERNAL LB: 'true'
+PROVISION INTERNAL LB: 'false'
+PROVISION PUBLIC IP: 'true'
+PUBLIC IP: 'true'
+REGION: us-east-1
+RUNTIME INIT CONFIG URL: 'https://ak-metadata-package-poc.s3.amazonaws.com/cloud_config_install_only.json'
+S3 BUCKET: ''
+SCALE MAX SIZE: 3
+SCALE MIN SIZE: 1
+SCALE UP BYTES THRESHOLD: 35000
+SCALE DOWN BYTES THRESHOLD: 35000
+LOW CPU THRESHOLD: 0
+HIGH CPU THRESHOLD: 80
+LICENSE TYPE: payg
+NUM SECONDARY PRIVATE IP: 0
+SOLUTION TYPE: autoscale
+SSH KEY: dewpt
+STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
+STACK TYPE: existing-stack
+SUBNET1 PUBLIC: 'true'
+SUBNETMASK: 24
+TEMPLATE URL: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/main/examples/modules/bigip-autoscale/bigip-autoscale.yaml'
+TENANCY: default
+THROUGHPUT: 200Mbps
+TIMEZONE: US/Pacific
+UNIQUESTRING: dew<DEWPOINT JOB ID>

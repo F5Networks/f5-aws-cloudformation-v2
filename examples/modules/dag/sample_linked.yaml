@@ -1,0 +1,63 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This template represents an example of a linked deployment of the Dag/Ingress template
+Resources:
+  Access:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: >-
+        https://cdn.f5.com/product/cloudsolutions/f5-aws-cloudformation-v2/master/examples/modules/dag/dag.yaml
+      Parameters:
+        createAppSecurityGroup: 'true'
+        createFailoverIngress: 'false'
+        externalSubnetAz1: ''
+        externalSubnetAz2: ''
+        internalSubnetAz1: ''
+        internalSubnetAz2: ''
+        numberPublicExternalIpAddresses: 4
+        numberPublicMgmtIpAddresses: 1
+        provisionExternalBigipLoadBalancer: 'false'
+        provisionInternalBigipLoadBalancer: 'false'
+        restrictedSrcAddressApp: 10.0.0.0/24
+        restrictedSrcAddressMgmt: 10.0.0.0/24
+        restrictedSrcPort: 443
+        subnetAz1: subnet-0000000000001
+        subnetAz2: subnet-0000000000002
+        uniqueString: myBIGIP
+        vpc: vpc-0c740ea960d66b7ef
+Outputs:
+  stackName:
+    Value: !GetAtt Dag.Outputs.stackName
+  externalElasticLoadBalancer:
+    Value: !GetAtt Dag.Outputs.externalElasticLoadBalancer
+  externalElasticLoadBalancerDnsName:
+    Value: !GetAtt Dag.Outputs.externalElasticLoadBalancerDnsName
+  externalTargetGroupHttp:
+    Value: !GetAtt Dag.Outputs.externalTargetGroupHttp
+  internalElasticLoadBalancer:
+    Value: !GetAtt Dag.Outputs.internalElasticLoadBalancer
+  internalElasticLoadBalancerDnsName:
+    Value: !GetAtt Dag.Outputs.internalElasticLoadBalancerDnsName
+  internalTargetGroupHttp:
+    Value: !GetAtt Dag.Outputs.internalTargetGroupHttp
+  bigIpManagementEipAddress01:
+    Value: !GetAtt Dag.Outputs.bigIpManagementEipAddress01
+  bigIpManagementEipAllocationId01:
+    Value: !GetAtt Dag.Outputs.bigIpManagementEipAllocationId01
+  bigIpManagementEipAllocationId02:
+    Value: !GetAtt Dag.Outputs.bigIpManagementEipAllocationId02
+  bigIpManagementEipAllocationId03:
+    Value: !GetAtt Dag.Outputs.bigIpManagementEipAllocationId03
+  bigIpManagementEipAllocationId04:
+    Value: !GetAtt Dag.Outputs.bigIpManagementEipAllocationId04
+  bigIpExternalEipAllocationId00:
+    Value: !GetAtt Dag.Outputs.bigIpExternalEipAllocationId00
+  bigIpExternalEipAllocationId01:
+    Value: !GetAtt Dag.Outputs.bigIpExternalEipAllocationId01
+  bigIpExternalEipAllocationId02:
+    Value: !GetAtt Dag.Outputs.bigIpExternalEipAllocationId02
+  bigIpExternalEipAllocationId03:
+    Value: !GetAtt Dag.Outputs.bigIpExternalEipAllocationId03
+  bigIpExternalEipAllocationId04:
+    Value: !GetAtt Dag.Outputs.bigIpExternalEipAllocationId04
+  appSecurityGroupId:
+    Value: !GetAtt Dag.Outputs.appSecurityGroupId

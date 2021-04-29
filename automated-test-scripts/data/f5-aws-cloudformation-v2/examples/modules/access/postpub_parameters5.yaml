@@ -1,0 +1,10 @@
+CREATE AMI ROLE: 'true'
+LICENSE TYPE: payg
+PUBLIC IP: 'true'
+REGION: us-west-2
+S3 BUCKET: ''
+SOLUTION TYPE: standard
+STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
+TEMPLATE NAME: access
+TEMPLATE URL: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/main/examples/modules/access/access.yaml'
+UNIQUESTRING: dew<DEWPOINT JOB ID>

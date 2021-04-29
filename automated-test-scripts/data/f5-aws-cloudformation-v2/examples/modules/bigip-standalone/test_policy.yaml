@@ -1,0 +1,18 @@
+# BIGIP Standalone Module Tests
+aws-cloudformation-bigip-standalone-module-test:
+    test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/daily_test.yaml"
+    run: "all"
+    #random-num-of-tests: 3
+    parameters-files:
+        # 3nic - PAYG - DYNAMIC IP ADDRESSES
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/prepub_parameters.yaml"
+        # 2nic - PAYG - DYNAMIC IP ADDRESSES
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/prepub_parameters1.yaml"
+        # 3nic - BYOL - DYNAMIC IP ADDRESSES
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/prepub_parameters2.yaml"
+        # 3nic - PAYG - STATIC IP ADDRESSES
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/prepub_parameters3.yaml"
+        # 1nic - PAYG - DYNAMIC IP ADDRESSES
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/prepub_parameters4.yaml"
+        # 1nic - BYOL - STATIC IP ADDRESSES
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/prepub_parameters5.yaml"
