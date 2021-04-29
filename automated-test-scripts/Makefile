@@ -3,7 +3,7 @@ current_dir := $(shell pwd)
 # Create an environmental script and refernce it here (.gitignore set to ignore env.sh)
 # example: export GOOGLE_PROJECT_ID=my_project_id
 # option 1 all env variables refrenced in rules need be defined in env.sh
-# option 2 have env vars set prior to running make rule
+# option 2 have env vars set prior to running make  rule
 include env.sh
 .PHONY: help
 help:

@@ -1,9 +1,9 @@
-CREATE AMI ROLE: 'true'
+CREATE AMI ROLE: 'false'
 LICENSE TYPE: bigiq
 PUBLIC IP: 'true'
-REGION: us-east-1
-S3 BUCKET: ''
-SOLUTION TYPE: secret
+REGION: us-east-2
+S3 BUCKET: <STACK NAME>
+SOLUTION TYPE: secretS3
 STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
 TEMPLATE NAME: access
 TEMPLATE URL: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/main/examples/modules/access/access.yaml'

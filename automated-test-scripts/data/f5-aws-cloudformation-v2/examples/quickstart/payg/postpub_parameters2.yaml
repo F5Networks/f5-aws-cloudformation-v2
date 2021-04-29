@@ -6,9 +6,9 @@ BIGIP USER: quickstart
 CUSTOM IMAGE: ''
 DOCKER IMAGE: 'f5devcentral/f5-demo-app:latest'
 LICENSE TYPE: payg
-NIC COUNT: 1
+NIC COUNT: 2
 PUBLIC MGMT: 'true'
-REGION: us-east-2
+REGION: eu-west-2
 # Ok to use example runtime for payg, nothing to replace in config.
 RUNTIME INIT CONFIG: https://dewdrop-quickstart-<NIC COUNT>nic-payg-<DEWPOINT JOB ID>.s3.<REGION>.amazonaws.com/<ARTIFACT LOCATION>quickstart/bigip-configurations/runtime-init-conf-<NIC COUNT>nic-payg.yaml
 SOLUTION TYPE: standalone

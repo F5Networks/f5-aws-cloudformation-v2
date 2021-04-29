@@ -44,7 +44,7 @@ STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
 STACK TYPE: existing-stack
 SUBNET1 PUBLIC: 'true'
 SUBNETMASK: 24
-TEMPLATE URL: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/master/examples/modules/bigip-autoscale/bigip-autoscale.yaml'
+TEMPLATE URL: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/main/examples/modules/bigip-autoscale/bigip-autoscale.yaml'
 TENANCY: default
 THROUGHPUT: 200Mbps
 TIMEZONE: US/Pacific
