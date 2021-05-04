@@ -38,11 +38,11 @@ else
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.password = \"{{{BIGIQ_PASSWORD}}}\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.shell = \"bash\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.userType = \"regular\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.myLicense.bigIpPassword = \"{{{BIGIQ_PASSWORD}}}\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.myLicense.bigIpUsername = \"admin\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.myLicense.bigIqHost = \"$bigiq_address\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.myLicense.licensePool = \"production\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.myLicense.overwrite = \"false\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.bigIpPassword = \"{{{BIGIQ_PASSWORD}}}\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.bigIpUsername = \"admin\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.bigIqHost = \"$bigiq_address\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.licensePool = \"production\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.overwrite = \"false\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTPS_Service.WAFPolicy.enforcementMode = \"transparent\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTP_Service.WAFPolicy.enforcementMode = \"transparent\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[2].value.My_Metrics_Namespace.My_Cloudwatch_Metrics.metricNamespace = \"<METRIC NAME SPACE>\"" -i <DEWPOINT JOB ID>.yaml
