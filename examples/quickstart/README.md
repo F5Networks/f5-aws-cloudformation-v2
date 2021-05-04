@@ -198,6 +198,8 @@ For next steps, see [Validating the Deployment](#validating-the-deployment).
 
 You will most likely want or need to change the BIG-IP configuration. This generally involves referencing or customizing a [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) configuration file and passing it through the **bigIpRuntimeInitConfig** template parameter.
 
+**IMPORTANT**: Note, any URLs pointing to git **must** use the raw file format (ex. "raw.githubusercontent.com")
+
 F5 has provided the following example configuration files in the `examples/quickstart/bigip-configurations` folder:
 
 - These examples install Automation Tool Chain packages and create WAF-protected services for a PAYG licensed deployment.
@@ -223,7 +225,7 @@ In order to deploy a **2NIC** instance:
   2. Update the **numNics** input parameter to **2**
 
 
-Some changes require republishing/rehosting configuration files. For example:
+Some changes require republishing/rehosting configuration files (git, s3, etc). For example:
 
 In order to deploy a **BYOL** instance:
 
@@ -231,13 +233,13 @@ In order to deploy a **BYOL** instance:
 
 ex.
 ```yaml
-          myLicense:
+          My_License:
             class: License
             licenseType: regKey
             regKey: AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE
 ```
-  2. publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (ex. git, S3, etc.)
-  3. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL of the updated configuration 
+  2. publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (ex. git, S3, etc.). 
+  3. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL of the updated configuration.
   4. Update the **licenseType** input parameter to use `byol` or **customImageId** input parameter to a valid byol image.
 
 

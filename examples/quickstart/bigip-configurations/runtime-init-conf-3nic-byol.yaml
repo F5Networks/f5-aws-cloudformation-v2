@@ -68,31 +68,31 @@ extension_services:
         async: true
         Common:
           class: Tenant
-          dbVars:
+          My_DbVariables:
             class: DbVariables
             provision.extramb: 1000
             restjavad.useextramb: true
             ui.advisory.enabled: true
             ui.advisory.color: blue
             ui.advisory.text: BIG-IP Quickstart
-          myDns:
+          My_Dns:
             class: DNS
             nameServers:
               - 169.254.169.253
-          myLicense:
+          My_License:
             class: License
             licenseType: regKey
             regKey: AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE
-          myNtp:
+          My_Ntp:
             class: NTP
             servers:
               - 169.254.169.253
             timezone: UTC
-          myProvisioning:
+          My_Provisioning:
             class: Provision
             asm: nominal
             ltm: nominal
-          mySystem:
+          My_System:
             class: System
             autoPhonehome: false
             hostname: '{{{HOST_NAME}}}'

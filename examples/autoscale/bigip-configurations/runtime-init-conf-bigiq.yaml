@@ -36,17 +36,17 @@ extension_services:
       value:
         Common:
           class: Tenant
-          dbvars:
+          My_DbVariables:
             class: DbVariables
             provision.extramb: 1000
             restjavad.useextramb: true
             ui.advisory.color: blue
             ui.advisory.text: "Provisioned via Runtime Init and DO"
-          myDns:
+          My_Dns:
             class: DNS
             nameServers:
               - 169.254.169.253
-          myLicense:
+          My_License:
             bigIqHost: 10.0.1.200
             bigIqPassword: '{{{BIGIQ_PASSWORD}}}'
             bigIqUsername: admin
@@ -58,16 +58,16 @@ extension_services:
             skuKeyword1: F5-BIG-MSP-BT-1G
             tenant: myTenant
             unitOfMeasure: hourly
-          myNtp:
+          My_Ntp:
             class: NTP
             servers:
               - 169.254.169.253
             timezone: UTC
-          myProvisioning:
+          My_Provisioning:
             asm: nominal
             class: Provision
             ltm: nominal
-          mySystem:
+          My_System:
             autoPhonehome: false
             class: System
             hostname: '{{{HOST_NAME}}}'

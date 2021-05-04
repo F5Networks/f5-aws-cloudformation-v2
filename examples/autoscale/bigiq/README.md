@@ -260,6 +260,8 @@ For next steps, see [Validating the Deployment](#validating-the-deployment).
 
 For Bring Your Own License (BYOL) deployments, you will need to change the BIG-IP configuration. This involves customizing the licensing portion of Declaritive Onboarding declartion in [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) configuration file, republishing/rehosting it and passing a new URL through the **bigIpRuntimeInitConfig** template parameter.
 
+**IMPORTANT**: Note, any URLs pointing to git **must** use the raw file format (ex. "raw.githubusercontent.com")
+
 F5 has provided the following example configuration files in the `examples/autoscale/bigip-configurations` folder:
 
 - `runtime-init-conf-bigiq.yaml`: This configuration file installs packages and creates WAF-protected services for a BIG-IQ licensed deployment.
@@ -277,7 +279,7 @@ In order to change the BIG-IQ Licensing configuration:
 
 ex.
 ```yaml
-          myLicense:
+          My_License:
             class: License
             hypervisor: aws
             licenseType: <YOUR_LICENSE_TYPE>
