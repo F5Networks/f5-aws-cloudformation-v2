@@ -828,7 +828,7 @@ Resources:
             - |+
 
             - |
-              echo "$(date +"%Y-%m-%dT%H:%M:%S.%3NZ") : Starting Custom Script"
+              echo "$(date +"%Y-%m-%dT%H:%M:%S.%3NZ") : Startup Script Start"
             - >
               # Optional optimizations required as early as possible in boot
               sequence before MCDP starts up.
@@ -856,7 +856,11 @@ Resources:
             - |
               if [[ "${RUNTIME_CONFIG}" =~ ^http.* ]]; then
             - |2
-                 curl -sfv --retry 60 --connect-timeout 5 -L "${RUNTIME_CONFIG}" -o /config/cloud/runtime-init.conf
+                   for i in {1..30}; do
+            - |2
+                      curl -sfv --retry 1 --connect-timeout 5 -L "${RUNTIME_CONFIG}" -o /config/cloud/runtime-init.conf && break || sleep 10
+            - |2
+                   done
             - |
               else
             - |2
@@ -894,7 +898,12 @@ Resources:
             - !Ref 'AWS::Region'
             - |+
 
-            - ''
+            - |+
+
+            - |
+              echo "$(date +"%Y-%m-%dT%H:%M:%S.%3NZ") : Startup Script Finish"
+            - |+
+
     Type: 'AWS::EC2::Instance'
   Bigip2NicInstance:
     CreationPolicy:
