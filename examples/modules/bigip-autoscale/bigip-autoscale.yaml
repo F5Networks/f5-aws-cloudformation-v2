@@ -384,9 +384,9 @@ Resources:
     Type: 'AWS::AutoScaling::AutoScalingGroup'
     UpdatePolicy:
       AutoScalingRollingUpdate:
-        MaxBatchSize: 1
+        MaxBatchSize: 5
         MinInstancesInService: 1
-        PauseTime: PT10M
+        PauseTime: PT8M
   BigipHighCpuAlarm:
     DependsOn: BigipAutoscaleGroup
     Properties:
@@ -453,10 +453,6 @@ Resources:
               LOG_FILE=/var/log/cloud/startup-script.log
             - |
               echo 'Initializing Runtime Init.'
-            - >
-              curl --retry 60 --silent --fail
-              https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.2.1-1.gz.run
-              -o /config/cloud/bigip-runtime-init.gz.run
             - |
               npipe=/tmp/$$.tmp
             - |
@@ -474,7 +470,7 @@ Resources:
             - |+
 
             - |
-              echo "$(date +"%Y-%m-%dT%H:%M:%S.%3NZ") : Starting Custom Script"
+              echo "$(date +"%Y-%m-%dT%H:%M:%S.%3NZ") : Startup Script Start"
             - >
               # Optional optimizations required as early as possible in boot
               sequence before MCDP starts up.
@@ -503,7 +499,11 @@ Resources:
             - |
               if [[ "${RUNTIME_CONFIG}" =~ ^http.* ]]; then
             - |2
-                 curl -sfv --retry 60 --connect-timeout 5 -L "${RUNTIME_CONFIG}" -o /config/cloud/runtime-init.conf
+                   for i in {1..30}; do
+            - |2
+                      curl -sfv --retry 1 --connect-timeout 5 -L "${RUNTIME_CONFIG}" -o /config/cloud/runtime-init.conf && break || sleep 10
+            - |2
+                   done
             - |
               else
             - |2
@@ -524,16 +524,14 @@ Resources:
 
             - |
               # Run
-            - >
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud
-              aws'
+            - |
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws'
             - |+
 
             - |
               # Execute Runtime-init
-            - >
-              f5-bigip-runtime-init --config-file
-              /config/cloud/runtime-init.conf
+            - |
+              f5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf
             - |+
 
             - '[[ $? -eq 0 ]] && /opt/aws/bin/cfn-signal -e 0 --stack '
@@ -542,6 +540,10 @@ Resources:
             - !Ref 'AWS::Region'
             - |+
 
+            - |+
+
+            - |
+              echo "$(date +"%Y-%m-%dT%H:%M:%S.%3NZ") : Startup Script Finish"
             - |+
 
     Type: 'AWS::AutoScaling::LaunchConfiguration'
