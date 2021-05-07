@@ -16,7 +16,7 @@
     - [Template Outputs](#template-outputs)
   - [Deploying this Solution](#deploying-this-solution)
     - [Deploying via the AWS Launch Stack Button](#deploying-via-the-aws-launch-stack-button)
-    - [Deploying via the AWS CLI]](#deploying-via-the-aws-cli)
+    - [Deploying via the AWS CLI](#deploying-via-the-aws-cli)
     - [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment)
   - [Validation](#validation)
     - [Validating the Deployment](#validating-the-deployment)

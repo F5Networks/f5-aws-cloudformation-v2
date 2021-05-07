@@ -17,5 +17,6 @@
     { "ParameterKey": "setAppPublicIp", "ParameterValue": "false" },
     { "ParameterKey": "sshKey", "ParameterValue": "" },
     { "ParameterKey": "staticIp", "ParameterValue": "" },
+    { "ParameterKey": "uniqueString", "ParameterValue": "myUniqStr" },
     { "ParameterKey": "vpc", "ParameterValue": "" }
 ]

@@ -8,7 +8,7 @@
 if [[ "<SOLUTION TYPE>" == "standalone" ]]; then
     instances=$(aws cloudformation describe-stacks --stack-name <STACK NAME> --region <REGION> | jq -r '.Stacks[].Outputs[] | select (.OutputKey=="bigIpInstanceId") | .OutputValue')
 else
-    autoscale_group=$(aws autoscaling describe-auto-scaling-groups --region <REGION> | jq -r '.AutoScalingGroups[] |select (.AutoScalingGroupARN |contains("<STACK NAME>"))|.AutoScalingGroupName' | grep 'BigipAutoscale')
+    autoscale_group=$(aws autoscaling describe-auto-scaling-groups --region <REGION> | jq -r '.AutoScalingGroups[] |select (.AutoScalingGroupARN |contains("<STACK NAME>"))|.AutoScalingGroupName' | grep 'bigip')
     instances=$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-name $autoscale_group --region <REGION> | jq -r .AutoScalingGroups[].Instances[].InstanceId)
 fi
 

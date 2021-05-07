@@ -38,6 +38,7 @@ ParameterKey=customAppImageId,ParameterValue=<CUSTOM APP IMAGE> \
 ParameterKey=restrictedSrcAddress,ParameterValue=0.0.0.0/0 \
 ParameterKey=setAppPublicIp,ParameterValue=<SET APP PUBLIC IP> \
 ParameterKey=sshKey,ParameterValue=dewpt \
+ParameterKey=uniqueString,ParameterValue=<UNIQUESTRING> \
 ParameterKey=vpc,ParameterValue=$vpcId"
 echo "Parameters:$parameters"
 

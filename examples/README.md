@@ -138,23 +138,24 @@ A high-level overview of customizing the templates may look like:
 3. Publish the templates to an HTTP or HTTPS location reachable by AWS CloudFormation Web Service. NOTE: The only location currently supported by CloudFormation is S3.
 
   - **AWS S3 Storage**
-    - Upload templates to AWS S3 bucket (from the directory containing the f5-aws-cloudformation-v2/ repo):
+    - Upload templates to AWS S3 bucket (from inside the directory containing the f5-aws-cloudformation-v2 repo):
         ```bash
-        aws s3api create-bucket --bucket ${BUCKET_NAME} --region ${REGION}
-        aws s3 cp f5-aws-cloudformation-v2/ s3://${BUCKET_NAME}/ --recursive
+        aws s3api create-bucket --bucket ${BUCKET_NAME} --region ${REGION} [--create-bucket-configuration LocationConstraint=${REGION}]
+        aws s3 cp examples s3://${BUCKET_NAME}/examples --recursive [--grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers]
         ```
         ex.
         ```bash
+        cd f5-aws-cloudformation-v2 
         aws s3api create-bucket --bucket customizations --region us-east-1
-        aws s3 cp f5-aws-cloudformation-v2/ s3://customizations/ --recursive
+        aws s3 cp examples s3://customizations/examples --recursive
         ```
-    - ***WARNING: This example will upload the entire git repository folder to AWS S3 bucket. If the folder contains any sensitive information (for example, from .gitignore, custom files), you should remove.***
+    - ***WARNING: This particular example will upload the entire git repository folder contents to the AWS S3 bucket. If the folder contains any sensitive information (for example, from .gitignore, custom files), you should remove.***
     - ***TIP: As you cannot reference git URLs, for versioning, you can use directories*** 
 
         ex.
         ```bash
-        aws s3 cp f5-aws-cloudformation-v2/ s3://customizations/v0.0.0.1/ --recursive
-        aws s3 cp f5-aws-cloudformation-v2/ s3://customizations/v0.0.0.2/ --recursive
+        aws s3 cp examples s3://customizations/v0.0.0.1/examples --recursive
+        aws s3 cp examples s3://customizations/v0.0.0.2/examples --recursive
         ```
 
 4. Update the **s3BucketName**, **s3BucketRegion** and **artifactLocation** input parameters to reference the custom location. 
@@ -175,9 +176,12 @@ A high-level overview of customizing the templates may look like:
 
     ex.
     ```bash
-    aws cloudformation create-stack --region us-east-1 --stack-name mycustomdeployment --template-url https://customizations.s3-us-east-1.amazonaws.com/examples/quickstart/quickstart.yaml --parameters file://quickstart-parameters.json --capabilities CAPABILITY_IAM
+    aws cloudformation create-stack --region us-east-1 --stack-name mycustomdeployment --template-url https://customizations.s3.us-east-1.amazonaws.com/examples/quickstart/quickstart.yaml --parameters file://quickstart-parameters.json --capabilities CAPABILITY_IAM
     ```
-
+    or if versioning:
+    ```bash
+    aws cloudformation create-stack --region us-east-1 --stack-name mycustomdeployment --template-url https://customizations.s3.us-east-1.amazonaws.com/v0.0.0.1/examples/quickstart/quickstart.yaml --parameters file://quickstart-parameters.json --capabilities CAPABILITY_IAM
+    ```
 
 ## Style Guide
 

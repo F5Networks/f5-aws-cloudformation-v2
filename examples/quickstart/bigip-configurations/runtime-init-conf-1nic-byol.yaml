@@ -71,7 +71,7 @@ extension_services:
             class: Provision
             asm: nominal
             ltm: nominal
-         My_System:
+          My_System:
             class: System
             autoPhonehome: false
             hostname: '{{{HOST_NAME}}}'

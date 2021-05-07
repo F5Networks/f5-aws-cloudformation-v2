@@ -385,7 +385,7 @@ Parameters:
     AllowedPattern: ^[a-zA-Z][a-zA-Z0-9]{1,11}$
     Description: Unique String used when creating object names or Tags.
     Type: String
-    Default: myBIGIP
+    Default: myUniqStr
   vpcCidr:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$'
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
@@ -424,6 +424,14 @@ Resources:
         - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
           S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}-${AWS::Region}', !Ref s3BucketName]
       Parameters:
+        application: !Ref application
+        cost: !Ref cost
+        createAmiRole: 'true'
+        createBigIqRoles: 'false'
+        environment: !Ref environment
+        group: !Ref group
+        s3Bucket: !If [useLoggingS3Bucket, !Ref loggingS3BucketName, !Ref 'AWS::NoValue']
+        secretArn: !If [useSecretArn, !Ref secretArn, !Ref 'AWS::NoValue']
         solutionType: !If
           - useSecretLoggingS3Bucket
           - secretS3
@@ -434,23 +442,15 @@ Resources:
               - useLoggingS3Bucket
               - s3
               - standard
-        createAmiRole: 'true'
-        createBigIqRoles: 'false'
-        secretArn: !If [useSecretArn, !Ref secretArn, !Ref 'AWS::NoValue']
-        s3Bucket: !If [useLoggingS3Bucket, !Ref loggingS3BucketName, !Ref 'AWS::NoValue']
         uniqueString: !Ref uniqueString
-        application: !Ref application
-        cost: !Ref cost
-        environment: !Ref environment
-        group: !Ref group
   AmiInfo:
     Type: 'Custom::AMIInfo'
     Condition: noCustomImageId
     Properties:
-      ServiceToken: !GetAtt [Function, Outputs.lambdaARN]
-      Region: !Ref 'AWS::Region'
       OSName: !Ref imageName
       OwnerId: 'aws-marketplace'
+      Region: !Ref 'AWS::Region'
+      ServiceToken: !GetAtt [Function, Outputs.lambdaARN]
   Application:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -460,12 +460,8 @@ Resources:
         - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
           S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}-${AWS::Region}', !Ref s3BucketName]
       Parameters:
-        sshKey: !Ref sshKey
-        restrictedSrcAddress: 0.0.0.0/0
-        setAppPublicIp: 'true'
-        vpc: !GetAtt
-          - Network
-          - Outputs.vpcId
+        appContainerName: !Ref appContainerName
+        application: !Ref application
         applicationSubnet: !Join
           - ','
           - - !Select
@@ -491,15 +487,20 @@ Resources:
                 - !GetAtt
                   - Network
                   - Outputs.subnetsB
-        scalingMinSize: !Ref appScalingMinSize
-        scalingMaxSize: !Ref appScalingMaxSize
-        appContainerName: !Ref appContainerName
         appSecurityGroupId: !GetAtt [Dag, Outputs.appSecurityGroupId]
-        application: !Ref application
-        createAutoscaleGroup: 'true'
         cost: !Ref cost
+        createAutoscaleGroup: 'true'
         environment: !Ref environment
         group: !Ref group
+        sshKey: !Ref sshKey
+        restrictedSrcAddress: 0.0.0.0/0
+        scalingMinSize: !Ref appScalingMinSize
+        scalingMaxSize: !Ref appScalingMaxSize
+        setAppPublicIp: 'true'
+        uniqueString: !Ref uniqueString
+        vpc: !GetAtt
+          - Network
+          - Outputs.vpcId
   BigipAutoscale:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -509,21 +510,37 @@ Resources:
         - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
           S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}-${AWS::Region}', !Ref s3BucketName]
       Parameters:
-        sshKey: !Ref sshKey
+        application: !Ref application
+        bigIpExternalSecurityGroup: !GetAtt
+          - Dag
+          - Outputs.bigIpExternalSecurityGroup
+        bigIpInstanceProfile: !GetAtt
+          - Access
+          - Outputs.bigIpInstanceProfile
         bigIpRuntimeInitConfig: !Ref bigIpRuntimeInitConfig
         bigIpRuntimeInitPackageUrl: !Ref bigIpRuntimeInitPackageUrl
-        externalTargetGroupHttps: !If
-          - externalLB
-          - !GetAtt
-            - Dag
-            - Outputs.externalTargetGroupHttps
-          - !Ref AWS::NoValue
+        cost: !Ref cost
+        environment: !Ref environment
         externalTargetGroupHttp: !If
           - externalLB
           - !GetAtt
             - Dag
             - Outputs.externalTargetGroupHttp
           - !Ref AWS::NoValue
+        externalTargetGroupHttps: !If
+          - externalLB
+          - !GetAtt
+            - Dag
+            - Outputs.externalTargetGroupHttps
+          - !Ref AWS::NoValue
+        group: !Ref group
+        imageId: !If
+          - noCustomImageId
+          - !GetAtt
+            - AmiInfo
+            - Id
+          - !Ref customImageId
+        instanceType: !Ref instanceType
         internalTargetGroupHttp: !If
           - internalLB
           - !GetAtt
@@ -536,14 +553,13 @@ Resources:
             - Dag
             - Outputs.internalTargetGroupHttps
           - !Ref AWS::NoValue
-        instanceType: !Ref instanceType
-        imageId: !If
-          - noCustomImageId
-          - !GetAtt
-            - AmiInfo
-            - Id
-          - !Ref customImageId
         metricNameSpace: !Ref metricNameSpace
+        notificationEmail: !Ref notificationEmail
+        provisionPublicIp: !Ref provisionPublicIp
+        scalingMinSize: !Ref bigIpScalingMinSize
+        scalingMaxSize: !Ref bigIpScalingMaxSize
+        snsEvents: !Join [',', !Ref snsEvents]
+        sshKey: !Ref sshKey
         subnets: !Join
           - ','
           - - !Select
@@ -560,21 +576,7 @@ Resources:
                 - !GetAtt
                   - Network
                   - Outputs.subnetsB
-        provisionPublicIp: !Ref provisionPublicIp
-        bigIpInstanceProfile: !GetAtt
-          - Access
-          - Outputs.bigIpInstanceProfile
-        bigIpExternalSecurityGroup: !GetAtt
-          - Dag
-          - Outputs.bigIpExternalSecurityGroup
-        scalingMinSize: !Ref bigIpScalingMinSize
-        scalingMaxSize: !Ref bigIpScalingMaxSize
-        notificationEmail: !Ref notificationEmail
-        snsEvents: !Join [',', !Ref snsEvents]
-        application: !Ref application
-        cost: !Ref cost
-        environment: !Ref environment
-        group: !Ref group
+        uniqueString: !Ref uniqueString
   Dag:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -584,9 +586,10 @@ Resources:
         - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
           S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}-${AWS::Region}', !Ref s3BucketName]
       Parameters:
-        vpc: !GetAtt
-          - Network
-          - Outputs.vpcId
+        application: !Ref application
+        cost: !Ref cost
+        createAppSecurityGroup: 'true'
+        environment: !Ref environment
         externalSubnetAz1: !Select
           - '0'
           - !Split
@@ -601,6 +604,7 @@ Resources:
             - !GetAtt
               - Network
               - Outputs.subnetsB
+        group: !Ref group
         internalSubnetAz1: !Select
           - '0'
           - !Split
@@ -615,17 +619,17 @@ Resources:
             - !GetAtt
               - Network
               - Outputs.subnetsB
-        restrictedSrcAddressApp: !Ref restrictedSrcAddressApp
-        restrictedSrcAddressMgmt: !Ref restrictedSrcAddressMgmt
-        vpcCidr: !Ref vpcCidr
+        numberPublicMgmtIpAddresses: 0
+        numberPublicExternalIpAddresses: 0
         provisionExternalBigipLoadBalancer: !Ref provisionExternalBigipLoadBalancer
         provisionInternalBigipLoadBalancer: !Ref provisionInternalBigipLoadBalancer
-        application: !Ref application
+        restrictedSrcAddressApp: !Ref restrictedSrcAddressApp
+        restrictedSrcAddressMgmt: !Ref restrictedSrcAddressMgmt
         uniqueString: !Ref uniqueString
-        cost: !Ref cost
-        environment: !Ref environment
-        group: !Ref group
-        createAppSecurityGroup: 'true'
+        vpc: !GetAtt
+          - Network
+          - Outputs.vpcId
+        vpcCidr: !Ref vpcCidr
   Function:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -635,10 +639,10 @@ Resources:
         - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
           S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}-${AWS::Region}', !Ref s3BucketName]
       Parameters:
-        createAmiLookupFunction: 'true'
         amiLookupRole: !GetAtt
           - Access
           - Outputs.lambdaAmiExecutionRole
+        createAmiLookupFunction: 'true'
   Network:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -648,12 +652,16 @@ Resources:
         - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
           S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}-${AWS::Region}', !Ref s3BucketName]
       Parameters:
+        cost: !Ref cost
+        environment: !Ref environment
+        group: !Ref group
         numAzs: !Ref numAzs
         numSubnets: !Ref numSubnets
         setPublicSubnet1: !Ref setPublicSubnet1
         subnetMask: !Ref subnetMask
+        uniqueString: !Ref uniqueString
         vpcCidr: !Ref vpcCidr
         vpcTenancy: default
-        cost: !Ref cost
-        environment: !Ref environment
-        group: !Ref group
+
+
+
