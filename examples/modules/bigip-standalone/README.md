@@ -1,4 +1,4 @@
-# Deploying BIGIP Standalone Template
+# Deploying BIG-IP Standalone Template
 
 [![Releases](https://img.shields.io/github/release/f5networks/f5-aws-cloudformation-v2.svg)](https://github.com/f5networks/f5-aws-cloudformation-v2/releases)
 [![Issues](https://img.shields.io/github/issues/f5networks/f5-aws-cloudformation-v2.svg)](https://github.com/f5networks/f5-aws-cloudformation-v2/issues)
@@ -7,7 +7,7 @@
 
 ## Contents
 
-- [Deploying BIGIP Standalone Template](#deploying-bigip-standalone-template)
+- [Deploying BIG-IP Standalone Template](#deploying-bigip-standalone-template)
   - [Contents](#contents)
   - [Introduction](#introduction)
   - [Prerequisites](#prerequisites)
@@ -16,13 +16,13 @@
     - [Template Outputs](#template-outputs)
   - [Resource Creation Flow Chart](#resource-creation-flow-chart)
   - [Customization options](#customization-options)
-    - [Multiple secondary private external ip address](#multiple-secondary-private-external-ip-address)
-    - [Multiple public external ip address](#multiple-public-external-ip-address)
+    - [Multiple secondary private external IP addresses](#multiple-secondary-private-external-ip-addresses)
+    - [Multiple public external IP addresses](#multiple-public-external-ip-addresses)
 
 
 ## Introduction
 
-This solution uses an AWS Cloud Formation template to launch a stack for provisioning standalone BIGIP-VE.
+This solution uses an AWS CloudFormation template to launch a stack for provisioning a standalone BIG-IP VE.
 
   
 ## Prerequisites
@@ -46,39 +46,39 @@ This solution uses an AWS Cloud Formation template to launch a stack for provisi
 | --- | --- | --- |
 | application | No | Application Tag. |
 | bigIpInstanceProfile | No | BIG-IP instance profile with applied IAM policy. |
-| bigIpRuntimeInitConfig | Yes | Delivery URL for config file (YAML/JSON) or JSON string |
-| bigIpRuntimeInitPackageUrl | No | URL for BIGIP Runtime Init package |
+| bigIpRuntimeInitConfig | Yes | Delivery URL for config file (YAML/JSON) or JSON string. |
+| bigIpRuntimeInitPackageUrl | No | URL for BIG-IP Runtime Init package. |
 | cost | No | Cost Center Tag. |
 | environment | No | Environment Tag. |
-| externalPrimaryPublicId | No | The resource ID of the public IP address to apply to the primary IP configuration on the external network interface. Default is empty string which does not provision public ip. |
+| externalPrimaryPublicId | No | The resource ID of the public IP address to apply to the primary IP configuration on the external network interface. The default is an empty string which does not provision public IP. |
 | externalSecurityGroupId | No | The optional resource ID of a security group to apply to the external network interface. |
-| externalSelfIp | No | The private IP address to apply to external network interfaces as primary private address. The address must reside in the subnet provided in the externalSubnetId parameter. ***NOTE:*** When set to empty string, DHCP will be used for allocating ip address. Default value is empty string. |
+| externalSelfIp | No | The private IP address to apply to external network interfaces as primary private address. The address must reside in the subnet provided in the externalSubnetId parameter. ***Note:*** When set to an empty string, DHCP will be used for allocating the IP address. The default value is empty string. |
 | externalServiceIps | No | An array of one or more private IP addresses to apply to the secondary external IP configurations. |
-| externalSubnetId | No | The resource ID of the external subnet. ***Note:*** SubnetId parameters used for identifying number of network interfaces. Example: 1NIC - only Mgmt subnet id provided, 2NIC - Mgmt and Externa subnets id provided, 3NIC - Mgmt, External and Internal subnets id provided. |
+| externalSubnetId | No | The resource ID of the external subnet. ***Note:*** SubnetId parameters used for identifying number of network interfaces. Example: *1NIC* - only Mgmt subnet ID provided; *2NIC* - Mgmt and External subnets ID provided; *3NIC* - Mgmt, External, and Internal subnets ID provided. |
 | group | No | Group Tag. |
-| imageId | Yes | Provide BIG-IP AMI Id you wish to deploy |
+| imageId | Yes | Provide BIG-IP AMI ID you wish to deploy. |
 | instanceType | No | Enter valid instance type. |
 | internalSecurityGroupId | No | The optional resource ID of a security group to apply to the internal network interface. |
 | internalSelfIp | No | The private IP address to apply to the primary IP configuration on the internal network interface. The address must reside in the subnet provided in the internalSubnetId parameter.|
-| internalSubnetId | No | The resource ID of the internal subnet. SubnetId parameters used for identifying number of network interfaces. Example: 1NIC - only Mgmt subnet id provided, 2NIC - Mgmt and Externa subnets id provided, 3NIC - Mgmt, External and Internal subnets id provided. |
-| mgmtPublicIpId | No | The resource ID of the public IP address to apply to the management network interface. Leave this parameter blank to create a management network interface without a public IP address. Default is empty string which does not provision public ip. |
+| internalSubnetId | No | The resource ID of the internal subnet. SubnetId parameters used for identifying number of network interfaces. Example: *1NIC* - only Mgmt subnet ID provided; *2NIC* - Mgmt and External subnets ID provided; *3NIC* - Mgmt, External, and Internal subnets ID provided. |
+| mgmtPublicIpId | No | The resource ID of the public IP address to apply to the management network interface. Leave this parameter blank to create a management network interface without a public IP address. Default is empty string which does not provision public IP. |
 | mgmtSecurityGroupId | Yes | The resource ID of a security group to apply to the management network interface. |
-| mgmtSelfIp | No | The private IP address to apply to the primary IP configuration on the management network interface. The address must reside in the subnet provided in the mgmtSubnetId parameter. ***NOTE:*** When set to empty string, DHCP will be used for allocating ip address. |
-| mgmtSubnetId | Yes | The resource ID of the management subnet. ***Note:*** SubnetId parameters used for identifying number of network interfaces. Example: 1NIC - only Mgmt subnet id provided, 2NIC - Mgmt and Externa subnets id provided, 3NIC - Mgmt, External and Internal subnets id provided.|
+| mgmtSelfIp | No | The private IP address to apply to the primary IP configuration on the management network interface. The address must reside in the subnet provided in the mgmtSubnetId parameter. ***Note:*** When set to empty string, DHCP will be used for allocating ip address. |
+| mgmtSubnetId | Yes | The resource ID of the management subnet. ***Note:*** SubnetId parameters used for identifying number of network interfaces. Example: *1NIC* - only Mgmt subnet ID provided; *2NIC* - Mgmt and External subnets ID provided; *3NIC* - Mgmt, External and Internal subnets ID provided.|
 | owner | No | Application Tag. |
 | sshKey | Yes | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. | 
-| uniqueString | Yes | Unique String used when creating object names or Tags |
+| uniqueString | Yes | Unique String used when creating object names or Tags. |
 
 ### Template Outputs
 
 | Name | Description | Required Resource | Type |
 | --- | --- | --- | --- |
-| stackName | bigip-standalone nested stack name | bigip-standalone template deployment | String |
-| bigIpInstanceId | BIG-IP instance id | None | String |
-| bigIpManagementInterfacePrivateIp | Internally routable IP of BIG-IP instance NIC eth0| None | String |
-| bigIp2nicExternalInterfacePrivateIp | Internally routable IP of BIG-IP instance NIC eth1 | None | String |
-| bigIp3NicExternalInterfacePrivateIp | Internally routable IP of BIG-IP instance NIC eth1 | None | String |
-| bigIp3NicInternalInterfacePrivateIp | Internally routable IP of BIG-IP instance NIC eth2 | None | String |
+| stackName | The bigip-standalone nested stack name. | bigip-standalone template deployment | String |
+| bigIpInstanceId | BIG-IP instance ID. | None | String |
+| bigIpManagementInterfacePrivateIp | Internally routable IP of BIG-IP instance NIC eth0.| None | String |
+| bigIp2nicExternalInterfacePrivateIp | Internally routable IP of BIG-IP instance NIC eth1. | None | String |
+| bigIp3NicExternalInterfacePrivateIp | Internally routable IP of BIG-IP instance NIC eth1. | None | String |
+| bigIp3NicInternalInterfacePrivateIp | Internally routable IP of BIG-IP instance NIC eth2. | None | String |
 
 
 ## Resource Creation Flow Chart
@@ -89,12 +89,11 @@ This solution uses an AWS Cloud Formation template to launch a stack for provisi
 
 ## Customization options
 
-This section provides instuctions on how to customize bigip-standalone template for various use cases.
+This section provides instuctions on how to customize BIG-IP standalone template for various use cases.
 
-### Multiple secondary private external ip address 
+### Multiple secondary private external IP addresses 
 
-externalServiceIps parameter allows to provide list of secondary private external ip addresses; however due to limitation in AWS Cloudformation DSL, it is not possible dynamically add secondary ip addresses to network interface.
-It can be done by updating BigIpStaticExternalInterface resource by including additional private addresses. The same approach can be used for private internal interface (aka BigipStaticInternalInterface). 
+The *externalServiceIps* parameter allows you to provide a list of secondary private external IP addresses. However, due to limitations in AWS CloudFormation DSL, it is not possible to dynamically add secondary IP addresses to the network interface. Instead, you can add secondary IP addresses by updating *BigIpStaticExternalInterface* resource and including the additional private addresses. The same approach can be used for private internal interface (aka *BigipStaticInternalInterface*). 
 
 ```yaml
   BigipStaticExternalInterface:
@@ -122,11 +121,11 @@ It can be done by updating BigIpStaticExternalInterface resource by including ad
     Type: 'AWS::EC2::NetworkInterface'
 ```
 
-### Multiple public external ip address
+### Multiple public external IP addresses
 
-Enabling multiple public external addresses requires the following changes:
+You can enable multiple public external addresses by using the following steps:
 
- 1) Create parameter for passing list of Elastic IP Allocation IDs
+ 1) Create parameter for passing list of Elastic IP Allocation IDs.
  
 ```yaml
   externalPublicIpsAllocationIds:
@@ -136,7 +135,7 @@ Enabling multiple public external addresses requires the following changes:
 
 ```
 
-  2) Create EIP Association resource for associating public ip with external network interface.
+  2) Create EIP Association resource for associating public IP with external network interface.
   
 ```yaml
   BigipVipEipAssociation00:
