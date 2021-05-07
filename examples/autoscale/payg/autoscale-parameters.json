@@ -32,6 +32,6 @@
   { "ParameterKey": "setPublicSubnet1", "ParameterValue": "false" },
   { "ParameterKey": "sshKey", "ParameterValue": "" },
   { "ParameterKey": "subnetMask", "ParameterValue": "24" },
-  { "ParameterKey": "uniqueString", "ParameterValue": "myBIGIP" },
+  { "ParameterKey": "uniqueString", "ParameterValue": "myUniqStr" },
   { "ParameterKey": "vpcCidr", "ParameterValue": "10.0.0.0/16" }
 ]

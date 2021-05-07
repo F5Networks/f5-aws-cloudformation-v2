@@ -17,8 +17,8 @@
     { "ParameterKey": "internalTargetGroupHttp", "ParameterValue": "" },
     { "ParameterKey": "internalTargetGroupHttps", "ParameterValue": "" },
     { "ParameterKey": "licenseType", "ParameterValue": "payg" },
-    { "ParameterKey": "lowCpuThreshold", "ParameterValue": "0" },
-    { "ParameterKey": "metricNameSpace", "ParameterValue": "bigip-throughput" },
+    { "ParameterKey": "lowCpuThreshold", "ParameterValue": "20" },
+    { "ParameterKey": "metricNameSpace", "ParameterValue": "f5-scaling-metrics" },
     { "ParameterKey": "notificationEmail", "ParameterValue": "" },
     { "ParameterKey": "owner", "ParameterValue": "f5owner" },
     { "ParameterKey": "provisionPublicIp", "ParameterValue": "Yes" },
@@ -28,5 +28,6 @@
     { "ParameterKey": "scalingMinSize", "ParameterValue": "1" },
     { "ParameterKey": "snsEvents", "ParameterValue": "autoscaling:EC2_INSTANCE_LAUNCH,autoscaling:EC2_INSTANCE_LAUNCH_ERROR" },
     { "ParameterKey": "sshKey", "ParameterValue": "" },
-    { "ParameterKey": "subnets", "ParameterValue": "" }
+    { "ParameterKey": "subnets", "ParameterValue": "" },
+    { "ParameterKey": "uniqueString", "ParameterValue": "myUniqStr" }
 ]

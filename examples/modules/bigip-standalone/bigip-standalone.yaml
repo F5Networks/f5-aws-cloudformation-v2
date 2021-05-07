@@ -457,7 +457,7 @@ Parameters:
   uniqueString:
     AllowedPattern: '^[a-zA-Z][a-zA-Z0-9]{1,11}$'
     ConstraintDescription: Must Contain between 1 and 12 alphanumeric characters with first character as a letter.
-    Default: myBIGIP
+    Default: myUniqStr
     Description: Unique String used when creating object names or Tags.
     Type: String
 Resources:
@@ -781,20 +781,18 @@ Resources:
             - !Ref BigipInternalInterface
             - !Ref BigipStaticInternalInterface
       Tags:
-        - Key: Application
-          Value: !Ref application
-        - Key: Costcenter
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
         - Key: Name
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-BIG-IP'
-        - Key: Owner
+              - '-bigip'
+        - Key: owner
           Value: !Ref owner
       UserData: !Base64
         'Fn::Join':
@@ -836,8 +834,6 @@ Resources:
               /usr/bin/setdb provision.extramb 1000
             - |
               /usr/bin/setdb restjavad.useextramb true
-            - |
-              '/usr/bin/curl -s -f -u admin: -H "Content-Type: application/json" -d ''{"maxMessageBodySize":134217728}'' -X POST http://localhost:8100/mgmt/shared/server/messaging/settings/8100 | jq .'
             - |+
 
             - |
@@ -856,15 +852,15 @@ Resources:
             - |
               if [[ "${RUNTIME_CONFIG}" =~ ^http.* ]]; then
             - |2
-                   for i in {1..30}; do
+                  for i in {1..30}; do
             - |2
                       curl -sfv --retry 1 --connect-timeout 5 -L "${RUNTIME_CONFIG}" -o /config/cloud/runtime-init.conf && break || sleep 10
             - |2
-                   done
+                  done
             - |
               else
             - |2
-                 printf '%s\n' "${RUNTIME_CONFIG}" | jq .  > /config/cloud/runtime-init.conf
+                  printf '%s\n' "${RUNTIME_CONFIG}" | jq .  > /config/cloud/runtime-init.conf
             - |
               fi
             - |+
@@ -874,16 +870,15 @@ Resources:
             - |
               for i in {1..30}; do
             - |2
-                 curl -fv --retry 1 --connect-timeout 5 -L "${PACKAGE_URL}" -o "/var/config/rest/downloads/${PACKAGE_URL##*/}" && break || sleep 10
+                  curl -fv --retry 1 --connect-timeout 5 -L "${PACKAGE_URL}" -o "/var/config/rest/downloads/${PACKAGE_URL##*/}" && break || sleep 10
             - |
               done
             - |+
 
             - |
               # Run
-            - >
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud
-              aws'
+            - |
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws'
             - |+
 
             - |
@@ -902,8 +897,7 @@ Resources:
 
             - |
               echo "$(date +"%Y-%m-%dT%H:%M:%S.%3NZ") : Startup Script Finish"
-            - |+
-
+            - ''
     Type: 'AWS::EC2::Instance'
   Bigip2NicInstance:
     CreationPolicy:
@@ -942,20 +936,18 @@ Resources:
             - !Ref BigipExternalInterface
             - !Ref BigipStaticExternalInterface
       Tags:
-        - Key: Application
-          Value: !Ref application
-        - Key: Costcenter
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
         - Key: Name
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-BIG-IP'
-        - Key: Owner
+              - '-bigip'
+        - Key: owner
           Value: !Ref owner
       UserData: !Base64
         'Fn::Join':
@@ -997,8 +989,6 @@ Resources:
               /usr/bin/setdb provision.extramb 1000
             - |
               /usr/bin/setdb restjavad.useextramb true
-            - |
-              '/usr/bin/curl -s -f -u admin: -H "Content-Type: application/json" -d ''{"maxMessageBodySize":134217728}'' -X POST http://localhost:8100/mgmt/shared/server/messaging/settings/8100 | jq .'
             - |+
 
             - |
@@ -1017,11 +1007,15 @@ Resources:
             - |
               if [[ "${RUNTIME_CONFIG}" =~ ^http.* ]]; then
             - |2
-                 curl -sfv --retry 60 --connect-timeout 5 -L "${RUNTIME_CONFIG}" -o /config/cloud/runtime-init.conf
+                  for i in {1..30}; do
+            - |2
+                      curl -sfv --retry 1 --connect-timeout 5 -L "${RUNTIME_CONFIG}" -o /config/cloud/runtime-init.conf && break || sleep 10
+            - |2
+                  done
             - |
               else
             - |2
-                 printf '%s\n' "${RUNTIME_CONFIG}" | jq .  > /config/cloud/runtime-init.conf
+                  printf '%s\n' "${RUNTIME_CONFIG}" | jq .  > /config/cloud/runtime-init.conf
             - |
               fi
             - |+
@@ -1031,30 +1025,21 @@ Resources:
             - |
               for i in {1..30}; do
             - |2
-                 curl -fv --retry 1 --connect-timeout 5 -L "${PACKAGE_URL}" -o "/var/config/rest/downloads/${PACKAGE_URL##*/}" && break || sleep 10
+                  curl -fv --retry 1 --connect-timeout 5 -L "${PACKAGE_URL}" -o "/var/config/rest/downloads/${PACKAGE_URL##*/}" && break || sleep 10
             - |
               done
             - |+
 
             - |
               # Run
-            - >
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud
-              aws'
+            - |
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws'
             - |+
 
             - |
               # Execute Runtime-init
             - |
-              for i in {1..5}; do
-            - |2
-                [[ $i -ne 1 ]] && sleep 10
-            - |2
-                f5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf
-            - |2
-                [[ $? -eq 0 ]] && break
-            - |
-              done
+              f5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf
             - |+
 
             - '[[ $? -eq 0 ]] && /opt/aws/bin/cfn-signal -e 0 --stack '
@@ -1063,6 +1048,10 @@ Resources:
             - !Ref 'AWS::Region'
             - |+
 
+            - |+
+
+            - |
+              echo "$(date +"%Y-%m-%dT%H:%M:%S.%3NZ") : Startup Script Finish"
             - ''
     Type: 'AWS::EC2::Instance'
   Bigip1NicInstance:
@@ -1096,20 +1085,18 @@ Resources:
             - !Ref BigipManagementInterface
             - !Ref BigipStaticManagementInterface
       Tags:
-        - Key: Application
-          Value: !Ref application
-        - Key: Costcenter
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
         - Key: Name
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-BIG-IP'
-        - Key: Owner
+              - '-bigip'
+        - Key: owner
           Value: !Ref owner
       UserData: !Base64
         'Fn::Join':
@@ -1151,8 +1138,6 @@ Resources:
               /usr/bin/setdb provision.extramb 1000
             - |
               /usr/bin/setdb restjavad.useextramb true
-            - |
-              '/usr/bin/curl -s -f -u admin: -H "Content-Type: application/json" -d ''{"maxMessageBodySize":134217728}'' -X POST http://localhost:8100/mgmt/shared/server/messaging/settings/8100 | jq .'
             - |+
 
             - |
@@ -1171,11 +1156,15 @@ Resources:
             - |
               if [[ "${RUNTIME_CONFIG}" =~ ^http.* ]]; then
             - |2
-                 curl -sfv --retry 60 --connect-timeout 5 -L "${RUNTIME_CONFIG}" -o /config/cloud/runtime-init.conf
+                  for i in {1..30}; do
+            - |2
+                      curl -sfv --retry 1 --connect-timeout 5 -L "${RUNTIME_CONFIG}" -o /config/cloud/runtime-init.conf && break || sleep 10
+            - |2
+                  done
             - |
               else
             - |2
-                 printf '%s\n' "${RUNTIME_CONFIG}" | jq .  > /config/cloud/runtime-init.conf
+                  printf '%s\n' "${RUNTIME_CONFIG}" | jq .  > /config/cloud/runtime-init.conf
             - |
               fi
             - |+
@@ -1185,30 +1174,21 @@ Resources:
             - |
               for i in {1..30}; do
             - |2
-                 curl -fv --retry 1 --connect-timeout 5 -L "${PACKAGE_URL}" -o "/var/config/rest/downloads/${PACKAGE_URL##*/}" && break || sleep 10
+                  curl -fv --retry 1 --connect-timeout 5 -L "${PACKAGE_URL}" -o "/var/config/rest/downloads/${PACKAGE_URL##*/}" && break || sleep 10
             - |
               done
             - |+
 
             - |
               # Run
-            - >
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud
-              aws'
+            - |
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws'
             - |+
 
             - |
               # Execute Runtime-init
             - |
-              for i in {1..5}; do
-            - |2
-                [[ $i -ne 1 ]] && sleep 10
-            - |2
-                f5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf
-            - |2
-                [[ $? -eq 0 ]] && break
-            - |
-              done
+              f5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf
             - |+
 
             - '[[ $? -eq 0 ]] && /opt/aws/bin/cfn-signal -e 0 --stack '
@@ -1217,5 +1197,9 @@ Resources:
             - !Ref 'AWS::Region'
             - |+
 
+            - |+
+
+            - |
+              echo "$(date +"%Y-%m-%dT%H:%M:%S.%3NZ") : Startup Script Finish"
             - ''
     Type: 'AWS::EC2::Instance'

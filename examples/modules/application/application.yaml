@@ -233,7 +233,7 @@ Parameters:
   uniqueString:
     AllowedPattern: ^[a-zA-Z][a-zA-Z0-9]{1,11}$
     ConstraintDescription: Must Contain between 1 and 12 alphanumeric characters with first character as a letter.
-    Default: myBIGIP
+    Default: myUniqStr
     Description: Unique String used when creating object names or Tags.
     Type: String
   vpc:
@@ -290,16 +290,22 @@ Resources:
             - 'docker run --name f5demo -p 80:80 -p 443:443 -d '
             - !Ref appContainerName
             - |+
+            
       Tags:
-        - Key: Application
+        - Key: application
           Value: !Ref application
         - Key: cost
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-application-instance'
+        - Key: group
           Value: !Ref group
-        - Key: Owner
+        - Key: owner
           Value: !Ref owner
   appLaunchConfig:
     Condition: Autoscale
@@ -349,31 +355,32 @@ Resources:
     Condition: Autoscale
     Type: 'AWS::AutoScaling::AutoScalingGroup'
     Properties:
-      Tags:
-        - Key: Name
-          PropagateAtLaunch: true
-          Value: !Join
+      AutoScalingGroupName: !Join
             - ''
             - - !Ref uniqueString
-              - '-Application'
-        - Key: Application
+              - '-application-autoscale-group'
+      Tags:
+        - Key: application
           PropagateAtLaunch: true
           Value: !Ref application
         - Key: cost
           PropagateAtLaunch: true
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           PropagateAtLaunch: true
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           PropagateAtLaunch: true
           Value: !Ref group
-        - Key: Owner
+        - Key: Name
+          PropagateAtLaunch: true
+          Value: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-application-autoscale-instance'
+        - Key: owner
           PropagateAtLaunch: true
           Value: !Ref owner
-        - Key: POC
-          PropagateAtLaunch: true
-          Value: F5APP
       VPCZoneIdentifier: !Ref applicationSubnets
       Cooldown: '600'
       HealthCheckGracePeriod: 120

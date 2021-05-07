@@ -273,7 +273,7 @@ Parameters:
     AllowedValues:
       - 'true'
       - 'false'
-    Default: 'true'
+    Default: 'false'
     Description: Select true if you would like to create a Security Group for your Application.
     Type: String
   createFailoverIngress:
@@ -308,13 +308,13 @@ Parameters:
     Description: Availability Zone 2 Internal Subnet ID.
     Type: String
   numberPublicExternalIpAddresses:
-    Default: 1
+    Default: 0
     Description: Number of external public ip address to create.
     MaxValue: 4
     MinValue: 0
     Type: Number
   numberPublicMgmtIpAddresses:
-    Default: 1
+    Default: 0
     Description: Number of external public ip address to create.
     MaxValue: 4
     MinValue: 0
@@ -359,7 +359,7 @@ Parameters:
   uniqueString:
     AllowedPattern: ^[a-zA-Z][a-zA-Z0-9]{1,11}$
     ConstraintDescription: Must Contain between 1 and 12 alphanumeric characters with first character as a letter.
-    Default: myBIGIP
+    Default: myUniqStr
     Description: Unique String used when creating object names or Tags.
     Type: String
   vpcCidr:
@@ -380,7 +380,7 @@ Resources:
       Name: !Join
         - ''
         - - !Ref uniqueString
-          - '-BigipExtLb'
+          - '-external-lb'
       Scheme: internet-facing
       Subnets:
         - !Ref externalSubnetAz1
@@ -390,16 +390,14 @@ Resources:
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-BigipExtLb'
-        - Key: Application
-          Value: !Ref application
-        - Key: cost
+              - '-external-lb'
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
-        - Key: Owner
+        - Key: owner
           Value: !Ref owner
   ExternalLBListenerHttps:
     Type: 'AWS::ElasticLoadBalancingV2::Listener'
@@ -428,7 +426,7 @@ Resources:
       Name: !Join
         - ''
         - - !Ref uniqueString
-          - '-EXT-HTTPS'
+          - '-external-https-tg'
       Port: 443
       Protocol: TCP
       HealthCheckIntervalSeconds: 10
@@ -447,7 +445,7 @@ Resources:
       Name: !Join
         - ''
         - - !Ref uniqueString
-          - '-EXT-HTTP'
+          - '-external-http-tg'
       Port: 80
       Protocol: TCP
       HealthCheckIntervalSeconds: 10
@@ -459,6 +457,20 @@ Resources:
         - Key: deregistration_delay.timeout_seconds
           Value: '20'
       VpcId: !Ref vpc
+      Tags:
+      - Key: Name
+        Value: !Join
+          - ''
+          - - !Ref uniqueString
+            - '-external-http-tg'
+      - Key: costcenter
+        Value: !Ref cost
+      - Key: environment
+        Value: !Ref environment
+      - Key: group
+        Value: !Ref group
+      - Key: owner
+        Value: !Ref owner
   InternalBigIpLoadBalancer:
     Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
     Condition: internalLB
@@ -467,7 +479,7 @@ Resources:
       Name: !Join
         - ''
         - - !Ref uniqueString
-          - '-BigipIntLb'
+          - '-internal-lb'
       Scheme: internal
       Subnets:
         - !Ref internalSubnetAz1
@@ -477,16 +489,14 @@ Resources:
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-BigipIntLb'
-        - Key: Application
-          Value: !Ref application
-        - Key: cost
+              - '-internal-lb'
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
-        - Key: Owner
+        - Key: owner
           Value: !Ref owner
   InternalLBListenerHttps:
     Type: 'AWS::ElasticLoadBalancingV2::Listener'
@@ -515,7 +525,7 @@ Resources:
       Name: !Join
         - ''
         - - !Ref uniqueString
-          - '-INT-HTTPS'
+          - '-internal-https'
       Port: 443
       Protocol: TCP
       HealthCheckIntervalSeconds: 10
@@ -534,7 +544,7 @@ Resources:
       Name: !Join
         - ''
         - - !Ref uniqueString
-          - '-INT-HTTP'
+          - '-internal-http'
       Port: 80
       Protocol: TCP
       HealthCheckIntervalSeconds: 10
@@ -551,25 +561,18 @@ Resources:
     Properties:
       Domain: vpc
       Tags:
-        - Key: Name
-          Value: !Join
-            - ''
-            - - !Ref uniqueString
-              - '-BigipMgmtEIP01'
-        - Key: Application
-          Value: !Ref application
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
         - Key: Name
           Value: !Join
             - ''
-            - - 'EIP:'
-              - !Ref 'AWS::StackName'
-        - Key: Owner
+            - - !Ref uniqueString
+              - '-bigip-management-eip-01'
+        - Key: owner
           Value: !Ref owner
     Type: 'AWS::EC2::EIP'
   BigipManagementEipAddress02:
@@ -577,25 +580,18 @@ Resources:
     Properties:
       Domain: vpc
       Tags:
-        - Key: Name
-          Value: !Join
-            - ''
-            - - !Ref uniqueString
-              - '-BigipMgmtEIP02'
-        - Key: Application
-          Value: !Ref application
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
         - Key: Name
           Value: !Join
             - ''
-            - - 'EIP:'
-              - !Ref 'AWS::StackName'
-        - Key: Owner
+            - - !Ref uniqueString
+              - '-bigip-management-eip-02'
+        - Key: owner
           Value: !Ref owner
     Type: 'AWS::EC2::EIP'
   BigipManagementEipAddress03:
@@ -603,25 +599,18 @@ Resources:
     Properties:
       Domain: vpc
       Tags:
-        - Key: Name
-          Value: !Join
-            - ''
-            - - !Ref uniqueString
-              - '-BigipMgmtEIP03'
-        - Key: Application
-          Value: !Ref application
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
         - Key: Name
           Value: !Join
             - ''
-            - - 'EIP:'
-              - !Ref 'AWS::StackName'
-        - Key: Owner
+            - - !Ref uniqueString
+              - '-bigip-management-eip-03'
+        - Key: owner
           Value: !Ref owner
     Type: 'AWS::EC2::EIP'
   BigipManagementEipAddress04:
@@ -629,25 +618,18 @@ Resources:
     Properties:
       Domain: vpc
       Tags:
-        - Key: Name
-          Value: !Join
-            - ''
-            - - !Ref uniqueString
-              - '-BigipMgmtEIP04'
-        - Key: Application
-          Value: !Ref application
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
         - Key: Name
           Value: !Join
             - ''
-            - - 'EIP:'
-              - !Ref 'AWS::StackName'
-        - Key: Owner
+            - - !Ref uniqueString
+              - '-bigip-management-eip-04'
+        - Key: owner
           Value: !Ref owner
     Type: 'AWS::EC2::EIP'
   BigipExternalEipAddress01:
@@ -655,25 +637,18 @@ Resources:
     Properties:
       Domain: vpc
       Tags:
-        - Key: Name
-          Value: !Join
-            - ''
-            - - !Ref uniqueString
-              - '-BigipExtEIP01'
-        - Key: Application
-          Value: !Ref application
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
         - Key: Name
           Value: !Join
             - ''
-            - - 'EIP:'
-              - !Ref 'AWS::StackName'
-        - Key: Owner
+            - - !Ref uniqueString
+              - '-bigip-external-eip-01'
+        - Key: owner
           Value: !Ref owner
     Type: 'AWS::EC2::EIP'
   BigipExternalEipAddress02:
@@ -681,25 +656,18 @@ Resources:
     Properties:
       Domain: vpc
       Tags:
-        - Key: Name
-          Value: !Join
-            - ''
-            - - !Ref uniqueString
-              - '-BigipExtEIP02'
-        - Key: Application
-          Value: !Ref application
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
         - Key: Name
           Value: !Join
             - ''
-            - - 'EIP:'
-              - !Ref 'AWS::StackName'
-        - Key: Owner
+            - - !Ref uniqueString
+              - '-bigip-external-eip-02'
+        - Key: owner
           Value: !Ref owner
     Type: 'AWS::EC2::EIP'
   BigipExternalEipAddress03:
@@ -707,25 +675,18 @@ Resources:
     Properties:
       Domain: vpc
       Tags:
-        - Key: Name
-          Value: !Join
-            - ''
-            - - !Ref uniqueString
-              - '-BigipExtEIP03'
-        - Key: Application
-          Value: !Ref application
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
         - Key: Name
           Value: !Join
             - ''
-            - - 'EIP:'
-              - !Ref 'AWS::StackName'
-        - Key: Owner
+            - - !Ref uniqueString
+              - '-bigip-external-eip-03'
+        - Key: owner
           Value: !Ref owner
     Type: 'AWS::EC2::EIP'
   BigipExternalEipAddress04:
@@ -733,25 +694,18 @@ Resources:
     Properties:
       Domain: vpc
       Tags:
-        - Key: Name
-          Value: !Join
-            - ''
-            - - !Ref uniqueString
-              - '-BigipExtEIP04'
-        - Key: Application
-          Value: !Ref application
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
         - Key: Name
           Value: !Join
             - ''
-            - - 'EIP:'
-              - !Ref 'AWS::StackName'
-        - Key: Owner
+            - - !Ref uniqueString
+              - '-bigip-external-eip-04'
+        - Key: owner
           Value: !Ref owner
     Type: 'AWS::EC2::EIP'
   BigipExternalSecurityGroup:
@@ -775,25 +729,18 @@ Resources:
           IpProtocol: tcp
           ToPort: 443
       Tags:
-        - Key: Name
-          Value: !Join
-            - ''
-            - - !Ref uniqueString
-              - '-BigipExternalSecurityGroup'
-        - Key: Application
-          Value: !Ref application
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
         - Key: Name
           Value: !Join
             - ''
-            - - 'Bigip Security Group: '
-              - !Ref 'AWS::StackName'
-        - Key: Owner
+            - - !Ref uniqueString
+              - '-bigip-external-sg'
+        - Key: owner
           Value: !Ref owner
       VpcId: !Ref vpc
     Type: 'AWS::EC2::SecurityGroup'
@@ -851,10 +798,16 @@ Resources:
           ToPort: 443
           CidrIp: !Ref vpcCidr
       Tags:
+        - Key: costcenter
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
         - Key: Name
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-ApplicationSecurityGroup'
-        - Key: Application
-          Value: !Ref application
+              - '-application-sg'
+        - Key: owner
+          Value: !Ref owner

@@ -61,6 +61,8 @@ Metadata:
       - Label:
           default: Tags
         Parameters:
+          - uniqueString
+          - application
           - cost
           - environment
           - group
@@ -131,6 +133,8 @@ Metadata:
         default: Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines.
       subnets:
         default: Public or external subnets for the availability zones
+      uniqueString:
+        default: Unique string
   Version: 1.0.0
 Outputs:
   stackName:
@@ -301,6 +305,12 @@ Parameters:
     ConstraintDescription: The subnet IDs must be within an existing VPC
     Description: REQUIRED - Public or external subnets for the availability zones.
     Type: List<AWS::EC2::Subnet::Id>
+  uniqueString:
+    AllowedPattern: '^[a-zA-Z][a-zA-Z0-9]{1,11}$'
+    ConstraintDescription: Must Contain between 1 and 12 alphanumeric characters with first character as a letter.
+    Default: myUniqStr
+    Description: Unique String used when creating object names or Tags.
+    Type: String
 Resources:
   SNSTopic:
     Properties:
@@ -323,6 +333,10 @@ Resources:
         Count: !Ref scalingMinSize
         Timeout: PT30M
     Properties:
+      AutoScalingGroupName: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-bigip-autoscale-group'
       Cooldown: '1500'
       DesiredCapacity: !Ref scalingMinSize
       HealthCheckGracePeriod: 1500
@@ -359,25 +373,22 @@ Resources:
             TopicARN: !Ref bigIqLicenseRevokeSnsTopic
           - !Ref 'AWS::NoValue'
       Tags:
+        - Key: costcenter
+          PropagateAtLaunch: true
+          Value: !Ref cost
+        - Key: environment
+          PropagateAtLaunch: true
+          Value: !Ref environment
+        - Key: group
+          PropagateAtLaunch: true
+          Value: !Ref group
         - Key: Name
           PropagateAtLaunch: true
           Value: !Join
             - ''
-            - - 'BIG-IP Autoscale Instance: '
-              - !Ref 'AWS::StackName'
-        - Key: Application
-          PropagateAtLaunch: true
-          Value: !Ref application
-        - Key: cost
-          PropagateAtLaunch: true
-          Value: !Ref cost
-        - Key: Environment
-          PropagateAtLaunch: true
-          Value: !Ref environment
-        - Key: Group
-          PropagateAtLaunch: true
-          Value: !Ref group
-        - Key: Owner
+            - - !Ref uniqueString
+              - '-bigip-autoscale-instance'
+        - Key: owner
           PropagateAtLaunch: true
           Value: !Ref owner
       VPCZoneIdentifier: !Ref subnets
@@ -499,15 +510,15 @@ Resources:
             - |
               if [[ "${RUNTIME_CONFIG}" =~ ^http.* ]]; then
             - |2
-                   for i in {1..30}; do
+                  for i in {1..30}; do
             - |2
                       curl -sfv --retry 1 --connect-timeout 5 -L "${RUNTIME_CONFIG}" -o /config/cloud/runtime-init.conf && break || sleep 10
             - |2
-                   done
+                  done
             - |
               else
             - |2
-                 printf '%s\n' "${RUNTIME_CONFIG}" | jq .  > /config/cloud/runtime-init.conf
+                  printf '%s\n' "${RUNTIME_CONFIG}" | jq .  > /config/cloud/runtime-init.conf
             - |
               fi
             - |+
@@ -517,7 +528,7 @@ Resources:
             - |
               for i in {1..30}; do
             - |2
-                 curl -fv --retry 1 --connect-timeout 5 -L "${PACKAGE_URL}" -o "/var/config/rest/downloads/${PACKAGE_URL##*/}" && break || sleep 10
+                  curl -fv --retry 1 --connect-timeout 5 -L "${PACKAGE_URL}" -o "/var/config/rest/downloads/${PACKAGE_URL##*/}" && break || sleep 10
             - |
               done
             - |+
@@ -544,8 +555,7 @@ Resources:
 
             - |
               echo "$(date +"%Y-%m-%dT%H:%M:%S.%3NZ") : Startup Script Finish"
-            - |+
-
+            - ''
     Type: 'AWS::AutoScaling::LaunchConfiguration'
   BigipLowCpuAlarm:
     DependsOn: BigipAutoscaleGroup

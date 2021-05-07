@@ -93,6 +93,10 @@ cat <<EOF > parameters.json
     {
         "ParameterKey": "subnets",
         "ParameterValue": "${subnets_param}"
+    },
+    {
+        "ParameterKey": "uniqueString",
+        "ParameterValue": "<UNIQUESTRING>"
     }
 ]
 EOF

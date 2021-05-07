@@ -497,27 +497,27 @@ Outputs:
     Description: bigip's instance-id
     Value: !GetAtt [BigipStandalone, Outputs.bigIpInstanceId]
   bigIpManagementPrivateIp:
-    Description: private management address.
+    Description: bigip's private management address
     Value: !GetAtt [BigipStandalone, Outputs.bigIpManagementInterfacePrivateIp]
   bigIpManagementPublicIp:
-    Description: public management address. WARNING - For eval purposes only. Production should never have Management interface exposed to Internet.
+    Description: bigip's public management address. WARNING - For eval purposes only. Production should never have the management interface exposed to Internet
     Value: !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
   bigIpManagementSsh:
-    Description: ssh login to management address. WARNING - For eval purposes only. Production should never have Management interface exposed to Internet.
+    Description: ssh login to bigip's management address. WARNING - For eval purposes only. Production should never have the management interface exposed to Internet
     Value: !Join
       - ''
       - - 'ssh admin@'
         - !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
   bigIpManagementUrl443:
     Condition: 2nic
-    Description: url to management address. WARNING - For eval purposes only. Production should never have Management interface exposed to Internet.
+    Description: url to bigip's management address. WARNING - For eval purposes only. Production should never have the management interface exposed to Internet
     Value: !Join
       - ''
       - - 'https://'
         - !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
   bigIpManagementUrl8443:
     Condition: 1nic
-    Description: url to management address. WARNING - For eval purposes only. Production should never have Management interface exposed to Internet.
+    Description: url to bigip's management address. WARNING - For eval purposes only. Production should never have the management interface exposed to Internet
     Value: !Join
       - ''
       - - 'https://'
@@ -680,7 +680,7 @@ Parameters:
   uniqueString:
     AllowedPattern: '^[a-zA-Z][a-zA-Z0-9]{1,11}$'
     ConstraintDescription: Must Contain between 1 and 12 alphanumeric characters with first character as a letter.
-    Default: myBIGIP
+    Default: myUniqStr
     Description: Unique String used when creating object names or Tags.
     Type: String
   version:
@@ -740,6 +740,7 @@ Resources:
         mgmtSubnetId: !Select [0, !Split [',', !GetAtt [Network, Outputs.subnetsA]]]
         numSecondaryPrivateIpAddress: 1
         sshKey: !Ref sshKey
+        uniqueString: !Ref uniqueString
   Dag:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
