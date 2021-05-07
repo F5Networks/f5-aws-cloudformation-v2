@@ -99,7 +99,7 @@ This solution leverages more traditional Auto Scale configuration management pra
       - Additional cloud services like [VPC endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints.html) can be used to address calls to native services traversing the Internet.
   - See [Security](#security) section for more details. 
 
-- If you have cloned this repository in order to modify the templates or BIG-IP config files and published to your own location (NOTE: Cloudformation can only reference S3 locations for templates and not generic URLs like from github), you can use the **s3BucketName**,  **s3BucketRegion** and **artifactLocation** input parameters to specify the new location of the customized templates and the **bigIpRuntimeInitConfig** input parameter to specify the new location of the BIG-IP Runtime-Init config. See main [/examples/README.md](../../README.md#cloud-configuration) for more template customization details. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details.  
+- If you have cloned this repository in order to modify the templates or BIG-IP config files and published to your own location (NOTE: CloudFormation can only reference S3 locations for templates and not generic URLs like from github), you can use the **s3BucketName**,  **s3BucketRegion** and **artifactLocation** input parameters to specify the new location of the customized templates and the **bigIpRuntimeInitConfig** input parameter to specify the new location of the BIG-IP Runtime-Init config. See main [/examples/README.md](../../README.md#cloud-configuration) for more template customization details. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details.  
 
 - In this solution, the BIG-IP VE has the [LTM](https://f5.com/products/big-ip/local-traffic-manager-ltm) and [ASM](https://f5.com/products/big-ip/application-security-manager-asm) modules enabled to provide advanced traffic management and web application security functionality. 
 
@@ -234,7 +234,7 @@ For next steps, see [Validating the Deployment](#validating-the-deployment).
 
 You will most likely want or need to change the BIG-IP configuration. This generally involves referencing or customizing a [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) configuration file and passing a new URL through the **bigIpRuntimeInitConfig** template parameter.
 
-**IMPORTANT**: Note, any URLs pointing to git **must** use the raw file format (ex. "raw.githubusercontent.com")
+**IMPORTANT**: Any URLs pointing to git **must** use the raw file format (for example, "raw.githubusercontent.com")
 
 F5 has provided the following example configuration files in the `examples/autoscale/bigip-configurations` folder:
 
@@ -334,7 +334,7 @@ This section describes how to validate the template deployment, test the WAF ser
 
 ### Validating the Deployment
 
-To view the status of the example and module stack deployments in the AWS Console, navigate to Cloudformation->Stacks->***Your stack name***. You should see a series of stacks, including one for the Parent Quickstart template as well as the Network, Application, DAG, BIG-IP nested templates. The creation status for each stack deployment should be "CREATE_COMPLETE".  
+To view the status of the example and module stack deployments in the AWS Console, navigate to CloudFormation->Stacks->***Your stack name***. You should see a series of stacks, including one for the Parent Quickstart template as well as the Network, Application, DAG, BIG-IP nested templates. The creation status for each stack deployment should be "CREATE_COMPLETE".  
 
 Expected Deploy time for entire stack =~ 15 minutes.
 
@@ -345,7 +345,7 @@ If any of the stacks are in a failed state, proceed to the [Troubleshooting Step
 As mentioned in [Configuration notes](#important-configuration-notes), by default, this solution does not create a password authenticated user and accessing or logging into the instances themselves is for demonstration or debugging purposes only.
 
 From Template Outputs:
-  - **Console**: Navigate to Cloudformation->**STACK_NAME**->Outputs
+  - **Console**: Navigate to CloudFormation->**STACK_NAME**->Outputs
   - **AWS CLI**: 
       ```bash
       aws cloudformation describe-stacks --region ${REGION} --stack-name ${STACK_NAME}  --query  "Stacks[0].Outputs"
@@ -354,7 +354,7 @@ From Template Outputs:
   - Obtain an Instance ID of one of the instances from the Autoscale Group:
     - **Console**:
       - Gather BigipAutoscaleGroup name
-      - Navigate to Cloudformation->**STACK_NAME**->Outputs->**BigipAutoscaleGroup** 
+      - Navigate to CloudFormation->**STACK_NAME**->Outputs->**BigipAutoscaleGroup** 
       - Navigate to EC2->Autos Scaling Groups->**BigipAutoscaleGroup**->"Instance Management" Tab
     - **AWS CLI**: 
         ```bash
@@ -432,7 +432,7 @@ From Template Outputs:
 
 To test the WAF service, perform the following steps:
 - Obtain the address of the WAF service:
-  - **Console**: Navigate to Cloudformation>**STACK_NAME**->Outputs->**wafExternalHttpsUrl** 
+  - **Console**: Navigate to CloudFormation>**STACK_NAME**->Outputs->**wafExternalHttpsUrl** 
   - **AWS CLI**: 
       ```bash
       aws cloudformation describe-stacks --region ${REGION} --stack-name ${STACK_NAME}  --query  "Stacks[0].Outputs[?OutputKey=='wafExternalHttpsUrl'].OutputValue" --output text
@@ -473,7 +473,7 @@ In order to update the BIG-IP configuration:
       - ```https://raw.githubusercontent.com/myAccount/myRepo/0.0.1/runtime-init.conf```
       - to
       - ```https://raw.githubusercontent.com/myAccount/myRepo/0.0.2/runtime-init.conf```
-  4. Update the Cloudformation Stack with new **bigIpRuntimeInitConfig** parameter
+  4. Update the CloudFormation Stack with new **bigIpRuntimeInitConfig** parameter
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
         --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v0.0.0.1/examples/autoscale/payg/autoscale.yaml \
@@ -483,7 +483,7 @@ In order to update the BIG-IP configuration:
 All lifecycle elements are now managed by the model as well. For example:
 
 In order to update the BIG-IP OS version:
-  1. Update the Cloudformation Stack with new **imageName** parameter
+  1. Update the CloudFormation Stack with new **imageName** parameter
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
         --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v0.0.0.1/examples/autoscale/payg/autoscale.yaml \
@@ -491,7 +491,7 @@ In order to update the BIG-IP OS version:
       ```
 
 In order to update the BIG-IP instance size:
-  1. Update the Cloudformation Stack with new **instanceType** parameter
+  1. Update the CloudFormation Stack with new **instanceType** parameter
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
         --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v0.0.0.1/examples/autoscale/payg/autoscale.yaml \
@@ -567,7 +567,7 @@ There are generally two classes of issues:
 
 In the even that a template in the stack failed, click on the name of a failed stack and then click `Events`. Check the `Status Reason` column for the failed event for details about the cause. 
 
-**When creating a Github issue for a template, please include as much information as possible from the failed Cloudformation stack events.**
+**When creating a Github issue for a template, please include as much information as possible from the failed CloudFormation stack events.**
 
 Common deployment failure causes include:
 - Required fields were left empty or contained incorrect values (input type mismatch, prohibited characters, etc.) causing template validation failure
@@ -598,7 +598,7 @@ aws ec2 get-console-output --region ${REGION}  --instance-id ${INSTANCE_ID}
 
 ## Security
 
-This Cloud Formation template downloads helper code to configure the BIG-IP system:
+This CloudFormation template downloads helper code to configure the BIG-IP system:
 
 - f5-bigip-runtime-init.gz.run: The self-extracting installer for the F5 BIG-IP Runtime Init RPM can be verified against a SHA256 checksum provided as a release asset on the F5 BIG-IP Runtime Init public Github repository, for example: https://github.com/F5Networks/f5-bigip-runtime-init/releases/download/1.2.0/f5-bigip-runtime-init-1.2.0-1.gz.run.sha256.
 - F5 BIG-IP Runtime Init: The self-extracting installer script extracts, verifies, and installs the F5 BIG-IP Runtime Init RPM package. Package files are signed by F5 and automatically verified using GPG.
@@ -657,7 +657,7 @@ List of endpoints BIG-IP may contact during onboarding:
 
 For more information on F5 solutions for AWS, including manual configuration procedures for some deployment scenarios, see the AWS section of [Public Cloud Docs](http://clouddocs.f5.com/cloud/public/v1/).
 
-For information on getting started using F5's Cloudformation templates on GitHub, see [Amazon Web Services: Solutions 101](https://clouddocs.f5.com/cloud/public/v1/aws/AWS_solutions101.html). 
+For information on getting started using F5's CloudFormation templates on GitHub, see [Amazon Web Services: Solutions 101](https://clouddocs.f5.com/cloud/public/v1/aws/AWS_solutions101.html). 
 
 
 ## Getting Help

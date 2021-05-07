@@ -5,7 +5,7 @@ Fixes #<issueid>
 WIP #<issueid>
 ...
 
-#### What's this change do?
+#### What does this change do?
 
 #### Where should the reviewer start?
 

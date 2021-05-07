@@ -1,15 +1,15 @@
-# F5 AWS Cloudformation Templates
+# F5 AWS CloudFormation Templates
 
 [![Releases](https://img.shields.io/github/release/f5networks/f5-aws-cloudformation-v2.svg)](https://github.com/f5networks/f5-aws-cloudformation-v2/releases)
 [![Issues](https://img.shields.io/github/issues/f5networks/f5-aws-cloudformation-v2.svg)](https://github.com/f5networks/f5-aws-cloudformation-v2/issues)
   
 
-## F5 AWS Cloudformation 2.0
+## F5 AWS CloudFormation 2.0
 
 
 ## Introduction
 
-Welcome to the GitHub repository for F5's Cloudformation Templates v2. All of the templates in this repository have been developed by F5 Networks engineers. This repository contains one main directory: *examples*.
+Welcome to the GitHub repository for F5's CloudFormation Templates v2. All of the templates in this repository have been developed by F5 Networks engineers. This repository contains one main directory: *examples*.
 
 - **examples**<br>
   These are our next-generation Cloud Solutions Templates 2.0 (CST2) which have been designed to provide an improved user experience via fewer templates, simplified full-stack deployments, enable customization via a new modular nested/linked architecture, and more. The example templates in this directory have been tested and verified to work as-is and are intended to provide reference deployments of F5 BIG-IP Virtual Editions. 

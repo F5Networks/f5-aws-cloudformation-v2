@@ -31,20 +31,20 @@
 
 ## Introduction
 
-The goal of this solution is to reduce prerequisits and complexity to a minimum so with a few clicks, a user can quickly deploy a BIG-IP, login and begin exploring the BIG-IP platform in a working full-stack deployment capable of passing traffic. 
+With this solution, you can quickly deploy a BIG-IP and begin exploring the BIG-IP platform in a working full-stack deployment that can pass traffic.
 
-This solution uses a parent template to launch several linked child templates (modules) to create a full example stack for the BIG-IP. The linked templates are located in the `examples/modules` directory in this repository. *F5 encourages you to clone this repository and modify these templates to fit your use case.*
+This solution uses a parent template to launch several linked child templates (modules) to create a full example stack for the BIG-IP. The linked templates are in the `examples/modules` directory in this repository. *F5 recommends you clone this repository and modify these templates to fit your use case.*
 
 The modules below create the following resources:
 
-- **Network**: A virtual network (aka vpc), subnets, internet/nat gateways, DHCP options, network ACLs and others network related resources. 
+- **Network**: A virtual network (also known as VPC), subnets, internet/NAT gateways, DHCP options, network ACLs, and other network-related resources. 
 - **Application**: A generic application for use when demonstrating live traffic through the BIG-IP.
-- **Disaggregation** *(DAG/Ingress)*:  Resources required to get traffic to the BIG-IP, including AWS Security Groups and Public IP Addresses.
+- **Disaggregation** *(DAG/Ingress)*: Resources required to get traffic to the BIG-IP, including AWS Security Groups and Public IP Addresses.
 - **BIG-IP**: a BIG-IP instance provisioned with Local Traffic Manager (LTM) and Application Security Manager (ASM). 
 
-By default, this solution creates a single Availability Zone VPC with four subnets, an example Web Application instance and a PAYG BIG-IP instance with three network interfaces (one for management and two for dataplane/application traffic - called external and internal).  Application traffic from the Internet traverses an external network interface configured with both public and private IP addresses. Traffic to the application traverses an internal network interface configured with a private IP address.
+By default, this solution creates a single Availability Zone VPC with four subnets, an example Web Application instance and a PAYG BIG-IP instance with three network interfaces (one for management and two for dataplane/application traffic - called external and internal). Application traffic from the Internet traverses an external network interface configured with both public and private IP addresses. Traffic to the application traverses an internal network interface configured with a private IP address.
 
-***DISCLAIMER/WARNING***: To reduce prerequisits and complexity to a bare minimum for evaluation purposes only, this quickstart provides immediate access to the management interface via a Public IP (AWS EIP).  At the very *minimum*, configure the **restrictedSrcAddressMgmt** parameter to limit access to your client IP or trusted network.  In production deployments, management access should never be directly exposed to the Internet and instead should be accessed via typical managment best practices like jumpboxes/bastion hosts, vpns, etc.  
+***DISCLAIMER/WARNING***: To reduce prerequisits and complexity to a bare minimum for evaluation purposes only, this quickstart provides immediate access to the management interface via a Public IP (AWS EIP). At the very *minimum*, configure the **restrictedSrcAddressMgmt** parameter to limit access to your client IP or trusted network. In production deployments, management access should never be directly exposed to the Internet and instead should be accessed via typical managment best practices like jumpboxes/bastion hosts, vpns, etc. 
 
 ## Diagram
 
@@ -54,9 +54,9 @@ By default, this solution creates a single Availability Zone VPC with four subne
 
 
 - An SSH Key pair in AWS for management access to BIG-IP VE. For more information about creating and/or importing the key pair in AWS, see AWS's ssh key [documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html).
-- Accepted the EULA for the F5 image in the AWS marketplace. If you have not deployed BIG-IP VE in your environment before, search for F5 in the Marketplace and then click **Accept Software Terms**.  This only appears the first time you attempt to launch an F5 image. By default, this solution deploys the [F5 BIG-IP Best 25Mbps](https://aws.amazon.com/marketplace/pp/F5-Networks-F5-BIG-IP-Virtual-Edition-BEST-PAYG-25/B079C4WR32) images. For more information, see [K14810: Overview of BIG-IP VE license and throughput limits](https://support.f5.com/csp/article/K14810).
+- Accepted the EULA for the F5 image in the AWS marketplace. If you have not deployed BIG-IP VE in your environment before, search for F5 in the Marketplace and then click **Accept Software Terms**. This only appears the first time you attempt to launch an F5 image. By default, this solution deploys the [F5 BIG-IP Best 25Mbps](https://aws.amazon.com/marketplace/pp/F5-Networks-F5-BIG-IP-Virtual-Edition-BEST-PAYG-25/B079C4WR32) images. For more information, see [K14810: Overview of BIG-IP VE license and throughput limits](https://support.f5.com/csp/article/K14810).
 - The appropriate permission in AWS to launch CloudFormation (CFT) templates. You must be using an IAM user with the AdministratorAccess policy attached and have permission to create the objects contained in this solution. VPCs, Routes, EIPs, EC2 Instances. For details on permissions and all AWS configuration, see AWS's [documentation](https://aws.amazon.com/documentation/). 
-- Sufficent **EC2 Resources** to deploy this solution. For more information, see AWS's resource limit [documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-resource-limits.html).  *NOTE:* The most likely resource limit to be hit by this solution is for Public IP addresses (AWS EIPs). This solution requires a minimum of two EIP addresses (for Single NIC deployments - one for the External Self-IP and one for an example Virtual Service) or three for Multi-Nic deployments (one for the Management Port, one for the External Self-IP and one for an example Virtual Service). By default, this solution deploys a 3NIC BIG-IP with 3 EIPs.  
+- Sufficent **EC2 Resources** to deploy this solution. For more information, see AWS's resource limit [documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-resource-limits.html). *NOTE:* The most likely resource limit to be hit by this solution is for Public IP addresses (AWS EIPs). This solution requires a minimum of two EIP addresses (for Single NIC deployments - one for the External Self-IP and one for an example Virtual Service) or three for Multi-Nic deployments (one for the Management Port, one for the External Self-IP and one for an example Virtual Service). By default, this solution deploys a 3NIC BIG-IP with 3 EIPs. 
 
 
 ## Important Configuration Notes
@@ -75,9 +75,9 @@ By default, this solution creates a single Availability Zone VPC with four subne
       - Additional cloud services like [VPC endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints.html) can be used to address calls to native services traversing the Internet.
   - See [Security](#security) section for more details. 
 
-- This solution template provides an **initial** deployment only for an "infrastructure" use case (meaning that it does not support managing the entire deployment exclusively via the template's "Update-Stack" function).  This solution leverages cloud-init to send the instance **user_data**, which is only used to provide an initial BIG-IP configuration and not as the primary configuration API for a long-running platform.  Although "Update-Stack" can be used to update some cloud resources, as the BIG-IP configuration needs to align with the cloud resources, like IPs to NICs, updating one without the other can result in inconsistent states, while updating other resources, like the **imageName** or **instanceType**, can trigger an entire instance re-deloyment. For instance, to upgrade software versions, traditional in-place upgrades should be leveraged. See [AskF5 Knowledge Base](https://support.f5.com/csp/article/K84554955) and [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more information.
+- This solution template provides an **initial** deployment only for an "infrastructure" use case (meaning that it does not support managing the entire deployment exclusively via the template's "Update-Stack" function). This solution leverages cloud-init to send the instance **user_data**, which is only used to provide an initial BIG-IP configuration and not as the primary configuration API for a long-running platform. Although "Update-Stack" can be used to update some cloud resources, as the BIG-IP configuration needs to align with the cloud resources, like IPs to NICs, updating one without the other can result in inconsistent states, while updating other resources, like the **imageName** or **instanceType**, can trigger an entire instance re-deloyment. For instance, to upgrade software versions, traditional in-place upgrades should be leveraged. See [AskF5 Knowledge Base](https://support.f5.com/csp/article/K84554955) and [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more information.
 
-- If you have cloned this repository in order to modify the templates or BIG-IP config files and published to your own location (NOTE: Cloudformation can only reference S3 locations for templates and not generic URLs like from github), you can use the **s3BucketName**,  **s3BucketRegion** and **artifactLocation** input parameters to specify the new location of the customized templates and the **bigIpRuntimeInitConfig** input parameter to specify the new location of the BIG-IP Runtime-Init config. See main [/examples/README.md](../README.md#cloud-configuration) for more template customization details. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details.  
+- If you have cloned this repository in order to modify the templates or BIG-IP config files and published to your own location (NOTE: CloudFormation can only reference S3 locations for templates and not generic URLs like from github), you can use the **s3BucketName**, **s3BucketRegion** and **artifactLocation** input parameters to specify the new location of the customized templates and the **bigIpRuntimeInitConfig** input parameter to specify the new location of the BIG-IP Runtime-Init config. See main [/examples/README.md](../README.md#cloud-configuration) for more template customization details. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details. 
 
 - In this solution, the BIG-IP VE has the [LTM](https://f5.com/products/big-ip/local-traffic-manager-ltm) and [ASM](https://f5.com/products/big-ip/application-security-manager-asm) modules enabled to provide advanced traffic management and web application security functionality. 
 
@@ -158,7 +158,7 @@ The easiest way to deploy this CloudFormation template is to use the Launch butt
   - Click "Next"
 
 *Step 4: Review*
-  - Capabilities -> Check "Acknowelgement" Boxes
+  - Capabilities -> Check "Acknowledgment" Boxes
   - Click "Create Stack"
 
 For next steps, see [Validating the Deployment](#validating-the-deployment).
@@ -198,7 +198,7 @@ For next steps, see [Validating the Deployment](#validating-the-deployment).
 
 You will most likely want or need to change the BIG-IP configuration. This generally involves referencing or customizing a [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) configuration file and passing it through the **bigIpRuntimeInitConfig** template parameter.
 
-**IMPORTANT**: Note, any URLs pointing to git **must** use the raw file format (ex. "raw.githubusercontent.com")
+**IMPORTANT**: Any URLs pointing to git **must** use the raw file format (for example, "raw.githubusercontent.com").
 
 F5 has provided the following example configuration files in the `examples/quickstart/bigip-configurations` folder:
 
@@ -216,18 +216,18 @@ See [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init
 
 By default, this solution deploys a 3NIC BIG-IP using the example `runtime-init-conf-3nic-payg.yaml` runtime-init config file.
 
-In order to deploy a **1NIC** instance:
+To deploy a **1NIC** instance:
   1. Update the **bigIpRuntimeInitConfig** input parameter to reference a corresponding `1nic` config file (ex. runtime-init-conf-1nic-payg.yaml )
   2. Update the **numNics** input parameter to **1**
 
-In order to deploy a **2NIC** instance:
+To deploy a **2NIC** instance:
   1. Update the **bigIpRuntimeInitConfig** input parameter to reference a corresponding `2nic` config file (ex. runtime-init-conf-2nic-payg.yaml )
   2. Update the **numNics** input parameter to **2**
 
 
-Some changes require republishing/rehosting configuration files (git, s3, etc). For example:
+Some changes require republishing/rehosting configuration files (git, s3, etc.). For example:
 
-In order to deploy a **BYOL** instance:
+To deploy a **BYOL** instance:
 
   1. edit/modify the Declarative Onboarding (DO) declaration in a corresponding `byol` runtime-init config file with the new `regKey` value. 
 
@@ -238,7 +238,7 @@ ex.
             licenseType: regKey
             regKey: AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE
 ```
-  2. publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (ex. git, S3, etc.). 
+  2. publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example: git, S3, etc.). 
   3. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL of the updated configuration.
   4. Update the **licenseType** input parameter to use `byol` or **customImageId** input parameter to a valid byol image.
 
@@ -261,7 +261,7 @@ This section describes how to validate the template deployment, test the WAF ser
 
 ### Validating the Deployment
 
-To view the status of the example and module stack deployments in the AWS Console, navigate to Cloudformation->Stacks->***Your stack name***. You should see a series of stacks, including one for the Parent Quickstart template as well as the Network, Application, DAG, BIG-IP nested templates. The creation status for each stack deployment should be "CREATE_COMPLETE".  
+To view the status of the example and module stack deployments in the AWS Console, navigate to CloudFormation->Stacks->***Your stack name***. You should see a series of stacks, including one for the Parent Quickstart template as well as the Network, Application, DAG, BIG-IP nested templates. The creation status for each stack deployment should be "CREATE_COMPLETE".
 
 Expected Deploy time for entire stack =~ 13-15 minutes.
 
@@ -270,21 +270,21 @@ If any of the stacks are in a failed state, proceed to the [Troubleshooting Step
 ### Accessing the BIG-IP
 
 From Parent Template Outputs:
-  - **Console**: Navigate to Cloudformation->**STACK_NAME**->Outputs
+  - **Console**: Navigate to CloudFormation->**STACK_NAME**->Outputs
   - **AWS CLI**: 
       ```bash
       aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME}  --query  "Stacks[0].Outputs" 
       ```
 
   - Obtain the Instance Id *(will be used for password later)*:
-    - **Console**: Navigate to Cloudformation->**STACK_NAME**->Outputs->**bigIpInstanceId** 
+    - **Console**: Navigate to CloudFormation->**STACK_NAME**->Outputs->**bigIpInstanceId** 
     - **AWS CLI**: 
         ```bash
         aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpInstanceId'].OutputValue" --output text
         ```
 
   - Obtain the IP address of the BIG-IP Mangement Port:
-    - **Console**: Navigate to Cloudformation->**STACK_NAME**->Outputs->**bigIpManagementPublicIp** 
+    - **Console**: Navigate to CloudFormation->**STACK_NAME**->Outputs->**bigIpManagementPublicIp** 
     - **AWS CLI**: 
       - Public IPs: 
           ```bash
@@ -310,7 +310,7 @@ From Parent Template Outputs:
 
 #### WebUI 
 - Open a browser to the Management IP
-  - NOTE: By default the BIG-IP's WebUI starts with a self-signed cert. Follow your browsers instructions for accepting self-signed certs (ex. If using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, Click "Accept Risk and Continue" ).
+  - NOTE: By default, the BIG-IP's WebUI starts with a self-signed cert. Follow your browser's instructions for accepting self-signed certs (ex. If using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, Click "Accept Risk and Continue" ).
   - To Login: 
     - username: quickstart
     - password: **bigIpInstanceId** (see above to obtain from template "Outputs")
@@ -355,7 +355,7 @@ From Parent Template Outputs:
 
 To test the WAF service, perform the following steps:
 - Obtain the address of the WAF service:
-  - **Console**: Navigate to Cloudformation->**STACK_NAME**->Outputs->**vip1PublicUrl** 
+  - **Console**: Navigate to CloudFormation->**STACK_NAME**->Outputs->**vip1PublicUrl** 
   - **AWS CLI**: 
       ```bash 
       aws --region ${REGION}  cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='vip1PublicUrl'].OutputValue" --output text
@@ -376,7 +376,7 @@ To test the WAF service, perform the following steps:
 
 - Verify the application is responding:
   - Paste the IP address in a browser: ```https://${IP_ADDRESS_FROM_OUTPUT}```
-      - NOTE: By default the Virtual Service starts with a self-signed cert. Follow your browsers instructions for accepting self-signed certs (ex. If using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, Click "Accept Risk and Continue", etc. ).
+      - NOTE: By default, the Virtual Service starts with a self-signed cert. Follow your browsers instructions for accepting self-signed certs (ex. If using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, Click "Accept Risk and Continue", etc. ).
   - Use curl: 
       ```shell
        curl -sko /dev/null -w '%{response_code}\n' https://${IP_ADDRESS_FROM_OUTPUT}
@@ -420,7 +420,7 @@ There are generally two classes of issues:
 
 In the even that a template in the stack failed, click on the name of a failed stack and then click `Events`. Check the `Status Reason` column for the failed event for details about the cause. 
 
-**When creating a Github issue for a template, please include as much information as possible from the failed Cloudformation stack events.**
+**When creating a Github issue for a template, please include as much information as possible from the failed CloudFormation stack events.**
 
 Common deployment failure causes include:
 - Required fields were left empty or contained incorrect values (input type mismatch, prohibited characters, etc.) causing template validation failure
@@ -451,7 +451,7 @@ aws ec2 get-console-output --region ${REGION}  --instance-id <ID>'
 
 ## Security
 
-This Cloud Formation template downloads helper code to configure the BIG-IP system:
+This CloudFormation template downloads helper code to configure the BIG-IP system:
 
 - f5-bigip-runtime-init.gz.run: The self-extracting installer for the F5 BIG-IP Runtime Init RPM can be verified against a SHA256 checksum provided as a release asset on the F5 BIG-IP Runtime Init public Github repository, for example: https://github.com/F5Networks/f5-bigip-runtime-init/releases/download/1.2.0/f5-bigip-runtime-init-1.2.0-1.gz.run.sha256.
 - F5 BIG-IP Runtime Init: The self-extracting installer script extracts, verifies, and installs the F5 BIG-IP Runtime Init RPM package. Package files are signed by F5 and automatically verified using GPG.
@@ -513,7 +513,7 @@ These templates have been tested and validated with the following versions of BI
 
 For more information on F5 solutions for AWS, including manual configuration procedures for some deployment scenarios, see the AWS section of [Public Cloud Docs](http://clouddocs.f5.com/cloud/public/v1/).
 
-For information on getting started using F5's Cloudformation templates on GitHub, see [Amazon Web Services: Solutions 101](https://clouddocs.f5.com/cloud/public/v1/aws/AWS_solutions101.html). 
+For information on getting started using F5's CloudFormation templates on GitHub, see [Amazon Web Services: Solutions 101](https://clouddocs.f5.com/cloud/public/v1/aws/AWS_solutions101.html). 
 
 
 ## Getting Help
