@@ -4,8 +4,8 @@ CUR_DIR := $(cwd)
 PROJECT_DIR := .
 LINK_CHECK_DIR := cloud-tools/link_checker
 PARSER_DIR := cloud-tools/parameter-parser
-DIFF_VAR :=`diff automated-test-scripts/parameters_diff_expected.yaml ${PARSER_DIR}/parameters_diff.yaml`
-DIFF_VAR_OUTPUTS :=`diff automated-test-scripts/outputs_diff_expected.yaml ${PARSER_DIR}/outputs_diff.yaml`
+DIFF_VAR :=`diff cloud-tools/parameter-parser/parameters_diff_expected.yaml ${PARSER_DIR}/parameters_diff.yaml`
+DIFF_VAR_OUTPUTS :=`diff cloud-tools/parameter-parser/outputs_diff_expected.yaml ${PARSER_DIR}/outputs_diff.yaml`
 
 
 .PHONY: help
