@@ -59,7 +59,7 @@ This solution leverages more traditional Auto Scale configuration management pra
 
 ## Diagram
 
-![Configuration Example](https://github.com/F5Networks/f5-aws-cloudformation-v2/blob/master/examples/autoscale/bigiq/diagram.png)
+![Configuration Example](diagram.png)
 
 ## Prerequisites
 
@@ -125,8 +125,15 @@ This solution leverages more traditional Auto Scale configuration management pra
 | appScalingMaxSize | No | Maximum number of Application instances (2-50) that can be created in the Auto Scale Group. |
 | appScalingMinSize | No | Minimum number of Application instances (1-49) you want available in the Auto Scale Group. |
 | artifactLocation | No | The path in the S3Bucket where the modules folder is located. |
+| bigIpCustomImageId | No | Provide BIG-IP AMI ID you wish to deploy. bigIpCustomImageId is required when bigIpImage is not specified. |
+| bigIpImage | No | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. bigIpImage is required when bigIpCustomImageId is not specified. | 
+| bigIpInstanceType | No | Enter valid instance type. |
 | bigIpRuntimeInitConfig | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format. |
 | bigIpRuntimeInitPackageUrl | No | Supply a URL to the bigip-runtime-init package. |
+| bigIpScaleInCpuThreshold | No | Low CPU Percentage threshold to begin scaling in BIG-IP VE instances. | 
+| bigIpScaleInThroughputThreshold | No | Incoming bytes threshold to begin scaling in BIG-IP VE instances. | 
+| bigIpScaleOutCpuThreshold | No | High CPU Percentage threshold to begin scaling out BIG-IP VE instances. | 
+| bigIpScaleOutThroughputThreshold | No | Incoming bytes threshold to begin scaling out BIG-IP VE instances. |
 | bigIpScalingMaxSize | No | Maximum number of BIG-IP instances (2-100) that can be created in the AutoScale Group. |
 | bigIpScalingMinSize | No | Minimum number of BIG-IP instances (1-99) you want available in the AutoScale Group. |
 | bigIqAddress | Yes | The IP address (or hostname) for the BIG-IQ used when licensing the BIG-IP. Note: The AWS function created by this template will make a REST call to the BIG-IQ (already existing) to revoke a license assignment when a BIG-IP instance is deallocated. This value should match the BIG-IQ address specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter. |
@@ -139,11 +146,8 @@ This solution leverages more traditional Auto Scale configuration management pra
 | bigIqUsername | Yes | The BIG-IQ username used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ username specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter. |
 | bigIqUtilitySku | No | The BIG-IQ utility license SKU used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ utilty SKU specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter. |
 | cost | No | Cost Center Tag. |
-| customImageId | No | Provide BIG-IP AMI ID you wish to deploy. customImageId is required when imageName is not specified. |
 | environment | No | Environment Tag. |
 | group | No | Group Tag. |
-| imageName | No | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. imageName is required when not using a customImageId. | 
-| instanceType | No | Enter valid instance type. |
 | lambdaS3BucketName | Yes | S3 bucket with BIG-IQ Revoke function. |
 | lambdaS3Key | Yes | The top-level key in the lambda S3 bucket where the lambda function is located. |
 | loggingS3BucketName | No | The name of the existing S3 bucket where BIG-IP logs will be sent. |
@@ -446,7 +450,7 @@ From Template Outputs:
 
   - **SSH key authentication**: 
       ```bash
-      ssh admin@${IP_ADDRESS_FROM_OUTPUT} -i ${PATH_TO_YOUR_PRIVATE_sshKey}
+      ssh admin@${IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
       ```
 
 #### WebUI 
@@ -645,6 +649,8 @@ Common deployment failure causes include:
 
 If all stacks were created "successfully" but maybe the BIG-IP or Service is not reachable, then log in to the BIG-IP instance via SSH to confirm BIG-IP deployment was successful (for example, if startup scripts completed as expected on the BIG-IP). To verify BIG-IP deployment, perform the following steps:
 - Obtain the IP address of the BIG-IP instance. See instructions [above](#accessing-the-bigip-ip)
+- Check startup-script to make sure was installed/interpolated correctly:
+  - ```cat /opt/cloud/instance/user-data.txt```
 - Check the logs (in order of invocation):
   - cloud-init Logs:
     - */var/log/boot.log*

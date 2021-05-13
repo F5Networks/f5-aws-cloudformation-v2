@@ -48,7 +48,7 @@ By default, this solution creates a single Availability Zone VPC with four subne
 
 ## Diagram
 
-![Configuration Example](https://github.com/F5Networks/f5-aws-cloudformation-v2/blob/master/examples/quickstart/diagram.png)
+![Configuration Example](diagram.png)
 
 ## Prerequisites
 
@@ -93,14 +93,14 @@ By default, this solution creates a single Availability Zone VPC with four subne
 | --- | --- | --- |
 | appContainerName | No | Application docker image name. |
 | application | No | Application Tag. |
+| bigIpCustomImageId | No | Provide BIG-IP AMI ID you wish to deploy. |
+| bigIpImage | No | F5 BIG-IP Performance Type. |
+| bigIpInstanceType | No | Enter valid instance type. |
 | bigIpRuntimeInitConfig | No | URL or JSON string for BIGIP Runtime Init config. |
 | bigIpRuntimeInitPackageUrl | No | Supply a URL to the bigip-runtime-init package |
 | cost | No | Cost Center Tag. |
-| customImageId | No | Provide BIG-IP AMI ID you wish to deploy. |
 | environment | No | Environment Tag. |
 | group | No | Group Tag. |
-| imageName | No | F5 BIG-IP Performance Type. |
-| instanceType | No | Enter valid instance type. |
 | licenseType | No | Specifies licence type used for BIG-IP VE. Default is payg. If select byol, see additional configuration notes. |
 | numAzs | No | Number of Availability Zones. Default = 1 |
 | numSubnets | No | Number of Subnets. NOTE: Quickstart requires leaving at Default = 4 as Application Subnet is hardcoded to be in 4th subnet |
@@ -240,7 +240,7 @@ ex.
 ```
   2. publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example: git, S3, etc.). 
   3. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL of the updated configuration.
-  4. Update the **licenseType** input parameter to use `byol` or **customImageId** input parameter to a valid byol image.
+  4. Update the **licenseType** input parameter to use `byol` or **bigIpCustomImageId** input parameter to a valid byol image.
 
 
 In order deploy additional virtual services:
@@ -318,7 +318,7 @@ From Parent Template Outputs:
 #### SSH
   - **SSH key authentication**: 
       ```bash
-      ssh admin@${IP_ADDRESS_FROM_OUTPUT} -i ${PATH_TO_YOUR_PRIVATE_sshKey}
+      ssh admin@${IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
       ```
   - **Password authentication**: 
       ```bash 
@@ -430,6 +430,8 @@ Common deployment failure causes include:
 
 If all stacks were created "successfully" but maybe the BIG-IP or Service is not reachable, then log in to the BIG-IP instance via SSH to confirm BIG-IP deployment was successful (for example, if startup scripts completed as expected on the BIG-IP). To verify BIG-IP deployment, perform the following steps:
 - Obtain the IP address of the BIG-IP instance. See instructions [above](#accessing-the-bigip-ip)
+- Check startup-script to make sure was installed/interpolated correctly:
+  - ```cat /opt/cloud/instance/user-data.txt```
 - Check the logs (in order of invocation):
   - cloud-init Logs:
     - */var/log/boot.log*

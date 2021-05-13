@@ -12,12 +12,12 @@ Resources:
         applicationSubnet: ''
         applicationSubnets: subnet-abcdefg
         createAutoscaleGroup: 'false'
-        customAppImageId: ''
+        customImageId: ''
         instanceType: t2.small
         restrictedSrcAddress: 0.0.0.0/0
         scalingMaxSize: 2
         scalingMinSize: 1
-        setAppPublicIp: 'false'
+        provisionPublicIp: 'false'
         sshKey: example-ssh-key-name
         staticIp: ''
         vpc: example-vpc-name

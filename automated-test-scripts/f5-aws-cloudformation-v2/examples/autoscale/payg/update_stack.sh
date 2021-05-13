@@ -29,103 +29,127 @@ fi
 # Set Parameters using file to eiliminate issues when passing spaces in parameter values
 cat <<EOF > parameters.json
 [
-    { 
+    {
         "ParameterKey": "application",
         "ParameterValue": "f5-app-<DEWPOINT JOB ID>"
     },
-    { 
-        "ParameterKey": "bigIpRuntimeInitConfig",
-        "ParameterValue": $runtimeConfig
+    {
+        "ParameterKey": "appScalingMaxSize",
+        "ParameterValue": "<APP SCALE MAX SIZE>"
     },
-    { 
-        "ParameterKey": "customImageId",
+    {
+        "ParameterKey": "appScalingMinSize",
+        "ParameterValue": "<APP SCALE MIN SIZE>"
+    },
+    {
+        "ParameterKey": "bigIpCustomImageId",
         "ParameterValue": "<CUSTOM IMAGE ID>"
     },
-    { 
-        "ParameterKey": "imageName",
-        "ParameterValue": "<BIGIP IMAGE NAME>"
+    {
+        "ParameterKey": "bigIpImage",
+        "ParameterValue": "<BIGIP IMAGE>"
     },
-    { 
-        "ParameterKey": "instanceType",
+    {
+        "ParameterKey": "bigIpInstanceType",
         "ParameterValue": "<BIGIP INSTANCE TYPE>"
     },
-    { 
-        "ParameterKey": "metricNameSpace",
-        "ParameterValue": "<METRIC NAME SPACE>"
-    },
-    { 
-        "ParameterKey": "notificationEmail",
-        "ParameterValue": "<NOTIFICATION EMAIL>"
-    },
-    { 
-        "ParameterKey": "numAzs",
-        "ParameterValue": "<NUMBER AZS>"
-    },
-    { 
-        "ParameterKey": "numSubnets",
-        "ParameterValue": "<NUMBER SUBNETS>"
-    },
-    { 
-        "ParameterKey": "provisionExternalBigipLoadBalancer",
-        "ParameterValue": "<PROVISION EXTERNAL LB>"
-    },
-    { 
-        "ParameterKey": "provisionInternalBigipLoadBalancer",
-        "ParameterValue": "<PROVISION INTERNAL LB>"
-    },
-    { 
-        "ParameterKey": "provisionPublicIp",
-        "ParameterValue": "<PROVISION PUBLIC IP>"
-    },
-    { 
-        "ParameterKey": "restrictedSrcAddressApp",
-        "ParameterValue": "0.0.0.0/0"
-    },
-    { 
-        "ParameterKey": "restrictedSrcAddressMgmt",
-        "ParameterValue": "0.0.0.0/0"
-    },
-    { 
-        "ParameterKey": "s3BucketName",
-        "ParameterValue": "$bucket_name"
-    },
-    { 
-        "ParameterKey": "s3BucketRegion",
-        "ParameterValue": "$region"
-    },
-    { 
-        "ParameterKey": "loggingS3BucketName",
-        "ParameterValue": "$bucket_name"
-    },
-    { 
-        "ParameterKey": "secretArn",
-        "ParameterValue": "$secret_arn"
-    },
-    { 
-        "ParameterKey": "setPublicSubnet1",
-        "ParameterValue": "<SUBNET1 PUBLIC>"
-    },
-    { 
-        "ParameterKey": "snsEvents",
-        "ParameterValue": "<SNS EVENTS>"
-    },
-    { 
-        "ParameterKey": "sshKey",
-        "ParameterValue": "<SSH KEY>"
-    },
-    { 
-        "ParameterKey": "subnetMask",
-        "ParameterValue": "<SUBNETMASK>"
-    },
-    { 
-        "ParameterKey": "uniqueString",
-        "ParameterValue": "<UNIQUESTRING>"
+    {
+        "ParameterKey": "bigIpRuntimeInitConfig",
+        "ParameterValue": $runtimeConfig
     },
     {
         "ParameterKey": "bigIpRuntimeInitPackageUrl",
         "ParameterValue": "<BIGIP RUNTIME INIT PACKAGEURL>"
     },
-    { 
+    {
+        "ParameterKey": "bigIpScaleInCpuThreshold",
+        "ParameterValue": "<LOW CPU THRESHOLD>"
+    },
+    {
+        "ParameterKey": "bigIpScaleInThroughputThreshold",
+        "ParameterValue": "<SCALE DOWN BYTES THRESHOLD>"
+    },
+    {
+        "ParameterKey": "bigIpScaleOutCpuThreshold",
+        "ParameterValue": "<HIGH CPU THRESHOLD>"
+    },
+    {
+        "ParameterKey": "bigIpScaleOutThroughputThreshold",
+        "ParameterValue": "<SCALE UP BYTES THRESHOLD>"
+    },
+    {
+        "ParameterKey": "loggingS3BucketName",
+        "ParameterValue": "$bucket_name"
+    },
+    {
+        "ParameterKey": "metricNameSpace",
+        "ParameterValue": "<METRIC NAME SPACE>"
+    },
+    {
+        "ParameterKey": "notificationEmail",
+        "ParameterValue": "<NOTIFICATION EMAIL>"
+    },
+    {
+        "ParameterKey": "numAzs",
+        "ParameterValue": "<NUMBER AZS>"
+    },
+    {
+        "ParameterKey": "numSubnets",
+        "ParameterValue": "<NUMBER SUBNETS>"
+    },
+    {
+        "ParameterKey": "provisionExternalBigipLoadBalancer",
+        "ParameterValue": "<PROVISION EXTERNAL LB>"
+    },
+    {
+        "ParameterKey": "provisionInternalBigipLoadBalancer",
+        "ParameterValue": "<PROVISION INTERNAL LB>"
+    },
+    {
+        "ParameterKey": "provisionPublicIp",
+        "ParameterValue": "<PROVISION PUBLIC IP>"
+    },
+    {
+        "ParameterKey": "restrictedSrcAddressApp",
+        "ParameterValue": "0.0.0.0/0"
+    },
+    {
+        "ParameterKey": "restrictedSrcAddressMgmt",
+        "ParameterValue": "0.0.0.0/0"
+    },
+    {
+        "ParameterKey": "s3BucketName",
+        "ParameterValue": "$bucket_name"
+    },
+    {
+        "ParameterKey": "s3BucketRegion",
+        "ParameterValue": "$region"
+    },
+    {
+        "ParameterKey": "secretArn",
+        "ParameterValue": "$secret_arn"
+    },
+    {
+        "ParameterKey": "setPublicSubnet1",
+        "ParameterValue": "<SUBNET1 PUBLIC>"
+    },
+    {
+        "ParameterKey": "snsEvents",
+        "ParameterValue": "<SNS EVENTS>"
+    },
+    {
+        "ParameterKey": "sshKey",
+        "ParameterValue": "<SSH KEY>"
+    },
+    {
+        "ParameterKey": "subnetMask",
+        "ParameterValue": "<SUBNETMASK>"
+    },
+    {
+        "ParameterKey": "uniqueString",
+        "ParameterValue": "<UNIQUESTRING>"
+    },
+    {
         "ParameterKey": "vpcCidr",
         "ParameterValue": "<CIDR>"
     }

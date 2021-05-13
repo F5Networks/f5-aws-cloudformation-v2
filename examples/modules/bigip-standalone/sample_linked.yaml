@@ -28,7 +28,7 @@ Resources:
         mgmtSubnetId: sub-00001
         numSecondaryPrivateIpAddress: 2
         sshKey: example-ssh-key-name
-        uniqueString: myBIGIP
+        uniqueString: myUniqStr
 Outputs:
   stackName:
     Value: !GetAtt BigIp.Outputs.stackName

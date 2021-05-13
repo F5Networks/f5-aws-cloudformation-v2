@@ -31,11 +31,11 @@ echo "RUNTIME CONFIG:$runtimeConfig"
 # Set Parameters using file to eiliminate issues when passing spaces in parameter values
 cat <<EOF > parameters.json
 [
-    { 
+    {
         "ParameterKey": "appContainerName",
         "ParameterValue": "<DOCKER IMAGE>"
     },
-    { 
+    {
         "ParameterKey": "application",
         "ParameterValue": "f5-app-<DEWPOINT JOB ID>"
     },
@@ -43,7 +43,19 @@ cat <<EOF > parameters.json
         "ParameterKey": "artifactLocation",
         "ParameterValue": "$artifact_location"
     },
-    { 
+    {
+        "ParameterKey": "bigIpCustomImageId",
+        "ParameterValue": "<CUSTOM IMAGE>"
+    },
+    {
+        "ParameterKey": "bigIpImage",
+        "ParameterValue": "<BIGIP IMAGE>"
+    },
+    {
+        "ParameterKey": "bigIpInstanceType",
+        "ParameterValue": "<BIGIP INSTANCE TYPE>"
+    },
+    {
         "ParameterKey": "bigIpRuntimeInitConfig",
         "ParameterValue": "$runtimeConfig"
     },
@@ -51,55 +63,43 @@ cat <<EOF > parameters.json
         "ParameterKey": "bigIpRuntimeInitPackageUrl",
         "ParameterValue": "<BIGIP RUNTIME INIT PACKAGEURL>"
     },
-    { 
-        "ParameterKey": "customImageId",
-        "ParameterValue": "<CUSTOM IMAGE>"
-    },
-    { 
-        "ParameterKey": "imageName",
-        "ParameterValue": "<BIGIP IMAGE NAME>"
-    },
-    { 
-        "ParameterKey": "instanceType",
-        "ParameterValue": "<BIGIP INSTANCE TYPE>"
-    },
-    { 
+    {
         "ParameterKey": "licenseType",
         "ParameterValue": "<LICENSE TYPE>"
     },
-    { 
+    {
         "ParameterKey": "numNics",
         "ParameterValue": "<NIC COUNT>"
     },
-    { 
+    {
         "ParameterKey": "restrictedSrcAddressApp",
         "ParameterValue": "0.0.0.0/0"
     },
-    { 
+    {
         "ParameterKey": "restrictedSrcAddressMgmt",
         "ParameterValue": "0.0.0.0/0"
     },
-    { 
+    {
         "ParameterKey": "s3BucketName",
         "ParameterValue": "$bucket_name"
     },
-    { 
+    {
         "ParameterKey": "s3BucketRegion",
         "ParameterValue": "$region"
     },
-    { 
+    {
         "ParameterKey": "sshKey",
         "ParameterValue": "<SSH KEY>"
     },
-    { 
+    {
         "ParameterKey": "throughput",
         "ParameterValue": "<THROUGHPUT>"
     },
-    { 
+    {
         "ParameterKey": "uniqueString",
         "ParameterValue": "<UNIQUESTRING>"
     },
-    { 
+    {
         "ParameterKey": "version",
         "ParameterValue": "<VERSION>"
     }

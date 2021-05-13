@@ -13,7 +13,7 @@ Resources:
         s3Bucket: example-s3-bucket-name
         secretArn: ''
         solutionType: failover
-        uniqueString: myBIGIP
+        uniqueString: myUniqStr
 Outputs:
   stackName:
     Value: !GetAtt Access.Outputs.stackName

@@ -46,15 +46,15 @@ This template deploys a simple example application. It launches a CentOS Linux V
 | appSecurityGroupId | No | ID of Security Group to apply to application. |
 | cost | No | Cost Center Tag. |
 | createAutoscaleGroup | No | Choose 'true' to create the application instances in an autoscaling configuration. |
-| customAppImageId | No | Custom Image AMI ID you wish to deploy. |
+| customImageId | No | Custom Image AMI ID you wish to deploy. |
 | environment | No | Environment Tag. |
 | group | No | Group Tag. |
 | instanceType | No | App EC2 instance type. For example, 't2.small'. |
 | owner | No | Application Tag. |
+| provisionPublicIp | No | To create a Public IP and connect it to the application. |
 | restrictedSrcAddress | Yes | The IP address range that can be used to SSH to the EC2 instances. |
 | scalingMaxSize | No | The maximum number of BIG-IP instances (2-100) that can be created in the Auto Scale Group. |
 | scalingMinSize | No | The minimum number of BIG-IP instances (1-99) you want available in the Auto Scale Group. |
-| setAppPublicIp | No | To create a Public IP and connect it to the application. |
 | sshKey | Yes | Name of an existing EC2 KeyPair to enable SSH access to the instance. |
 | staticIp | No | The private IP address to apply as the primary private address. |
 | uniqueString | Yes | Unique String used when creating object names or Tags. |

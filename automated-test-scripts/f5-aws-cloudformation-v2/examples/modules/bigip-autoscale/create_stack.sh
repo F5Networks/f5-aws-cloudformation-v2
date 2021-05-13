@@ -83,6 +83,30 @@ cat <<EOF > parameters.json
         "ParameterValue": "<PROVISION PUBLIC IP>"
     },
     {
+        "ParameterKey": "scaleInThroughputThreshold",
+        "ParameterValue": "<SCALE DOWN BYTES THRESHOLD>"
+    },
+    {
+        "ParameterKey": "scaleInCpuThreshold",
+        "ParameterValue": "<LOW CPU THRESHOLD>"
+    },
+    {
+        "ParameterKey": "scaleOutThroughputThreshold",
+        "ParameterValue": "<SCALE UP BYTES THRESHOLD>"
+    },
+    {
+        "ParameterKey": "scaleOutCpuThreshold",
+        "ParameterValue": "<HIGH CPU THRESHOLD>"
+    },
+    {
+        "ParameterKey": "scalingMaxSize",
+        "ParameterValue": "<SCALE MAX SIZE>"
+    },
+    {
+        "ParameterKey": "scalingMinSize",
+        "ParameterValue": "<SCALE MIN SIZE>"
+    },
+    {
         "ParameterKey": "snsEvents",
         "ParameterValue": "<SNS EVENTS>"
     },

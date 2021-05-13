@@ -32,17 +32,20 @@ Metadata:
           - provisionPublicIp
           - restrictedSrcAddressMgmt
           - restrictedSrcAddressApp
-          - setAppPublicIp
       - Label:
           default: BIG-IP and Auto Scaling Configuration
         Parameters:
           - bigIpRuntimeInitPackageUrl
           - bigIpRuntimeInitConfig
-          - bigIpScalingMaxSize
           - bigIpScalingMinSize
-          - customImageId
-          - imageName
-          - instanceType
+          - bigIpScalingMaxSize
+          - bigIpScaleInCpuThreshold
+          - bigIpScaleInThroughputThreshold
+          - bigIpScaleOutCpuThreshold
+          - bigIpScaleOutThroughputThreshold
+          - bigIpImage
+          - bigIpCustomImageId
+          - bigIpInstanceType
           - loggingS3BucketName
           - metricNameSpace
           - notificationEmail
@@ -72,12 +75,6 @@ Metadata:
           - lambdaS3BucketName
           - lambdaS3Key
       - Label:
-          default: Application
-        Parameters:
-          - appContainerName
-          - appScalingMaxSize
-          - appScalingMinSize
-      - Label:
           default: Resources Tags
         Parameters:
           - uniqueString
@@ -97,10 +94,24 @@ Metadata:
         default: Application
       artifactLocation:
         default: Path to directory where the modules folder is located. ex. "examples/"
+      bigIpCustomImageId:
+        default: Custom Image Id
+      bigIpImage:
+        default: F5 BIG-IP Image
+      bigIpInstanceType:
+        default: Enter valid instance type.
       bigIpRuntimeInitConfig:
         default: BIG-IP Runtime Init config
       bigIpRuntimeInitPackageUrl:
         default: Runtime Init Package
+      bigIpScaleInCpuThreshold:
+        default: Low CPU Percentage threshold to begin scaling in BIG-IP VE instances.
+      bigIpScaleInThroughputThreshold:
+        default: Incoming throughput threshold to begin scaling in BIG-IP VE instances.
+      bigIpScaleOutCpuThreshold:
+        default: High CPU Percentage threshold to begin scaling out BIG-IP VE instances.
+      bigIpScaleOutThroughputThreshold:
+        default: Incoming throughput threshold to begin scaling out BIG-IP VE instances.
       bigIpScalingMaxSize:
         default: Maximum number of BIG-IP instances that can be created in the Autoscale Group
       bigIpScalingMinSize:
@@ -123,16 +134,10 @@ Metadata:
         default: The BIG-IQ utility license SKU used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ utilty SKU specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter
       cost:
         default: Cost Center
-      customImageId:
-        default: Custom Image Id
       environment:
         default: Environment
       group:
         default: Group
-      imageName:
-        default: F5 BIG-IP Image
-      instanceType:
-        default: Enter valid instance type.
       lambdaS3BucketName:
         default: S3 bucket with BIG-IQ Revoke function
       lambdaS3Key:
@@ -147,8 +152,6 @@ Metadata:
         default: Number of Availability Zones
       numSubnets:
         default: Number of Subnets
-      numberPublicExternalIpAddresses:
-        default: Number of External Public IP addresses
       owner:
         default: Owner
       provisionExternalBigipLoadBalancer:
@@ -157,20 +160,22 @@ Metadata:
         default: Provision Internal Elastic Load Balancer
       provisionPublicIp:
         default: Provision Public IP addresses for the BIG-IP interfaces
-      restrictedSrcAddressMgmt:
-        default: Restricted Source Address to BIG-IP
       restrictedSrcAddressApp:
         default: Restricted Source Address to Application
+      restrictedSrcAddressMgmt:
+        default: Restricted Source Address to BIG-IP
       s3BucketName:
         default: S3 Bucket where Templates are Located
       s3BucketRegion:
         default: S3 Bucket Region where Templates are Located
       secretArn:
         default: ARN of Secrets Manager secret
+      setPublicSubnet1:
+        default: Set Subnet1 Public
       snsEvents:
         default: Provides list of SNS Events used for sending Notifications on Autoscale group
       sshKey:
-        default: Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines.
+        default: Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines
       subnetMask:
         default: Subnet Mask
       uniqueString:
@@ -251,6 +256,42 @@ Parameters:
       Can include numbers, lowercase letters, uppercase letters, hyphens (-), and
       forward slash (/).
     Type: String
+  bigIpCustomImageId:
+    Default: ''
+    Description: Provide BIG-IP AMI ID you wish to deploy.
+    MaxLength: 255
+    Type: String
+  bigIpImage:
+    ConstraintDescription: Must be a valid F5 BIG-IP market place image
+    Default: '*16.0.1.1-0.0.6**BYOL-All Modules 2Boot*'
+    Description: F5 BIG-IP market place image
+    Type: String
+  bigIpInstanceType:
+    AllowedValues:
+      - m3.2xlarge
+      - m4.xlarge
+      - m4.2xlarge
+      - m4.4xlarge
+      - m4.10xlarge
+      - m5.large
+      - m5.xlarge
+      - m5.2xlarge
+      - m5.4xlarge
+      - c3.4xlarge
+      - c3.8xlarge
+      - c4.4xlarge
+      - c4.8xlarge
+      - c5.large
+      - c5.xlarge
+      - c5.2xlarge
+      - c5.4xlarge
+      - cc2.8xlarge
+      - c5n.2xlarge
+      - c5n.4xlarge
+    ConstraintDescription: Must be a valid EC2 instance type for BIG-IP
+    Default: m5.xlarge
+    Description: Enter valid instance type.
+    Type: String
   bigIpRuntimeInitConfig:
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration.'
     Type: String
@@ -258,6 +299,28 @@ Parameters:
     Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.0/dist/f5-bigip-runtime-init-1.2.0-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
+  bigIpScaleInCpuThreshold:
+    ConstraintDescription: Select a value between 0 to 100
+    Default: 20
+    Description: Low CPU Percentage threshold to begin scaling in BIG-IP VE instances.
+    MaxValue: 100
+    MinValue: 0
+    Type: Number
+  bigIpScaleInThroughputThreshold:
+    Default: 10000000
+    Description: 'The amount of throughput (**bytes**) that should trigger a scale in event. Note: The default value is equal to 10 MB.'
+    Type: Number
+  bigIpScaleOutCpuThreshold:
+    ConstraintDescription: Select a value between 0 to 100
+    Default: 80
+    Description: High CPU Percentage threshold to begin scaling out BIG-IP VE instances.
+    MaxValue: 100
+    MinValue: 0
+    Type: Number
+  bigIpScaleOutThroughputThreshold:
+    Default: 20000000
+    Description: 'The amount of throughput (**bytes**) that should trigger a scale out event. Note: The default value is equal to 20 MB.'
+    Type: Number
   bigIpScalingMaxSize:
     ConstraintDescription: Must be a number between 2-100
     Default: 50
@@ -315,11 +378,6 @@ Parameters:
     Default: f5cost
     Description: Cost Center Tag.
     Type: String
-  customImageId:
-    Default: ''
-    Description: Provide BIG-IP AMI ID you wish to deploy.
-    MaxLength: 255
-    Type: String
   environment:
     Default: f5env
     Description: Environment Tag.
@@ -327,37 +385,6 @@ Parameters:
   group:
     Default: f5group
     Description: Group Tag.
-    Type: String
-  imageName:
-    ConstraintDescription: Must be a valid F5 BIG-IP market place image
-    Default: '*16.0.1.1-0.0.6**BYOL-All Modules 2Boot*'
-    Description: F5 BIG-IP market place image
-    Type: String
-  instanceType:
-    AllowedValues:
-      - m3.2xlarge
-      - m4.xlarge
-      - m4.2xlarge
-      - m4.4xlarge
-      - m4.10xlarge
-      - m5.large
-      - m5.xlarge
-      - m5.2xlarge
-      - m5.4xlarge
-      - c3.4xlarge
-      - c3.8xlarge
-      - c4.4xlarge
-      - c4.8xlarge
-      - c5.large
-      - c5.xlarge
-      - c5.2xlarge
-      - c5.4xlarge
-      - cc2.8xlarge
-      - c5n.2xlarge
-      - c5n.4xlarge
-    ConstraintDescription: Must be a valid EC2 instance type for BIG-IP
-    Default: m5.xlarge
-    Description: Enter valid instance type.
     Type: String
   lambdaS3BucketName:
     Description: REQUIRED - The name of the S3 bucket where the lambdaBigiqRevoke lambda function is located.
@@ -413,7 +440,7 @@ Parameters:
       - 'true'
       - 'false'
     Default: 'true'
-    Description: Whether or not to provision Public IP Addresses for the BIG-IP Network Interfaces. By Default no Public IP addresses are provisioned.
+    Description: Whether or not to provision Public IP Addresses for the BIG-IP Network Interfaces.
     Type: String
   restrictedSrcAddressMgmt:
     AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
@@ -434,6 +461,7 @@ Parameters:
     ConstraintDescription: >-
       S3 bucket name can include numbers, lowercase letters, uppercase letters,
       and hyphens (-). It cannot start or end with a hyphen (-).
+    Default: f5-cft-v2
     Description: >-
       REQUIRED - S3 bucket name for the modules. S3 bucket name can include numbers,
       lowercase letters, uppercase letters, and hyphens (-). It cannot start or
@@ -490,7 +518,7 @@ Conditions:
     - !Ref provisionInternalBigipLoadBalancer
   noCustomImageId: !Equals
     - ''
-    - !Ref customImageId
+    - !Ref bigIpCustomImageId
   useLoggingS3Bucket: !Not
     - !Equals
       - ''
@@ -523,7 +551,7 @@ Resources:
   AmiInfo:
     Type: 'Custom::AMIInfo'
     Properties:
-      OSName: !Ref imageName
+      OSName: !Ref bigIpImage
       OwnerId: 'aws-marketplace'
       Region: !Ref 'AWS::Region'
       ServiceToken: !GetAtt [Function, Outputs.lambdaARN]
@@ -541,7 +569,7 @@ Resources:
         applicationSubnet: !Join
           - ','
           - - !Select
-              - '0'
+              - '1'
               - !Split
                 - ','
                 - !GetAtt
@@ -550,14 +578,14 @@ Resources:
         applicationSubnets: !Join
           - ','
           - - !Select
-              - '0'
+              - '1'
               - !Split
                 - ','
                 - !GetAtt
                   - Network
                   - Outputs.subnetsA
             - !Select
-              - '0'
+              - '1'
               - !Split
                 - ','
                 - !GetAtt
@@ -572,7 +600,7 @@ Resources:
         restrictedSrcAddress: 0.0.0.0/0
         scalingMinSize: !Ref appScalingMinSize
         scalingMaxSize: !Ref appScalingMaxSize
-        setAppPublicIp: 'true'
+        provisionPublicIp: 'false'
         uniqueString: !Ref uniqueString
         vpc: !GetAtt
           - Network
@@ -621,8 +649,8 @@ Resources:
           - !GetAtt
             - AmiInfo
             - Id
-          - !Ref customImageId
-        instanceType: !Ref instanceType
+          - !Ref bigIpCustomImageId
+        instanceType: !Ref bigIpInstanceType
         internalTargetGroupHttp: !If
           - internalLB
           - !GetAtt
@@ -639,11 +667,13 @@ Resources:
         metricNameSpace: !Ref metricNameSpace
         notificationEmail: !Ref notificationEmail
         provisionPublicIp: !Ref provisionPublicIp
+        scaleInCpuThreshold: !Ref bigIpScaleInCpuThreshold
+        scaleInThroughputThreshold: !Ref bigIpScaleInThroughputThreshold
+        scaleOutCpuThreshold: !Ref bigIpScaleOutCpuThreshold
+        scaleOutThroughputThreshold: !Ref bigIpScaleOutThroughputThreshold
         scalingMinSize: !Ref bigIpScalingMinSize
         scalingMaxSize: !Ref bigIpScalingMaxSize
-        snsEvents: !Join
-          - ','
-          - !Ref snsEvents
+        snsEvents: !Join [',', !Ref snsEvents]
         sshKey: !Ref sshKey
         subnets: !Join
           - ','
@@ -724,7 +754,6 @@ Resources:
         - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
           S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}-${AWS::Region}', !Ref s3BucketName]
       Parameters:
-        application: !Ref application
         amiLookupRole: !GetAtt
           - Access
           - Outputs.lambdaAmiExecutionRole
