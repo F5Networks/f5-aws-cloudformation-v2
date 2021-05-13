@@ -60,7 +60,7 @@ This solution leverages more traditional Auto Scale configuration management pra
 
 ## Diagram
 
-![Configuration Example](https://github.com/F5Networks/f5-aws-cloudformation-v2/blob/master/examples/autoscale/payg/diagram.png)
+![Configuration Example](diagram.png)
 
 ## Prerequisites
 
@@ -119,16 +119,20 @@ This solution leverages more traditional Auto Scale configuration management pra
 | appScalingMaxSize | No | Maximum number of Application instances (2-50) that can be created in the Auto Scale Group |
 | appScalingMinSize | No | Minimum number of Application instances (1-49) you want available in the Auto Scale Group |
 | artifactLocation | No | The path in the S3Bucket where the modules folder is located. |
+| bigIpCustomImageId | No | Provide BIG-IP AMI ID you wish to deploy. bigIpCustomImageId is required when bigIpImage is not specified. |
+| bigIpImage | No | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. bigIpImage is required when bigIpCustomImageId is not specified. | 
+| bigIpInstanceType | No | Enter valid instance type. |
 | bigIpRuntimeInitConfig | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format |
 | bigIpRuntimeInitPackageUrl | No | Supply a URL to the bigip-runtime-init package |
+| bigIpScaleInCpuThreshold | No | Low CPU Percentage threshold to begin scaling in BIG-IP VE instances. | 
+| bigIpScaleInThroughputThreshold | No | Incoming bytes threshold to begin scaling in BIG-IP VE instances. | 
+| bigIpScaleOutCpuThreshold | No | High CPU Percentage threshold to begin scaling out BIG-IP VE instances. | 
+| bigIpScaleOutThroughputThreshold | No | Incoming bytes threshold to begin scaling out BIG-IP VE instances. |
 | bigIpScalingMaxSize | No | Maximum number of BIG-IP instances (2-100) that can be created in the AutoScale Group |
 | bigIpScalingMinSize | No | Minimum number of BIG-IP instances (1-99) you want available in the AutoScale Group |
 | cost | No | Cost Center Tag. |
-| customImageId | No | Provide BIG-IP AMI ID you wish to deploy. customImageId is required when imageName is not specified. |
 | environment | No | Environment Tag. |
 | group | No | Group Tag. |
-| imageName | No | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. imageName is required when not using a customImageId. | 
-| instanceType | No | Enter valid instance type. |
 | loggingS3BucketName | No | The name of the existing S3 bucket where BIG-IP logs will be sent. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details. |
 | metricNameSpace | Yes | CloudWatch namespace used for custom metrics. This should match the namespace defined in your telemetry services declaration within bigipRuntimInitConfig. |
 | notificationEmail | Yes | Valid email address to send Auto Scaling event notifications. |
@@ -380,7 +384,7 @@ From Template Outputs:
 
   - **SSH key authentication**: 
       ```bash
-      ssh admin@${IP_ADDRESS_FROM_OUTPUT} -i ${PATH_TO_YOUR_PRIVATE_sshKey}
+      ssh admin@${IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
       ```
 
 #### WebUI 
@@ -483,11 +487,11 @@ In order to update the BIG-IP configuration:
 All lifecycle elements are now managed by the model as well. For example:
 
 In order to update the BIG-IP OS version:
-  1. Update the CloudFormation Stack with new **imageName** parameter
+  1. Update the CloudFormation Stack with new **bigIpImage** parameter
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
         --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v0.0.0.1/examples/autoscale/payg/autoscale.yaml \
-        --parameters "ParameterKey=imageName,ParameterValue=${imageName} ParameterKey=<KEY>,ParameterValue=<VALUE>"
+        --parameters "ParameterKey=bigIpImage,ParameterValue=${bigIpImage} ParameterKey=<KEY>,ParameterValue=<VALUE>"
       ```
 
 In order to update the BIG-IP instance size:
@@ -577,6 +581,8 @@ Common deployment failure causes include:
 
 If all stacks were created "successfully" but maybe the BIG-IP or Service is not reachable, then log in to the BIG-IP instance via SSH to confirm BIG-IP deployment was successful (for example, if startup scripts completed as expected on the BIG-IP). To verify BIG-IP deployment, perform the following steps:
 - Obtain the IP address of the BIG-IP instance. See instructions [above](#accessing-the-bigip-ip)
+- Check startup-script to make sure was installed/interpolated correctly:
+  - ```cat /opt/cloud/instance/user-data.txt```
 - Check the logs (in order of invocation):
   - cloud-init Logs:
     - */var/log/boot.log*

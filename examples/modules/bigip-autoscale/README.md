@@ -71,8 +71,10 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | notificationEmail | Yes | Valid email address to send Auto Scaling event notifications. |
 | owner | No | Application Tag. |
 | provisionPublicIp | No |  Whether or not to provision Public IP Addresses for the BIG-IP Network Interfaces. By default, no Public IP addresses are provisioned. |
-| scaleDownBytesThreshold | No | Incoming bytes threshold to begin scaling down BIG-IP VE instances. | 
-| scaleUpBytesThreshold | No | Incoming bytes threshold to begin scaling up BIG-IP VE instances. |
+| scaleInCpuThreshold | No | Low CPU Percentage threshold to begin scaling in BIG-IP VE instances. | 
+| scaleInThroughputThreshold | No | Incoming throughput threshold to begin scaling in BIG-IP VE instances. | 
+| scaleOutCpuThreshold | No | High CPU Percentage threshold to begin scaling out BIG-IP VE instances. | 
+| scaleOutThroughputThreshold | No | Incoming throughput threshold to begin scaling out BIG-IP VE instances. |
 | scalingMaxSize | No |  Maximum number of BIG-IP instances (2-100) that can be created in the Auto Scale Group. |
 | scalingMinSize | No | Minimum number of BIG-IP instances (1-99) you want available in the Auto Scale Group. |
 | snsEvents | No | Provide a list of SNS Topics used on Autoscale Group. |
@@ -80,7 +82,6 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | subnets | Yes | Public or external subnets for the availability zones. | 
 | throughput | No | Maximum amount of throughput for BIG-IP VE. |
 | uniqueString | No | Unique String used when creating object names or Tags |
-
 
 ### Template Outputs
 

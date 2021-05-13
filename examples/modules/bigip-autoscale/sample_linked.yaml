@@ -15,18 +15,18 @@ Resources:
         bigIqNotificationRole: ''
         externalTargetGroupHttp: example-target-group-http
         externalTargetGroupHttps: example-target-group-https
-        highCpuThreshold: 80
+        scaleOutCpuThreshold: 80
         imageId: ami-id
         instanceType: m5.4xlarge
         internalTargetGroupHttp: ''
         internalTargetGroupHttps: ''
         licenseType: payg
-        lowCpuThreshold: 0
+        scaleOutCpuThreshold: 0
         metricNameSpace: bigip-throughput
         notificationEmail: example@mail.com
         provisionPublicIp: 'true'
-        scaleDownBytesThreshold: 10000
-        scaleUpBytesThreshold: 35000
+        scaleInThroughputThreshold: 10000
+        scaleOutThroughputThreshold: 35000
         scalingMaxSize: 3
         scalingMinSize: 1
         snsEvents: autoscaling:EC2_INSTANCE_LAUNCH,autoscaling:EC2_INSTANCE_LAUNCH_ERROR

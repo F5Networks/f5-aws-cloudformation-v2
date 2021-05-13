@@ -1,8 +1,10 @@
 ---
 ACCESS: 0.0.0.0/0
+APP SCALE MAX SIZE: 2
+APP SCALE MIN SIZE: 1
 AUTOFILL BIGIQ LICENSE KEY: null
 AUTOFILL CLPV2 LICENSE KEY: null
-BIGIP IMAGE NAME: '*16.0.1.1-0.0.6**BYOL-All Modules 2Boot*'
+BIGIP IMAGE: '*16.0.1.1-0.0.6**BYOL-All Modules 2Boot*'
 BIGIP INSTANCE TYPE: m5.2xlarge
 BIGIP MGMT PORT: 8443
 BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.2.1-1.gz.run'
@@ -47,6 +49,6 @@ NETWORK TEMPLATE NAME: network
 NETWORK TEMPLATE URL: 'file://$PWD/examples/modules/network/network.yaml'
 NUMBER AZS: 2
 NUMBER SUBNETS: 3
-SUBNET1 PUBLIC: 'true'
+SUBNET1 PUBLIC: 'false'
 SUBNETMASK: 24
 TENANCY: default

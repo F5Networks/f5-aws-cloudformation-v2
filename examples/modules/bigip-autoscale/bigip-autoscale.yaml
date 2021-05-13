@@ -34,11 +34,11 @@ Metadata:
           default: Autoscale Group
         Parameters:
           - scalingMinSize
-          - scalingMaxSize
-          - scaleDownBytesThreshold
-          - scaleUpBytesThreshold
-          - lowCpuThreshold
-          - highCpuThreshold
+          - scalingMaxSizes
+          - scaleInCpuThreshold
+          - scaleInThroughputThreshold
+          - scaleOutCpuThreshold
+          - scaleOutThroughputThreshold
           - metricNameSpace
       - Label:
           default: Networking
@@ -97,8 +97,6 @@ Metadata:
         default: External Load Balancer Targert Group with BIG-IP VEs for HTTPS requests
       group:
         default: Group
-      highCpuThreshold:
-        default: High CPU Percentage threshold to begin scaling up BIG-IP VE instances.
       imageId:
         default: Image Id
       instanceType:
@@ -109,8 +107,6 @@ Metadata:
         default: Internal Load Balancer Target Group with BIG-IP VEs. for HTTPS requests
       licenseType:
         default: Specifies licence type used for BIG-IP VE.
-      lowCpuThreshold:
-        default: Low CPU Percentage threshold to begin scaling down BIG-IP VE instances.
       metricNameSpace:
         default: CloudWatch custom metric name space
       notificationEmail:
@@ -119,10 +115,14 @@ Metadata:
         default: Owner
       provisionPublicIp:
         default: Provision Public IP addresses for the BIG-IP interfaces
-      scaleDownBytesThreshold:
-        default: Incoming bytes threshold to begin scaling down BIG-IP VE instances.
-      scaleUpBytesThreshold:
-        default: Incoming bytes threshold to begin scaling up BIG-IP VE instances.
+      scaleInCpuThreshold:
+        default: Low CPU Percentage threshold to begin scaling in BIG-IP VE instances.
+      scaleInThroughputThreshold:
+        default: Incoming bytes threshold to begin scaling in BIG-IP VE instances.
+      scaleOutCpuThreshold:
+        default: High CPU Percentage threshold to begin scaling out BIG-IP VE instances.
+      scaleOutThroughputThreshold:
+        default: Incoming bytes threshold to begin scaling out BIG-IP VE instances.
       scalingMaxSize:
         default: Maximum number of BIG-IP instances (2-8) that can be created in the Autoscale Group
       scalingMinSize:
@@ -192,13 +192,6 @@ Parameters:
     Default: f5group
     Description: Group Tag.
     Type: String
-  highCpuThreshold:
-    ConstraintDescription: Select a value between 0 to 100
-    Default: 80
-    Description: High CPU Percentage threshold to begin scaling up BIG-IP VE instances.
-    MaxValue: 100
-    MinValue: 0
-    Type: Number
   imageId:
     Description: REQUIRED - Provide BIG-IP AMI ID you wish to deploy.
     MaxLength: 255
@@ -245,13 +238,6 @@ Parameters:
     Default: payg
     Description: Specifies licence type used for BIG-IP VE.
     Type: String
-  lowCpuThreshold:
-    ConstraintDescription: Select a value between 0 to 100
-    Default: 20
-    Description: Low CPU Percentage threshold to begin scaling down BIG-IP VE instances.
-    MaxValue: 100
-    MinValue: 0
-    Type: Number
   metricNameSpace:
     Default: f5-scaling-metrics
     Description: CloudWatch namespace used for custom metrics. This should match the namespace defined in your telemetry services declaration within bigipRuntimInitConfig.
@@ -272,13 +258,27 @@ Parameters:
     Default: 'true'
     Description: Whether or not to provision Public IP Addresses for the BIG-IP Network Interfaces. By Default no Public IP addresses are provisioned.
     Type: String
-  scaleDownBytesThreshold:
-    Default: 10000000
-    Description: Incoming bytes threshold to begin scaling down BIG-IP VE instances.
+  scaleInCpuThreshold:
+    ConstraintDescription: Select a value between 0 to 100
+    Default: 20
+    Description: Low CPU Percentage threshold to begin scaling in BIG-IP VE instances.
+    MaxValue: 100
+    MinValue: 0
     Type: Number
-  scaleUpBytesThreshold:
+  scaleInThroughputThreshold:
+    Default: 10000000
+    Description: Incoming throughput threshold to begin scaling in BIG-IP VE instances.
+    Type: Number
+  scaleOutCpuThreshold:
+    ConstraintDescription: Select a value between 0 to 100
+    Default: 80
+    Description: High CPU Percentage threshold to begin scaling out BIG-IP VE instances.
+    MaxValue: 100
+    MinValue: 0
+    Type: Number
+  scaleOutThroughputThreshold:
     Default: 20000000
-    Description: Incoming bytes threshold to begin scaling up BIG-IP VE instances.
+    Description: Incoming throughput threshold to begin scaling out BIG-IP VE instances.
     Type: Number
   scalingMaxSize:
     ConstraintDescription: Must be a number between 2-100
@@ -403,7 +403,7 @@ Resources:
     Properties:
       ActionsEnabled: true
       AlarmActions:
-        - !Ref BigipScaleUpPolicy
+        - !Ref BigipScaleOutPolicy
       AlarmDescription: >-
         CPU usage percentage exceeds average threshold after 1 successive
         interval of 1 minute
@@ -413,14 +413,14 @@ Resources:
       Namespace: !Ref metricNameSpace
       Period: 60
       Statistic: Average
-      Threshold: !Ref highCpuThreshold
+      Threshold: !Ref scaleOutCpuThreshold
     Type: 'AWS::CloudWatch::Alarm'
   BigipHighbytesAlarm:
     DependsOn: BigipAutoscaleGroup
     Properties:
       ActionsEnabled: true
       AlarmActions:
-        - !Ref BigipScaleUpPolicy
+        - !Ref BigipScaleOutPolicy
       AlarmDescription: >-
         Throughput exceeds average threshold after 1 successive interval of 1
         minute
@@ -430,7 +430,7 @@ Resources:
       Namespace: !Ref metricNameSpace
       Period: 60
       Statistic: Average
-      Threshold: !Ref scaleUpBytesThreshold
+      Threshold: !Ref scaleOutThroughputThreshold
     Type: 'AWS::CloudWatch::Alarm'
   BigipLaunchConfig:
     Properties:
@@ -562,7 +562,7 @@ Resources:
     Properties:
       ActionsEnabled: true
       AlarmActions:
-        - !Ref BigipScaleDownPolicy
+        - !Ref BigipScaleInPolicy
       AlarmDescription: >-
         CPU usage percentage below average threshold after 10 datapoints over 10 minutes
       ComparisonOperator: LessThanThreshold
@@ -571,14 +571,14 @@ Resources:
       Namespace: !Ref metricNameSpace
       Period: 60
       Statistic: Average
-      Threshold: !Ref lowCpuThreshold
+      Threshold: !Ref scaleInCpuThreshold
     Type: 'AWS::CloudWatch::Alarm'
   BigipLowbytesAlarm:
     DependsOn: BigipAutoscaleGroup
     Properties:
       ActionsEnabled: true
       AlarmActions:
-        - !Ref BigipScaleDownPolicy
+        - !Ref BigipScaleInPolicy
       AlarmDescription: >-
         Throughput below average threshold for after 10 datapoints over 10 minutes
       ComparisonOperator: LessThanThreshold
@@ -587,16 +587,16 @@ Resources:
       Namespace: !Ref metricNameSpace
       Period: 60
       Statistic: Average
-      Threshold: !Ref scaleDownBytesThreshold
+      Threshold: !Ref scaleInThroughputThreshold
     Type: 'AWS::CloudWatch::Alarm'
-  BigipScaleDownPolicy:
+  BigipScaleInPolicy:
     Properties:
       AdjustmentType: ChangeInCapacity
       AutoScalingGroupName: !Ref BigipAutoscaleGroup
       Cooldown: '1500'
       ScalingAdjustment: -1
     Type: 'AWS::AutoScaling::ScalingPolicy'
-  BigipScaleUpPolicy:
+  BigipScaleOutPolicy:
     Properties:
       AdjustmentType: ChangeInCapacity
       AutoScalingGroupName: !Ref BigipAutoscaleGroup

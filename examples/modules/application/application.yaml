@@ -15,11 +15,11 @@ Conditions:
       - ''
   useCustomImage: !Not
     - !Equals
-      - !Ref customAppImageId
+      - !Ref customImageId
       - ''
   useAppPublicIp: !Equals
     - 'true'
-    - !Ref setAppPublicIp
+    - !Ref provisionPublicIp
   Standalone: !Equals
     - 'false'
     - !Ref createAutoscaleGroup
@@ -79,12 +79,12 @@ Metadata:
           - applicationSubnet
           - applicationSubnets
           - createAutoscaleGroup
-          - customAppImageId
+          - customImageId
           - instanceType
+          - provisionPublicIp
           - restrictedSrcAddress
           - scalingMaxSize
           - scalingMinSize
-          - setAppPublicIp
           - sshKey
           - staticIp
           - vpc
@@ -117,8 +117,8 @@ Metadata:
         default: Maximum number of BIG-IP instances (2-100) that can be created in the Auto Scale Group
       scalingMinSize:
         default: Minimum number of BIG-IP instances (1-99) you want available in the Auto Scale Group
-      setAppPublicIp:
-        default: To create a Public IP and connect it to the application
+      provisionPublicIp:
+        default: To create a Public IP for the Application Instance.
       sshKey:
         default: Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines
       staticIp:
@@ -172,7 +172,7 @@ Parameters:
     Default: 'false'
     Description: Choose true to create the application instances in an autoscaling configuration.
     Type: String
-  customAppImageId:
+  customImageId:
     Default: ''
     Description: Provide Custom Image AMI ID you wish to deploy.
     Type: String
@@ -195,6 +195,13 @@ Parameters:
     Default: f5owner
     MaxLength: 50
     Type: String
+  provisionPublicIp:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+    Description: Whether or not to provision Public IP Addresses for the Application Network Interfaces.
+    Type: String
   restrictedSrcAddress:
     AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
     ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
@@ -216,13 +223,6 @@ Parameters:
     MaxValue: 99
     MinValue: 1
     Type: Number
-  setAppPublicIp:
-    AllowedValues:
-      - 'true'
-      - 'false'
-    Default: 'false'
-    Description: To create a Public IP and connect it to the application.
-    Type: String
   sshKey:
     Description: REQUIRED - Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines.
     Type: AWS::EC2::KeyPair::KeyName
@@ -247,7 +247,7 @@ Resources:
       ImageId:
         !If
         - useCustomImage
-        - !Ref customAppImageId
+        - !Ref customImageId
         - !FindInMap
           - imageRegionMap
           - !Ref 'AWS::Region'
@@ -258,7 +258,7 @@ Resources:
         !If
         - useStaticIp
         - 
-          - AssociatePublicIpAddress: !Ref setAppPublicIp
+          - AssociatePublicIpAddress: !Ref provisionPublicIp
             DeviceIndex: "0"
             SubnetId: !Ref applicationSubnet
             GroupSet:
@@ -269,7 +269,7 @@ Resources:
                 - !Ref AWS::NoValue
             PrivateIpAddress: !Ref staticIp
         - 
-          - AssociatePublicIpAddress: !Ref setAppPublicIp
+          - AssociatePublicIpAddress: !Ref provisionPublicIp
             DeviceIndex: "0"
             SubnetId: !Ref applicationSubnet
             GroupSet:
@@ -331,7 +331,7 @@ Resources:
         - !Ref 'AWS::Region'
         - AMI
       InstanceType: !Ref instanceType
-      AssociatePublicIpAddress: !Ref setAppPublicIp
+      AssociatePublicIpAddress: !Ref provisionPublicIp
       KeyName: !Ref sshKey
       SecurityGroups:
         - !If

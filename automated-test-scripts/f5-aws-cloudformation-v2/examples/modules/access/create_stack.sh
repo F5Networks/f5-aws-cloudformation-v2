@@ -17,7 +17,7 @@ echo "bigiq_secret_arn=$bigiq_secret_arn"
 echo "create_bigiq_roles=$create_bigiq_roles"
 
 parameters="\
-ParameterKey=uniqueString,ParameterValue=myBIGIP \
+ParameterKey=uniqueString,ParameterValue=myUniqStr \
 ParameterKey=bigIqSecretArn,ParameterValue=$bigiq_secret_arn \
 ParameterKey=secretArn,ParameterValue=$secret_arn \
 ParameterKey=createBigIqRoles,ParameterValue=$create_bigiq_roles \

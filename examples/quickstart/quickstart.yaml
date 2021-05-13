@@ -21,7 +21,7 @@ Conditions:
     - !Ref licenseType
   noCustomImageId: !Equals
     - ''
-    - !Ref customImageId
+    - !Ref bigIpCustomImageId
 Mappings:
   AWSBigipThroughput:
     1000Mbps:
@@ -414,19 +414,19 @@ Metadata:
       - Label:
           default: Amazon EC2 Configuration
         Parameters:
-          - instanceType
-          - numNics
+          - sshKey
           - restrictedSrcAddressMgmt
           - restrictedSrcAddressApp
-          - sshKey
       - Label:
           default: BIG-IP Configuration
         Parameters:
-          - licenseType
-          - imageName
-          - throughput
           - version
-          - customImageId
+          - licenseType
+          - bigIpImage
+          - throughput
+          - bigIpCustomImageId
+          - bigIpInstanceType
+          - numNics
           - bigIpRuntimeInitConfig
           - bigIpRuntimeInitPackageUrl
       - Label:
@@ -449,22 +449,22 @@ Metadata:
         default: Application
       artifactLocation:
         default: Directory Path
+      bigIpCustomImageId:
+        default: Custom Image Id
+      bigIpImage:
+        default: F5 BIG-IP Performance Type (PAYG Only)
+      bigIpInstanceType:
+        default: Instance Type
       bigIpRuntimeInitConfig:
         default: BIG-IP Runtime Init Config
       bigIpRuntimeInitPackageUrl:
         default: Runtime Init Package
       cost:
         default: Cost Center
-      customImageId:
-        default: Custom Image Id
       environment:
         default: Environment
       group:
         default: Group
-      imageName:
-        default: F5 BIG-IP Performance Type (PAYG)
-      instanceType:
-        default: Instance Type
       licenseType:
         default: Licence Type
       numAzs:
@@ -472,7 +472,7 @@ Metadata:
       numNics:
         default: Interfaces
       numSubnets:
-        default: Subnets 
+        default: Subnets
       owner:
         default: Owner
       restrictedSrcAddressApp:
@@ -486,7 +486,7 @@ Metadata:
       sshKey:
         default: SSH public key
       throughput:
-        default: BIG-IP VE throughput (PAYG)
+        default: BIG-IP VE throughput (PAYG Only)
       uniqueString:
         default: Unique String
       version:
@@ -556,7 +556,7 @@ Parameters:
     Default: f5costcenter-quickstart
     Description: Cost Center Tag.
     Type: String
-  customImageId:
+  bigIpCustomImageId:
     Default: ''
     Description: Provide BIG-IP AMI ID you wish to deploy.
     MaxLength: 255
@@ -569,14 +569,14 @@ Parameters:
     Default: f5group-quickstart
     Description: Group Tag.
     Type: String
-  imageName:
+  bigIpImage:
     AllowedValues:
       - Best
     ConstraintDescription: Must be a valid F5 BIG-IP VE image type
     Default: Best
     Description: F5 BIG-IP Performance Type
     Type: String
-  instanceType:
+  bigIpInstanceType:
     AllowedValues:
       - m3.2xlarge
       - m4.xlarge
@@ -637,7 +637,7 @@ Parameters:
     Description: Indicate the number of subnets to create.
     Type: Number
   owner:
-    Default: f5owner
+    Default: f5owner-quickstart
     Description: Owner Tag.
     Type: String
   restrictedSrcAddressApp:
@@ -658,6 +658,7 @@ Parameters:
     AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
     ConstraintDescription: 'S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).'
     Description: 'REQUIRED - S3 bucket name for the modules. S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).'
+    Default: f5-cft-v2
     Type: String
   s3BucketRegion:
     Default: us-east-1
@@ -674,7 +675,7 @@ Parameters:
       - 5000Mbps
       - 10000Mbps
     ConstraintDescription: Select the BIG-IP throughput you want to use
-    Default: 1000Mbps
+    Default: 25Mbps
     Description: Maximum amount of throughput for BIG-IP VE.
     Type: String
   uniqueString:
@@ -730,8 +731,8 @@ Resources:
         externalSelfIp: !If [2nic, "10.0.1.11", !Ref 'AWS::NoValue']
         externalServiceIps: !If [1nic, "10.0.0.101", "10.0.1.101"]
         externalSubnetId: !If [2nic, !Select [1, !Split [',', !GetAtt [Network, Outputs.subnetsA]]], !Ref 'AWS::NoValue']
-        imageId: !If [noCustomImageId, !If [isPaygLicensing, !FindInMap [!FindInMap [VERSION, !Ref version, REGIONMAP], !Ref 'AWS::Region', !FindInMap [AWSBigipThroughput, !Ref throughput, !Ref imageName]], !FindInMap [!FindInMap [VERSION, !Ref version, REGIONMAP], !Ref 'AWS::Region', AllTwoBootLocations]], !Ref customImageId]
-        instanceType: !Ref instanceType
+        imageId: !If [noCustomImageId, !If [isPaygLicensing, !FindInMap [!FindInMap [VERSION, !Ref version, REGIONMAP], !Ref 'AWS::Region', !FindInMap [AWSBigipThroughput, !Ref throughput, !Ref bigIpImage]], !FindInMap [!FindInMap [VERSION, !Ref version, REGIONMAP], !Ref 'AWS::Region', AllTwoBootLocations]], !Ref bigIpCustomImageId]
+        instanceType: !Ref bigIpInstanceType
         internalSelfIp: !If [3nic, "10.0.2.11", !Ref 'AWS::NoValue']
         internalSubnetId: !If [3nic, !Select [2, !Split [',', !GetAtt [Network, Outputs.subnetsA]]], !Ref 'AWS::NoValue']
         mgmtPublicIpId: !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId01]

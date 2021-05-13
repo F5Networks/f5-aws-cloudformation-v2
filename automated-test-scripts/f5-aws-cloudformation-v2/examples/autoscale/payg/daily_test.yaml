@@ -11,13 +11,13 @@ onStart:
   - ../common/verify_waf_transparent.sh
   - ../common/verify_as3.sh
   - ../common/verify_ts.sh
-  - ../common/verify_ts_metrics.sh
   - ./update_stack.sh
   - ../../../common/verify_update.sh
   - ../common/verify_app_availability.sh
   - ../common/verify_login.sh
   - ../common/verify_traffic.sh
   - ../common/verify_waf_blocking.sh
+  - ../common/verify_ts_metrics.sh
   - ../../../../sleep/2_minutes.sh
   - ../../../common/delete_stack.sh
   - ../../../common/verify_stack_deleted.sh
