@@ -1,7 +1,7 @@
 [
     { "ParameterKey": "appContainerName", "ParameterValue": "f5devcentral/f5-demo-app:latest" },
     { "ParameterKey": "application", "ParameterValue": "f5app" },
-    { "ParameterKey": "artifactLocation", "ParameterValue": "examples/" },
+    { "ParameterKey": "artifactLocation", "ParameterValue": "f5-aws-cloudformation-v2/v1.0.0.0/examples/" },
     { "ParameterKey": "bigIpCustomImageId", "ParameterValue": "" },
     { "ParameterKey": "bigIpImage", "ParameterValue": "Best" },
     { "ParameterKey": "bigIpInstanceType", "ParameterValue": "m5.xlarge" },
@@ -17,10 +17,10 @@
     { "ParameterKey": "owner", "ParameterValue": "f5owner" },
     { "ParameterKey": "restrictedSrcAddressApp", "ParameterValue": "" },
     { "ParameterKey": "restrictedSrcAddressMgmt", "ParameterValue": "" },
-    { "ParameterKey": "s3BucketName", "ParameterValue": "f5-cft" },
-    { "ParameterKey": "s3BucketRegion", "ParameterValue": "us-east-2" },
+    { "ParameterKey": "s3BucketName", "ParameterValue": "f5-cft-v2" },
+    { "ParameterKey": "s3BucketRegion", "ParameterValue": "us-east-1" },
     { "ParameterKey": "sshKey", "ParameterValue": "" },
     { "ParameterKey": "throughput", "ParameterValue": "25Mbps" },
     { "ParameterKey": "uniqueString", "ParameterValue": "myUniqStr" },
-    { "ParameterKey": "version", "ParameterValue": "15-1-2-1-0010" }
+    { "ParameterKey": "version", "ParameterValue": "16-0-1-1006" }
 ]
