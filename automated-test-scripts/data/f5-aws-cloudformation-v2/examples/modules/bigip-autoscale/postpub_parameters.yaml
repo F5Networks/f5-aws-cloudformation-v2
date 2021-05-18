@@ -6,7 +6,7 @@ ACCESS SOLUTION TYPE: secretS3
 BIGIP AMI: ami-0eae6c4d8f2a36358
 BIGIP INSTANCE TYPE: m5.2xlarge
 BIGIP MGMT PORT: 8443
-BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.2.1-1.gz.run'
+BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run'
 CIDR: 10.0.0.0/16
 CREATE AMI LOOKUP FUNCTION: 'false'
 CREATE AMI ROLE: 'false'
@@ -24,6 +24,7 @@ NIC COUNT: 1
 NOTIFICATION EMAIL: dewpoint@f5.com
 NTP SERVER: 0.us.pool.ntp.org
 NUM SECONDARY PRIVATE IP: 0
+NUM PUBLIC MGMT IP: 0
 NUMBER AZS: 3
 NUMBER SUBNETS: 3
 PRIVATE IP TYPE: STATIC

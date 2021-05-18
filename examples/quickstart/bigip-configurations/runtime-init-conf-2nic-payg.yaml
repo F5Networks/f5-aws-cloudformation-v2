@@ -61,27 +61,27 @@ extension_services:
         async: true
         Common:
           class: Tenant
-          dbVars:
+          My_DbVariables:
             class: DbVariables
             provision.extramb: 1000
             restjavad.useextramb: true
             ui.advisory.enabled: true
             ui.advisory.color: blue
             ui.advisory.text: BIG-IP Quickstart
-          myDns:
+          My_Dns:
             class: DNS
             nameServers:
               - 169.254.169.253
-          myNtp:
+          My_Ntp:
             class: NTP
             servers:
               - 169.254.169.253
             timezone: UTC
-          myProvisioning:
+          My_Provisioning:
             class: Provision
             asm: nominal
             ltm: nominal
-          mySystem:
+          My_System:
             class: System
             autoPhonehome: false
             hostname: '{{{HOST_NAME}}}'
@@ -146,7 +146,7 @@ extension_services:
             WAFPolicy:
               class: WAF_Policy
               url: >-
-                https://raw.githubusercontent.com/f5devcentral/f5-asm-policy-templates/master/generic_ready_template/Rapid_Depolyment_Policy_13_1.xml
+                https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.0.0.0/examples/quickstart/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml
               enforcementMode: blocking
               ignoreChanges: false
           HTTPS_Service:
@@ -166,7 +166,7 @@ extension_services:
             WAFPolicy:
               class: WAF_Policy
               url: >-
-                https://raw.githubusercontent.com/f5devcentral/f5-asm-policy-templates/master/generic_ready_template/Rapid_Depolyment_Policy_13_1.xml
+                https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.0.0.0/examples/quickstart/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml
               enforcementMode: blocking
               ignoreChanges: false
 post_onboard_enabled: []

@@ -1,9 +1,11 @@
 ---
 ACCESS: 0.0.0.0/0
-BIGIP IMAGE NAME: '*16.0.1.1-0.0.6**PAYG-Best 1Gbps*'
+APP SCALE MAX SIZE: 2
+APP SCALE MIN SIZE: 1
+BIGIP IMAGE: '*16.0.1.1-0.0.6**PAYG-Best 1Gbps*'
 BIGIP INSTANCE TYPE: m5.2xlarge
 BIGIP MGMT PORT: 8443
-BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.2.1-1.gz.run'
+BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run'
 BIGIQ PASSWORD: b1gAdminPazz
 CIDR: 10.0.0.0/16
 CUSTOM IMAGE ID: ''

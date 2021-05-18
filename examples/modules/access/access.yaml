@@ -168,7 +168,7 @@ Parameters:
   uniqueString:
     AllowedPattern: ^[a-zA-Z][a-zA-Z0-9]{1,11}$
     ConstraintDescription: Must Contain between 1 and 12 alphanumeric characters with first character as a letter.
-    Default: myBIGIP
+    Default: myUniqStr
     Description: Unique String used when creating object names or Tags.
     Type: String
 Resources:
@@ -205,13 +205,13 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-BigipCopyZipsRole'
-        - Key: Cost
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
-        - Key: Owner
+        - Key: owner
           Value: !Ref owner
         - Key: DeleteKey
           Value: !Ref uniqueString
@@ -265,14 +265,14 @@ Resources:
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-BigipAccessRole'
-        - Key: Cost
+              - '-bigip-access-role'
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
-        - Key: Owner
+        - Key: owner
           Value: !Ref owner
   LambdaAmiExecutionRole:
     Condition: createAmiRole
@@ -308,14 +308,14 @@ Resources:
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-LambdaAmiRole'
-        - Key: Cost
+              - '-lambda-ami-role'
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
-        - Key: Owner
+        - Key: owner
           Value: !Ref owner
   BigIqNotificationRole:
     Condition: createBigIqRoles
@@ -337,14 +337,14 @@ Resources:
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-BigipNotificationRole'
-        - Key: Cost
+              - '-bigip-notification-role'
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
-        - Key: Owner
+        - Key: owner
           Value: !Ref owner
   BigIpStandardAccessRole:
     Condition: standard
@@ -404,14 +404,14 @@ Resources:
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-BigIpStandardAccessRole'
-        - Key: Cost
+              - '-bigip-standard-access-role'
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
-        - Key: Owner
+        - Key: owner
           Value: !Ref owner
   BigIpSecretAccessRole:
     Condition: secret
@@ -486,14 +486,14 @@ Resources:
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-BigIpSecretAccessRole'
-        - Key: Cost
+              - '-bigip-secret-access-role'
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
-        - Key: Owner
+        - Key: owner
           Value: !Ref owner
         - Key: DeleteKey
           Value: !Ref uniqueString
@@ -572,14 +572,14 @@ Resources:
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-BigIpS3AccessRole'
-        - Key: Cost
+              - '-bigip-s3-access-role'
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
-        - Key: Owner
+        - Key: owner
           Value: !Ref owner
   BigIpSecretS3AccessRole:
     Condition: secretS3
@@ -671,14 +671,14 @@ Resources:
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-BigIpSecretS3AccessRole'
-        - Key: Cost
+              - '-bigip-secret-s3-access-role'
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
-        - Key: Owner
+        - Key: owner
           Value: !Ref owner
   BigIpHighAvailabilityAccessRole:
     Condition: failover
@@ -771,14 +771,14 @@ Resources:
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-BigIpHighAvailabilityAccessRole'
-        - Key: Cost
+              - '-bigip-high-availability-access-role'
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
-        - Key: Owner
+        - Key: owner
           Value: !Ref owner
   BigIpStandardInstanceProfile:
     Condition: standard

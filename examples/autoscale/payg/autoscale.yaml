@@ -32,17 +32,20 @@ Metadata:
           - provisionPublicIp
           - restrictedSrcAddressMgmt
           - restrictedSrcAddressApp
-          - setAppPublicIp
       - Label:
           default: BIG-IP and Auto Scaling Configuration
         Parameters:
           - bigIpRuntimeInitPackageUrl
           - bigIpRuntimeInitConfig
-          - bigIpScalingMaxSize
           - bigIpScalingMinSize
-          - customImageId
-          - imageName
-          - instanceType
+          - bigIpScalingMaxSize
+          - bigIpScaleInCpuThreshold
+          - bigIpScaleInThroughputThreshold
+          - bigIpScaleOutCpuThreshold
+          - bigIpScaleOutThroughputThreshold
+          - bigIpImage
+          - bigIpCustomImageId
+          - bigIpInstanceType
           - loggingS3BucketName
           - metricNameSpace
           - notificationEmail
@@ -74,26 +77,34 @@ Metadata:
         default: Application
       artifactLocation:
         default: Path to directory where the modules folder is located. ex. "examples/"
+      bigIpCustomImageId:
+        default: Custom Image Id
+      bigIpImage:
+        default: F5 BIG-IP Image
+      bigIpInstanceType:
+        default: Enter valid instance type.
       bigIpRuntimeInitConfig:
         default: BIG-IP Runtime Init config
       bigIpRuntimeInitPackageUrl:
         default: Runtime Init Package
+      bigIpScaleInCpuThreshold:
+        default: Low CPU Percentage threshold to begin scaling in BIG-IP VE instances.
+      bigIpScaleInThroughputThreshold:
+        default: Incoming throughput threshold to begin scaling in BIG-IP VE instances.
+      bigIpScaleOutCpuThreshold:
+        default: High CPU Percentage threshold to begin scaling out BIG-IP VE instances.
+      bigIpScaleOutThroughputThreshold:
+        default: Incoming throughput threshold to begin scaling out BIG-IP VE instances.
       bigIpScalingMaxSize:
         default: Maximum number of BIG-IP instances that can be created in the Autoscale Group
       bigIpScalingMinSize:
         default: Minimum number of BIG-IP instances that can be created in the Autoscale Group
       cost:
         default: Cost Center
-      customImageId:
-        default: Custom Image Id
       environment:
         default: Environment
       group:
         default: Group
-      imageName:
-        default: F5 BIG-IP Image
-      instanceType:
-        default: Enter valid instance type.
       loggingS3BucketName:
         default: S3 Bucket for BIG-IP logging.
       metricNameSpace:
@@ -208,50 +219,17 @@ Parameters:
       Can include numbers, lowercase letters, uppercase letters, hyphens (-), and
       forward slash (/).
     Type: String
-  bigIpRuntimeInitConfig:
-    Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration.'
-    Type: String
-  bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.0/dist/f5-bigip-runtime-init-1.2.0-1.gz.run'
-    Description: URL for BIG-IP Runtime Init package.
-    Type: String
-  bigIpScalingMaxSize:
-    ConstraintDescription: Must be a number between 2-100
-    Default: 50
-    Description: Maximum number of BIG-IP instances (2-100) that can be created in the Auto Scale Group.
-    MaxValue: 100
-    MinValue: 2
-    Type: Number
-  bigIpScalingMinSize:
-    ConstraintDescription: Must be a number between 1-99
-    Default: 1
-    Description: Minimum number of BIG-IP instances (1-99) you want available in the Auto Scale Group.
-    MaxValue: 99
-    MinValue: 1
-    Type: Number
-  cost:
-    Default: f5cost
-    Description: Cost Center Tag.
-    Type: String
-  customImageId:
+  bigIpCustomImageId:
     Default: ''
     Description: Provide BIG-IP AMI ID you wish to deploy.
     MaxLength: 255
     Type: String
-  environment:
-    Default: f5env
-    Description: Environment Tag.
-    Type: String
-  group:
-    Default: f5group
-    Description: Group Tag.
-    Type: String
-  imageName:
+  bigIpImage:
     ConstraintDescription: Must be a valid F5 BIG-IP market place image
     Default: '*16.0.1.1-0.0.6**PAYG-Adv WAF Plus 25Mbps*'
     Description: F5 BIG-IP market place image
     Type: String
-  instanceType:
+  bigIpInstanceType:
     AllowedValues:
       - m3.2xlarge
       - m4.xlarge
@@ -276,6 +254,61 @@ Parameters:
     ConstraintDescription: Must be a valid EC2 instance type for BIG-IP
     Default: m5.xlarge
     Description: Enter valid instance type.
+    Type: String
+  bigIpRuntimeInitConfig:
+    Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration.'
+    Type: String
+  bigIpRuntimeInitPackageUrl:
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run'
+    Description: URL for BIG-IP Runtime Init package.
+    Type: String
+  bigIpScaleInCpuThreshold:
+    ConstraintDescription: Select a value between 0 to 100
+    Default: 20
+    Description: Low CPU Percentage threshold to begin scaling in BIG-IP VE instances.
+    MaxValue: 100
+    MinValue: 0
+    Type: Number
+  bigIpScaleInThroughputThreshold:
+    Default: 10000000
+    Description: 'The amount of throughput (**bytes**) that should trigger a scale in event. Note: The default value is equal to 10 MB.'
+    Type: Number
+  bigIpScaleOutCpuThreshold:
+    ConstraintDescription: Select a value between 0 to 100
+    Default: 80
+    Description: High CPU Percentage threshold to begin scaling out BIG-IP VE instances.
+    MaxValue: 100
+    MinValue: 0
+    Type: Number
+  bigIpScaleOutThroughputThreshold:
+    Default: 20000000
+    Description: 'The amount of throughput (**bytes**) that should trigger a scale out event. Note: The default value is equal to 20 MB.'
+    Type: Number
+  bigIpScalingMaxSize:
+    ConstraintDescription: Must be a number between 2-100
+    Default: 50
+    Description: Maximum number of BIG-IP instances (2-100) that can be created in the Auto Scale Group.
+    MaxValue: 100
+    MinValue: 2
+    Type: Number
+  bigIpScalingMinSize:
+    ConstraintDescription: Must be a number between 1-99
+    Default: 1
+    Description: Minimum number of BIG-IP instances (1-99) you want available in the Auto Scale Group.
+    MaxValue: 99
+    MinValue: 1
+    Type: Number
+  cost:
+    Default: f5cost
+    Description: Cost Center Tag.
+    Type: String
+  environment:
+    Default: f5env
+    Description: Environment Tag.
+    Type: String
+  group:
+    Default: f5group
+    Description: Group Tag.
     Type: String
   loggingS3BucketName:
     Default: ''
@@ -325,7 +358,7 @@ Parameters:
       - 'true'
       - 'false'
     Default: 'true'
-    Description: Whether or not to provision Public IP Addresses for the BIG-IP Network Interfaces. By Default no Public IP addresses are provisioned.
+    Description: Whether or not to provision Public IP Addresses for the BIG-IP Network Interfaces.
     Type: String
   restrictedSrcAddressMgmt:
     AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
@@ -346,6 +379,7 @@ Parameters:
     ConstraintDescription: >-
       S3 bucket name can include numbers, lowercase letters, uppercase letters,
       and hyphens (-). It cannot start or end with a hyphen (-).
+    Default: f5-cft-v2
     Description: >-
       REQUIRED - S3 bucket name for the modules. S3 bucket name can include numbers,
       lowercase letters, uppercase letters, and hyphens (-). It cannot start or
@@ -367,7 +401,7 @@ Parameters:
     Description: 'Value of true sets subnet1 in each AZ as a public subnet, value of false sets subnet1 as private network.'
     Type: String
   snsEvents:
-    Description: REQUIRED - Provides list of SNS Topics used on Autoscale Group.
+    Description: Provides list of SNS Topics used on Autoscale Group.
     Type: List<String>
     Default: autoscaling:EC2_INSTANCE_LAUNCH,autoscaling:EC2_INSTANCE_LAUNCH_ERROR
   sshKey:
@@ -385,7 +419,7 @@ Parameters:
     AllowedPattern: ^[a-zA-Z][a-zA-Z0-9]{1,11}$
     Description: Unique String used when creating object names or Tags.
     Type: String
-    Default: myBIGIP
+    Default: myUniqStr
   vpcCidr:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$'
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
@@ -402,7 +436,7 @@ Conditions:
     - !Ref provisionInternalBigipLoadBalancer
   noCustomImageId: !Equals
     - ''
-    - !Ref customImageId
+    - !Ref bigIpCustomImageId
   useLoggingS3Bucket: !Not
     - !Equals
       - ''
@@ -424,6 +458,14 @@ Resources:
         - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
           S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}-${AWS::Region}', !Ref s3BucketName]
       Parameters:
+        application: !Ref application
+        cost: !Ref cost
+        createAmiRole: 'true'
+        createBigIqRoles: 'false'
+        environment: !Ref environment
+        group: !Ref group
+        s3Bucket: !If [useLoggingS3Bucket, !Ref loggingS3BucketName, !Ref 'AWS::NoValue']
+        secretArn: !If [useSecretArn, !Ref secretArn, !Ref 'AWS::NoValue']
         solutionType: !If
           - useSecretLoggingS3Bucket
           - secretS3
@@ -434,23 +476,15 @@ Resources:
               - useLoggingS3Bucket
               - s3
               - standard
-        createAmiRole: 'true'
-        createBigIqRoles: 'false'
-        secretArn: !If [useSecretArn, !Ref secretArn, !Ref 'AWS::NoValue']
-        s3Bucket: !If [useLoggingS3Bucket, !Ref loggingS3BucketName, !Ref 'AWS::NoValue']
         uniqueString: !Ref uniqueString
-        application: !Ref application
-        cost: !Ref cost
-        environment: !Ref environment
-        group: !Ref group
   AmiInfo:
     Type: 'Custom::AMIInfo'
     Condition: noCustomImageId
     Properties:
-      ServiceToken: !GetAtt [Function, Outputs.lambdaARN]
-      Region: !Ref 'AWS::Region'
-      OSName: !Ref imageName
+      OSName: !Ref bigIpImage
       OwnerId: 'aws-marketplace'
+      Region: !Ref 'AWS::Region'
+      ServiceToken: !GetAtt [Function, Outputs.lambdaARN]
   Application:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -460,16 +494,12 @@ Resources:
         - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
           S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}-${AWS::Region}', !Ref s3BucketName]
       Parameters:
-        sshKey: !Ref sshKey
-        restrictedSrcAddress: 0.0.0.0/0
-        setAppPublicIp: 'true'
-        vpc: !GetAtt
-          - Network
-          - Outputs.vpcId
+        appContainerName: !Ref appContainerName
+        application: !Ref application
         applicationSubnet: !Join
           - ','
           - - !Select
-              - '0'
+              - '1'
               - !Split
                 - ','
                 - !GetAtt
@@ -478,28 +508,33 @@ Resources:
         applicationSubnets: !Join
           - ','
           - - !Select
-              - '0'
+              - '1'
               - !Split
                 - ','
                 - !GetAtt
                   - Network
                   - Outputs.subnetsA
             - !Select
-              - '0'
+              - '1'
               - !Split
                 - ','
                 - !GetAtt
                   - Network
                   - Outputs.subnetsB
-        scalingMinSize: !Ref appScalingMinSize
-        scalingMaxSize: !Ref appScalingMaxSize
-        appContainerName: !Ref appContainerName
         appSecurityGroupId: !GetAtt [Dag, Outputs.appSecurityGroupId]
-        application: !Ref application
-        createAutoscaleGroup: 'true'
         cost: !Ref cost
+        createAutoscaleGroup: 'true'
         environment: !Ref environment
         group: !Ref group
+        sshKey: !Ref sshKey
+        restrictedSrcAddress: 0.0.0.0/0
+        scalingMinSize: !Ref appScalingMinSize
+        scalingMaxSize: !Ref appScalingMaxSize
+        provisionPublicIp: 'false'
+        uniqueString: !Ref uniqueString
+        vpc: !GetAtt
+          - Network
+          - Outputs.vpcId
   BigipAutoscale:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -509,21 +544,37 @@ Resources:
         - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
           S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}-${AWS::Region}', !Ref s3BucketName]
       Parameters:
-        sshKey: !Ref sshKey
+        application: !Ref application
+        bigIpExternalSecurityGroup: !GetAtt
+          - Dag
+          - Outputs.bigIpExternalSecurityGroup
+        bigIpInstanceProfile: !GetAtt
+          - Access
+          - Outputs.bigIpInstanceProfile
         bigIpRuntimeInitConfig: !Ref bigIpRuntimeInitConfig
         bigIpRuntimeInitPackageUrl: !Ref bigIpRuntimeInitPackageUrl
-        externalTargetGroupHttps: !If
-          - externalLB
-          - !GetAtt
-            - Dag
-            - Outputs.externalTargetGroupHttps
-          - !Ref AWS::NoValue
+        cost: !Ref cost
+        environment: !Ref environment
         externalTargetGroupHttp: !If
           - externalLB
           - !GetAtt
             - Dag
             - Outputs.externalTargetGroupHttp
           - !Ref AWS::NoValue
+        externalTargetGroupHttps: !If
+          - externalLB
+          - !GetAtt
+            - Dag
+            - Outputs.externalTargetGroupHttps
+          - !Ref AWS::NoValue
+        group: !Ref group
+        imageId: !If
+          - noCustomImageId
+          - !GetAtt
+            - AmiInfo
+            - Id
+          - !Ref bigIpCustomImageId
+        instanceType: !Ref bigIpInstanceType
         internalTargetGroupHttp: !If
           - internalLB
           - !GetAtt
@@ -536,14 +587,17 @@ Resources:
             - Dag
             - Outputs.internalTargetGroupHttps
           - !Ref AWS::NoValue
-        instanceType: !Ref instanceType
-        imageId: !If
-          - noCustomImageId
-          - !GetAtt
-            - AmiInfo
-            - Id
-          - !Ref customImageId
         metricNameSpace: !Ref metricNameSpace
+        notificationEmail: !Ref notificationEmail
+        provisionPublicIp: !Ref provisionPublicIp
+        scaleInCpuThreshold: !Ref bigIpScaleInCpuThreshold
+        scaleInThroughputThreshold: !Ref bigIpScaleInThroughputThreshold
+        scaleOutCpuThreshold: !Ref bigIpScaleOutCpuThreshold
+        scaleOutThroughputThreshold: !Ref bigIpScaleOutThroughputThreshold
+        scalingMinSize: !Ref bigIpScalingMinSize
+        scalingMaxSize: !Ref bigIpScalingMaxSize
+        snsEvents: !Join [',', !Ref snsEvents]
+        sshKey: !Ref sshKey
         subnets: !Join
           - ','
           - - !Select
@@ -560,21 +614,7 @@ Resources:
                 - !GetAtt
                   - Network
                   - Outputs.subnetsB
-        provisionPublicIp: !Ref provisionPublicIp
-        bigIpInstanceProfile: !GetAtt
-          - Access
-          - Outputs.bigIpInstanceProfile
-        bigIpExternalSecurityGroup: !GetAtt
-          - Dag
-          - Outputs.bigIpExternalSecurityGroup
-        scalingMinSize: !Ref bigIpScalingMinSize
-        scalingMaxSize: !Ref bigIpScalingMaxSize
-        notificationEmail: !Ref notificationEmail
-        snsEvents: !Join [',', !Ref snsEvents]
-        application: !Ref application
-        cost: !Ref cost
-        environment: !Ref environment
-        group: !Ref group
+        uniqueString: !Ref uniqueString
   Dag:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -584,9 +624,10 @@ Resources:
         - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
           S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}-${AWS::Region}', !Ref s3BucketName]
       Parameters:
-        vpc: !GetAtt
-          - Network
-          - Outputs.vpcId
+        application: !Ref application
+        cost: !Ref cost
+        createAppSecurityGroup: 'true'
+        environment: !Ref environment
         externalSubnetAz1: !Select
           - '0'
           - !Split
@@ -601,6 +642,7 @@ Resources:
             - !GetAtt
               - Network
               - Outputs.subnetsB
+        group: !Ref group
         internalSubnetAz1: !Select
           - '0'
           - !Split
@@ -615,17 +657,17 @@ Resources:
             - !GetAtt
               - Network
               - Outputs.subnetsB
-        restrictedSrcAddressApp: !Ref restrictedSrcAddressApp
-        restrictedSrcAddressMgmt: !Ref restrictedSrcAddressMgmt
-        vpcCidr: !Ref vpcCidr
+        numberPublicMgmtIpAddresses: 0
+        numberPublicExternalIpAddresses: 0
         provisionExternalBigipLoadBalancer: !Ref provisionExternalBigipLoadBalancer
         provisionInternalBigipLoadBalancer: !Ref provisionInternalBigipLoadBalancer
-        application: !Ref application
+        restrictedSrcAddressApp: !Ref restrictedSrcAddressApp
+        restrictedSrcAddressMgmt: !Ref restrictedSrcAddressMgmt
         uniqueString: !Ref uniqueString
-        cost: !Ref cost
-        environment: !Ref environment
-        group: !Ref group
-        createAppSecurityGroup: 'true'
+        vpc: !GetAtt
+          - Network
+          - Outputs.vpcId
+        vpcCidr: !Ref vpcCidr
   Function:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -635,10 +677,10 @@ Resources:
         - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
           S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}-${AWS::Region}', !Ref s3BucketName]
       Parameters:
-        createAmiLookupFunction: 'true'
         amiLookupRole: !GetAtt
           - Access
           - Outputs.lambdaAmiExecutionRole
+        createAmiLookupFunction: 'true'
   Network:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -648,12 +690,13 @@ Resources:
         - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
           S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}-${AWS::Region}', !Ref s3BucketName]
       Parameters:
+        cost: !Ref cost
+        environment: !Ref environment
+        group: !Ref group
         numAzs: !Ref numAzs
         numSubnets: !Ref numSubnets
         setPublicSubnet1: !Ref setPublicSubnet1
         subnetMask: !Ref subnetMask
+        uniqueString: !Ref uniqueString
         vpcCidr: !Ref vpcCidr
         vpcTenancy: default
-        cost: !Ref cost
-        environment: !Ref environment
-        group: !Ref group

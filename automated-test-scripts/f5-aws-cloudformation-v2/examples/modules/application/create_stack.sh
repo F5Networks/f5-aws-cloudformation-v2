@@ -34,10 +34,11 @@ fi
 
 parameters+="ParameterKey=appSecurityGroupId,ParameterValue=$appSecurityGroupId \
 ParameterKey=createAutoscaleGroup,ParameterValue=<CREATE AUTOSCALE GROUP> \
-ParameterKey=customAppImageId,ParameterValue=<CUSTOM APP IMAGE> \
+ParameterKey=customImageId,ParameterValue=<CUSTOM APP IMAGE> \
 ParameterKey=restrictedSrcAddress,ParameterValue=0.0.0.0/0 \
-ParameterKey=setAppPublicIp,ParameterValue=<SET APP PUBLIC IP> \
+ParameterKey=provisionPublicIp,ParameterValue=<PROVISION PUBLIC IP> \
 ParameterKey=sshKey,ParameterValue=dewpt \
+ParameterKey=uniqueString,ParameterValue=<UNIQUESTRING> \
 ParameterKey=vpc,ParameterValue=$vpcId"
 echo "Parameters:$parameters"
 
