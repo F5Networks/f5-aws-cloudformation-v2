@@ -19,7 +19,7 @@ ParameterKey=externalSubnetAz2,ParameterValue=$subnetAz2 \
 ParameterKey=internalSubnetAz1,ParameterValue=$subnetAz1 \
 ParameterKey=internalSubnetAz2,ParameterValue=$subnetAz2 \
 ParameterKey=numberPublicExternalIpAddresses,ParameterValue=<NUM SECONDARY PRIVATE IP> \
-ParameterKey=numberPublicMgmtIpAddresses,ParameterValue=<NUM SECONDARY PRIVATE IP> \
+ParameterKey=numberPublicMgmtIpAddresses,ParameterValue=<NUM PUBLIC MGMT IP> \
 ParameterKey=provisionExternalBigipLoadBalancer,ParameterValue=<PROVISION EXTERNAL LB> \
 ParameterKey=provisionInternalBigipLoadBalancer,ParameterValue=<PROVISION INTERNAL LB> \
 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0 \

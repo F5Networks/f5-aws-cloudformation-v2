@@ -4,7 +4,7 @@
 #  replayTimeout = 180
 
 # supports utility license only atm
-autoscale_group=$(aws autoscaling describe-auto-scaling-groups --region <REGION> | jq -r '.AutoScalingGroups[] |select (.AutoScalingGroupARN |contains("<STACK NAME>"))|.AutoScalingGroupName' | grep 'BigipAutoscale')
+autoscale_group=$(aws autoscaling describe-auto-scaling-groups --region <REGION> | jq -r '.AutoScalingGroups[] |select (.AutoScalingGroupARN |contains("<UNIQUESTRING>-bigip"))|.AutoScalingGroupName')
 instances=$(aws autoscaling describe-auto-scaling-groups --auto-scaling-group-name $autoscale_group --region <REGION> | jq -r .AutoScalingGroups[].Instances[].InstanceId)
 
 running_macs=$(aws ec2 describe-instances --instance-ids $instances --region <REGION> --filters Name=instance-state-name,Values=running | jq -r '.Reservations[].Instances[].NetworkInterfaces[].MacAddress' | sort -f)

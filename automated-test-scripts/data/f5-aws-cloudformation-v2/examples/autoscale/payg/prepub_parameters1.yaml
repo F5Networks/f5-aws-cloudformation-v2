@@ -1,15 +1,17 @@
 ---
 ACCESS: 0.0.0.0/0
-BIGIP IMAGE NAME: '*15.1.2.1**PAYG-Best 1Gbps*'
+APP SCALE MAX SIZE: 2
+APP SCALE MIN SIZE: 1
+BIGIP IMAGE: '*15.1.2.1**PAYG-Best 1Gbps*'
 BIGIP INSTANCE TYPE: m5.2xlarge
 BIGIP MGMT PORT: 8443
-BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.2.1-1.gz.run'
+BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run'
 BIGIQ PASSWORD: b1gAdminPazz
 CIDR: 10.0.0.0/16
 CUSTOM IMAGE ID: ami-0bf7c36963b8063fc # F5 BIGIP-16.0.1.1-0.0.6 PAYG-Best 1Gbps-210129034806 for us-west-2
 HIGH CPU THRESHOLD: 80
 LICENSE TYPE: payg
-LOW CPU THRESHOLD: 0
+LOW CPU THRESHOLD: 20
 METRIC NAME SPACE: dd-<DEWPOINT JOB ID>
 NIC COUNT: 1
 NOTIFICATION EMAIL: dewpoint@f5.com
@@ -34,7 +36,7 @@ SOLUTION TYPE: autoscale
 SSH KEY: dewpt
 STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
 STACK TYPE: existing-stack
-SUBNET1 PUBLIC: 'true'
+SUBNET1 PUBLIC: 'false'
 SUBNETMASK: 24
 TEMPLATE NAME: payg-autoscale
 TEMPLATE URL: 'file://$PWD/examples/autoscale/payg/autoscale.yaml'

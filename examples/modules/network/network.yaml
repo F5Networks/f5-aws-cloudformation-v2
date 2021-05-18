@@ -492,7 +492,7 @@ Parameters:
   uniqueString:
     AllowedPattern: ^[a-zA-Z][a-zA-Z0-9]{1,11}$
     ConstraintDescription: Must Contain between 1 and 12 alphanumeric characters with first character as a letter.
-    Default: myBIGIP
+    Default: myUniqStr
     Description: Unique String used when creating object names or Tags.
     Type: String
   vpcCidr:
@@ -522,7 +522,7 @@ Resources:
             - '-'
             - - !Ref uniqueString
               - VPC
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -548,7 +548,7 @@ Resources:
             - '-'
             - - !Ref uniqueString
               - DHCP Options
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -575,7 +575,7 @@ Resources:
             - '-'
             - - !Ref uniqueString
               - Internet Gateway
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -654,7 +654,7 @@ Resources:
               - Subnet 0A
         - Key: Network
           Value: Public
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -733,7 +733,7 @@ Resources:
             - subnet1PrivateA
             - Private
             - Public
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -809,7 +809,7 @@ Resources:
               - Subnet 2A
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -884,7 +884,7 @@ Resources:
               - Subnet 3A
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -959,7 +959,7 @@ Resources:
               - Subnet 4A
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -1034,7 +1034,7 @@ Resources:
               - Subnet 5A
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -1109,7 +1109,7 @@ Resources:
               - Subnet 6A
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -1184,7 +1184,7 @@ Resources:
               - Subnet 7A
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -1259,7 +1259,7 @@ Resources:
               - Subnet 0B
         - Key: Network
           Value: Public
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -1338,7 +1338,7 @@ Resources:
             - subnet1PrivateB
             - Private
             - Public
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -1414,7 +1414,7 @@ Resources:
               - Subnet 2B
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -1489,7 +1489,7 @@ Resources:
               - Subnet 3B
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -1564,7 +1564,7 @@ Resources:
               - Subnet 4B
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -1639,7 +1639,7 @@ Resources:
               - Subnet 5B
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -1714,7 +1714,7 @@ Resources:
               - Subnet 6B
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -1789,7 +1789,7 @@ Resources:
               - Subnet 7B
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -1864,7 +1864,7 @@ Resources:
               - Subnet 0C
         - Key: Network
           Value: Public
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -1943,7 +1943,7 @@ Resources:
             - subnet1PrivateC
             - Private
             - Public
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -2019,7 +2019,7 @@ Resources:
               - Subnet 2C
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -2094,7 +2094,7 @@ Resources:
               - Subnet 3C
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -2169,7 +2169,7 @@ Resources:
               - Subnet 4C
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -2244,7 +2244,7 @@ Resources:
               - Subnet 5C
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -2319,7 +2319,7 @@ Resources:
               - Subnet 6C
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -2394,7 +2394,7 @@ Resources:
               - Subnet 7C
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -2469,7 +2469,7 @@ Resources:
               - Subnet 0D
         - Key: Network
           Value: Public
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -2548,7 +2548,7 @@ Resources:
             - subnet1PrivateD
             - Private
             - Public
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -2624,7 +2624,7 @@ Resources:
               - Subnet 2D
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -2700,7 +2700,7 @@ Resources:
               - Subnet 3D
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -2775,7 +2775,7 @@ Resources:
               - Subnet 4D
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -2850,7 +2850,7 @@ Resources:
               - Subnet 5D
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -2925,7 +2925,7 @@ Resources:
               - Subnet 6D
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -3000,7 +3000,7 @@ Resources:
               - Subnet 7D
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -3020,7 +3020,7 @@ Resources:
               - Public Subnets Route Table
         - Key: Network
           Value: Public
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -3071,7 +3071,7 @@ Resources:
               - Private SubnetA Route Table
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -3099,7 +3099,7 @@ Resources:
               - NACL Private Subnets A
         - Key: Network
           Value: NACL Protected
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -3202,7 +3202,7 @@ Resources:
               - Private SubnetB Route Table
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -3230,7 +3230,7 @@ Resources:
               - NACL Private Subnets B
         - Key: Network
           Value: NACL Protected
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -3333,7 +3333,7 @@ Resources:
               - Private SubnetC Route Table
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -3361,7 +3361,7 @@ Resources:
               - NACL Private Subnets C
         - Key: Network
           Value: NACL Protected
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -3464,7 +3464,7 @@ Resources:
               - Private SubnetD Route Table
         - Key: Network
           Value: Private
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -3492,7 +3492,7 @@ Resources:
               - NACL Private Subnets D
         - Key: Network
           Value: NACL Protected
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -3774,7 +3774,7 @@ Resources:
             - '-'
             - - !Ref uniqueString
               - EIP NAT Gateway A
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -3794,7 +3794,7 @@ Resources:
             - '-'
             - - !Ref uniqueString
               - EIP NAT Gateway B
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -3814,7 +3814,7 @@ Resources:
             - '-'
             - - !Ref uniqueString
               - EIP NAT Gateway C
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -3834,7 +3834,7 @@ Resources:
             - '-'
             - - !Ref uniqueString
               - EIP NAT Gateway D
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -3857,7 +3857,7 @@ Resources:
             - '-'
             - - !Ref uniqueString
               - Nat Gateway Subnets A
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -3880,7 +3880,7 @@ Resources:
             - '-'
             - - !Ref uniqueString
               - Nat Gateway Subnets B
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -3903,7 +3903,7 @@ Resources:
             - '-'
             - - !Ref uniqueString
               - Nat Gateway Subnets C
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
@@ -3926,7 +3926,7 @@ Resources:
             - '-'
             - - !Ref uniqueString
               - Nat Gateway Subnets D
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment

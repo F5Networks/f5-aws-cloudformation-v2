@@ -241,15 +241,13 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       Tags:
-        - Key: Application
-          Value: !Ref application
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
-        - Key: Owner
+        - Key: owner
           Value: !Ref owner
   CopyZipsFunction:
     Condition: createRevoke
@@ -319,15 +317,13 @@ Resources:
                   timer.cancel()
                   cfnresponse.send(event, context, status, {}, None)
       Tags:
-        - Key: Application
-          Value: !Ref application
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
-        - Key: Owner
+        - Key: owner
           Value: !Ref owner
   CopyZipsLogGroup:
     Condition: createRevoke
@@ -348,15 +344,13 @@ Resources:
       Objects:
         - v1.1.0/lambda_bigiq_revoke.zip
       Tags:
-        - Key: Application
-          Value: !Ref application
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
-        - Key: Owner
+        - Key: owner
           Value: !Ref owner
   LambdaInvokePermission:
     Condition: createRevoke
@@ -413,15 +407,13 @@ Resources:
             - !Ref 'AWS::NoValue'
             - !Ref bigIqSubnetId
       Tags:
-        - Key: Application
-          Value: !Ref application
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
-        - Key: Owner
+        - Key: owner
           Value: !Ref owner
   LambdaLogGroup:
     Condition: createRevoke
@@ -439,15 +431,13 @@ Resources:
       region: !Ref 'AWS::Region'
       bucketName: !Ref LambdaZipsBucket
       Tags:
-        - Key: Application
-          Value: !Ref application
-        - Key: cost
+        - Key: costcenter
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
-        - Key: Owner
+        - Key: owner
           Value: !Ref owner
   LambdaDeploymentCleanup:
     Condition: createRevoke

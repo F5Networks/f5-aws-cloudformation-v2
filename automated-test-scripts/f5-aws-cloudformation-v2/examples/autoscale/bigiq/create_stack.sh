@@ -38,13 +38,15 @@ else
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.password = \"{{{BIGIQ_PASSWORD}}}\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.shell = \"bash\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.userType = \"regular\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.myLicense.bigIpPassword = \"{{{BIGIQ_PASSWORD}}}\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.myLicense.bigIpUsername = \"admin\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.myLicense.bigIqHost = \"$bigiq_address\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.myLicense.licensePool = \"production\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.myLicense.overwrite = \"false\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.bigIpPassword = \"{{{BIGIQ_PASSWORD}}}\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.bigIpUsername = \"admin\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.bigIqHost = \"$bigiq_address\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.licensePool = \"production\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.overwrite = \"false\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTPS_Service.WAFPolicy.enforcementMode = \"transparent\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTP_Service.WAFPolicy.enforcementMode = \"transparent\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTPS_Service.WAFPolicy.url = \"https://raw.githubusercontent.com/f5devcentral/f5-asm-policy-templates/master/generic_ready_template/Rapid_Depolyment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTP_Service.WAFPolicy.url = \"https://raw.githubusercontent.com/f5devcentral/f5-asm-policy-templates/master/generic_ready_template/Rapid_Depolyment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[2].value.My_Metrics_Namespace.My_Cloudwatch_Metrics.metricNamespace = \"<METRIC NAME SPACE>\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[2].value.My_S3.class = \"Telemetry_Consumer\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[2].value.My_S3.type = \"AWS_S3\"" -i <DEWPOINT JOB ID>.yaml
@@ -76,132 +78,163 @@ cat <<EOF > parameters.json
         "ParameterKey": "artifactLocation",
         "ParameterValue": "$artifact_location"
     },
-    { 
+    {
         "ParameterKey": "application",
         "ParameterValue": "f5-app-<DEWPOINT JOB ID>"
     },
-    { 
-        "ParameterKey": "bigIpRuntimeInitConfig",
-        "ParameterValue": $runtimeConfig
+    {
+        "ParameterKey": "appScalingMaxSize",
+        "ParameterValue": "<APP SCALE MAX SIZE>"
     },
     {
-        "ParameterKey": "bigIqAddress",
-        "ParameterValue": "$bigiq_address"
+        "ParameterKey": "appScalingMinSize",
+        "ParameterValue": "<APP SCALE MIN SIZE>"
     },
-    {   "ParameterKey": "bigIqAddressType",
-        "ParameterValue": "public"
-    },
-    {   "ParameterKey": "bigIqLicensePool",
-        "ParameterValue": "production"
-    },
-    {   "ParameterKey": "bigIqSecretArn",
-        "ParameterValue": "$secret_arn"
-    },
-    {   "ParameterKey": "bigIqTenant",
-        "ParameterValue": "myTenant"
-    },
-    {   
-        "ParameterKey": "bigIqUsername",
-        "ParameterValue": "admin"
-    },
-    {   "ParameterKey": "bigIqUtilitySku",
-        "ParameterValue": "F5-BIG-MSP-BT-1G"
-    },
-    { 
-        "ParameterKey": "customImageId",
+    {
+        "ParameterKey": "bigIpCustomImageId",
         "ParameterValue": "<CUSTOM IMAGE ID>"
     },
-    { 
-        "ParameterKey": "imageName",
-        "ParameterValue": "<BIGIP IMAGE NAME>"
+    {
+        "ParameterKey": "bigIpImage",
+        "ParameterValue": "<BIGIP IMAGE>"
     },
-    { 
-        "ParameterKey": "instanceType",
+    {
+        "ParameterKey": "bigIpInstanceType",
         "ParameterValue": "<BIGIP INSTANCE TYPE>"
     },
-    {   "ParameterKey": "lambdaS3BucketName",
-        "ParameterValue": "f5-aws-bigiq-revoke"
-    },
-    {   "ParameterKey": "lambdaS3Key",
-        "ParameterValue": "develop/"
-    },
-    { 
-        "ParameterKey": "metricNameSpace",
-        "ParameterValue": "<METRIC NAME SPACE>"
-    },
-    { 
-        "ParameterKey": "notificationEmail",
-        "ParameterValue": "<NOTIFICATION EMAIL>"
-    },
-    { 
-        "ParameterKey": "numAzs",
-        "ParameterValue": "<NUMBER AZS>"
-    },
-    { 
-        "ParameterKey": "numSubnets",
-        "ParameterValue": "<NUMBER SUBNETS>"
-    },
-    { 
-        "ParameterKey": "provisionExternalBigipLoadBalancer",
-        "ParameterValue": "<PROVISION EXTERNAL LB>"
-    },
-    { 
-        "ParameterKey": "provisionInternalBigipLoadBalancer",
-        "ParameterValue": "<PROVISION INTERNAL LB>"
-    },
-    { 
-        "ParameterKey": "provisionPublicIp",
-        "ParameterValue": "<PROVISION PUBLIC IP>"
-    },
-    { 
-        "ParameterKey": "restrictedSrcAddressApp",
-        "ParameterValue": "0.0.0.0/0"
-    },
-    { 
-        "ParameterKey": "restrictedSrcAddressMgmt",
-        "ParameterValue": "0.0.0.0/0"
-    },
-    { 
-        "ParameterKey": "s3BucketName",
-        "ParameterValue": "$bucket_name"
-    },
-    { 
-        "ParameterKey": "s3BucketRegion",
-        "ParameterValue": "$region"
-    },
-    { 
-        "ParameterKey": "loggingS3BucketName",
-        "ParameterValue": "$bucket_name"
-    },
-    { 
-        "ParameterKey": "secretArn",
-        "ParameterValue": "$secret_arn"
-    },
-    { 
-        "ParameterKey": "setPublicSubnet1",
-        "ParameterValue": "<SUBNET1 PUBLIC>"
-    },
-    { 
-        "ParameterKey": "snsEvents",
-        "ParameterValue": "<SNS EVENTS>"
-    },
-    { 
-        "ParameterKey": "sshKey",
-        "ParameterValue": "<SSH KEY>"
-    },
-    { 
-        "ParameterKey": "subnetMask",
-        "ParameterValue": "<SUBNETMASK>"
-    },
-    { 
-        "ParameterKey": "uniqueString",
-        "ParameterValue": "<UNIQUESTRING>"
+    {
+        "ParameterKey": "bigIpRuntimeInitConfig",
+        "ParameterValue": $runtimeConfig
     },
     {
         "ParameterKey": "bigIpRuntimeInitPackageUrl",
         "ParameterValue": "<BIGIP RUNTIME INIT PACKAGEURL>"
     },
-    { 
+    {
+        "ParameterKey": "bigIpScaleInCpuThreshold",
+        "ParameterValue": "<LOW CPU THRESHOLD>"
+    },
+    {
+        "ParameterKey": "bigIpScaleInThroughputThreshold",
+        "ParameterValue": "<SCALE DOWN BYTES THRESHOLD>"
+    },
+    {
+        "ParameterKey": "bigIpScaleOutCpuThreshold",
+        "ParameterValue": "<HIGH CPU THRESHOLD>"
+    },
+    {
+        "ParameterKey": "bigIpScaleOutThroughputThreshold",
+        "ParameterValue": "<SCALE UP BYTES THRESHOLD>"
+    },
+    {
+        "ParameterKey": "bigIqAddress",
+        "ParameterValue": "$bigiq_address"
+    },
+    {
+        "ParameterKey": "bigIqAddressType",
+        "ParameterValue": "public"
+    },
+    {
+        "ParameterKey": "bigIqLicensePool",
+        "ParameterValue": "production"
+    },
+    {
+        "ParameterKey": "bigIqSecretArn",
+        "ParameterValue": "$secret_arn"
+    },
+    {
+        "ParameterKey": "bigIqTenant",
+        "ParameterValue": "myTenant"
+    },
+    {
+        "ParameterKey": "bigIqUsername",
+        "ParameterValue": "admin"
+    },
+    {
+        "ParameterKey": "bigIqUtilitySku",
+        "ParameterValue": "F5-BIG-MSP-BT-1G"
+    },
+    {
+        "ParameterKey": "lambdaS3BucketName",
+        "ParameterValue": "f5-aws-bigiq-revoke"
+    },
+    {
+        "ParameterKey": "lambdaS3Key",
+        "ParameterValue": "develop/"
+    },
+    {
+        "ParameterKey": "loggingS3BucketName",
+        "ParameterValue": "$bucket_name"
+    },
+    {
+        "ParameterKey": "metricNameSpace",
+        "ParameterValue": "<METRIC NAME SPACE>"
+    },
+    {
+        "ParameterKey": "notificationEmail",
+        "ParameterValue": "<NOTIFICATION EMAIL>"
+    },
+    {
+        "ParameterKey": "numAzs",
+        "ParameterValue": "<NUMBER AZS>"
+    },
+    {
+        "ParameterKey": "numSubnets",
+        "ParameterValue": "<NUMBER SUBNETS>"
+    },
+    {
+        "ParameterKey": "provisionExternalBigipLoadBalancer",
+        "ParameterValue": "<PROVISION EXTERNAL LB>"
+    },
+    {
+        "ParameterKey": "provisionInternalBigipLoadBalancer",
+        "ParameterValue": "<PROVISION INTERNAL LB>"
+    },
+    {
+        "ParameterKey": "provisionPublicIp",
+        "ParameterValue": "<PROVISION PUBLIC IP>"
+    },
+    {
+        "ParameterKey": "restrictedSrcAddressApp",
+        "ParameterValue": "0.0.0.0/0"
+    },
+    {
+        "ParameterKey": "restrictedSrcAddressMgmt",
+        "ParameterValue": "0.0.0.0/0"
+    },
+    {
+        "ParameterKey": "s3BucketName",
+        "ParameterValue": "$bucket_name"
+    },
+    {
+        "ParameterKey": "s3BucketRegion",
+        "ParameterValue": "$region"
+    },
+    {
+        "ParameterKey": "secretArn",
+        "ParameterValue": "$secret_arn"
+    },
+    {
+        "ParameterKey": "setPublicSubnet1",
+        "ParameterValue": "<SUBNET1 PUBLIC>"
+    },
+    {
+        "ParameterKey": "snsEvents",
+        "ParameterValue": "<SNS EVENTS>"
+    },
+    {
+        "ParameterKey": "sshKey",
+        "ParameterValue": "<SSH KEY>"
+    },
+    {
+        "ParameterKey": "subnetMask",
+        "ParameterValue": "<SUBNETMASK>"
+    },
+    {
+        "ParameterKey": "uniqueString",
+        "ParameterValue": "<UNIQUESTRING>"
+    },
+    {
         "ParameterKey": "vpcCidr",
         "ParameterValue": "<CIDR>"
     }
