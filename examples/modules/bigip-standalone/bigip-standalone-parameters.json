@@ -2,7 +2,7 @@
     { "ParameterKey": "application", "ParameterValue": "f5app" },
     { "ParameterKey": "bigIpInstanceProfile", "ParameterValue": "" },
     { "ParameterKey": "bigIpRuntimeInitConfig:", "ParameterValue": "" },
-    { "ParameterKey": "bigIpRuntimeInitPackageUrl", "ParameterValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.0/dist/f5-bigip-runtime-init-1.2.0-1.gz.run" },
+    { "ParameterKey": "bigIpRuntimeInitPackageUrl", "ParameterValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run" },
     { "ParameterKey": "cost", "ParameterValue": "f5cost" },
     { "ParameterKey": "environment", "ParameterValue": "f5env" },
     { "ParameterKey": "externalPrimaryPublicId", "ParameterValue": "" },

@@ -75,8 +75,8 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | scaleInThroughputThreshold | No | Incoming throughput threshold to begin scaling in BIG-IP VE instances. | 
 | scaleOutCpuThreshold | No | High CPU Percentage threshold to begin scaling out BIG-IP VE instances. | 
 | scaleOutThroughputThreshold | No | Incoming throughput threshold to begin scaling out BIG-IP VE instances. |
-| scalingMaxSize | No |  Maximum number of BIG-IP instances (2-100) that can be created in the Auto Scale Group. |
-| scalingMinSize | No | Minimum number of BIG-IP instances (1-99) you want available in the Auto Scale Group. |
+| scalingMaxSize | No |  Maximum number of BIG-IP instances (2-100) that can be created in the Autoscale Group. |
+| scalingMinSize | No | Minimum number of BIG-IP instances (1-99) you want available in the Autoscale Group. |
 | snsEvents | No | Provide a list of SNS Topics used on Autoscale Group. |
 | sshKey | Yes | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. | 
 | subnets | Yes | Public or external subnets for the availability zones. | 

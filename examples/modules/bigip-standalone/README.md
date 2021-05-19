@@ -125,7 +125,7 @@ The *externalServiceIps* parameter allows you to provide a list of secondary pri
 
 You can enable multiple public external addresses by using the following steps:
 
- 1) Create parameter for passing list of Elastic IP Allocation IDs.
+1. Create parameter for passing list of Elastic IP Allocation IDs.
  
 ```yaml
   externalPublicIpsAllocationIds:
@@ -135,7 +135,7 @@ You can enable multiple public external addresses by using the following steps:
 
 ```
 
-  2) Create EIP Association resource for associating public IP with external network interface.
+2. Create EIP Association resource for associating public IP with external network interface.
   
 ```yaml
   BigipVipEipAssociation00:
