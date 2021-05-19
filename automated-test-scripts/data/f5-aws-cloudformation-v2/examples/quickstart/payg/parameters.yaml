@@ -2,7 +2,7 @@
 BIGIP IMAGE: Best
 BIGIP INSTANCE TYPE: m5.2xlarge
 BIGIP USER: quickstart
-BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.2.1-1.gz.run'
+BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run'
 CUSTOM IMAGE: ''
 DOCKER IMAGE: 'f5devcentral/f5-demo-app:1.0.1'
 LICENSE TYPE: payg

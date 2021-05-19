@@ -14,7 +14,7 @@ help:
 link_check:
 	echo "Running link checker against all markdown files";
 	cd ${LINK_CHECK_DIR} && npm install && cd ${CUR_DIR};
-	${LINK_CHECK_DIR}/link_checker.sh ${PROJECT_DIR} "cloud-tools automated-test-scripts"
+	${LINK_CHECK_DIR}/link_checker.sh ${PROJECT_DIR} "cloud-tools node_modules archived automated-test-scripts"
 run_parameter_parser:
 	echo "Generating v2 parameter config file"
 	cd ${PARSER_DIR} &&	pip install -r requirements.txt && python parameter_parser.py --cloud aws

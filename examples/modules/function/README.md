@@ -18,7 +18,7 @@
 
 ## Introduction
 
-This template creates the AWS Lambda function, IAM roles, SNS topic, S3 bucket, supplemental Lambda function, and other resources required for revoking licenses from a BIG-IQ system based on current AWS Auto Scale group capacity. The Lambda function is triggered by a notification received from an AWS SNS topic targeted by an Auto Scale group notification.
+This template creates the AWS Lambda function, IAM roles, SNS topic, S3 bucket, supplemental Lambda function, and other resources required for revoking licenses from a BIG-IQ system based on current AWS Autoscale group capacity. The Lambda function is triggered by a notification received from an AWS SNS topic targeted by an Autoscale group notification.
 
 ## Prerequisites
 
@@ -38,7 +38,7 @@ This template creates the AWS Lambda function, IAM roles, SNS topic, S3 bucket, 
 
  - At provisioning time, this template creates an S3 bucket in the deployment region and a supplemental Lambda function named **CopyZipsFunction**. This Lambda function and its accompanying resources are not required after deployment succeeds, and can be deleted.
 
- - This template's outputs include the ARN of the SNS topic resource. You can pass this value to the snsTopics input parameter of the examples/modules/bigip-autoscale module template to associate the topic with your Auto Scale group.
+ - This template's outputs include the ARN of the SNS topic resource. You can pass this value to the snsTopics input parameter of the examples/modules/bigip-autoscale module template to associate the topic with your Autoscale group.
 
 
 ### Template Input Parameters

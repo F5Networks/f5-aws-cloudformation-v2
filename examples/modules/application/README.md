@@ -53,8 +53,8 @@ This template deploys a simple example application. It launches a CentOS Linux V
 | owner | No | Application Tag. |
 | provisionPublicIp | No | To create a Public IP and connect it to the application. |
 | restrictedSrcAddress | Yes | The IP address range that can be used to SSH to the EC2 instances. |
-| scalingMaxSize | No | The maximum number of BIG-IP instances (2-100) that can be created in the Auto Scale Group. |
-| scalingMinSize | No | The minimum number of BIG-IP instances (1-99) you want available in the Auto Scale Group. |
+| scalingMaxSize | No | The maximum number of BIG-IP instances (2-100) that can be created in the Autoscale Group. |
+| scalingMinSize | No | The minimum number of BIG-IP instances (1-99) you want available in the Autoscale Group. |
 | sshKey | Yes | Name of an existing EC2 KeyPair to enable SSH access to the instance. |
 | staticIp | No | The private IP address to apply as the primary private address. |
 | uniqueString | Yes | Unique String used when creating object names or Tags. |
