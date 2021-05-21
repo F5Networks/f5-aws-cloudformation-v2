@@ -15,7 +15,7 @@
     - [Template Outputs](#template-outputs)
   - [Deploying this Solution](#deploying-this-solution)
     - [Deploying via the AWS Launch Stack button](#deploying-via-the-aws-launch-stack-button)
-    - [Deploying via the AWS CLI]](#deploying-via-the-aws-cli)
+    - [Deploying via the AWS CLI](#deploying-via-the-aws-cli)
     - [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment)
   - [Validation](#validation)
     - [Validating the Deployment](#validating-the-deployment)
@@ -32,7 +32,6 @@
   - [Troubleshooting Steps](#troubleshooting-steps)
   - [Security](#security)
   - [BIG-IP Versions](#big-ip-versions)
-  - [Resource Creation Flow Chart](#resource-creation-flow-chart)
   - [Documentation](#documentation)
   - [Getting Help](#getting-help)
     - [Filing Issues](#filing-issues)
@@ -136,7 +135,7 @@ By default, this solution creates a single Availability Zone VPC with four subne
 | bigIpManagementSsh | SSH Command to Public Management IP | Dag Module | string |
 | bigIpManagementUrl443 | Url to public management address | Dag Module | string |
 | bigIpManagementUrl8443 | Url to public management address | Dag Module | string |
-| vipPublicUrl | Url to public application address | string |
+| vipPublicUrl | Url to public application address | Dag Module | string | 
 
 
 ## Deploying this Solution
@@ -149,7 +148,7 @@ Two options for deploying this solution:
 The easiest way to deploy this CloudFormation template is to use the Launch button.<br>
 **Important**: By default, the link takes you to an AWS console set to the us-east-1 region. Select the AWS region (upper right) in which you want to deploy after clicking the Launch Stack button. 
 
-<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Quickstart-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.0.0/examples/quickstart/quickstart.yaml">
+<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Quickstart-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/quickstart/quickstart.yaml">
     <img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png"/></a>
 
 
@@ -179,14 +178,14 @@ By default, the templates in this repository are also publicly hosted on S3 at [
 
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.0.0/examples/quickstart/quickstart.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/quickstart/quickstart.yaml \
   --parameters "ParameterKey=<KEY>,ParameterValue=<VALUE> ParameterKey=<KEY>,ParameterValue=<VALUE>"
 ```
 
 or with a local parameters file (see `autoscale-parameters.json` example in this directory):
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.0.0/examples/quickstart/quickstart.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/quickstart/quickstart.yaml \
   --parameters file://quickstart-parameters.json
 ```
 
@@ -194,7 +193,7 @@ Example:
 
 ```bash
  aws cloudformation create-stack --region us-east-1 --stack-name myQuickstart \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.0.0/examples/quickstart/quickstart.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/quickstart/quickstart.yaml \
   --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0"
 ```
 
@@ -304,19 +303,6 @@ From Parent Template Outputs:
           aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpManagementPrivateIp'].OutputValue" --output text
           ```
 
-      Or from Instance Id directly:
-      - **Console**: Navigate to **EC2 > Instances > *bigIpInstanceId* > Instance Summary > *Public IPv4 address*** or ***Private IPv4 address***.
-      - **AWS CLI**: 
-        - Public IPs: 
-            ```bash 
-            aws --region ${REGION} ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=instance-id,Values=${bigIpInstanceId}" --query 'Reservations[*].Instances[*].[PublicIpAddress]' --output text
-            ```
-        - Private IPs: 
-            ```bash 
-            aws --region ${REGION} ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=instance-id,Values=${bigIpInstanceId}" --query 'Reservations[*].Instances[*].[PrivateIpAddress]' --output text
-            ```
-
-
 #### WebUI 
 - Open a browser to the Management IP
   - NOTE: By default, the BIG-IP's WebUI starts with a self-signed cert. Follow your browser's instructions for accepting self-signed certs (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, click "Accept Risk and Continue").
@@ -365,19 +351,6 @@ To test the WAF service, perform the following steps:
   - **AWS CLI**: 
       ```bash 
       aws --region ${REGION}  cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='vip1PublicUrl'].OutputValue" --output text
-      ```
-
-  - Or from the instance directly
-  - **Console**: Navigate to **EC2 > Instances > *${bigIpInstanceId}* > Instance Summary > *Public IPv4 address*** or ***Private IPv4 address***.
-  - **AWS CLI**: 
-    - Public IPs: 
-      ```bash 
-      aws --region ${REGION} ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=instance-id,Values=${bigIpInstanceId}" --query 'Reservations[*].Instances[*].NetworkInterfaces' --output text
-      ``` 
-      Look for the Secondary IP address on the Public/External Subnet NIC 
-      Example:
-      ```bash 
-      aws --region us-east-1 ec2 describe-instances --filters "Name=instance-state-name,Values=running" "Name=instance-id,Values=i-0b218faad768207e8" --query 'Reservations[*].Instances[*].NetworkInterfaces[2].PrivateIpAddresses[1].Association.PublicIp' --output text
       ```
 
 - Verify the application is responding:
@@ -512,11 +485,6 @@ These templates have been tested and validated with the following versions of BI
 | --- | --- |
 | 16.0.1.1 | 0.0.6 |
 | 14.1.4 | 0.0.11 |
-
-
-## Resource Creation Flow Chart
-
-![Resource Creation Flow Chart](../../images/aws-quickstart-example.png)
 
 
 ## Documentation
