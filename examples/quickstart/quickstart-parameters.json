@@ -1,7 +1,7 @@
 [
     { "ParameterKey": "appContainerName", "ParameterValue": "f5devcentral/f5-demo-app:latest" },
     { "ParameterKey": "application", "ParameterValue": "f5app" },
-    { "ParameterKey": "artifactLocation", "ParameterValue": "f5-aws-cloudformation-v2/v1.0.0.0/examples/" },
+    { "ParameterKey": "artifactLocation", "ParameterValue": "f5-aws-cloudformation-v2/v1.0.1.0/examples/" },
     { "ParameterKey": "bigIpCustomImageId", "ParameterValue": "" },
     { "ParameterKey": "bigIpImage", "ParameterValue": "Best" },
     { "ParameterKey": "bigIpInstanceType", "ParameterValue": "m5.xlarge" },

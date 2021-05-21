@@ -610,7 +610,7 @@ publish_to_github:
     GITHUB_API_TOKEN: "$AWS_V2_GITHUB_API_TOKEN"
     GITLAB_PRIVATE_TOKEN: "$AWS_V2_GITLAB_API_TOKEN"
 
-# Check template version, then push the examples/ folder to S3 when a tag in the form of "aws-v1.0.0.0" is added to the main branch
+# Check template version, then push the examples/ folder to S3 when a tag in the form of "aws-v1.0.1.0" is added to the main branch
 publish_aws_modules_s3:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3
   stage: publish
