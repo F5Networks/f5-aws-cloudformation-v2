@@ -16,7 +16,7 @@
     - [Template Outputs](#template-outputs)
   - [Deploying this Solution](#deploying-this-solution)
     - [Deploying via the AWS Launch Stack Button](#deploying-via-the-aws-launch-stack-button)
-    - [Deploying via the AWS CLI]](#deploying-via-the-aws-cli)
+    - [Deploying via the AWS CLI](#deploying-via-the-aws-cli)
     - [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment)
   - [Validation](#validation)
     - [Validating the Deployment](#validating-the-deployment)
@@ -37,7 +37,6 @@
   - [Troubleshooting Steps](#troubleshooting-steps)
   - [Security](#security)
   - [BIG-IP Versions](#big-ip-versions)
-  - [Resource Creation Flow Chart](#resource-creation-flow-chart)
   - [Documentation](#documentation)
   - [Getting Help](#getting-help)
     - [Filing Issues](#filing-issues)
@@ -178,7 +177,7 @@ Two options for deploying this solution include:
 The easiest way to deploy this CloudFormation template is to use the Launch button.<br>
 **Important**: By default, the link takes you to an AWS console set to the us-east-1 region. Select the AWS region (upper right) in which you want to deploy after clicking the Launch Stack button. 
 
-<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Autoscale-WAF-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.0.0/examples/autoscale/payg/autoscale.yaml">
+<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Autoscale-WAF-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/autoscale/payg/autoscale.yaml">
     <img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png"/></a>
 
 
@@ -210,14 +209,14 @@ By default, the templates in this repository are also publicly hosted on S3 at [
 
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.0.0/examples/autoscale/payg/autoscale.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/autoscale/payg/autoscale.yaml \
   --parameters "ParameterKey=<KEY>,ParameterValue=<VALUE> ParameterKey=<KEY>,ParameterValue=<VALUE>"
 ```
 
 or with a local parameters file (see `autoscale-parameters.json` example in this directory):
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.0.0/examples/autoscale/payg/autoscale.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/autoscale/payg/autoscale.yaml \
   --parameters file://autoscale-parameters.json
 ```
 
@@ -225,7 +224,7 @@ Example:
 
 ```bash
  aws cloudformation create-stack --region us-east-1 --stack-name mywaf \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.0.0/examples/autoscale/payg/autoscale.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/autoscale/payg/autoscale.yaml \
   --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0 ParameterKey=uniqueString,ParameterValue=mywaf ParameterKey=notificationEmail,ParameterValue=myemail@example.com" 
 ```
 
@@ -388,13 +387,13 @@ From Template Outputs:
 
 #### WebUI 
 
-- As mentioned above, no password is configured by default. If you would like or need to login to the GUI for debugging or inspection, you can create a custom username/password by logging in to admin account via SSH (per above) and use TMSH to create one:
-    At the TMSH prompt ```admin@(ip-10-0-0-100)(cfg-sync Standalone)(Active)(/Common)(tmos)#```:
-      ```shell
-      create auth user <YOUR_WEBUI_USERNAME> password <YOUR_STRONG_PASSWORD> partition-access add { all-partitions { role admin } }
-
-      save sys config
-      ```
+- As mentioned above, no password is configured by default. If you would like or need to login to the GUI for debugging or inspection, you can create a custom username/password by logging in to admin account via SSH (as shown above) and use TMSH to create one:
+    At the TMSH prompt ```admin@(ip-10-0-0-100)(cfg-sync Standalone)(Active)(/Common)(tmos)#``` :
+      
+    ```shell
+        create auth user <YOUR_WEBUI_USERNAME> password <YOUR_STRONG_PASSWORD> partition-access add { all-partitions { role admin } }
+        save sys config
+    ```  
 
 - Open a browser to the Management IP
   - ```https://${IP_ADDRESS_FROM_OUTPUT}:8443```
@@ -477,7 +476,7 @@ To update the BIG-IP configuration:
   4. Update the CloudFormation Stack with new **bigIpRuntimeInitConfig** parameter
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
-        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.0.0/examples/autoscale/payg/autoscale.yaml \
+        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/autoscale/payg/autoscale.yaml \
         --parameters "ParameterKey=bigIpRuntimeInitConfig,ParameterValue=https://<YOUR_NEW_LOCATION> ParameterKey=<KEY>,ParameterValue=<VALUE>"
       ```
 
@@ -487,7 +486,7 @@ To update the BIG-IP OS version:
   1. Update the CloudFormation Stack with new **bigIpImage** parameter
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
-        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.0.0/examples/autoscale/payg/autoscale.yaml \
+        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/autoscale/payg/autoscale.yaml \
         --parameters "ParameterKey=bigIpImage,ParameterValue=${bigIpImage} ParameterKey=<KEY>,ParameterValue=<VALUE>"
       ```
 
@@ -495,7 +494,7 @@ To update the BIG-IP instance size:
   1. Update the CloudFormation Stack with new **instanceType** parameter
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
-        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.0.0/examples/autoscale/payg/autoscale.yaml \
+        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/autoscale/payg/autoscale.yaml \
         --parameters "ParameterKey=instanceSize,ParameterValue=${instanceType} ParameterKey=<KEY>,ParameterValue=<VALUE>"
       ```
 
@@ -653,12 +652,6 @@ List of endpoints BIG-IP may contact during onboarding:
 | --- | --- |
 | 16.0.1.1 | 0.0.6 |
 | 14.1.4 | 0.0.11 |
-
-
-## Resource Creation Flow Chart
-
-![Resource Creation Flow Chart](../../images/aws-payg-autoscale-example.png)
-
 
 ## Documentation
 

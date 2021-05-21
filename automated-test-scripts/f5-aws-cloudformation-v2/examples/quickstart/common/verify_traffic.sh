@@ -1,18 +1,15 @@
 #  expectValue = "PASS"
-#  scriptTimeout = 2
+#  scriptTimeout = 3
 #  replayEnabled = true
-#  replayTimeout = 5
+#  replayTimeout = 10
 
-flag=PASS
 dnsAppname=$(aws cloudformation describe-stacks --stack-name <STACK NAME> --region <REGION> | jq -r '.Stacks[].Outputs[] | select (.OutputKey=="vipPublicUrl") | .OutputValue')
 
-echo "Executing HTTPS calls to Application"
+echo "Executing HTTPS call to Application ${dnsAppname}"
 
-httpsResponse=$(curl -sk $dnsAppname)
-echo "Validating HTTPS call:"
-if ! echo $httpsResponse | grep "Demo"; then
- echo "HTTPS traffic is not working"
- flag=FAIL
+RESPONSE=$(curl -sk ${dnsAppname})
+echo "RESPONSE: ${RESPONSE}"
+
+if echo ${RESPONSE} | grep -q "Demo"; then
+    echo "PASS"
 fi
-
-echo $flag
