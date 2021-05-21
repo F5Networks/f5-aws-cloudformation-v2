@@ -251,7 +251,7 @@ Parameters:
     AllowedPattern: ^.*[a-zA-Z]+/$
     ConstraintDescription:  key prefix can include numbers, lowercase letters,
       uppercase letters, hyphens (-), and forward slash (/).
-    Default: f5-aws-cloudformation-v2/v1.0.0.0/examples/
+    Default: f5-aws-cloudformation-v2/v1.0.1.0/examples/
     Description: The path in the S3Bucket where the modules folder is located.
       Can include numbers, lowercase letters, uppercase letters, hyphens (-), and
       forward slash (/).
@@ -293,6 +293,7 @@ Parameters:
     Description: Enter valid instance type.
     Type: String
   bigIpRuntimeInitConfig:
+    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
@@ -425,7 +426,7 @@ Parameters:
     AllowedValues:
       - 'true'
       - 'false'
-    Default: 'false'
+    Default: 'true'
     Description: Select true if you would like to provision an external elastic load balancer.
     Type: String
   provisionInternalBigipLoadBalancer:
@@ -535,7 +536,7 @@ Resources:
         !Sub
         - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/access/access.yaml'
         - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
-          S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}-${AWS::Region}', !Ref s3BucketName]
+          S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}', !Ref s3BucketName]
       Parameters:
         application: !Ref application
         bigIqSecretArn: !Ref bigIqSecretArn
@@ -562,7 +563,7 @@ Resources:
         !Sub
         - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/application/application.yaml'
         - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
-          S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}-${AWS::Region}', !Ref s3BucketName]
+          S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}', !Ref s3BucketName]
       Parameters:
         appContainerName: !Ref appContainerName
         application: !Ref application
@@ -612,7 +613,7 @@ Resources:
         !Sub
         - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/bigip-autoscale/bigip-autoscale.yaml'
         - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
-          S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}-${AWS::Region}', !Ref s3BucketName]
+          S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}', !Ref s3BucketName]
       Parameters:
         application: !Ref application
         bigIpExternalSecurityGroup: !GetAtt
@@ -699,7 +700,7 @@ Resources:
         !Sub
         - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/dag/dag.yaml'
         - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
-          S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}-${AWS::Region}', !Ref s3BucketName]
+          S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}', !Ref s3BucketName]
       Parameters:
         application: !Ref application
         cost: !Ref cost
@@ -752,7 +753,7 @@ Resources:
         !Sub
         - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/function/function.yaml'
         - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
-          S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}-${AWS::Region}', !Ref s3BucketName]
+          S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}', !Ref s3BucketName]
       Parameters:
         amiLookupRole: !GetAtt
           - Access
@@ -786,7 +787,7 @@ Resources:
         !Sub
         - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/network/network.yaml'
         - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
-          S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}-${AWS::Region}', !Ref s3BucketName]
+          S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}', !Ref s3BucketName]
       Parameters:
         cost: !Ref cost
         environment: !Ref environment

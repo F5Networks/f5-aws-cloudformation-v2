@@ -33,6 +33,7 @@ run_cfn_lint:
     - pip install -r requirements.txt
     - cfn-lint --template ../../examples/**/*.yaml --override-spec override_propagate.json
 
+## disabling this for now, need to work on checking links that have not been published yet
 # validate README file(s) only contain links that respond with 200 OK
 run_link_checker:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/node:10
@@ -591,7 +592,6 @@ verify_reg_key_counts:
     - pip install -r build/regkey-count-job/requirements.txt
     - build/regkey-count-job/regkey-count-checker.py
 
-# publish templates to github
 publish_to_github:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/node:8
   stage: release
@@ -610,7 +610,7 @@ publish_to_github:
     GITHUB_API_TOKEN: "$AWS_V2_GITHUB_API_TOKEN"
     GITLAB_PRIVATE_TOKEN: "$AWS_V2_GITLAB_API_TOKEN"
 
-# Check template version, then push the examples/ folder to S3 when a tag in the form of "aws-v1.0.0.0" is added to the main branch
+# Check template version, then push the examples/ folder to S3 when a tag in the form of "aws-v1.0.1.0" is added to the main branch
 publish_aws_modules_s3:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3
   stage: publish
