@@ -428,7 +428,6 @@ Parameters:
     Description: CIDR block for the VPC.
     Type: String
 Conditions:
-  usingDefaultBucket: !Equals [!Ref s3BucketName, 'f5-cft-v2']
   externalLB: !Equals
     - 'true'
     - !Ref provisionExternalBigipLoadBalancer
@@ -456,8 +455,8 @@ Resources:
       TemplateURL:
         !Sub
         - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/access/access.yaml'
-        - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
-          S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}', !Ref s3BucketName]
+        - S3Region: !Ref s3BucketRegion
+          S3Bucket: !Ref s3BucketName
       Parameters:
         application: !Ref application
         cost: !Ref cost
@@ -492,8 +491,8 @@ Resources:
       TemplateURL:
         !Sub
         - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/application/application.yaml'
-        - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
-          S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}', !Ref s3BucketName]
+        - S3Region: !Ref s3BucketRegion
+          S3Bucket: !Ref s3BucketName
       Parameters:
         appContainerName: !Ref appContainerName
         application: !Ref application
@@ -542,8 +541,8 @@ Resources:
       TemplateURL:
         !Sub
         - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/bigip-autoscale/bigip-autoscale.yaml'
-        - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
-          S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}', !Ref s3BucketName]
+        - S3Region: !Ref s3BucketRegion
+          S3Bucket: !Ref s3BucketName
       Parameters:
         application: !Ref application
         bigIpExternalSecurityGroup: !GetAtt
@@ -622,8 +621,8 @@ Resources:
       TemplateURL:
         !Sub
         - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/dag/dag.yaml'
-        - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
-          S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}', !Ref s3BucketName]
+        - S3Region: !Ref s3BucketRegion
+          S3Bucket: !Ref s3BucketName
       Parameters:
         application: !Ref application
         cost: !Ref cost
@@ -675,8 +674,8 @@ Resources:
       TemplateURL:
         !Sub
         - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/function/function.yaml'
-        - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
-          S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}', !Ref s3BucketName]
+        - S3Region: !Ref s3BucketRegion
+          S3Bucket: !Ref s3BucketName
       Parameters:
         amiLookupRole: !GetAtt
           - Access
@@ -688,8 +687,8 @@ Resources:
       TemplateURL:
         !Sub
         - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/network/network.yaml'
-        - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
-          S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}', !Ref s3BucketName]
+        - S3Region: !Ref s3BucketRegion
+          S3Bucket: !Ref s3BucketName
       Parameters:
         cost: !Ref cost
         environment: !Ref environment
