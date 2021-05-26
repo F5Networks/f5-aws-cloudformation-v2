@@ -68,7 +68,7 @@ Metadata:
         default: The ARN of the AWS secret containing the password used during BIG-IP licensing via BIG-IQ
       secretArn:
         default: ARN of Secrets Manager secret
-  Version: 1.0.0
+  Version: 1.0.1.0
 Outputs:
   stackName:
     Description: Access nested stack name

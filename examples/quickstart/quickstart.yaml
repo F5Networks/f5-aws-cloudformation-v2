@@ -4,7 +4,6 @@ Description: >-
   nested templates for provisioning network, dag/ingress and compute resources for
   hosting BIG-IP Standalone solution.
 Conditions:
-  usingDefaultBucket: !Equals [!Ref s3BucketName, 'f5-cft-v2']
   1nic: !Equals
     - 1
     - !Ref numNics
@@ -491,7 +490,7 @@ Metadata:
         default: Unique String
       version:
         default: BIG-IP Version
-  Version: 1.0.0
+  Version: 1.0.1.0
 Outputs:
   bigIpInstanceId:
     Description: bigip's instance-id
@@ -698,8 +697,8 @@ Resources:
       TemplateURL:
         !Sub
           - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/application/application.yaml'
-          - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
-            S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}', !Ref s3BucketName]
+          - S3Region: !Ref s3BucketRegion
+            S3Bucket: !Ref s3BucketName
       Parameters:
         appContainerName: !Ref appContainerName
         application: !Ref application
@@ -721,8 +720,8 @@ Resources:
       TemplateURL:
         !Sub
           - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/bigip-standalone/bigip-standalone.yaml'
-          - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
-            S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}', !Ref s3BucketName]
+          - S3Region: !Ref s3BucketRegion
+            S3Bucket: !Ref s3BucketName
       Parameters:
         bigIpRuntimeInitConfig: !Ref bigIpRuntimeInitConfig
         externalPrimaryPublicId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01]
@@ -748,8 +747,8 @@ Resources:
       TemplateURL:
         !Sub
           - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/dag/dag.yaml'
-          - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
-            S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}', !Ref s3BucketName]
+          - S3Region: !Ref s3BucketRegion
+            S3Bucket: !Ref s3BucketName
       Parameters:
         application: !Ref application
         cost: !Ref cost
@@ -772,8 +771,8 @@ Resources:
       TemplateURL:
         !Sub
           - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/network/network.yaml'
-          - S3Region: !If [usingDefaultBucket, !Ref 'AWS::Region', !Ref s3BucketRegion]
-            S3Bucket: !If [usingDefaultBucket, !Sub '${s3BucketName}', !Ref s3BucketName]
+          - S3Region: !Ref s3BucketRegion
+            S3Bucket: !Ref s3BucketName
       Parameters:
         cost: !Ref cost
         environment: !Ref environment
