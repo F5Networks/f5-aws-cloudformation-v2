@@ -145,7 +145,7 @@ Metadata:
         default: Unique string
       vpcCidr:
         default: VPC CIDR
-  Version: 1.0.0
+  Version: 1.0.1.0
 Outputs:
   wafExternalDnsName:
     Condition: externalLB
