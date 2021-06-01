@@ -26,6 +26,13 @@ else
     echo "bucket region:$region"
 fi
 
+# create a new bucket if deploying telemetry, otherwise pass existing bucket
+if [[ <CREATE LOG DESTINATION> == "true" ]]; then
+    logging_bucket_name="<DEWPOINT JOB ID>-logging-s3"
+else
+    logging_bucket_name=$bucket_name
+fi
+
 # Set Parameters using file to eiliminate issues when passing spaces in parameter values
 cat <<EOF > parameters.json
 [
@@ -78,8 +85,24 @@ cat <<EOF > parameters.json
         "ParameterValue": "<SCALE UP BYTES THRESHOLD>"
     },
     {
+        "ParameterKey": "cloudWatchLogGroupName",
+        "ParameterValue": "<UNIQUESTRING>-<CLOUDWATCH LOG GROUP NAME>"
+    },
+    {
+        "ParameterKey": "cloudWatchLogStreamName",
+        "ParameterValue": "<UNIQUESTRING>-<CLOUDWATCH LOG STREAM NAME>"
+    },
+    {
+        "ParameterKey": "cloudWatchDashboardName",
+        "ParameterValue": "<UNIQUESTRING>-<CLOUDWATCH DASHBOARD NAME>"
+    },
+    {
+        "ParameterKey": "createLogDestination",
+        "ParameterValue": "<CREATE LOG DESTINATION>"
+    },
+    {
         "ParameterKey": "loggingS3BucketName",
-        "ParameterValue": "$bucket_name"
+        "ParameterValue": "$logging_bucket_name"
     },
     {
         "ParameterKey": "metricNameSpace",

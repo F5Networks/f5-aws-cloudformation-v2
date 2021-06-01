@@ -8,6 +8,10 @@ BIGIP MGMT PORT: 8443
 BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run'
 BIGIQ PASSWORD: b1gAdminPazz
 CIDR: 10.0.0.0/16
+CLOUDWATCH LOG GROUP NAME: f5telemetry
+CLOUDWATCH LOG STREAM NAME: f5-waf-logs
+CLOUDWATCH DASHBOARD NAME: F5-BIGIP-WAF-View
+CREATE LOG DESTINATION: 'true'
 CUSTOM IMAGE ID: ''
 HIGH CPU THRESHOLD: 80
 LICENSE TYPE: payg

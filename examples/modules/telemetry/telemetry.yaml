@@ -1,0 +1,225 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >- 
+  Template to deploy Telemetry Streaming Related Resources
+Conditions:
+  createCloudWatchLogGroup: !Equals
+    - 'true'
+    - !Ref createCloudWatchLogGroup
+  createCloudWatchLogStream: !Equals
+    - 'true'
+    - !Ref createCloudWatchLogStream
+  createCloudWatchDashboard: !Equals
+    - 'true'
+    - !Ref createCloudWatchDashboard
+  createS3Bucket: !Equals
+    - 'true'
+    - !Ref createS3Bucket
+Metadata:
+  'AWS::CloudFormation::Interface':
+    ParameterGroups:
+      - Label:
+          default: Create Telemetry Destinations
+        Parameters:
+          - createCloudWatchLogGroup
+          - cloudWatchLogGroupName
+          - createCloudWatchLogStream
+          - cloudWatchLogStreamName
+          - createCloudWatchDashboard
+          - cloudWatchDashboardName
+          - metricsNameSpace
+          - createS3Bucket
+          - s3BucketName
+      - Label:
+          default: Resources Tags
+        Parameters:
+          - application
+          - environment
+          - group
+          - owner
+          - cost
+    ParameterLabels:
+      cloudwatchLogGroupName:
+        default: CloudWatch Log Group Name
+      cloudwatchLogStreamName:
+        default: CloudWatch Log Stream Name
+      cloudwatchDashboardName:
+        default: CloudWatch Dashboard Name
+      createCloudWatchLogGroup:
+        default: Create Cloudwatch Log Group
+      createCloudWatchLogStream:
+        default: Create CloudWatch Stream
+      createCloudWatchDashboard:
+        default: Create CloudWatch Dashboard
+      createS3Bucket:
+        default: CloudWatch Log Group Name
+      metricsNameSpace:
+        default: CloudWatch Metrics Namespace
+      s3BucketName:
+        default: S3 Bucket Name
+      application:
+        default: Application
+      cost:
+        default: Cost Center
+      environment:
+        default: Environment
+      group:
+        default: Group
+      owner:
+        default: Owner
+  Version: 1.0.1.0
+Outputs:
+  cloudWatchLogGroup:
+    Condition: createCloudWatchLogGroup
+    Description: CloudWatch Log Group Name
+    Value: !Ref LogGroup
+  cloudWatchLogStream:
+    Condition: createCloudWatchLogStream
+    Description: CloudWatch Log Stream Name
+    Value: !Ref LogStream
+  cloudWatchDashboard:
+    Condition: createCloudWatchDashboard
+    Description: CloudWatch Dashboard
+    Value: !Ref Dashboard
+  s3Bucket:
+    Condition: createS3Bucket
+    Description: S3 Bucket Name
+    Value: !Ref S3Bucket
+Parameters:
+  application:
+    Default: f5app
+    Description: Application Tag.
+    Type: String
+  cloudWatchLogGroupName:
+    Default: f5telemetry
+    Description: The name of the CloudWatch Log Group
+    Type: String
+  cloudWatchLogStreamName:
+    Default: f5-waf-logs
+    Description: The name of the CloudWatch Log Stream
+    Type: String
+  cloudWatchDashboardName:
+    Default: "F5-BIGIP-WAF-View"
+    AllowedPattern: '[0-9A-Za-z_-]*'
+    Description: The name of the CloudWatch Dashboard
+    Type: String
+  cost:
+    Default: f5cost
+    Description: Cost Center Tag.
+    Type: String
+  createCloudWatchDashboard:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+    Description: Choose true to create CloudWatch Dashboard. If true, Log Group Name and metricsNameSpace are required.
+    Type: String
+  createCloudWatchLogGroup:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+    Description: Choose true to create CloudWatch Log Group
+    Type: String
+  createCloudWatchLogStream:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+    Description: Choose true to create CloudWatch Log Stream. Log Group Name must be provided. 
+    Type: String
+  createS3Bucket:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+    Description: Choose true to creates S3 Bucket.
+    Type: String
+  environment:
+    Default: f5env
+    Description: Environment Tag.
+    Type: String
+  group:
+    Default: f5group
+    Description: Group Tag.
+    Type: String
+  metricNameSpace:
+    Default: f5-scaling-metrics
+    Description: CloudWatch namespace used for custom metrics. This should match the namespace defined in your telemetry services declaration within bigipRuntimInitConfig. 
+    Type: String
+  owner:
+    Default: f5owner
+    Description: Owner Tag.
+    Type: String
+  s3BucketName:
+    Default: ''
+    Description: S3 bucket name for the WAF logs. S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).
+    Type: String
+Resources:
+  S3Bucket:
+    Condition: createS3Bucket
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Ref s3BucketName
+      AccessControl: BucketOwnerFullControl
+      Tags:
+        - Key: Name
+          Value: !Ref s3BucketName
+        - Key: cost
+          Value: !Ref cost
+        - Key: Environment
+          Value: !Ref environment
+        - Key: Group
+          Value: !Ref group
+        - Key: Owner
+          Value: !Ref owner
+  LogGroup: 
+    Type: AWS::Logs::LogGroup
+    Condition: createCloudWatchLogGroup
+    Properties: 
+      LogGroupName: !Ref cloudWatchLogGroupName
+  LogStream: 
+    Type: AWS::Logs::LogStream
+    Condition: createCloudWatchLogStream
+    Properties: 
+      LogGroupName: !Ref LogGroup
+      LogStreamName: !Ref cloudWatchLogStreamName
+  Dashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Condition: createCloudWatchDashboard
+    Properties:
+      DashboardName: !Ref cloudWatchDashboardName
+      DashboardBody: !Join
+          - ''
+          - - >-
+              {"widgets":[{"height":6,"width":24,"y":18,"x":0,"type":"metric","properties":{"view":"timeSeries","stacked":false,"metrics":[["
+            - !Ref 'metricNameSpace'
+            - >-
+              ","F5_system_cpu"]],"region":"
+            - >-
+            - !Ref 'AWS::Region'
+            - >-       
+              "}},{"height":6,"width":24,"y":0,"x":12,"type":"metric","properties":{"view":"timeSeries","stacked":false,"metrics":[["
+            - !Ref 'metricNameSpace'
+            - >-       
+              ","F5_throughputIn_sys/performance/throughput/In_Current"]],"region":"
+            - !Ref 'AWS::Region'
+            - >-                     
+              "}},{"height":6,"width":12,"y":0,"x":12,"type":"log","properties":{"query":"SOURCE '
+            - !Ref 'LogGroup'
+            - >-                     
+              ' | fields attack_type\n| sort @timestamp desc\n| limit 20\n| display @timestamp,attack_type\n| stats count(*) by attack_type","region":"
+            - !Ref 'AWS::Region'
+            - >-                     
+              ","stacked":false,"title":"Attacks by Type","view":"pie"}},{"type":"log","x":0,"y":0,"width":12,"height":6,"properties":{"query":"SOURCE '
+            - !Ref 'LogGroup'
+            - >-                     
+              ' | stats count(violations) by bin(1h)","region":"
+            - !Ref 'AWS::Region'
+            - >-                     
+              ","stacked":false,"title":"WAF Violations Over Time","view":"timeSeries"}},{"type":"log","x":0,"y":6,"width":24,"height":6,"properties":{"query":"SOURCE '
+            - !Ref 'LogGroup'
+            - >-                     
+              ' | stats count(*) as numViolations by ip_client\n    | sort numViolations desc\n    | limit 15","region":"
+            - !Ref 'AWS::Region'
+            - >-                     
+              ","stacked":false,"title":"Waf Violations by Client IP","view":"table"}}]}

@@ -1,0 +1,15 @@
+---
+CREATE DASHBOARD: 'true'
+CREATE LOG GROUP: 'true'
+CREATE LOG STREAM: 'true'
+CREATE S3 BUCKET: 'true'
+DASHBOARD NAME: F5-BIGIP-WAF-View
+LOG GROUP NAME: f5telemetry
+LOG STREAM NAME: f5-waf-logs
+METRIC NAMESPACE NAME: f5-scaling-metrics
+REGION: us-east-1
+S3 BUCKET NAME: <DEWPOINT JOB ID>-logging-s3
+STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
+TEMPLATE NAME: telemetry
+TEMPLATE URL: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/main/examples/modules/telemetry/telemetry.yaml'
+UNIQUESTRING: dew<DEWPOINT JOB ID>

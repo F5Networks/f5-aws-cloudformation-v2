@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This template represents an example of a linked deployment of the Telemetry template
+Resources:
+  Function:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: >-
+        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.0.1.0/examples/modules/telemetry/telemetry.yaml
+      Parameters:
+        cloudWatchLogGroupName: 'f5telemetry'
+        cloudWatchLogStreamName: 'f5-waf-logs'
+        cloudWatchDashboardName: 'F5-BIGIP-WAF-View'
+        createCloudWatchDashboard: 'false'
+        createCloudWatchLogGroup: 'false'
+        createCloudWatchLogStream: 'false'
+        createS3Bucket: 'false'
+        metricNameSpace: 'f5-scaling-metrics'
+        s3BucketName: ''
+Outputs:
+  cloudWatchLogGroup:
+    Value: !GetAtt Telemetry.Outputs.CloudwatchLogGroup
+  cloudWatchLogStream:
+    Value: !GetAtt Telemetry.Outputs.CloudwatchLogStream
+  cloudWatchDashboard:
+    Value: !GetAtt Telemetry.Outputs.CloudwatchDashboard
+  s3Bucket:
+    Value: !GetAtt Telemetry.Outputs.S3Bucket

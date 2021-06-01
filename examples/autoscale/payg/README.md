@@ -53,6 +53,7 @@ The modules below create the following resources:
 - **Access**: This template creates an AWS InstanceProfile and IAM Roles.
 - **BIG-IP**: This template creates the AWS Autoscale Group with F5 BIG-IP Virtual Editions provisioned with Local Traffic Manager (LTM) and Application Security Manager (ASM). Traffic flows from the AWS load balancer to the BIG-IP VE instances and then to the application servers. The BIG-IP VE(s) are configured in single-NIC mode. Auto scaling means that as certain thresholds are reached, the number of BIG-IP VE instances automatically increases or decreases accordingly. The BIG-IP module template can be deployed separately from the example template provided here into an "existing" stack.
 - **Function**: This template creates AWS Lambda functions for revoking licenses from BIG-IP instances that were licensed using a BIG-IQ license pool or utility offer *(BIG-IQ only)*, looking up AMI by name, file cleanup, etc.
+- **Telemetry**: This template creates AWS CloudWatch Log Group, Log Stream, and Dashboard, as well as an S3 bucket for receiving remote logging from BIG-IP instances.
 
 This solution leverages more traditional Autoscale configuration management practices where each instance is created with an identical configuration as defined in the Autoscale Group's "model" (in other words, "launch config"). Scale Max sizes are no longer restricted to the small limitations of the cluster. The BIG-IP's configuration, now defined in a single convenient YAML or JSON [F5 BIG-IP Runtime Init](https://github.com/F5Networks/f5-bigip-runtime-init) configuration file, leverages [F5 Automation Tool Chain](https://www.f5.com/pdf/products/automation-toolchain-overview.pdf) declarations which are easier to author, validate, and maintain as code. For instance, if you need to change the configuration on the BIG-IPs in the deployment, you update the instance model by passing a new config file (which references the updated Automation Toolchain declarations) via template's bigIpRuntimeInitConfig input parameter. New instances will be deployed with the updated configurations.
 
@@ -128,7 +129,11 @@ This solution leverages more traditional Autoscale configuration management prac
 | bigIpScaleOutThroughputThreshold | No | Incoming bytes threshold to begin scaling out BIG-IP VE instances. |
 | bigIpScalingMaxSize | No | Maximum number of BIG-IP instances (2-100) that can be created in the Autoscale Group. |
 | bigIpScalingMinSize | No | Minimum number of BIG-IP instances (1-99) you want available in the Autoscale Group. |
+| cloudWatchLogGroupName | No | The name of the CloudWatch Log Group. |
+| cloudWatchLogStreamName | No | The name of the CloudWatch Log Stream. |
+| cloudWatchDashboardName | No | The name of the CloudWatch Log Dashboard. |
 | cost | No | Cost Center Tag. |
+| createLogDestination | No | Select true to create a new CloudWatch logging destination. |
 | environment | No | Environment Tag. |
 | group | No | Group Tag. |
 | loggingS3BucketName | No | The name of the existing S3 bucket where BIG-IP logs will be sent. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details. |

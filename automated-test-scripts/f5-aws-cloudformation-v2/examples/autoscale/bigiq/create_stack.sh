@@ -25,6 +25,13 @@ else
     echo "bucket region:$region"
 fi
 
+# create a new bucket if deploying telemetry, otherwise pass existing bucket
+if [[ <CREATE LOG DESTINATION> == "true" ]]; then
+    logging_bucket_name="<DEWPOINT JOB ID>-logging-s3"
+else
+    logging_bucket_name=$bucket_name
+fi
+
 if [[ "<RUNTIME INIT CONFIG>" == *{* ]]; then
     config_with_added_address="${runtimeConfig//<BIGIQ ADDRESS>/$bigiq_address}"
     config_with_added_secret_id="${config_with_added_address//<SECRET_ID>/$secret_name}"
@@ -34,35 +41,49 @@ if [[ "<RUNTIME INIT CONFIG>" == *{* ]]; then
 else
     # Modify Runtime-init, then upload to s3.
     cp /$PWD/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml <DEWPOINT JOB ID>.yaml
+
+    # Create user for login tests
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.class = \"User\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.password = \"{{{BIGIQ_PASSWORD}}}\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.shell = \"bash\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.userType = \"regular\"" -i <DEWPOINT JOB ID>.yaml
+
+    # BIG-IQ license settings
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.bigIpPassword = \"{{{BIGIQ_PASSWORD}}}\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.bigIpUsername = \"admin\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.bigIqHost = \"$bigiq_address\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.licensePool = \"production\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.overwrite = \"false\"" -i <DEWPOINT JOB ID>.yaml
+
+    # WAF policy settings
     /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTPS_Service.WAFPolicy.enforcementMode = \"transparent\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTP_Service.WAFPolicy.enforcementMode = \"transparent\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTPS_Service.WAFPolicy.url = \"https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/autoscale/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTP_Service.WAFPolicy.url = \"https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/autoscale/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>.yaml
+
+    # Telemetry settings
     /usr/bin/yq e ".extension_services.service_operations.[2].value.My_Metrics_Namespace.My_Cloudwatch_Metrics.metricNamespace = \"<METRIC NAME SPACE>\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[2].value.My_Remote_Logs_Namespace.My_Cloudwatch_Logs.logGroup = \"<UNIQUESTRING>-<CLOUDWATCH LOG GROUP NAME>\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[2].value.My_Remote_Logs_Namespace.My_Cloudwatch_Logs.logStream = \"<UNIQUESTRING>-<CLOUDWATCH LOG STREAM NAME>\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[2].value.My_S3.class = \"Telemetry_Consumer\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[2].value.My_S3.type = \"AWS_S3\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[2].value.My_S3.region = \"{{{REGION}}}\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[2].value.My_S3.bucket = \"{{{BUCKET_NAME}}}\"" -i <DEWPOINT JOB ID>.yaml
+
+    # Runtime parameters
     /usr/bin/yq e ".runtime_parameters.[2].secretProvider.secretId = \"$secret_name\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".runtime_parameters += {\"name\":\"BUCKET_NAME\"}" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".runtime_parameters.[3].type = \"static\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".runtime_parameters.[3].value = \"$bucket_name\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".runtime_parameters.[3].value = \"$logging_bucket_name\"" -i <DEWPOINT JOB ID>.yaml
 
     # print out config file
     /usr/bin/yq e <DEWPOINT JOB ID>.yaml
+
     # update copy
     cp <DEWPOINT JOB ID>.yaml update_<DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTPS_Service.WAFPolicy.enforcementMode = \"blocking\"" -i update_<DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTP_Service.WAFPolicy.enforcementMode = \"blocking\"" -i update_<DEWPOINT JOB ID>.yaml
+
     # upload to s3
     aws s3 cp --region <REGION> /$PWD/examples/autoscale/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml s3://"$bucket_name"/examples/autoscale/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml --acl public-read
     aws s3 cp --region <REGION> update_<DEWPOINT JOB ID>.yaml s3://"$bucket_name"/examples/autoscale/bigip-configurations/update_<DEWPOINT JOB ID>.yaml --acl public-read
@@ -164,8 +185,24 @@ cat <<EOF > parameters.json
         "ParameterValue": "develop/"
     },
     {
+        "ParameterKey": "cloudWatchLogGroupName",
+        "ParameterValue": "<UNIQUESTRING>-<CLOUDWATCH LOG GROUP NAME>"
+    },
+    {
+        "ParameterKey": "cloudWatchLogStreamName",
+        "ParameterValue": "<UNIQUESTRING>-<CLOUDWATCH LOG STREAM NAME>"
+    },
+    {
+        "ParameterKey": "cloudWatchDashboardName",
+        "ParameterValue": "<UNIQUESTRING>-<CLOUDWATCH DASHBOARD NAME>"
+    },
+    {
+        "ParameterKey": "createLogDestination",
+        "ParameterValue": "<CREATE LOG DESTINATION>"
+    },
+    {
         "ParameterKey": "loggingS3BucketName",
-        "ParameterValue": "$bucket_name"
+        "ParameterValue": "$logging_bucket_name"
     },
     {
         "ParameterKey": "metricNameSpace",
