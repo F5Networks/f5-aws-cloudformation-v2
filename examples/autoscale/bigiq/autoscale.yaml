@@ -46,7 +46,6 @@ Metadata:
           - bigIpImage
           - bigIpCustomImageId
           - bigIpInstanceType
-          - loggingS3BucketName
           - metricNameSpace
           - notificationEmail
           - secretArn
@@ -74,6 +73,14 @@ Metadata:
         Parameters:
           - lambdaS3BucketName
           - lambdaS3Key
+      - Label:
+          default: Telemetry Configuration
+        Parameters:
+          - createLogDestination
+          - cloudWatchLogGroupName
+          - cloudWatchLogStreamName
+          - cloudWatchDashboardName
+          - loggingS3BucketName
       - Label:
           default: Resources Tags
         Parameters:
@@ -132,8 +139,16 @@ Metadata:
         default: The BIG-IQ tenant used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ tenant specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter.
       bigIqUtilitySku:
         default: The BIG-IQ utility license SKU used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ utilty SKU specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter
+      cloudWatchLogGroupName:
+        default: CloudWatch Log Group Name
+      cloudWatchLogStreamName:
+        default: CloudWatch Log Stream Name
+      cloudWatchDashboardName:
+        default: CloudWatch Dashboard Name
       cost:
         default: Cost Center
+      createLogDestination:
+        default: Create Log Destination
       environment:
         default: Environment
       group:
@@ -375,9 +390,29 @@ Parameters:
     Default: ''
     Description: The BIG-IQ utility license SKU used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ utility SKU specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter.
     Type: String
+  cloudWatchLogGroupName:
+    Default: ''
+    Description: The name of the CloudWatch Log Group
+    Type: String
+  cloudWatchLogStreamName:
+    Default: ''
+    Description: The name of the CloudWatch Log Stream
+    Type: String
+  cloudWatchDashboardName:
+    Default: ''
+    AllowedPattern: '[0-9A-Za-z_-]*'
+    Description: The name of the CloudWatch Dashboard
+    Type: String
   cost:
     Default: f5cost
     Description: Cost Center Tag.
+    Type: String
+  createLogDestination:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'true'
+    Description: Select true to create a new CloudWatch logging destination.
     Type: String
   environment:
     Default: f5env
@@ -395,7 +430,7 @@ Parameters:
     Type: String
   loggingS3BucketName:
     Default: ''
-    Description: The name of the existing S3 bucket where BIG-IP logs will be sent.
+    Description: The name of the S3 bucket where BIG-IP logs will be sent. If creating a new log destination, the bucket will be created.
     Type: String
   metricNameSpace:
     Default: f5-scaling-metrics
@@ -510,6 +545,28 @@ Parameters:
     Description: CIDR block for the VPC.
     Type: String
 Conditions:
+  createLogDestination: !Equals
+    - 'true'
+    - !Ref createLogDestination
+  createLoggingS3Bucket: !And 
+    - !Condition createLogDestination
+    - !Condition useLoggingS3Bucket
+  customDashboard: !Not
+    - !Equals
+      - ''
+      - !Ref cloudWatchDashboardName
+  customLogGroup: !Not
+    - !Equals
+      - ''
+      - !Ref cloudWatchLogGroupName
+  customLogStream: !Not
+    - !Equals
+      - ''
+      - !Ref cloudWatchLogStreamName
+  customNameSpace: !Not
+    - !Equals
+      - ''
+      - !Ref metricNameSpace
   externalLB: !Equals
     - 'true'
     - !Ref provisionExternalBigipLoadBalancer
@@ -544,10 +601,17 @@ Resources:
         createBigIqRoles: 'true'
         environment: !Ref environment
         group: !Ref group
-        s3Bucket: !If [useLoggingS3Bucket, !Ref loggingS3BucketName, !Ref 'AWS::NoValue']
+        s3Bucket: !If
+          - createLoggingS3Bucket
+          - !GetAtt
+              - Telemetry
+              - Outputs.s3Bucket
+          - !If
+              - useLoggingS3Bucket
+              - !Ref loggingS3BucketName
+              - !Ref 'AWS::NoValue'
         secretArn: !If [useSecretArn, !Ref secretArn, !Ref 'AWS::NoValue']
         solutionType: !If [useLoggingS3Bucket, secretS3, secret]
-        uniqueString: !Ref uniqueString
   AmiInfo:
     Type: 'Custom::AMIInfo'
     Properties:
@@ -798,3 +862,28 @@ Resources:
         uniqueString: !Ref uniqueString
         vpcCidr: !Ref vpcCidr
         vpcTenancy: default
+  Telemetry:
+    Type: 'AWS::CloudFormation::Stack'
+    Condition: createLogDestination
+    Properties:
+      TemplateURL:
+        !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/telemetry/telemetry.yaml'
+        - S3Region: !Ref s3BucketRegion
+          S3Bucket: !Ref s3BucketName
+      Parameters:
+        application: !Ref application
+        cost: !Ref cost
+        environment: !Ref environment
+        group: !Ref group
+        owner: !Ref owner
+        cloudWatchLogGroupName: !If [customLogGroup, !Ref cloudWatchLogGroupName, 'f5telemetry']
+        cloudWatchLogStreamName: !If [customLogStream, !Ref cloudWatchLogStreamName, 'f5-waf-logs']
+        cloudWatchDashboardName: !If [customDashboard, !Ref cloudWatchDashboardName, 'F5-BIGIP-WAF-View']
+        createCloudWatchDashboard: 'true'
+        createCloudWatchLogGroup: 'true'
+        createCloudWatchLogStream: 'true'
+        createS3Bucket: !If [createLoggingS3Bucket, 'true', 'false']
+        metricNameSpace: !If [customNameSpace, !Ref metricNameSpace, 'f5-scaling-metrics']
+        s3BucketName: !If [createLoggingS3Bucket, !Ref loggingS3BucketName, !Ref 'AWS::NoValue']
+        uniqueString: !Ref uniqueString

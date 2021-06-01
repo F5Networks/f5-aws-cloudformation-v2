@@ -113,3 +113,13 @@ aws-network-module-test:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/prepub_parameters6.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/prepub_parameters7.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/prepub_parameters8.yaml"
+
+# AWS telemetry example tests
+aws-telemetry-example-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/telemetry/daily_test.yaml"
+  run: "random"
+  random-num-of-tests: 3
+  parameters-files:
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/telemetry/prepub_parameters.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/telemetry/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/telemetry/prepub_parameters2.yaml"

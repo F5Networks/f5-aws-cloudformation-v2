@@ -1,0 +1,11 @@
+# Telemetry Module Tests 
+aws-telemetry-module-test:
+    test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/telemetry/daily_test.yaml"
+    run: "all"
+    parameters-files:
+      # Create CloudWatch logs and S3 bucket
+      - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/telemetry/prepub_parameters.yaml"
+      # Create S3 bucket only
+      - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/telemetry/prepub_parameters1.yaml"
+      # Create CloudWatch logs only
+      - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/telemetry/prepub_parameters2.yaml"

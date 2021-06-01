@@ -54,3 +54,10 @@ aws-application-example-test:
   run: "all"
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/application/postpub_parameters.yaml"
+
+# AWS telemetry example tests
+aws-telemetry-example-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/telemetry/daily_test.yaml"
+  run: "all"
+  parameters-files:
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/telemetry/postpub_parameters.yaml"

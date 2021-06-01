@@ -17,6 +17,7 @@ onStart:
   - ../common/verify_login.sh
   - ../common/verify_traffic.sh
   - ../common/verify_waf_blocking.sh
+  - ../common/verify_cloudwatch_logs.sh
   - ../common/verify_ts_metrics.sh
   - ../../../../sleep/2_minutes.sh
   - ../../../common/delete_stack.sh

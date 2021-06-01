@@ -46,6 +46,12 @@
 ../../examples/modules/network/sample_linked.yaml:
 - No Key Diff
 - No Value Diff
+../../examples/modules/telemetry/sample_linked.yaml:
+- No Key Diff
+- No Value Diff
+../../examples/modules/telemetry/telemetry.yaml:
+- No Key Diff
+- No Value Diff
 ../../examples/quickstart/quickstart.yaml:
 - No Key Diff
 - No Value Diff
