@@ -788,4 +788,3 @@ Resources:
         createS3Bucket: !If [createLoggingS3Bucket, 'true', 'false']
         metricNameSpace: !If [customNameSpace, !Ref metricNameSpace, 'f5-scaling-metrics']
         s3BucketName: !If [createLoggingS3Bucket, !Ref loggingS3BucketName, !Ref 'AWS::NoValue']
-        uniqueString: !Ref uniqueString
