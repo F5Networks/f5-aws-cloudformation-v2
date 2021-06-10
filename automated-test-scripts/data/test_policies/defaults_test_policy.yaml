@@ -1,0 +1,15 @@
+# Policy to test default values from published templates on Github
+# Autoscale PAYG Defaults Example Test
+aws-autoscale-defaults-example-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/payg/defaults_test.yaml"
+  run: "all"
+  parameters-files:
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/parameters.yaml"
+
+# Quickstart PAYG Defaults Tests
+aws-quickstart-defaults-example-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/defaults_test.yaml"
+  run: "all"
+  parameters-files:
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/parameters.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/parameters.yaml"
