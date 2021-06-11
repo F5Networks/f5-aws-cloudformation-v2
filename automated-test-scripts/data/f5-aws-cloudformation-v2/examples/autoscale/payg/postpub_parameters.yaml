@@ -48,3 +48,6 @@ TENANCY: default
 TIMEZONE: US/Pacific
 UPDATE CONFIG: https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/autoscale/bigip-configurations/update_<DEWPOINT JOB ID>.yaml
 UNIQUESTRING: dew<DEWPOINT JOB ID>
+UPDATE MAX BATCH SIZE: 5
+UPDATE MIN INSTANCES: 1
+UPDATE PAUSE TIME: 480

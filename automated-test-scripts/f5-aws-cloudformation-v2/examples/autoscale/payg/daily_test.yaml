@@ -12,6 +12,7 @@ onStart:
   - ../common/verify_as3.sh
   - ../common/verify_ts.sh
   - ./update_stack.sh
+  - ../common/verify_pause_time.sh
   - ../../../common/verify_update.sh
   - ../common/verify_app_availability.sh
   - ../common/verify_login.sh

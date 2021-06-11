@@ -22,8 +22,11 @@ Resources:
         internalTargetGroupHttps: ''
         licenseType: payg
         scaleOutCpuThreshold: 0
+        maxBatchSize: 5
         metricNameSpace: bigip-throughput
+        minInstancesInService: 1
         notificationEmail: example@mail.com
+        pauseTime: 480
         provisionPublicIp: 'true'
         scaleInThroughputThreshold: 10000
         scaleOutThroughputThreshold: 35000
