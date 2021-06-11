@@ -67,9 +67,12 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | internalTargetGroup | No | Internal Load Balancer Target Group with BIG-IP VEs. |
 | licenseType | Yes | Specifies license type used for BIG-IP VE. |
 | lowCpuThreshold | No | Low CPU Percentage threshold to begin scaling down BIG-IP VE instances. |
+| maxBatchSize | No | Specifies the maximum number of instances that CloudFormation updates. |
 | metricNameSpace | Yes | CloudWatch namespace used for custom metrics. This should match the namespace defined in your telemetry services declaration within bigipRuntimInitConfig. |
+| minInstancesInService | No | Specifies the minimum number of instances that must be in service within the Auto Scaling group while CloudFormation updates old instances. |
 | notificationEmail | Yes | Valid email address to send Auto Scaling event notifications. |
 | owner | No | Application Tag. |
+| pauseTime | No | The amount of time in seconds that CloudFormation pauses after making a change to a batch of instances to give those instances time to start software applications. |
 | provisionPublicIp | No |  Whether or not to provision Public IP Addresses for the BIG-IP Network Interfaces. By default, no Public IP addresses are provisioned. |
 | scaleInCpuThreshold | No | Low CPU Percentage threshold to begin scaling in BIG-IP VE instances. | 
 | scaleInThroughputThreshold | No | Incoming throughput threshold to begin scaling in BIG-IP VE instances. | 

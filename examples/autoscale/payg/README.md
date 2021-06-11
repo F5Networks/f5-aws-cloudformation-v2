@@ -121,6 +121,9 @@ This solution leverages more traditional Autoscale configuration management prac
 | bigIpCustomImageId | No | Provide BIG-IP AMI ID you wish to deploy. bigIpCustomImageId is required when bigIpImage is not specified. |
 | bigIpImage | No | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. bigIpImage is required when bigIpCustomImageId is not specified. | 
 | bigIpInstanceType | No | Enter valid instance type. |
+| bigIpMaxBatchSize | No | Specifies the maximum number of instances that CloudFormation updates. |
+| bigIpMinInstancesInService | No | Specifies the minimum number of instances that must be in service within the Auto Scaling group while CloudFormation updates old instances. |
+| bigIpPauseTime | No | The amount of time in seconds that CloudFormation pauses after making a change to a batch of instances to give those instances time to start software applications. |
 | bigIpRuntimeInitConfig | No | Enter a URL to the bigip-runtime-init configuration file in YAML or JSON format. |
 | bigIpRuntimeInitPackageUrl | No | Enter a URL to the bigip-runtime-init package. |
 | bigIpScaleInCpuThreshold | No | Low CPU Percentage threshold to begin scaling in BIG-IP VE instances. | 

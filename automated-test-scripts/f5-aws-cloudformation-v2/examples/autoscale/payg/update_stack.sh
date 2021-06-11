@@ -105,12 +105,24 @@ cat <<EOF > parameters.json
         "ParameterValue": "$logging_bucket_name"
     },
     {
+        "ParameterKey": "bigIpMaxBatchSize",
+        "ParameterValue": "<UPDATE MAX BATCH SIZE>"
+    },
+    {
         "ParameterKey": "metricNameSpace",
         "ParameterValue": "<METRIC NAME SPACE>"
     },
     {
+        "ParameterKey": "bigIpMinInstancesInService",
+        "ParameterValue": "<UPDATE MIN INSTANCES>"
+    },
+    {
         "ParameterKey": "notificationEmail",
         "ParameterValue": "<NOTIFICATION EMAIL>"
+    },
+    {
+        "ParameterKey": "bigIpPauseTime",
+        "ParameterValue": "<UPDATE PAUSE TIME>"
     },
     {
         "ParameterKey": "numAzs",

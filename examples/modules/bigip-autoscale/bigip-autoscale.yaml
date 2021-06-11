@@ -39,6 +39,9 @@ Metadata:
           - scaleInThroughputThreshold
           - scaleOutCpuThreshold
           - scaleOutThroughputThreshold
+          - maxBatchSize
+          - minInstancesInService
+          - pauseTime
           - metricNameSpace
       - Label:
           default: Networking
@@ -107,12 +110,18 @@ Metadata:
         default: Internal Load Balancer Target Group with BIG-IP VEs. for HTTPS requests
       licenseType:
         default: Specifies licence type used for BIG-IP VE.
+      maxBatchSize:
+        default: Maximum number of instances CloudFormation updates
       metricNameSpace:
         default: CloudWatch custom metric name space
+      minInstancesInService:
+        default: Minimum number of instances that must be in service to update
       notificationEmail:
         default: Notification Email
       owner:
         default: Owner
+      pauseTime:
+        default: Amount of time CloudFormation waits between updating batches
       provisionPublicIp:
         default: Provision Public IP addresses for the BIG-IP interfaces
       scaleInCpuThreshold:
@@ -238,10 +247,19 @@ Parameters:
     Default: payg
     Description: Specifies licence type used for BIG-IP VE.
     Type: String
+  maxBatchSize:
+    Default: 5
+    Description: Specifies the maximum number of instances that CloudFormation updates.
+    Type: Number
   metricNameSpace:
     Default: f5-scaling-metrics
     Description: CloudWatch namespace used for custom metrics. This should match the namespace defined in your telemetry services declaration within bigipRuntimInitConfig.
     Type: String
+  minInstancesInService:
+    ConstraintDescription: This value must be less than the scalingMaxSize of the Auto Scaling group.
+    Default: 1
+    Description: Specifies the minimum number of instances that must be in service within the Auto Scaling group while CloudFormation updates old instances.
+    Type: Number
   notificationEmail:
     AllowedPattern: .+@.+
     ConstraintDescription: Must be a valid email address.
@@ -251,6 +269,13 @@ Parameters:
     Default: f5owner
     Description: Owner Tag.
     Type: String
+  pauseTime:
+    ConstraintDescription: Select a value between 0 to 3600
+    Default: 480
+    Description: The amount of time in seconds that CloudFormation pauses after making a change to a batch of instances to give those instances time to start software applications.
+    MaxValue: 3600
+    MinValue: 0
+    Type: Number
   provisionPublicIp:
     AllowedValues:
       - 'true'
@@ -395,9 +420,13 @@ Resources:
     Type: 'AWS::AutoScaling::AutoScalingGroup'
     UpdatePolicy:
       AutoScalingRollingUpdate:
-        MaxBatchSize: 5
-        MinInstancesInService: 1
-        PauseTime: PT8M
+        MaxBatchSize: !Ref maxBatchSize
+        MinInstancesInService: !Ref minInstancesInService
+        PauseTime: !Join
+          - ''
+          - - 'PT'
+            - !Ref pauseTime
+            - 'S'
   BigipHighCpuAlarm:
     DependsOn: BigipAutoscaleGroup
     Properties:

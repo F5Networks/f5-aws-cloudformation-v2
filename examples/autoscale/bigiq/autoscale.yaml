@@ -43,6 +43,9 @@ Metadata:
           - bigIpScaleInThroughputThreshold
           - bigIpScaleOutCpuThreshold
           - bigIpScaleOutThroughputThreshold
+          - bigIpMaxBatchSize
+          - bigIpMinInstancesInService
+          - bigIpPauseTime
           - bigIpImage
           - bigIpCustomImageId
           - bigIpInstanceType
@@ -107,6 +110,12 @@ Metadata:
         default: F5 BIG-IP Image
       bigIpInstanceType:
         default: Enter valid instance type.
+      bigIpMaxBatchSize:
+        default: Maximum number of instances CloudFormation updates
+      bigIpMinInstancesInService:
+        default: Minimum number of instances that must be in service to update
+      bigIpPauseTime:
+        default: Amount of time CloudFormation waits between updating batches
       bigIpRuntimeInitConfig:
         default: BIG-IP Runtime Init config
       bigIpRuntimeInitPackageUrl:
@@ -307,6 +316,22 @@ Parameters:
     Default: m5.xlarge
     Description: Enter valid instance type.
     Type: String
+  bigIpMaxBatchSize:
+    Default: 5
+    Description: Specifies the maximum number of instances that CloudFormation updates.
+    Type: Number
+  bigIpMinInstancesInService:
+    ConstraintDescription: This value must be less than the scalingMaxSize of the Auto Scaling group.
+    Default: 1
+    Description: Specifies the minimum number of instances that must be in service within the Auto Scaling group while CloudFormation updates old instances.
+    Type: Number
+  bigIpPauseTime:
+    ConstraintDescription: Select a value between 0 to 3600
+    Default: 480
+    Description: The amount of time in seconds that CloudFormation pauses after making a change to a batch of instances to give those instances time to start software applications.
+    MaxValue: 3600
+    MinValue: 0
+    Type: Number
   bigIpRuntimeInitConfig:
     Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration.'
@@ -728,8 +753,11 @@ Resources:
             - Outputs.internalTargetGroupHttps
           - !Ref AWS::NoValue
         licenseType: 'bigiq'
+        maxBatchSize: !Ref bigIpMaxBatchSize
         metricNameSpace: !Ref metricNameSpace
+        minInstancesInService: !Ref bigIpMinInstancesInService
         notificationEmail: !Ref notificationEmail
+        pauseTime: !Ref bigIpPauseTime
         provisionPublicIp: !Ref provisionPublicIp
         scaleInCpuThreshold: !Ref bigIpScaleInCpuThreshold
         scaleInThroughputThreshold: !Ref bigIpScaleInThroughputThreshold
