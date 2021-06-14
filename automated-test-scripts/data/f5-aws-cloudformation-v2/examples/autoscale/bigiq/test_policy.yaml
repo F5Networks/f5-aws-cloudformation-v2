@@ -5,6 +5,6 @@ aws-autoscale-bigiq-example-test:
     run: "all"
     parameters-files:
         # using ami lookup to deploy in us-east-2
-        # - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/prepub_parameters.yaml"
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/prepub_parameters.yaml"
         # using custom ami id to deploy in us-west-1
-        # - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/prepub_parameters1.yaml"
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/prepub_parameters1.yaml"
