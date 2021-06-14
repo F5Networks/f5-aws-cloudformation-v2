@@ -1,6 +1,13 @@
 # Pre release test plan - Templates 2.0 only
 # AWS autoscale example tests
-aws-autoscale-example-test:
+aws-autoscale-bigiq-example-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/bigiq/daily_test.yaml"
+  run: "all"
+  parameters-files:
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/postpub_parameters.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/postpub_parameters1.yaml"
+
+aws-autoscale-payg-example-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/payg/daily_test.yaml"
   run: "all"
   parameters-files:
