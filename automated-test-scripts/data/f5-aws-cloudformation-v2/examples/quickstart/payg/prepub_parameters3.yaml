@@ -16,6 +16,6 @@ STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
 # have to be explicit here because dewdrop only runs one substitution
 TEMPLATE NAME: quickstart-3nic-payg
 TEMPLATE URL: 'file://$PWD/examples/quickstart/quickstart.yaml'
-THROUGHPUT: 1000Mbps
+THROUGHPUT: 25Mbps
 UNIQUESTRING: dew<DEWPOINT JOB ID>
 VERSION: 14-1-4-0011

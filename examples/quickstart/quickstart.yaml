@@ -359,7 +359,7 @@ Mappings:
       Best10000Mbps: ami-046bd522357acb04e
       Best1000Mbps: ami-000c53776a2ce0f76
       Best200Mbps: ami-057b5aa231c004e5b
-      Best25Mbps: ami-095cad9a666f6f3e7
+      Best25Mbps: ami-0e200a0f04744dd1f
       Best5000Mbps: ami-00c6b00dab86b2a7c
     us-east-2:
       AllTwoBootLocations: ami-02889a7b400b1baa8
