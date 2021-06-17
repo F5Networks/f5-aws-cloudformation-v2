@@ -1,26 +1,26 @@
-AWSTemplateFormatVersion: 2010-09-09
+AWSTemplateFormatVersion: '2010-09-09'
 Description: >-
-  This template creates a BIG-IP Standalone WAF solution. The template uses
-  nested templates for provisioning network, dag/ingress and compute resources for
-  hosting BIG-IP Standalone solution.
+  This template creates a BIG-IP Standalone WAF solution. The template uses nested
+  templates for provisioning network, dag/ingress and compute resources for hosting
+  BIG-IP Standalone solution.
 Conditions:
   1nic: !Equals
     - 1
-    - !Ref numNics
+    - !Ref 'numNics'
   2nic: !Or
-    - !Condition 3nic
+    - !Condition '3nic'
     - !Equals
       - 2
-      - !Ref numNics
+      - !Ref 'numNics'
   3nic: !Equals
     - 3
-    - !Ref numNics
+    - !Ref 'numNics'
   isPaygLicensing: !Equals
     - payg
-    - !Ref licenseType
+    - !Ref 'licenseType'
   noCustomImageId: !Equals
     - ''
-    - !Ref bigIpCustomImageId
+    - !Ref 'bigIpCustomImageId'
 Mappings:
   AWSBigipThroughput:
     1000Mbps:
@@ -397,7 +397,7 @@ Mappings:
       Best25Mbps: ami-0ebe7a25da2acff93
       Best5000Mbps: ami-01507d3154590edc0
 Metadata:
-  'AWS::CloudFormation::Interface':
+  AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
           default: Templates Location
@@ -499,24 +499,28 @@ Outputs:
     Description: bigip's private management address
     Value: !GetAtt [BigipStandalone, Outputs.bigIpManagementInterfacePrivateIp]
   bigIpManagementPublicIp:
-    Description: bigip's public management address. WARNING - For eval purposes only. Production should never have the management interface exposed to Internet
+    Description: bigip's public management address. WARNING - For eval purposes only.
+      Production should never have the management interface exposed to Internet
     Value: !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
   bigIpManagementSsh:
-    Description: ssh login to bigip's management address. WARNING - For eval purposes only. Production should never have the management interface exposed to Internet
+    Description: ssh login to bigip's management address. WARNING - For eval purposes
+      only. Production should never have the management interface exposed to Internet
     Value: !Join
       - ''
       - - 'ssh admin@'
         - !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
   bigIpManagementUrl443:
     Condition: 2nic
-    Description: url to bigip's management address. WARNING - For eval purposes only. Production should never have the management interface exposed to Internet
+    Description: url to bigip's management address. WARNING - For eval purposes only.
+      Production should never have the management interface exposed to Internet
     Value: !Join
       - ''
       - - 'https://'
         - !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
   bigIpManagementUrl8443:
     Condition: 1nic
-    Description: url to bigip's management address. WARNING - For eval purposes only. Production should never have the management interface exposed to Internet
+    Description: url to bigip's management address. WARNING - For eval purposes only.
+      Production should never have the management interface exposed to Internet
     Value: !Join
       - ''
       - - 'https://'
@@ -539,13 +543,17 @@ Parameters:
     Type: String
   artifactLocation:
     AllowedPattern: ^.*[a-zA-Z]+/$
-    ConstraintDescription: 'key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).'
+    ConstraintDescription: 'key prefix can include numbers, lowercase letters, uppercase
+      letters, hyphens (-), and forward slash (/).'
     Default: f5-aws-cloudformation-v2/v1.0.1.0/examples/
-    Description: 'The path in the S3Bucket where the modules folder is located. Can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/).'
+    Description: 'The path in the S3Bucket where the modules folder is located. Can
+      include numbers, lowercase letters, uppercase letters, hyphens (-), and forward
+      slash (/).'
     Type: String
   bigIpRuntimeInitConfig:
     Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml'
-    Description: 'Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration.'
+    Description: 'Supply a URL to the bigip-runtime-init configuration file in YAML
+      or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
     Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run'
@@ -615,7 +623,8 @@ Parameters:
       - 3
       - 4
     Default: 1
-    Description: Number of Availability Zones to use in the VPC. Region must support number of availability  zones entered. Min 1 Max 4.
+    Description: Number of Availability Zones to use in the VPC. Region must support
+      number of availability  zones entered. Min 1 Max 4.
     Type: Number
   numNics:
     AllowedValues:
@@ -623,7 +632,8 @@ Parameters:
       - 2
       - 3
     Default: 3
-    Description: Number of interfaces to create on BIG-IP instance. Maximum of 3 allowed. Minimum of 1 allowed.
+    Description: Number of interfaces to create on BIG-IP instance. Maximum of 3 allowed.
+      Minimum of 1 allowed.
     Type: Number
   numSubnets:
     AllowedValues:
@@ -642,29 +652,37 @@ Parameters:
   restrictedSrcAddressApp:
     AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
     ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
-    Description: REQUIRED - The IP address range that can be used to access web traffic (80/443) to the EC2 instances.
+    Description: REQUIRED - The IP address range that can be used to access web traffic
+      (80/443) to the EC2 instances.
     MaxLength: '18'
     MinLength: '9'
     Type: String
   restrictedSrcAddressMgmt:
     AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
     ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
-    Description: REQUIRED - The IP address range used to SSH and access BIG-IP management port.  Restrict to your client IP. Ex. X.X.X.X/32. WARNING - For eval purposes only. Production should never have Management interface exposed to Internet.
+    Description: REQUIRED - The IP address range used to SSH and access BIG-IP management
+      port.  Restrict to your client IP. Ex. X.X.X.X/32. WARNING - For eval purposes
+      only. Production should never have Management interface exposed to Internet.
     MaxLength: '18'
     MinLength: '9'
     Type: String
   s3BucketName:
     AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
-    ConstraintDescription: 'S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).'
-    Description: 'REQUIRED - S3 bucket name for the modules. S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).'
+    ConstraintDescription: 'S3 bucket name can include numbers, lowercase letters,
+      uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).'
+    Description: 'REQUIRED - S3 bucket name for the modules. S3 bucket name can include
+      numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start
+      or end with a hyphen (-).'
     Default: f5-cft-v2
     Type: String
   s3BucketRegion:
     Default: us-east-1
-    Description: 'The AWS Region where the Quick Start S3 bucket (s3BucketName) is hosted. When using your own bucket, you must specify this value.'
+    Description: 'The AWS Region where the Quick Start S3 bucket (s3BucketName) is
+      hosted. When using your own bucket, you must specify this value.'
     Type: String
   sshKey:
-    Description: REQUIRED - Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines.
+    Description: REQUIRED - Supply the public key that will be used for SSH authentication
+      to the BIG-IP and application virtual machines.
     Type: 'AWS::EC2::KeyPair::KeyName'
   throughput:
     AllowedValues:
@@ -679,7 +697,8 @@ Parameters:
     Type: String
   uniqueString:
     AllowedPattern: '^[a-zA-Z][a-zA-Z0-9]{1,11}$'
-    ConstraintDescription: Must Contain between 1 and 12 alphanumeric characters with first character as a letter.
+    ConstraintDescription: Must Contain between 1 and 12 alphanumeric characters with
+      first character as a letter.
     Default: myUniqStr
     Description: Unique String used when creating object names or Tags.
     Type: String
@@ -694,73 +713,77 @@ Resources:
   Application:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL:
-        !Sub
-          - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/application/application.yaml'
-          - S3Region: !Ref s3BucketRegion
-            S3Bucket: !Ref s3BucketName
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/application/application.yaml'
+        - S3Region: !Ref 's3BucketRegion'
+          S3Bucket: !Ref 's3BucketName'
       Parameters:
-        appContainerName: !Ref appContainerName
-        application: !Ref application
+        appContainerName: !Ref 'appContainerName'
+        application: !Ref 'application'
         applicationSubnet: !Select [3, !Split [',', !GetAtt [Network, Outputs.subnetsA]]]
         appSecurityGroupId: !GetAtt [Dag, Outputs.appSecurityGroupId]
-        cost: !Ref cost
-        environment: !Ref environment
-        group: !Ref group
-        restrictedSrcAddress: !Ref restrictedSrcAddressApp
-        sshKey: !Ref sshKey
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        restrictedSrcAddress: !Ref 'restrictedSrcAddressApp'
+        sshKey: !Ref 'sshKey'
         staticIp: "10.0.3.4"
-        uniqueString: !Ref uniqueString
+        uniqueString: !Ref 'uniqueString'
         vpc: !GetAtt
           - Network
           - Outputs.vpcId
   BigipStandalone:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL:
-        !Sub
-          - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/bigip-standalone/bigip-standalone.yaml'
-          - S3Region: !Ref s3BucketRegion
-            S3Bucket: !Ref s3BucketName
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/bigip-standalone/bigip-standalone.yaml'
+        - S3Region: !Ref 's3BucketRegion'
+          S3Bucket: !Ref 's3BucketName'
       Parameters:
-        bigIpRuntimeInitConfig: !Ref bigIpRuntimeInitConfig
+        bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig'
         externalPrimaryPublicId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01]
         externalPublicIpIds: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId02]
-        externalSecurityGroupId: !If [2nic, !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup], !Ref 'AWS::NoValue']
+        externalSecurityGroupId: !If [2nic, !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup],
+          !Ref 'AWS::NoValue']
         externalSelfIp: !If [2nic, "10.0.1.11", !Ref 'AWS::NoValue']
         externalServiceIps: !If [1nic, "10.0.0.101", "10.0.1.101"]
-        externalSubnetId: !If [2nic, !Select [1, !Split [',', !GetAtt [Network, Outputs.subnetsA]]], !Ref 'AWS::NoValue']
-        imageId: !If [noCustomImageId, !If [isPaygLicensing, !FindInMap [!FindInMap [VERSION, !Ref version, REGIONMAP], !Ref 'AWS::Region', !FindInMap [AWSBigipThroughput, !Ref throughput, !Ref bigIpImage]], !FindInMap [!FindInMap [VERSION, !Ref version, REGIONMAP], !Ref 'AWS::Region', AllTwoBootLocations]], !Ref bigIpCustomImageId]
-        instanceType: !Ref bigIpInstanceType
+        externalSubnetId: !If [2nic, !Select [1, !Split [',', !GetAtt [Network, Outputs.subnetsA]]],
+          !Ref 'AWS::NoValue']
+        imageId: !If [noCustomImageId, !If [isPaygLicensing, !FindInMap [!FindInMap [
+                VERSION, !Ref 'version', REGIONMAP], !Ref 'AWS::Region', !FindInMap [
+                AWSBigipThroughput, !Ref 'throughput', !Ref 'bigIpImage']], !FindInMap [
+              !FindInMap [VERSION, !Ref 'version', REGIONMAP], !Ref 'AWS::Region',
+              AllTwoBootLocations]], !Ref 'bigIpCustomImageId']
+        instanceType: !Ref 'bigIpInstanceType'
         internalSelfIp: !If [3nic, "10.0.2.11", !Ref 'AWS::NoValue']
-        internalSubnetId: !If [3nic, !Select [2, !Split [',', !GetAtt [Network, Outputs.subnetsA]]], !Ref 'AWS::NoValue']
+        internalSubnetId: !If [3nic, !Select [2, !Split [',', !GetAtt [Network, Outputs.subnetsA]]],
+          !Ref 'AWS::NoValue']
         mgmtPublicIpId: !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId01]
         mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup]
         mgmtSelfIp: "10.0.0.11"
         mgmtSubnetId: !Select [0, !Split [',', !GetAtt [Network, Outputs.subnetsA]]]
         numSecondaryPrivateIpAddress: 1
-        sshKey: !Ref sshKey
-        uniqueString: !Ref uniqueString
+        sshKey: !Ref 'sshKey'
+        uniqueString: !Ref 'uniqueString'
   Dag:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL:
-        !Sub
-          - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/dag/dag.yaml'
-          - S3Region: !Ref s3BucketRegion
-            S3Bucket: !Ref s3BucketName
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/dag/dag.yaml'
+        - S3Region: !Ref 's3BucketRegion'
+          S3Bucket: !Ref 's3BucketName'
       Parameters:
-        application: !Ref application
-        cost: !Ref cost
+        application: !Ref 'application'
+        cost: !Ref 'cost'
         createAppSecurityGroup: 'true'
-        environment: !Ref environment
-        group: !Ref group
+        environment: !Ref 'environment'
+        group: !Ref 'group'
         numberPublicExternalIpAddresses: 2
         numberPublicMgmtIpAddresses: 1
-        restrictedSrcAddressApp: !Ref restrictedSrcAddressApp
-        restrictedSrcAddressMgmt: !Ref restrictedSrcAddressMgmt
+        restrictedSrcAddressApp: !Ref 'restrictedSrcAddressApp'
+        restrictedSrcAddressMgmt: !Ref 'restrictedSrcAddressMgmt'
         restrictedSrcPort: !If [1nic, 8443, 443]
-        uniqueString: !Ref uniqueString
+        uniqueString: !Ref 'uniqueString'
         vpcCidr: 10.0.0.0/16
         vpc: !GetAtt
           - Network
@@ -768,18 +791,17 @@ Resources:
   Network:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
-      TemplateURL:
-        !Sub
-          - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/network/network.yaml'
-          - S3Region: !Ref s3BucketRegion
-            S3Bucket: !Ref s3BucketName
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/network/network.yaml'
+        - S3Region: !Ref 's3BucketRegion'
+          S3Bucket: !Ref 's3BucketName'
       Parameters:
-        cost: !Ref cost
-        environment: !Ref environment
-        group: !Ref group
-        numAzs: !Ref numAzs
-        numSubnets: !Ref numSubnets
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        numAzs: !Ref 'numAzs'
+        numSubnets: !Ref 'numSubnets'
         setPublicSubnet1: 'true'
         subnetMask: 24
-        uniqueString: !Ref uniqueString
+        uniqueString: !Ref 'uniqueString'
         vpcCidr: 10.0.0.0/16
