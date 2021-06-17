@@ -1,5 +1,6 @@
-AWSTemplateFormatVersion: 2010-09-09
-Description: This template represents an example of a linked deployment of the BIG-IP Autoscale template
+AWSTemplateFormatVersion: '2010-09-09'
+Description: This template represents an example of a linked deployment of the BIG-IP
+  Autoscale template
 Resources:
   Access:
     Type: 'AWS::CloudFormation::Stack'
@@ -15,13 +16,12 @@ Resources:
         bigIqNotificationRole: ''
         externalTargetGroupHttp: example-target-group-http
         externalTargetGroupHttps: example-target-group-https
-        scaleOutCpuThreshold: 80
+        scaleOutCpuThreshold: 0
         imageId: ami-id
         instanceType: m5.4xlarge
         internalTargetGroupHttp: ''
         internalTargetGroupHttps: ''
         licenseType: payg
-        scaleOutCpuThreshold: 0
         maxBatchSize: 5
         metricNameSpace: bigip-throughput
         minInstancesInService: 1
@@ -40,8 +40,8 @@ Resources:
           - subnet-000003
 Outputs:
   stackName:
-    Value: !GetAtt BigIp.Outputs.stackName
+    Value: !GetAtt 'BigIp.Outputs.stackName'
   bigIpAutoscaleGroup:
-    Value: !GetAtt BigIp.Outputs.bigIpAutoscaleGroup
+    Value: !GetAtt 'BigIp.Outputs.bigIpAutoscaleGroup'
   snsTopic:
-    Value: !GetAtt BigIp.Outputs.snsTopic
+    Value: !GetAtt 'BigIp.Outputs.snsTopic'

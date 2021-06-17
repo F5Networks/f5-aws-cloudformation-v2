@@ -1,29 +1,29 @@
-AWSTemplateFormatVersion: 2010-09-09
+AWSTemplateFormatVersion: '2010-09-09'
 Description: >-
-  BIG-IP Autoscale Template is intended to deploy Autoscale Group of BIG-IP
-  virtual editions
+  BIG-IP Autoscale Template is intended to deploy Autoscale Group of BIG-IP virtual
+  editions
 Conditions:
   isBigIqLicensing: !Equals
     - bigiq
-    - !Ref licenseType
+    - !Ref 'licenseType'
   externalTargetGroupHttpProvided: !Not
     - !Equals
       - ''
-      - !Ref externalTargetGroupHttp
+      - !Ref 'externalTargetGroupHttp'
   externalTargetGroupHttpsProvided: !Not
     - !Equals
       - ''
-      - !Ref externalTargetGroupHttps
+      - !Ref 'externalTargetGroupHttps'
   internalTargetGroupHttpsProvided: !Not
     - !Equals
       - ''
-      - !Ref internalTargetGroupHttps
+      - !Ref 'internalTargetGroupHttps'
   internalTargetGroupHttpProvided: !Not
     - !Equals
       - ''
-      - !Ref internalTargetGroupHttp
+      - !Ref 'internalTargetGroupHttp'
 Metadata:
-  'AWS::CloudFormation::Interface':
+  AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
           default: BIG-IP Configuration
@@ -87,7 +87,8 @@ Metadata:
       bigIpRuntimeInitPackageUrl:
         default: Runtime Init Package
       bigIqLicenseRevokeSnsTopic:
-        default: Provides SNS Topic ARN used for triggering Lambda Function for revoking license on BIG-IQ
+        default: Provides SNS Topic ARN used for triggering Lambda Function for revoking
+          license on BIG-IQ
       bigIqNotificationRole:
         default: The ARN of the IAM role to assign to the Lifecycle Hook
       cost:
@@ -133,13 +134,17 @@ Metadata:
       scaleOutThroughputThreshold:
         default: Incoming bytes threshold to begin scaling out BIG-IP VE instances.
       scalingMaxSize:
-        default: Maximum number of BIG-IP instances (2-8) that can be created in the Autoscale Group
+        default: Maximum number of BIG-IP instances (2-8) that can be created in the
+          Autoscale Group
       scalingMinSize:
-        default: Minimum number of BIG-IP instances (2-8) that can be created in the Autoscale Group
+        default: Minimum number of BIG-IP instances (2-8) that can be created in the
+          Autoscale Group
       snsEvents:
-        default: Provides list of SNS Events used for sending Notifications on Autoscale group
+        default: Provides list of SNS Events used for sending Notifications on Autoscale
+          group
       sshKey:
-        default: Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines.
+        default: Supply the public key that will be used for SSH authentication to
+          the BIG-IP and application virtual machines.
       subnets:
         default: Public or external subnets for the availability zones
       uniqueString:
@@ -151,10 +156,10 @@ Outputs:
     Value: !Ref "AWS::StackName"
   bigIpAutoscaleGroup:
     Description: BIG-IP Autoscale Group
-    Value: !Ref BigipAutoscaleGroup
+    Value: !Ref 'BigipAutoscaleGroup'
   snsTopic:
     Description: SNS topic Autoscale should notify
-    Value: !Ref SNSTopic
+    Value: !Ref 'SNSTopic'
 Parameters:
   application:
     Default: f5app
@@ -167,7 +172,9 @@ Parameters:
     Description: REQUIRED - BIG-IP instance profile with applied IAM policy.
     Type: String
   bigIpRuntimeInitConfig:
-    Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration.'
+    Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
+      file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
+      configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
     Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run'
@@ -175,7 +182,8 @@ Parameters:
     Type: String
   bigIqLicenseRevokeSnsTopic:
     Default: ''
-    Description: Provides SNS Topic ARN used for triggering Lambda Function for revoking license on BIG-IQ.
+    Description: Provides SNS Topic ARN used for triggering Lambda Function for revoking
+      license on BIG-IQ.
     Type: String
   bigIqNotificationRole:
     Default: ''
@@ -253,12 +261,15 @@ Parameters:
     Type: Number
   metricNameSpace:
     Default: f5-scaling-metrics
-    Description: CloudWatch namespace used for custom metrics. This should match the namespace defined in your telemetry services declaration within bigipRuntimInitConfig.
+    Description: CloudWatch namespace used for custom metrics. This should match the
+      namespace defined in your telemetry services declaration within bigipRuntimInitConfig.
     Type: String
   minInstancesInService:
-    ConstraintDescription: This value must be less than the scalingMaxSize of the Auto Scaling group.
+    ConstraintDescription: This value must be less than the scalingMaxSize of the
+      Auto Scaling group.
     Default: 1
-    Description: Specifies the minimum number of instances that must be in service within the Auto Scaling group while CloudFormation updates old instances.
+    Description: Specifies the minimum number of instances that must be in service
+      within the Auto Scaling group while CloudFormation updates old instances.
     Type: Number
   notificationEmail:
     AllowedPattern: .+@.+
@@ -272,7 +283,9 @@ Parameters:
   pauseTime:
     ConstraintDescription: Select a value between 0 to 3600
     Default: 480
-    Description: The amount of time in seconds that CloudFormation pauses after making a change to a batch of instances to give those instances time to start software applications.
+    Description: The amount of time in seconds that CloudFormation pauses after making
+      a change to a batch of instances to give those instances time to start software
+      applications.
     MaxValue: 3600
     MinValue: 0
     Type: Number
@@ -281,7 +294,8 @@ Parameters:
       - 'true'
       - 'false'
     Default: 'true'
-    Description: Whether or not to provision Public IP Addresses for the BIG-IP Network Interfaces. By Default no Public IP addresses are provisioned.
+    Description: Whether or not to provision Public IP Addresses for the BIG-IP Network
+      Interfaces. By Default no Public IP addresses are provisioned.
     Type: String
   scaleInCpuThreshold:
     ConstraintDescription: Select a value between 0 to 100
@@ -308,14 +322,16 @@ Parameters:
   scalingMaxSize:
     ConstraintDescription: Must be a number between 2-100
     Default: 2
-    Description: Maximum number of BIG-IP instances (2-100) that can be created in the Auto Scale Group.
+    Description: Maximum number of BIG-IP instances (2-100) that can be created in
+      the Auto Scale Group.
     MaxValue: 100
     MinValue: 2
     Type: Number
   scalingMinSize:
     ConstraintDescription: Must be a number between 1-99
     Default: 1
-    Description: Minimum number of BIG-IP instances (1-99) you want available in the Auto Scale Group.
+    Description: Minimum number of BIG-IP instances (1-99) you want available in the
+      Auto Scale Group.
     MaxValue: 99
     MinValue: 1
     Type: Number
@@ -324,7 +340,8 @@ Parameters:
     Description: Provides list of SNS Topics used on Autoscale Group.
     Type: List<String>
   sshKey:
-    Description: REQUIRED - Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines.
+    Description: REQUIRED - Supply the public key that will be used for SSH authentication
+      to the BIG-IP and application virtual machines.
     Type: AWS::EC2::KeyPair::KeyName
   subnets:
     ConstraintDescription: The subnet IDs must be within an existing VPC
@@ -332,7 +349,8 @@ Parameters:
     Type: List<AWS::EC2::Subnet::Id>
   uniqueString:
     AllowedPattern: '^[a-zA-Z][a-zA-Z0-9]{1,11}$'
-    ConstraintDescription: Must Contain between 1 and 12 alphanumeric characters with first character as a letter.
+    ConstraintDescription: Must Contain between 1 and 12 alphanumeric characters with
+      first character as a letter.
     Default: myUniqStr
     Description: Unique String used when creating object names or Tags.
     Type: String
@@ -340,130 +358,129 @@ Resources:
   SNSTopic:
     Properties:
       Subscription:
-        - Endpoint: !Ref notificationEmail
+        - Endpoint: !Ref 'notificationEmail'
           Protocol: email
     Type: 'AWS::SNS::Topic'
   LifecycleHook:
     Condition: isBigIqLicensing
     Properties:
-      AutoScalingGroupName: !Ref BigipAutoscaleGroup
+      AutoScalingGroupName: !Ref 'BigipAutoscaleGroup'
       HeartbeatTimeout: 120
       LifecycleTransition: autoscaling:EC2_INSTANCE_TERMINATING
-      NotificationTargetARN: !Ref bigIqLicenseRevokeSnsTopic
-      RoleARN: !Ref bigIqNotificationRole
+      NotificationTargetARN: !Ref 'bigIqLicenseRevokeSnsTopic'
+      RoleARN: !Ref 'bigIqNotificationRole'
     Type: 'AWS::AutoScaling::LifecycleHook'
   BigipAutoscaleGroup:
     CreationPolicy:
       ResourceSignal:
-        Count: !Ref scalingMinSize
+        Count: !Ref 'scalingMinSize'
         Timeout: PT30M
     Properties:
       AutoScalingGroupName: !Join
-            - ''
-            - - !Ref uniqueString
-              - '-bigip-autoscale-group'
+        - ''
+        - - !Ref 'uniqueString'
+          - '-bigip-autoscale-group'
       Cooldown: '1500'
-      DesiredCapacity: !Ref scalingMinSize
+      DesiredCapacity: !Ref 'scalingMinSize'
       HealthCheckGracePeriod: 1500
       HealthCheckType: EC2
-      LaunchConfigurationName: !Ref BigipLaunchConfig
+      LaunchConfigurationName: !Ref 'BigipLaunchConfig'
       TargetGroupARNs:
         - !If
           - externalTargetGroupHttpProvided
-          - !Ref externalTargetGroupHttp
+          - !Ref 'externalTargetGroupHttp'
           - !Ref 'AWS::NoValue'
         - !If
           - externalTargetGroupHttpsProvided
-          - !Ref externalTargetGroupHttps
+          - !Ref 'externalTargetGroupHttps'
           - !Ref 'AWS::NoValue'
         - !If
           - internalTargetGroupHttpProvided
-          - !Ref internalTargetGroupHttp
+          - !Ref 'internalTargetGroupHttp'
           - !Ref 'AWS::NoValue'
         - !If
           - internalTargetGroupHttpsProvided
-          - !Ref internalTargetGroupHttps
+          - !Ref 'internalTargetGroupHttps'
           - !Ref 'AWS::NoValue'
-      MaxSize: !Ref scalingMaxSize
+      MaxSize: !Ref 'scalingMaxSize'
       MetricsCollection:
         - Granularity: 1Minute
-      MinSize: !Ref scalingMinSize
+      MinSize: !Ref 'scalingMinSize'
       NotificationConfigurations:
-        - NotificationTypes: !Ref snsEvents
-          TopicARN: !Ref SNSTopic
+        - NotificationTypes: !Ref 'snsEvents'
+          TopicARN: !Ref 'SNSTopic'
         - !If
           - isBigIqLicensing
           - NotificationTypes:
               - 'autoscaling:EC2_INSTANCE_TERMINATE'
-            TopicARN: !Ref bigIqLicenseRevokeSnsTopic
+            TopicARN: !Ref 'bigIqLicenseRevokeSnsTopic'
           - !Ref 'AWS::NoValue'
       Tags:
         - Key: costcenter
           PropagateAtLaunch: true
-          Value: !Ref cost
+          Value: !Ref 'cost'
         - Key: environment
           PropagateAtLaunch: true
-          Value: !Ref environment
+          Value: !Ref 'environment'
         - Key: group
           PropagateAtLaunch: true
-          Value: !Ref group
+          Value: !Ref 'group'
         - Key: Name
           PropagateAtLaunch: true
           Value: !Join
             - ''
-            - - !Ref uniqueString
+            - - !Ref 'uniqueString'
               - '-bigip-autoscale-instance'
         - Key: owner
           PropagateAtLaunch: true
-          Value: !Ref owner
-      VPCZoneIdentifier: !Ref subnets
+          Value: !Ref 'owner'
+      VPCZoneIdentifier: !Ref 'subnets'
     Type: 'AWS::AutoScaling::AutoScalingGroup'
     UpdatePolicy:
       AutoScalingRollingUpdate:
-        MaxBatchSize: !Ref maxBatchSize
-        MinInstancesInService: !Ref minInstancesInService
+        MaxBatchSize: !Ref 'maxBatchSize'
+        MinInstancesInService: !Ref 'minInstancesInService'
         PauseTime: !Join
           - ''
           - - 'PT'
-            - !Ref pauseTime
+            - !Ref 'pauseTime'
             - 'S'
   BigipHighCpuAlarm:
     DependsOn: BigipAutoscaleGroup
     Properties:
       ActionsEnabled: true
       AlarmActions:
-        - !Ref BigipScaleOutPolicy
+        - !Ref 'BigipScaleOutPolicy'
       AlarmDescription: >-
-        CPU usage percentage exceeds average threshold after 1 successive
-        interval of 1 minute
+        CPU usage percentage exceeds average threshold after 1 successive interval
+        of 1 minute
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 1
       MetricName: F5_system_cpu
-      Namespace: !Ref metricNameSpace
+      Namespace: !Ref 'metricNameSpace'
       Period: 60
       Statistic: Average
-      Threshold: !Ref scaleOutCpuThreshold
+      Threshold: !Ref 'scaleOutCpuThreshold'
     Type: 'AWS::CloudWatch::Alarm'
   BigipHighbytesAlarm:
     DependsOn: BigipAutoscaleGroup
     Properties:
       ActionsEnabled: true
       AlarmActions:
-        - !Ref BigipScaleOutPolicy
+        - !Ref 'BigipScaleOutPolicy'
       AlarmDescription: >-
-        Throughput exceeds average threshold after 1 successive interval of 1
-        minute
+        Throughput exceeds average threshold after 1 successive interval of 1 minute
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 1
       MetricName: F5_throughputIn_sys/performance/throughput/In_Current
-      Namespace: !Ref metricNameSpace
+      Namespace: !Ref 'metricNameSpace'
       Period: 60
       Statistic: Average
-      Threshold: !Ref scaleOutThroughputThreshold
+      Threshold: !Ref 'scaleOutThroughputThreshold'
     Type: 'AWS::CloudWatch::Alarm'
   BigipLaunchConfig:
     Properties:
-      AssociatePublicIpAddress: !Ref provisionPublicIp
+      AssociatePublicIpAddress: !Ref 'provisionPublicIp'
       BlockDeviceMappings:
         - DeviceName: /dev/xvda
           Ebs:
@@ -471,19 +488,19 @@ Resources:
             VolumeType: gp2
         - DeviceName: /dev/xvdb
           NoDevice: true
-      IamInstanceProfile: !Ref bigIpInstanceProfile
-      ImageId: !Ref imageId
+      IamInstanceProfile: !Ref 'bigIpInstanceProfile'
+      ImageId: !Ref 'imageId'
       InstanceMonitoring: false
-      InstanceType: !Ref instanceType
-      KeyName: !Ref sshKey
+      InstanceType: !Ref 'instanceType'
+      KeyName: !Ref 'sshKey'
       SecurityGroups:
-        - !Ref bigIpExternalSecurityGroup
+        - !Ref 'bigIpExternalSecurityGroup'
       UserData: !Base64
-        'Fn::Join':
+        Fn::Join:
           - ''
           - - |
               #!/bin/bash -x
-            - |+
+            - |2+
 
             - |
               # Log to local file and serial console
@@ -507,31 +524,31 @@ Resources:
               exec 1>$npipe
             - |
               exec 2>&1
-            - |+
+            - |2+
 
             - |
               echo "$(date +"%Y-%m-%dT%H:%M:%S.%3NZ") : Startup Script Start"
             - >
-              # Optional optimizations required as early as possible in boot
-              sequence before MCDP starts up.
+              # Optional optimizations required as early as possible in boot sequence
+              before MCDP starts up.
             - |
               /usr/bin/setdb provision.extramb 1000
             - |
               /usr/bin/setdb restjavad.useextramb true
             - >
-              ! grep -q 'provision asm' /config/bigip_base.conf && echo 'sys
-              provision asm { level nominal }' >> /config/bigip_base.conf
-            - |+
+              ! grep -q 'provision asm' /config/bigip_base.conf && echo 'sys provision
+              asm { level nominal }' >> /config/bigip_base.conf
+            - |2+
 
             - |
               # VARS FROM TEMPLATE
-            - >
+            - ""
             - PACKAGE_URL='
-            - !Ref bigIpRuntimeInitPackageUrl
+            - !Ref 'bigIpRuntimeInitPackageUrl'
             - |
               '
             - RUNTIME_CONFIG='
-            - !Ref bigIpRuntimeInitConfig
+            - !Ref 'bigIpRuntimeInitConfig'
             - |
               '
             - |
@@ -550,7 +567,7 @@ Resources:
                   printf '%s\n' "${RUNTIME_CONFIG}" | jq .  > /config/cloud/runtime-init.conf
             - |
               fi
-            - |+
+            - |2+
 
             - |
               # Download and install f5-bigip-runtime-init package
@@ -560,27 +577,27 @@ Resources:
                   curl -fv --retry 1 --connect-timeout 5 -L "${PACKAGE_URL}" -o "/var/config/rest/downloads/${PACKAGE_URL##*/}" && break || sleep 10
             - |
               done
-            - |+
+            - |2+
 
             - |
               # Run
             - |
               bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws'
-            - |+
+            - |2+
 
             - |
               # Execute Runtime-init
             - |
               f5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf
-            - |+
+            - |2+
 
             - '[[ $? -eq 0 ]] && /opt/aws/bin/cfn-signal -e 0 --stack '
             - !Ref 'AWS::StackName'
             - ' --resource BigipAutoscaleGroup --region '
             - !Ref 'AWS::Region'
-            - |+
+            - |2+
 
-            - |+
+            - |2+
 
             - |
               echo "$(date +"%Y-%m-%dT%H:%M:%S.%3NZ") : Startup Script Finish"
@@ -591,44 +608,44 @@ Resources:
     Properties:
       ActionsEnabled: true
       AlarmActions:
-        - !Ref BigipScaleInPolicy
+        - !Ref 'BigipScaleInPolicy'
       AlarmDescription: >-
         CPU usage percentage below average threshold after 10 datapoints over 10 minutes
       ComparisonOperator: LessThanThreshold
       EvaluationPeriods: 10
       MetricName: F5_system_cpu
-      Namespace: !Ref metricNameSpace
+      Namespace: !Ref 'metricNameSpace'
       Period: 60
       Statistic: Average
-      Threshold: !Ref scaleInCpuThreshold
+      Threshold: !Ref 'scaleInCpuThreshold'
     Type: 'AWS::CloudWatch::Alarm'
   BigipLowbytesAlarm:
     DependsOn: BigipAutoscaleGroup
     Properties:
       ActionsEnabled: true
       AlarmActions:
-        - !Ref BigipScaleInPolicy
+        - !Ref 'BigipScaleInPolicy'
       AlarmDescription: >-
         Throughput below average threshold for after 10 datapoints over 10 minutes
       ComparisonOperator: LessThanThreshold
       EvaluationPeriods: 10
       MetricName: F5_throughputIn_sys/performance/throughput/In_Current
-      Namespace: !Ref metricNameSpace
+      Namespace: !Ref 'metricNameSpace'
       Period: 60
       Statistic: Average
-      Threshold: !Ref scaleInThroughputThreshold
+      Threshold: !Ref 'scaleInThroughputThreshold'
     Type: 'AWS::CloudWatch::Alarm'
   BigipScaleInPolicy:
     Properties:
       AdjustmentType: ChangeInCapacity
-      AutoScalingGroupName: !Ref BigipAutoscaleGroup
+      AutoScalingGroupName: !Ref 'BigipAutoscaleGroup'
       Cooldown: '1500'
       ScalingAdjustment: -1
     Type: 'AWS::AutoScaling::ScalingPolicy'
   BigipScaleOutPolicy:
     Properties:
       AdjustmentType: ChangeInCapacity
-      AutoScalingGroupName: !Ref BigipAutoscaleGroup
+      AutoScalingGroupName: !Ref 'BigipAutoscaleGroup'
       Cooldown: '1500'
       ScalingAdjustment: 1
     Type: 'AWS::AutoScaling::ScalingPolicy'

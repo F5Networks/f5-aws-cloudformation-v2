@@ -1,200 +1,200 @@
-AWSTemplateFormatVersion: 2010-09-09
+AWSTemplateFormatVersion: '2010-09-09'
 Description: >-
-  BIG-IP Standalone Template is intended to deploy standalone BIG-IP VE instance
-  virtual editions.
+  BIG-IP Standalone Template is intended to deploy standalone BIG-IP VE instance virtual
+  editions.
 Conditions:
   is3Nic: !And
     - !Not
       - !Equals
-        - !Ref externalSubnetId
+        - !Ref 'externalSubnetId'
         - ''
     - !Not
       - !Equals
-        - !Ref mgmtSubnetId
+        - !Ref 'mgmtSubnetId'
         - ''
     - !Not
       - !Equals
-        - !Ref internalSubnetId
+        - !Ref 'internalSubnetId'
         - ''
   is2Nic: !And
     - !Not
       - !Equals
-        - !Ref mgmtSubnetId
+        - !Ref 'mgmtSubnetId'
         - ''
     - !Not
       - !Equals
-        - !Ref externalSubnetId
+        - !Ref 'externalSubnetId'
         - ''
     - !Equals
-      - !Ref internalSubnetId
+      - !Ref 'internalSubnetId'
       - ''
   is1Nic: !And
     - !Equals
-      - !Ref externalSubnetId
+      - !Ref 'externalSubnetId'
       - ''
     - !Equals
-      - !Ref internalSubnetId
+      - !Ref 'internalSubnetId'
       - ''
     - !Not
       - !Equals
-        - !Ref mgmtSubnetId
+        - !Ref 'mgmtSubnetId'
         - ''
   noExternalServiceIPs: !And
-    - !Condition is1Nic
+    - !Condition 'is1Nic'
     - !Equals
-      - !Join ['', !Ref externalServiceIps]
+      - !Join ['', !Ref 'externalServiceIps']
       - ''
   hasExternalServiceIPs: !And
-    - !Condition is1Nic
+    - !Condition 'is1Nic'
     - !Not
       - !Equals
-        - !Join ['', !Ref externalServiceIps]
+        - !Join ['', !Ref 'externalServiceIps']
         - ''
   useMgmtSecondary: !Or
-    - !Condition useDynamicExternalIpAddr
-    - !Condition useStaticExternalIpAddr
+    - !Condition 'useDynamicExternalIpAddr'
+    - !Condition 'useStaticExternalIpAddr'
   useDynamicExternalIpAddr: !And
     - !Equals
-      - !Ref externalSelfIp
+      - !Ref 'externalSelfIp'
       - ''
     - !Not
       - !Equals
-        - !Ref mgmtSubnetId
+        - !Ref 'mgmtSubnetId'
         - ''
     - !Not
       - !Equals
-        - !Ref externalSubnetId
+        - !Ref 'externalSubnetId'
         - ''
   useDynamicInternalIpAddr: !And
     - !Equals
-      - !Ref internalSelfIp
+      - !Ref 'internalSelfIp'
       - ''
     - !Not
       - !Equals
-        - !Ref externalSubnetId
+        - !Ref 'externalSubnetId'
         - ''
     - !Not
       - !Equals
-        - !Ref mgmtSubnetId
+        - !Ref 'mgmtSubnetId'
         - ''
     - !Not
       - !Equals
-        - !Ref internalSubnetId
+        - !Ref 'internalSubnetId'
         - ''
   useInternalSecurityGroupId: !Not
     - !Equals
-      - !Ref internalSecurityGroupId
+      - !Ref 'internalSecurityGroupId'
       - ''
   useDynamicManagementIpAddr: !Equals
-    - !Ref mgmtSelfIp
+    - !Ref 'mgmtSelfIp'
     - ''
   useMgmtPublicIP: !Not
     - !Equals
-      - !Ref mgmtPublicIpId
+      - !Ref 'mgmtPublicIpId'
       - ''
   associateVip1: !And
-    - !Condition useExternalPublicIP
+    - !Condition 'useExternalPublicIP'
     - !Or
       - !Equals
-        - !Ref numSecondaryPrivateIpAddress
+        - !Ref 'numSecondaryPrivateIpAddress'
         - '1'
       - !Equals
-        - !Ref numSecondaryPrivateIpAddress
+        - !Ref 'numSecondaryPrivateIpAddress'
         - '2'
       - !Equals
-        - !Ref numSecondaryPrivateIpAddress
+        - !Ref 'numSecondaryPrivateIpAddress'
         - '3'
       - !Equals
-        - !Ref numSecondaryPrivateIpAddress
+        - !Ref 'numSecondaryPrivateIpAddress'
         - '4'
-      - !Condition associateVip2
+      - !Condition 'associateVip2'
   associateVip2: !And
-    - !Condition useExternalPublicIP
+    - !Condition 'useExternalPublicIP'
     - !Or
       - !Equals
-        - !Ref numSecondaryPrivateIpAddress
+        - !Ref 'numSecondaryPrivateIpAddress'
         - '2'
-      - !Condition associateVip3
+      - !Condition 'associateVip3'
     - !Not
-      - !Condition useStaticExternalIpAddr
+      - !Condition 'useStaticExternalIpAddr'
   associateVip3: !And
-    - !Condition useExternalPublicIP
+    - !Condition 'useExternalPublicIP'
     - !Or
       - !Equals
-        - !Ref numSecondaryPrivateIpAddress
+        - !Ref 'numSecondaryPrivateIpAddress'
         - '3'
-      - !Condition associateVip4
+      - !Condition 'associateVip4'
     - !Not
-      - !Condition useStaticExternalIpAddr
+      - !Condition 'useStaticExternalIpAddr'
   associateVip4: !And
-    - !Condition useExternalPublicIP
+    - !Condition 'useExternalPublicIP'
     - !Not
       - !Equals
-        - !Ref numSecondaryPrivateIpAddress
+        - !Ref 'numSecondaryPrivateIpAddress'
         - '3'
     - !Not
       - !Equals
-        - !Ref numSecondaryPrivateIpAddress
+        - !Ref 'numSecondaryPrivateIpAddress'
         - '2'
     - !Not
       - !Equals
-        - !Ref numSecondaryPrivateIpAddress
+        - !Ref 'numSecondaryPrivateIpAddress'
         - '1'
     - !Not
-      - !Condition useStaticExternalIpAddr
+      - !Condition 'useStaticExternalIpAddr'
   useExternalPublicIP: !And
     - !Not
       - !Equals
-        - !Ref externalPrimaryPublicId
+        - !Ref 'externalPrimaryPublicId'
         - ''
     - !Not
       - !Equals
-        - !Ref mgmtSubnetId
+        - !Ref 'mgmtSubnetId'
         - ''
   bigipVipEipAssociation: !And
-    - !Condition useExternalPublicIP
+    - !Condition 'useExternalPublicIP'
     - !Not
-      - !Condition is1Nic
+      - !Condition 'is1Nic'
   useStaticExternalIpAddr: !And
     - !Not
       - !Equals
-        - !Ref externalSelfIp
+        - !Ref 'externalSelfIp'
         - ''
     - !Not
       - !Equals
-        - !Ref mgmtSubnetId
+        - !Ref 'mgmtSubnetId'
         - ''
     - !Not
       - !Equals
-        - !Ref externalSubnetId
+        - !Ref 'externalSubnetId'
         - ''
   useStaticInternalIpAddr: !And
     - !Not
       - !Equals
-        - !Ref internalSelfIp
+        - !Ref 'internalSelfIp'
         - ''
     - !Not
       - !Equals
-        - !Ref externalSubnetId
+        - !Ref 'externalSubnetId'
         - ''
     - !Not
       - !Equals
-        - !Ref mgmtSubnetId
+        - !Ref 'mgmtSubnetId'
         - ''
     - !Not
       - !Equals
-        - !Ref internalSubnetId
+        - !Ref 'internalSubnetId'
         - ''
   useStaticManagementIpAddr: !Not
     - !Equals
-      - !Ref mgmtSelfIp
+      - !Ref 'mgmtSelfIp'
       - ''
   useBigIpInstanceProfile: !Not
     - !Equals
-      - !Ref bigIpInstanceProfile
+      - !Ref 'bigIpInstanceProfile'
       - ""
 Metadata:
-  'AWS::CloudFormation::Interface':
+  AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
           default: BIG-IP Configuration
@@ -300,58 +300,58 @@ Outputs:
   bigIpInstanceId:
     Description: BIG-IP instance id
     Value: !If
-        - is1Nic
-        - !Ref Bigip1NicInstance
-        - !If 
-          - is2Nic
-          - !Ref Bigip2NicInstance
-          - !If 
-            - is3Nic
-            - !Ref Bigip3NicInstance
-            - !Ref AWS::NoValue
+      - is1Nic
+      - !Ref 'Bigip1NicInstance'
+      - !If
+        - is2Nic
+        - !Ref 'Bigip2NicInstance'
+        - !If
+          - is3Nic
+          - !Ref 'Bigip3NicInstance'
+          - !Ref 'AWS::NoValue'
   bigIpManagementInterfacePrivateIp:
     Description: Internally routable IP of BIG-IP instance NIC eth0
     Value: !If
-        - useDynamicManagementIpAddr
-        - !GetAtt 
-          - BigipManagementInterface
-          - PrimaryPrivateIpAddress
-        - !GetAtt 
-          - BigipStaticManagementInterface
-          - PrimaryPrivateIpAddress
+      - useDynamicManagementIpAddr
+      - !GetAtt
+        - BigipManagementInterface
+        - PrimaryPrivateIpAddress
+      - !GetAtt
+        - BigipStaticManagementInterface
+        - PrimaryPrivateIpAddress
   bigIp2nicExternalInterfacePrivateIp:
     Condition: is2Nic
     Description: Internally routable IP of BIG-IP instance NIC eth1
     Value: !If
-        - useDynamicExternalIpAddr
-        - !GetAtt 
-          - BigipExternalInterface
-          - PrimaryPrivateIpAddress
-        - !GetAtt 
-          - BigipStaticExternalInterface
-          - PrimaryPrivateIpAddress
+      - useDynamicExternalIpAddr
+      - !GetAtt
+        - BigipExternalInterface
+        - PrimaryPrivateIpAddress
+      - !GetAtt
+        - BigipStaticExternalInterface
+        - PrimaryPrivateIpAddress
   bigIp3NicExternalInterfacePrivateIp:
     Condition: is3Nic
     Description: Internally routable IP of BIG-IP instance NIC eth1
     Value: !If
-        - useDynamicExternalIpAddr
-        - !GetAtt 
-          - BigipExternalInterface
-          - PrimaryPrivateIpAddress
-        - !GetAtt 
-          - BigipStaticExternalInterface
-          - PrimaryPrivateIpAddress
+      - useDynamicExternalIpAddr
+      - !GetAtt
+        - BigipExternalInterface
+        - PrimaryPrivateIpAddress
+      - !GetAtt
+        - BigipStaticExternalInterface
+        - PrimaryPrivateIpAddress
   bigIp3NicInternalInterfacePrivateIp:
     Condition: is3Nic
     Description: Internally routable IP of BIG-IP instance NIC eth2
     Value: !If
-        - useDynamicInternalIpAddr
-        - !GetAtt 
-          - BigipInternalInterface
-          - PrimaryPrivateIpAddress
-        - !GetAtt 
-          - BigipStaticInternalInterface
-          - PrimaryPrivateIpAddress
+      - useDynamicInternalIpAddr
+      - !GetAtt
+        - BigipInternalInterface
+        - PrimaryPrivateIpAddress
+      - !GetAtt
+        - BigipStaticInternalInterface
+        - PrimaryPrivateIpAddress
 Parameters:
   application:
     Default: f5app
@@ -362,7 +362,9 @@ Parameters:
     Description: BIG-IP instance profile with applied IAM policy.
     Type: String
   bigIpRuntimeInitConfig:
-    Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration.'
+    Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
+      file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
+      configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
     Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run'
@@ -378,27 +380,41 @@ Parameters:
     Type: String
   externalPrimaryPublicId:
     Default: ''
-    Description: The allocation ID of the public IP address to apply to the primary IP configuration on the external network interface. Default is empty which does not provision public ip.
+    Description: The allocation ID of the public IP address to apply to the primary
+      IP configuration on the external network interface. Default is empty which does
+      not provision public ip.
     Type: String
   externalPublicIpIds:
     Default: ''
-    Description: A comma separated list of one or more Public IP addresses to associate to the external network interface secondary private addresses. **Note template only supports up to 4 addresses. numSecondaryPrivateIpAddress parameter needs to be equal to our greater than the number of addresses sent. Leaving default empty will not associate EIPS to secondary addresses.
+    Description: A comma separated list of one or more Public IP addresses to associate
+      to the external network interface secondary private addresses. **Note template
+      only supports up to 4 addresses. numSecondaryPrivateIpAddress parameter needs
+      to be equal to our greater than the number of addresses sent. Leaving default
+      empty will not associate EIPS to secondary addresses.
     Type: CommaDelimitedList
   externalSecurityGroupId:
     Default: ''
-    Description: The optional resource ID of a security group to apply to the external network interface.
+    Description: The optional resource ID of a security group to apply to the external
+      network interface.
     Type: String
   externalSelfIp:
     Default: ''
-    Description: 'The private IP address to apply to external network interfaces as primary private address. The address must reside in the subnet provided in the externalSubnetId parameter. ***NOTE:*** When set to empty string, DHCP will be used for allocating ip address.'
+    Description: 'The private IP address to apply to external network interfaces as
+      primary private address. The address must reside in the subnet provided in the
+      externalSubnetId parameter. ***NOTE:*** When set to empty string, DHCP will
+      be used for allocating ip address.'
     Type: String
   externalServiceIps:
     Default: ''
-    Description: An array of one or more private IP addresses to apply to the external network interface as secondary private addresses.
+    Description: An array of one or more private IP addresses to apply to the external
+      network interface as secondary private addresses.
     Type: CommaDelimitedList
   externalSubnetId:
     Default: ''
-    Description: 'The resource ID of the external subnet. ***Note:*** Subnet ID parameters used for identifying number of network interfaces. Example: 1NIC - only Mgmt subnet id provided, 2NIC - Mgmt and Externa subnets id providedl, 3NIC - Mgmt, External and Internal subnets id provided).'
+    Description: 'The resource ID of the external subnet. ***Note:*** Subnet ID parameters
+      used for identifying number of network interfaces. Example: 1NIC - only Mgmt
+      subnet id provided, 2NIC - Mgmt and Externa subnets id providedl, 3NIC - Mgmt,
+      External and Internal subnets id provided).'
     Type: String
   group:
     Default: f5group
@@ -416,11 +432,13 @@ Parameters:
     Type: String
   internalSecurityGroupId:
     Default: ''
-    Description: The optional resource ID of a security group to apply to the internal network interface.
+    Description: The optional resource ID of a security group to apply to the internal
+      network interface.
     Type: String
   internalSelfIp:
     Default: ''
-    Description: The private IP address to apply to the internal network interface. The address must reside in the subnet provided in the internalSubnetId parameter.
+    Description: The private IP address to apply to the internal network interface.
+      The address must reside in the subnet provided in the internalSubnetId parameter.
     Type: String
   internalSubnetId:
     Default: ''
@@ -428,23 +446,33 @@ Parameters:
     Type: String
   mgmtPublicIpId:
     Default: ''
-    Description: The resource ID of the public IP address to apply to the management network interface. Leave this parameter blank to create a management network interface without a public IP address. Default is empty which does not provision public ip.
+    Description: The resource ID of the public IP address to apply to the management
+      network interface. Leave this parameter blank to create a management network
+      interface without a public IP address. Default is empty which does not provision
+      public ip.
     Type: String
   mgmtSecurityGroupId:
-    Description: REQUIRED - The resource ID of a security group to apply to the management network interface.
+    Description: REQUIRED - The resource ID of a security group to apply to the management
+      network interface.
     Type: String
   mgmtSelfIp:
     Default: ''
-    Description: 'The private IP address to apply to the management network interface. The address must reside in the subnet provided in the mgmtSubnetId parameter. ***NOTE:*** When set to empty string, DHCP will be used for allocating ip address.'
+    Description: 'The private IP address to apply to the management network interface.
+      The address must reside in the subnet provided in the mgmtSubnetId parameter.
+      ***NOTE:*** When set to empty string, DHCP will be used for allocating ip address.'
     Type: String
   mgmtSubnetId:
     ConstraintDescription: Must be populated.
     Default: ''
-    Description: 'The resource ID of the management subnet. ***Note:*** SubnetId parameters used for identifying number of network interfaces. Example: 1NIC - only Mgmt subnet id provided, 2NIC - Mgmt and Externa subnets id providedl, 3NIC - Mgmt, External and Internal subnets id provided).'
+    Description: 'The resource ID of the management subnet. ***Note:*** SubnetId parameters
+      used for identifying number of network interfaces. Example: 1NIC - only Mgmt
+      subnet id provided, 2NIC - Mgmt and Externa subnets id providedl, 3NIC - Mgmt,
+      External and Internal subnets id provided).'
     Type: String
   numSecondaryPrivateIpAddress:
     Default: 1
-    Description: The number of dynamic secondary private IP's to associate to external nic.
+    Description: The number of dynamic secondary private IP's to associate to external
+      nic.
     MinValue: 0
     Type: Number
   owner:
@@ -452,11 +480,13 @@ Parameters:
     Description: Owner Tag.
     Type: String
   sshKey:
-    Description: REQUIRED - Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines.
+    Description: REQUIRED - Supply the public key that will be used for SSH authentication
+      to the BIG-IP and application virtual machines.
     Type: 'AWS::EC2::KeyPair::KeyName'
   uniqueString:
     AllowedPattern: '^[a-zA-Z][a-zA-Z0-9]{1,11}$'
-    ConstraintDescription: Must Contain between 1 and 12 alphanumeric characters with first character as a letter.
+    ConstraintDescription: Must Contain between 1 and 12 alphanumeric characters with
+      first character as a letter.
     Default: myUniqStr
     Description: Unique String used when creating object names or Tags.
     Type: String
@@ -465,12 +495,12 @@ Resources:
     Condition: useDynamicInternalIpAddr
     Properties:
       Description: Internal Interface for the BIG-IP
-      GroupSet: 
+      GroupSet:
         - !If
           - useInternalSecurityGroupId
-          - !Ref internalSecurityGroupId
-          - !Ref AWS::NoValue
-      SubnetId: !Ref internalSubnetId
+          - !Ref 'internalSecurityGroupId'
+          - !Ref 'AWS::NoValue'
+      SubnetId: !Ref 'internalSubnetId'
     Type: 'AWS::EC2::NetworkInterface'
   BigipManagementInterface:
     Condition: useDynamicManagementIpAddr
@@ -479,19 +509,19 @@ Resources:
       SecondaryPrivateIpAddressCount: !If
         - useMgmtSecondary
         - 0
-        - !Ref numSecondaryPrivateIpAddress
+        - !Ref 'numSecondaryPrivateIpAddress'
       GroupSet:
-        - !Ref mgmtSecurityGroupId
-      SubnetId: !Ref mgmtSubnetId
+        - !Ref 'mgmtSecurityGroupId'
+      SubnetId: !Ref 'mgmtSubnetId'
     Type: 'AWS::EC2::NetworkInterface'
   BigipExternalInterface:
     Condition: useDynamicExternalIpAddr
     Properties:
       Description: Public External Interface for the BIG-IP
-      SecondaryPrivateIpAddressCount: !Ref numSecondaryPrivateIpAddress
+      SecondaryPrivateIpAddressCount: !Ref 'numSecondaryPrivateIpAddress'
       GroupSet:
-        - !Ref externalSecurityGroupId
-      SubnetId: !Ref externalSubnetId
+        - !Ref 'externalSecurityGroupId'
+      SubnetId: !Ref 'externalSubnetId'
     Type: 'AWS::EC2::NetworkInterface'
   BigipStaticInternalInterface:
     Condition: useStaticInternalIpAddr
@@ -500,10 +530,10 @@ Resources:
       GroupSet:
         - !If
           - useInternalSecurityGroupId
-          - !Ref internalSecurityGroupId
-          - !Ref AWS::NoValue
-      PrivateIpAddress: !Ref internalSelfIp
-      SubnetId: !Ref internalSubnetId
+          - !Ref 'internalSecurityGroupId'
+          - !Ref 'AWS::NoValue'
+      PrivateIpAddress: !Ref 'internalSelfIp'
+      SubnetId: !Ref 'internalSubnetId'
     Type: 'AWS::EC2::NetworkInterface'
   BigipStaticManagementInterface:
     Condition: useStaticManagementIpAddr
@@ -511,68 +541,68 @@ Resources:
       Description: Management Interface for the BIG-IP
       SecondaryPrivateIpAddressCount: !If
         - noExternalServiceIPs
-        - !Ref numSecondaryPrivateIpAddress
+        - !Ref 'numSecondaryPrivateIpAddress'
         - !Ref 'AWS::NoValue'
       GroupSet:
-        - !Ref mgmtSecurityGroupId
-      PrivateIpAddress: !If 
+        - !Ref 'mgmtSecurityGroupId'
+      PrivateIpAddress: !If
         - is1Nic
         - !If
           - noExternalServiceIPs
-          - !Ref mgmtSelfIp
+          - !Ref 'mgmtSelfIp'
           - !Ref 'AWS::NoValue'
-        - !Ref mgmtSelfIp
-      PrivateIpAddresses: !If 
+        - !Ref 'mgmtSelfIp'
+      PrivateIpAddresses: !If
         - hasExternalServiceIPs
         - - Primary: true
-            PrivateIpAddress: !Ref mgmtSelfIp
+            PrivateIpAddress: !Ref 'mgmtSelfIp'
           - Primary: false
             PrivateIpAddress: !Select
               - '0'
-              - !Ref externalServiceIps
+              - !Ref 'externalServiceIps'
         - !Ref 'AWS::NoValue'
-      SubnetId: !Ref mgmtSubnetId
+      SubnetId: !Ref 'mgmtSubnetId'
     Type: 'AWS::EC2::NetworkInterface'
   BigipStaticExternalInterface:
     Condition: useStaticExternalIpAddr
     Properties:
       Description: Public External Interface for the BIG-IP
       GroupSet:
-        - !Ref externalSecurityGroupId
+        - !Ref 'externalSecurityGroupId'
       PrivateIpAddresses:
         - Primary: true
-          PrivateIpAddress: !Ref externalSelfIp
+          PrivateIpAddress: !Ref 'externalSelfIp'
         - Primary: false
           PrivateIpAddress: !Select
             - '0'
-            - !Ref externalServiceIps
-      SubnetId: !Ref externalSubnetId
+            - !Ref 'externalServiceIps'
+      SubnetId: !Ref 'externalSubnetId'
     Type: 'AWS::EC2::NetworkInterface'
   BigipVipEipAssociation:
     Condition: bigipVipEipAssociation
     Properties:
-      AllocationId: !Ref externalPrimaryPublicId
+      AllocationId: !Ref 'externalPrimaryPublicId'
       NetworkInterfaceId: !If
         - useDynamicExternalIpAddr
-        - !Ref BigipExternalInterface
-        - !Ref BigipStaticExternalInterface
+        - !Ref 'BigipExternalInterface'
+        - !Ref 'BigipStaticExternalInterface'
     Type: 'AWS::EC2::EIPAssociation'
   BigipVipEipAssociation1:
     Condition: associateVip1
     Properties:
       AllocationId: !Select
         - '0'
-        - !Ref externalPublicIpIds
+        - !Ref 'externalPublicIpIds'
       NetworkInterfaceId: !If
         - is1Nic
         - !If
           - useDynamicManagementIpAddr
-          - !Ref BigipManagementInterface
-          - !Ref BigipStaticManagementInterface
+          - !Ref 'BigipManagementInterface'
+          - !Ref 'BigipStaticManagementInterface'
         - !If
           - useDynamicExternalIpAddr
-          - !Ref BigipExternalInterface
-          - !Ref BigipStaticExternalInterface
+          - !Ref 'BigipExternalInterface'
+          - !Ref 'BigipStaticExternalInterface'
       PrivateIpAddress: !If
         - is1Nic
         - !If
@@ -605,17 +635,17 @@ Resources:
     Properties:
       AllocationId: !Select
         - '1'
-        - !Ref externalPublicIpIds
+        - !Ref 'externalPublicIpIds'
       NetworkInterfaceId: !If
         - is1Nic
         - !If
           - useDynamicManagementIpAddr
-          - !Ref BigipManagementInterface
-          - !Ref BigipStaticManagementInterface
+          - !Ref 'BigipManagementInterface'
+          - !Ref 'BigipStaticManagementInterface'
         - !If
           - useDynamicExternalIpAddr
-          - !Ref BigipExternalInterface
-          - !Ref BigipStaticExternalInterface
+          - !Ref 'BigipExternalInterface'
+          - !Ref 'BigipStaticExternalInterface'
       PrivateIpAddress: !If
         - is1Nic
         - !If
@@ -648,17 +678,17 @@ Resources:
     Properties:
       AllocationId: !Select
         - '2'
-        - !Ref externalPublicIpIds
+        - !Ref 'externalPublicIpIds'
       NetworkInterfaceId: !If
         - is1Nic
         - !If
           - useDynamicManagementIpAddr
-          - !Ref BigipManagementInterface
-          - !Ref BigipStaticManagementInterface
+          - !Ref 'BigipManagementInterface'
+          - !Ref 'BigipStaticManagementInterface'
         - !If
           - useDynamicExternalIpAddr
-          - !Ref BigipExternalInterface
-          - !Ref BigipStaticExternalInterface
+          - !Ref 'BigipExternalInterface'
+          - !Ref 'BigipStaticExternalInterface'
       PrivateIpAddress: !If
         - is1Nic
         - !If
@@ -691,17 +721,17 @@ Resources:
     Properties:
       AllocationId: !Select
         - '3'
-        - !Ref externalPublicIpIds
+        - !Ref 'externalPublicIpIds'
       NetworkInterfaceId: !If
         - is1Nic
         - !If
           - useDynamicManagementIpAddr
-          - !Ref BigipManagementInterface
-          - !Ref BigipStaticManagementInterface
+          - !Ref 'BigipManagementInterface'
+          - !Ref 'BigipStaticManagementInterface'
         - !If
           - useDynamicExternalIpAddr
-          - !Ref BigipExternalInterface
-          - !Ref BigipStaticExternalInterface
+          - !Ref 'BigipExternalInterface'
+          - !Ref 'BigipStaticExternalInterface'
       PrivateIpAddress: !If
         - is1Nic
         - !If
@@ -732,11 +762,11 @@ Resources:
   BigipManagementEipAssociation:
     Condition: useMgmtPublicIP
     Properties:
-      AllocationId: !Ref mgmtPublicIpId
+      AllocationId: !Ref 'mgmtPublicIpId'
       NetworkInterfaceId: !If
         - useDynamicManagementIpAddr
-        - !Ref BigipManagementInterface
-        - !Ref BigipStaticManagementInterface
+        - !Ref 'BigipManagementInterface'
+        - !Ref 'BigipStaticManagementInterface'
     Type: 'AWS::EC2::EIPAssociation'
   Bigip3NicInstance:
     CreationPolicy:
@@ -753,53 +783,52 @@ Resources:
             VolumeType: gp2
         - DeviceName: /dev/xvdb
           NoDevice: {}
-      IamInstanceProfile: 
-        !If
+      IamInstanceProfile: !If
         - useBigIpInstanceProfile
-        - !Ref bigIpInstanceProfile
-        - !Ref AWS::NoValue
-      ImageId: !Ref imageId
-      InstanceType: !Ref instanceType
-      KeyName: !Ref sshKey
+        - !Ref 'bigIpInstanceProfile'
+        - !Ref 'AWS::NoValue'
+      ImageId: !Ref 'imageId'
+      InstanceType: !Ref 'instanceType'
+      KeyName: !Ref 'sshKey'
       NetworkInterfaces:
         - Description: Management Interface
           DeviceIndex: '0'
           NetworkInterfaceId: !If
             - useDynamicManagementIpAddr
-            - !Ref BigipManagementInterface
-            - !Ref BigipStaticManagementInterface
+            - !Ref 'BigipManagementInterface'
+            - !Ref 'BigipStaticManagementInterface'
         - Description: Public or External Interface
           DeviceIndex: '1'
           NetworkInterfaceId: !If
             - useDynamicExternalIpAddr
-            - !Ref BigipExternalInterface
-            - !Ref BigipStaticExternalInterface
+            - !Ref 'BigipExternalInterface'
+            - !Ref 'BigipStaticExternalInterface'
         - Description: Private or Internal Interface
           DeviceIndex: '2'
           NetworkInterfaceId: !If
             - useDynamicInternalIpAddr
-            - !Ref BigipInternalInterface
-            - !Ref BigipStaticInternalInterface
+            - !Ref 'BigipInternalInterface'
+            - !Ref 'BigipStaticInternalInterface'
       Tags:
         - Key: costcenter
-          Value: !Ref cost
+          Value: !Ref 'cost'
         - Key: environment
-          Value: !Ref environment
+          Value: !Ref 'environment'
         - Key: group
-          Value: !Ref group
+          Value: !Ref 'group'
         - Key: Name
           Value: !Join
             - ''
-            - - !Ref uniqueString
+            - - !Ref 'uniqueString'
               - '-bigip'
         - Key: owner
-          Value: !Ref owner
+          Value: !Ref 'owner'
       UserData: !Base64
-        'Fn::Join':
+        Fn::Join:
           - ''
           - - |
               #!/bin/bash -x
-            - |+
+            - |2+
 
             - |
               # Log to local file and serial console
@@ -823,28 +852,28 @@ Resources:
               exec 1>$npipe
             - |
               exec 2>&1
-            - |+
+            - |2+
 
             - |
               echo "$(date +"%Y-%m-%dT%H:%M:%S.%3NZ") : Startup Script Start"
             - >
-              # Optional optimizations required as early as possible in boot
-              sequence before MCDP starts up.
+              # Optional optimizations required as early as possible in boot sequence
+              before MCDP starts up.
             - |
               /usr/bin/setdb provision.extramb 1000
             - |
               /usr/bin/setdb restjavad.useextramb true
-            - |+
+            - |2+
 
             - |
               # VARS FROM TEMPLATE
-            - >
+            - ""
             - PACKAGE_URL='
-            - !Ref bigIpRuntimeInitPackageUrl
+            - !Ref 'bigIpRuntimeInitPackageUrl'
             - |
               '
             - RUNTIME_CONFIG='
-            - !Ref bigIpRuntimeInitConfig
+            - !Ref 'bigIpRuntimeInitConfig'
             - |
               '
             - |
@@ -863,7 +892,7 @@ Resources:
                   printf '%s\n' "${RUNTIME_CONFIG}" | jq .  > /config/cloud/runtime-init.conf
             - |
               fi
-            - |+
+            - |2+
 
             - |
               # Download and install f5-bigip-runtime-init package
@@ -873,27 +902,27 @@ Resources:
                   curl -fv --retry 1 --connect-timeout 5 -L "${PACKAGE_URL}" -o "/var/config/rest/downloads/${PACKAGE_URL##*/}" && break || sleep 10
             - |
               done
-            - |+
+            - |2+
 
             - |
               # Run
             - |
               bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws'
-            - |+
+            - |2+
 
             - |
               # Execute Runtime-init
             - |
               f5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf
-            - |+
+            - |2+
 
             - '[[ $? -eq 0 ]] && /opt/aws/bin/cfn-signal -e 0 --stack '
             - !Ref 'AWS::StackName'
             - ' --resource Bigip3NicInstance --region '
             - !Ref 'AWS::Region'
-            - |+
+            - |2+
 
-            - |+
+            - |2+
 
             - |
               echo "$(date +"%Y-%m-%dT%H:%M:%S.%3NZ") : Startup Script Finish"
@@ -914,47 +943,46 @@ Resources:
             VolumeType: gp2
         - DeviceName: /dev/xvdb
           NoDevice: {}
-      IamInstanceProfile: 
-        !If
+      IamInstanceProfile: !If
         - useBigIpInstanceProfile
-        - !Ref bigIpInstanceProfile
-        - !Ref AWS::NoValue
-      ImageId: !Ref imageId
-      InstanceType: !Ref instanceType
-      KeyName: !Ref sshKey
+        - !Ref 'bigIpInstanceProfile'
+        - !Ref 'AWS::NoValue'
+      ImageId: !Ref 'imageId'
+      InstanceType: !Ref 'instanceType'
+      KeyName: !Ref 'sshKey'
       NetworkInterfaces:
         - Description: Management Interface
           DeviceIndex: '0'
           NetworkInterfaceId: !If
             - useDynamicManagementIpAddr
-            - !Ref BigipManagementInterface
-            - !Ref BigipStaticManagementInterface
+            - !Ref 'BigipManagementInterface'
+            - !Ref 'BigipStaticManagementInterface'
         - Description: Public or External Interface
           DeviceIndex: '1'
           NetworkInterfaceId: !If
             - useDynamicExternalIpAddr
-            - !Ref BigipExternalInterface
-            - !Ref BigipStaticExternalInterface
+            - !Ref 'BigipExternalInterface'
+            - !Ref 'BigipStaticExternalInterface'
       Tags:
         - Key: costcenter
-          Value: !Ref cost
+          Value: !Ref 'cost'
         - Key: environment
-          Value: !Ref environment
+          Value: !Ref 'environment'
         - Key: group
-          Value: !Ref group
+          Value: !Ref 'group'
         - Key: Name
           Value: !Join
             - ''
-            - - !Ref uniqueString
+            - - !Ref 'uniqueString'
               - '-bigip'
         - Key: owner
-          Value: !Ref owner
+          Value: !Ref 'owner'
       UserData: !Base64
-        'Fn::Join':
+        Fn::Join:
           - ''
           - - |
               #!/bin/bash -x
-            - |+
+            - |2+
 
             - |
               # Log to local file and serial console
@@ -978,28 +1006,28 @@ Resources:
               exec 1>$npipe
             - |
               exec 2>&1
-            - |+
+            - |2+
 
             - |
               echo "$(date +"%Y-%m-%dT%H:%M:%S.%3NZ") : Starting Custom Script"
             - >
-              # Optional optimizations required as early as possible in boot
-              sequence before MCDP starts up.
+              # Optional optimizations required as early as possible in boot sequence
+              before MCDP starts up.
             - |
               /usr/bin/setdb provision.extramb 1000
             - |
               /usr/bin/setdb restjavad.useextramb true
-            - |+
+            - |2+
 
             - |
               # VARS FROM TEMPLATE
-            - >
+            - ""
             - PACKAGE_URL='
-            - !Ref bigIpRuntimeInitPackageUrl
+            - !Ref 'bigIpRuntimeInitPackageUrl'
             - |
               '
             - RUNTIME_CONFIG='
-            - !Ref bigIpRuntimeInitConfig
+            - !Ref 'bigIpRuntimeInitConfig'
             - |
               '
             - |
@@ -1018,7 +1046,7 @@ Resources:
                   printf '%s\n' "${RUNTIME_CONFIG}" | jq .  > /config/cloud/runtime-init.conf
             - |
               fi
-            - |+
+            - |2+
 
             - |
               # Download and install f5-bigip-runtime-init package
@@ -1028,27 +1056,27 @@ Resources:
                   curl -fv --retry 1 --connect-timeout 5 -L "${PACKAGE_URL}" -o "/var/config/rest/downloads/${PACKAGE_URL##*/}" && break || sleep 10
             - |
               done
-            - |+
+            - |2+
 
             - |
               # Run
             - |
               bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws'
-            - |+
+            - |2+
 
             - |
               # Execute Runtime-init
             - |
               f5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf
-            - |+
+            - |2+
 
             - '[[ $? -eq 0 ]] && /opt/aws/bin/cfn-signal -e 0 --stack '
             - !Ref 'AWS::StackName'
             - ' --resource Bigip2NicInstance --region '
             - !Ref 'AWS::Region'
-            - |+
+            - |2+
 
-            - |+
+            - |2+
 
             - |
               echo "$(date +"%Y-%m-%dT%H:%M:%S.%3NZ") : Startup Script Finish"
@@ -1069,41 +1097,40 @@ Resources:
             VolumeType: gp2
         - DeviceName: /dev/xvdb
           NoDevice: {}
-      IamInstanceProfile: 
-        !If
+      IamInstanceProfile: !If
         - useBigIpInstanceProfile
-        - !Ref bigIpInstanceProfile
-        - !Ref AWS::NoValue
-      ImageId: !Ref imageId
-      InstanceType: !Ref instanceType
-      KeyName: !Ref sshKey
+        - !Ref 'bigIpInstanceProfile'
+        - !Ref 'AWS::NoValue'
+      ImageId: !Ref 'imageId'
+      InstanceType: !Ref 'instanceType'
+      KeyName: !Ref 'sshKey'
       NetworkInterfaces:
         - Description: Management Interface
           DeviceIndex: '0'
           NetworkInterfaceId: !If
             - useDynamicManagementIpAddr
-            - !Ref BigipManagementInterface
-            - !Ref BigipStaticManagementInterface
+            - !Ref 'BigipManagementInterface'
+            - !Ref 'BigipStaticManagementInterface'
       Tags:
         - Key: costcenter
-          Value: !Ref cost
+          Value: !Ref 'cost'
         - Key: environment
-          Value: !Ref environment
+          Value: !Ref 'environment'
         - Key: group
-          Value: !Ref group
+          Value: !Ref 'group'
         - Key: Name
           Value: !Join
             - ''
-            - - !Ref uniqueString
+            - - !Ref 'uniqueString'
               - '-bigip'
         - Key: owner
-          Value: !Ref owner
+          Value: !Ref 'owner'
       UserData: !Base64
-        'Fn::Join':
+        Fn::Join:
           - ''
           - - |
               #!/bin/bash -x
-            - |+
+            - |2+
 
             - |
               # Log to local file and serial console
@@ -1127,28 +1154,28 @@ Resources:
               exec 1>$npipe
             - |
               exec 2>&1
-            - |+
+            - |2+
 
             - |
               echo "$(date +"%Y-%m-%dT%H:%M:%S.%3NZ") : Starting Custom Script"
             - >
-              # Optional optimizations required as early as possible in boot
-              sequence before MCDP starts up.
+              # Optional optimizations required as early as possible in boot sequence
+              before MCDP starts up.
             - |
               /usr/bin/setdb provision.extramb 1000
             - |
               /usr/bin/setdb restjavad.useextramb true
-            - |+
+            - |2+
 
             - |
               # VARS FROM TEMPLATE
-            - >
+            - ""
             - PACKAGE_URL='
-            - !Ref bigIpRuntimeInitPackageUrl
+            - !Ref 'bigIpRuntimeInitPackageUrl'
             - |
               '
             - RUNTIME_CONFIG='
-            - !Ref bigIpRuntimeInitConfig
+            - !Ref 'bigIpRuntimeInitConfig'
             - |
               '
             - |
@@ -1167,7 +1194,7 @@ Resources:
                   printf '%s\n' "${RUNTIME_CONFIG}" | jq .  > /config/cloud/runtime-init.conf
             - |
               fi
-            - |+
+            - |2+
 
             - |
               # Download and install f5-bigip-runtime-init package
@@ -1177,27 +1204,27 @@ Resources:
                   curl -fv --retry 1 --connect-timeout 5 -L "${PACKAGE_URL}" -o "/var/config/rest/downloads/${PACKAGE_URL##*/}" && break || sleep 10
             - |
               done
-            - |+
+            - |2+
 
             - |
               # Run
             - |
               bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws'
-            - |+
+            - |2+
 
             - |
               # Execute Runtime-init
             - |
               f5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf
-            - |+
+            - |2+
 
             - '[[ $? -eq 0 ]] && /opt/aws/bin/cfn-signal -e 0 --stack '
             - !Ref 'AWS::StackName'
             - ' --resource Bigip1NicInstance --region '
             - !Ref 'AWS::Region'
-            - |+
+            - |2+
 
-            - |+
+            - |2+
 
             - |
               echo "$(date +"%Y-%m-%dT%H:%M:%S.%3NZ") : Startup Script Finish"

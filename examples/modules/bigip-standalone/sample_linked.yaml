@@ -1,5 +1,6 @@
-AWSTemplateFormatVersion: 2010-09-09
-Description: This template represents an example of a linked deployment of the BIG-IP Standalone template
+AWSTemplateFormatVersion: '2010-09-09'
+Description: This template represents an example of a linked deployment of the BIG-IP
+  Standalone template
 Resources:
   Access:
     Type: 'AWS::CloudFormation::Stack'
@@ -31,12 +32,12 @@ Resources:
         uniqueString: myUniqStr
 Outputs:
   stackName:
-    Value: !GetAtt BigIp.Outputs.stackName
+    Value: !GetAtt 'BigIp.Outputs.stackName'
   bigIpInstanceId:
-    Value: !GetAtt BigIp.Outputs.bigIpInstanceId
+    Value: !GetAtt 'BigIp.Outputs.bigIpInstanceId'
   bigIp2nicExternalInterfacePrivateIp:
-    Value: !GetAtt BigIp.Outputs.bigIp2nicExternalInterfacePrivateIp
+    Value: !GetAtt 'BigIp.Outputs.bigIp2nicExternalInterfacePrivateIp'
   bigIp3NicExternalInterfacePrivateIp:
-    Value: !GetAtt BigIp.Outputs.bigIp3NicExternalInterfacePrivateIp
+    Value: !GetAtt 'BigIp.Outputs.bigIp3NicExternalInterfacePrivateIp'
   bigIp3NicInternalInterfacePrivateIp:
-    Value: !GetAtt BigIp.Outputs.bigIp3NicInternalInterfacePrivateIp
+    Value: !GetAtt 'BigIp.Outputs.bigIp3NicInternalInterfacePrivateIp'
