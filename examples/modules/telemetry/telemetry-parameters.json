@@ -1,16 +1,58 @@
 [
-  { "ParameterKey": "application", "ParameterValue": "f5app" },
-  { "ParameterKey": "cost", "ParameterValue": "f5costcenter" },
-  { "ParameterKey": "cloudWatchLogGroupName", "ParameterValue": "f5telemetry" },
-  { "ParameterKey": "cloudWatchLogStreamName", "ParameterValue": "f5-waf-logs" },
-  { "ParameterKey": "cloudWatchDashboardName", "ParameterValue": "F5-BIGIP-WAF-View" },
-  { "ParameterKey": "createCloudWatchDashboard", "ParameterValue": "false" },
-  { "ParameterKey": "createCloudWatchLogGroup", "ParameterValue": "false" },
-  { "ParameterKey": "createCloudWatchLogStream", "ParameterValue": "false" },
-  { "ParameterKey": "createS3Bucket", "ParameterValue": "false" },
-  { "ParameterKey": "environment", "ParameterValue": "f5env" },
-  { "ParameterKey": "group", "ParameterValue": "f5group" },
-  { "ParameterKey": "metricNameSpace", "ParameterValue": "f5-scaling-metrics" },
-  { "ParameterKey": "owner", "ParameterValue": "f5owner" },
-  { "ParameterKey": "s3BucketName", "ParameterValue": "" }
+  {
+    "ParameterKey": "application",
+    "ParameterValue": "f5app"
+  },
+  {
+    "ParameterKey": "cloudWatchLogGroupName",
+    "ParameterValue": "f5telemetry"
+  },
+  {
+    "ParameterKey": "cloudWatchLogStreamName",
+    "ParameterValue": "f5-waf-logs"
+  },
+  {
+    "ParameterKey": "cloudWatchDashboardName",
+    "ParameterValue": "F5-BIGIP-WAF-View"
+  },
+  {
+    "ParameterKey": "cost",
+    "ParameterValue": "f5cost"
+  },
+  {
+    "ParameterKey": "createCloudWatchDashboard",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "createCloudWatchLogGroup",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "createCloudWatchLogStream",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "createS3Bucket",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "environment",
+    "ParameterValue": "f5env"
+  },
+  {
+    "ParameterKey": "group",
+    "ParameterValue": "f5group"
+  },
+  {
+    "ParameterKey": "metricNameSpace",
+    "ParameterValue": "f5-scaling-metrics"
+  },
+  {
+    "ParameterKey": "owner",
+    "ParameterValue": "f5owner"
+  },
+  {
+    "ParameterKey": "s3BucketName",
+    "ParameterValue": ""
+  }
 ]
