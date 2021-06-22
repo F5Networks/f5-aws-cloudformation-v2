@@ -1,56 +1,230 @@
 [
-  { "ParameterKey": "appContainerName", "ParameterValue": "f5devcentral/f5-demo-app:latest" },
-  { "ParameterKey": "application", "ParameterValue": "f5app" },
-  { "ParameterKey": "appScalingMaxSize", "ParameterValue": "20" },
-  { "ParameterKey": "appScalingMinSize", "ParameterValue": "1" },
-  { "ParameterKey": "artifactLocation", "ParameterValue": "f5-aws-cloudformation-v2/v1.0.1.0/examples/" },
-  { "ParameterKey": "bigIpCustomImageId", "ParameterValue": "" },
-  { "ParameterKey": "bigIpImage", "ParameterValue": "*16.0.1.1-0.0.6**BYOL-All Modules 2Boot*" },
-  { "ParameterKey": "bigIpInstanceType", "ParameterValue": "m5.xlarge" },
-  { "ParameterKey": "bigIpMaxBatchSize", "ParameterValue": "5" },
-  { "ParameterKey": "bigIpMinInstancesInService", "ParameterValue": "1" },
-  { "ParameterKey": "bigIpPauseTime", "ParameterValue": "480" },
-  { "ParameterKey": "bigIpRuntimeInitConfig", "ParameterValue": "" },
-  { "ParameterKey": "bigIpRuntimeInitPackageUrl", "ParameterValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run" },
-  { "ParameterKey": "bigIpScaleInCpuThreshold", "ParameterValue": "20" },
-  { "ParameterKey": "bigIpScaleInThroughputThreshold", "ParameterValue": "10000000" },
-  { "ParameterKey": "bigIpScaleOutCpuThreshold", "ParameterValue": "80" },
-  { "ParameterKey": "bigIpScaleOutThroughputThreshold", "ParameterValue": "20000000" },
-  { "ParameterKey": "bigIpScalingMaxSize", "ParameterValue": "20" },
-  { "ParameterKey": "bigIpScalingMinSize", "ParameterValue": "1" },
-  { "ParameterKey": "bigIqAddress", "ParameterValue": "" },
-  { "ParameterKey": "bigIqAddressType", "ParameterValue": "" },
-  { "ParameterKey": "bigIqLicensePool", "ParameterValue": "" },
-  { "ParameterKey": "bigIqSecretArn", "ParameterValue": "" },
-  { "ParameterKey": "bigIqSecurityGroupId", "ParameterValue": "" },
-  { "ParameterKey": "bigIqSubnetId", "ParameterValue": "" },
-  { "ParameterKey": "bigIqTenant", "ParameterValue": "" },
-  { "ParameterKey": "bigIqUtilitySku", "ParameterValue": "" },
-  { "ParameterKey": "cloudWatchLogGroupName", "ParameterValue": "" },
-  { "ParameterKey": "cloudWatchLogStreamName", "ParameterValue": "" },
-  { "ParameterKey": "cloudWatchDashboardName", "ParameterValue": "" },
-  { "ParameterKey": "cost", "ParameterValue": "f5costcenter" },
-  { "ParameterKey": "createLogDestination", "ParameterValue": "true" },
-  { "ParameterKey": "environment", "ParameterValue": "f5env" },
-  { "ParameterKey": "group", "ParameterValue": "f5group" },
-  { "ParameterKey": "lambdaS3BucketName", "ParameterValue": "" },
-  { "ParameterKey": "lambdaS3Key", "ParameterValue": "" },
-  { "ParameterKey": "loggingS3BucketName", "ParameterValue": "" },
-  { "ParameterKey": "metricNameSpace", "ParameterValue": "bigip-throughput" },
-  { "ParameterKey": "notificationEmail", "ParameterValue": "" },
-  { "ParameterKey": "numAzs", "ParameterValue": "2" },
-  { "ParameterKey": "numSubnets", "ParameterValue": "2" },
-  { "ParameterKey": "owner", "ParameterValue": "f5owner" },
-  { "ParameterKey": "provisionExternalBigipLoadBalancer", "ParameterValue": "true" },
-  { "ParameterKey": "provisionInternalBigipLoadBalancer", "ParameterValue": "false" },
-  { "ParameterKey": "provisionPublicIp", "ParameterValue": "false" },
-  { "ParameterKey": "restrictedSrcAddressApp", "ParameterValue": "" },
-  { "ParameterKey": "restrictedSrcAddressMgmt", "ParameterValue": "" },
-  { "ParameterKey": "s3BucketName", "ParameterValue": "f5-cft-v2" },
-  { "ParameterKey": "s3BucketRegion", "ParameterValue": "us-east-1" },
-  { "ParameterKey": "setPublicSubnet1", "ParameterValue": "false" },
-  { "ParameterKey": "sshKey", "ParameterValue": "" },
-  { "ParameterKey": "subnetMask", "ParameterValue": "24" },
-  { "ParameterKey": "uniqueString", "ParameterValue": "myUniqStr" },
-  { "ParameterKey": "vpcCidr", "ParameterValue": "10.0.0.0/16" }
+  {
+    "ParameterKey": "appContainerName",
+    "ParameterValue": "f5devcentral/f5-demo-app:latest"
+  },
+  {
+    "ParameterKey": "application",
+    "ParameterValue": "f5app"
+  },
+  {
+    "ParameterKey": "appScalingMaxSize",
+    "ParameterValue": 50
+  },
+  {
+    "ParameterKey": "appScalingMinSize",
+    "ParameterValue": 1
+  },
+  {
+    "ParameterKey": "artifactLocation",
+    "ParameterValue": "f5-aws-cloudformation-v2/v1.0.1.0/examples/"
+  },
+  {
+    "ParameterKey": "bigIpCustomImageId",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "bigIpImage",
+    "ParameterValue": "*16.0.1.1-0.0.6**BYOL-All Modules 2Boot*"
+  },
+  {
+    "ParameterKey": "bigIpInstanceType",
+    "ParameterValue": "m5.xlarge"
+  },
+  {
+    "ParameterKey": "bigIpMaxBatchSize",
+    "ParameterValue": 5
+  },
+  {
+    "ParameterKey": "bigIpMinInstancesInService",
+    "ParameterValue": 1
+  },
+  {
+    "ParameterKey": "bigIpPauseTime",
+    "ParameterValue": 480
+  },
+  {
+    "ParameterKey": "bigIpRuntimeInitConfig",
+    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg.yaml"
+  },
+  {
+    "ParameterKey": "bigIpRuntimeInitPackageUrl",
+    "ParameterValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run"
+  },
+  {
+    "ParameterKey": "bigIpScaleInCpuThreshold",
+    "ParameterValue": 20
+  },
+  {
+    "ParameterKey": "bigIpScaleInThroughputThreshold",
+    "ParameterValue": 10000000
+  },
+  {
+    "ParameterKey": "bigIpScaleOutCpuThreshold",
+    "ParameterValue": 80
+  },
+  {
+    "ParameterKey": "bigIpScaleOutThroughputThreshold",
+    "ParameterValue": 20000000
+  },
+  {
+    "ParameterKey": "bigIpScalingMaxSize",
+    "ParameterValue": 50
+  },
+  {
+    "ParameterKey": "bigIpScalingMinSize",
+    "ParameterValue": 1
+  },
+  {
+    "ParameterKey": "bigIqAddress",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "bigIqAddressType",
+    "ParameterValue": "private"
+  },
+  {
+    "ParameterKey": "bigIqLicensePool",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "bigIqSecretArn",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "bigIqSecurityGroupId",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "bigIqSubnetId",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "bigIqTenant",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "bigIqUsername",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "bigIqUtilitySku",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "cloudWatchLogGroupName",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "cloudWatchLogStreamName",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "cloudWatchDashboardName",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "cost",
+    "ParameterValue": "f5cost"
+  },
+  {
+    "ParameterKey": "createLogDestination",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "environment",
+    "ParameterValue": "f5env"
+  },
+  {
+    "ParameterKey": "group",
+    "ParameterValue": "f5group"
+  },
+  {
+    "ParameterKey": "lambdaS3BucketName",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "lambdaS3Key",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "loggingS3BucketName",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "metricNameSpace",
+    "ParameterValue": "f5-scaling-metrics"
+  },
+  {
+    "ParameterKey": "notificationEmail",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "numAzs",
+    "ParameterValue": 2
+  },
+  {
+    "ParameterKey": "numSubnets",
+    "ParameterValue": 3
+  },
+  {
+    "ParameterKey": "owner",
+    "ParameterValue": "f5owner"
+  },
+  {
+    "ParameterKey": "provisionExternalBigipLoadBalancer",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "provisionInternalBigipLoadBalancer",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "provisionPublicIp",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "restrictedSrcAddressMgmt",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "restrictedSrcAddressApp",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "s3BucketName",
+    "ParameterValue": "f5-cft-v2"
+  },
+  {
+    "ParameterKey": "s3BucketRegion",
+    "ParameterValue": "us-east-1"
+  },
+  {
+    "ParameterKey": "secretArn",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "setPublicSubnet1",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "snsEvents",
+    "ParameterValue": "autoscaling:EC2_INSTANCE_LAUNCH,autoscaling:EC2_INSTANCE_LAUNCH_ERROR"
+  },
+  {
+    "ParameterKey": "sshKey",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "subnetMask",
+    "ParameterValue": 24
+  },
+  {
+    "ParameterKey": "uniqueString",
+    "ParameterValue": "myUniqStr"
+  },
+  {
+    "ParameterKey": "vpcCidr",
+    "ParameterValue": "10.0.0.0/16"
+  }
 ]
