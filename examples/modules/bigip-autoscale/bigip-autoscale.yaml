@@ -381,7 +381,6 @@ Resources:
         - - !Ref 'uniqueString'
           - '-bigip-autoscale-group'
       Cooldown: '1500'
-      DesiredCapacity: !Ref 'scalingMinSize'
       HealthCheckGracePeriod: 1500
       HealthCheckType: EC2
       LaunchConfigurationName: !Ref 'BigipLaunchConfig'
