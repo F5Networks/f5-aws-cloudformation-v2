@@ -68,7 +68,7 @@ extension_services:
             class: Provision
             ltm: nominal
           My_System:
-            autoPhonehome: false
+            autoPhonehome: true
             class: System
             hostname: '{{{HOST_NAME}}}'
         async: true
