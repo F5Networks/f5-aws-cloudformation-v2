@@ -437,6 +437,10 @@ Resources:
       TargetGroupAttributes:
         - Key: deregistration_delay.timeout_seconds
           Value: '20'
+        - Key: stickiness.enabled
+          Value: 'true'
+        - Key: stickiness.type
+          Value: 'source_ip'
       VpcId: !Ref vpc
   ExternalTargetGroupHttp:
     Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
