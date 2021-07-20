@@ -20,8 +20,8 @@
   - [Validation](#validation)
     - [Validating the Deployment](#validating-the-deployment)
     - [Accessing the BIG-IP](#accessing-the-big-ip)
-      - [WebUI](#webui)
       - [SSH](#ssh)
+      - [WebUI](#webui)
     - [Further Exploring](#further-exploring)
       - [WebUI](#webui-1)
       - [SSH](#ssh-1)
@@ -237,7 +237,7 @@ Some changes require republishing/rehosting configuration files (git, s3, etc). 
 
 To deploy a **BYOL** instance:
 
-  1. edit/modify the Declarative Onboarding (DO) declaration in a corresponding `byol` runtime-init config file with the new `regKey` value. 
+  1. Edit/modify the Declarative Onboarding (DO) declaration in a corresponding `byol` runtime-init config file with the new `regKey` value. 
 
 Example:
 ```yaml
@@ -246,7 +246,7 @@ Example:
             licenseType: regKey
             regKey: AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE
 ```
-  2. publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example: git, S3, etc.). 
+  2. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example: git, S3, etc.). 
   3. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL of the updated configuration.
   4. Update the **licenseType** input parameter to use `byol` or **bigIpCustomImageId** input parameter to a valid byol image.
 
@@ -258,10 +258,10 @@ For illustration purposes, this solution pre-provisions IP addresses needed for 
       - [Assigning a Private IP](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/MultipleIP.html#ManageMultipleIP)
       - [Allocating a Public IP](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html#using-instance-addressing-eips-allocating)
       - [Associating a Public IP](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html#using-instance-addressing-eips-associating)
-  2. *BIG-IP* - Creating Virtual Services that match those additional Secondary IPs 
+  2. *BIG-IP* - Creating Virtual Services that match those additional Secondary IPs.
       - Updating the [AS3](https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/latest/userguide/composing-a-declaration.html) declaration with additional Virtual Services (see **virtualAddresses:**).
 
-*NOTE: For cloud resources, templates can be customized to pre-provision and update addtional resources (for example, various combinations of NICs, IPs, Public IPs, etc). Please see [Getting Help](#getting-help) for more information. For BIG-IP configurations, you can leverage any REST or Automation Tool Chain clients like [Ansible](https://ansible.github.io/workshops/exercises/ansible_f5/3.0-as3-intro/),[Terraform](https://registry.terraform.io/providers/F5Networks/bigip/latest/docs/resources/bigip_as3),etc.*
+*NOTE: For cloud resources, templates can be customized to pre-provision and update addtional resources (for example, various combinations of NICs, IPs, Public IPs, etc). Please see [Getting Help](#getting-help) for more information. For BIG-IP configurations, you can leverage any REST or Automation Tool Chain clients like [Ansible](https://ansible.github.io/workshops/exercises/ansible_f5/3.0-as3-intro/),[Terraform](https://registry.terraform.io/providers/F5Networks/bigip/latest/docs/resources/bigip_as3), etc.*
 
 ## Validation
 
@@ -303,13 +303,6 @@ From Parent Template Outputs:
           aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpManagementPrivateIp'].OutputValue" --output text
           ```
 
-#### WebUI 
-- Open a browser to the Management IP
-  - NOTE: By default, the BIG-IP's WebUI starts with a self-signed cert. Follow your browser's instructions for accepting self-signed certs (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, click "Accept Risk and Continue").
-  - To Login: 
-    - username: quickstart
-    - password: **bigIpInstanceId** (see above to obtain from template "Outputs")
-
 #### SSH
   - **SSH key authentication**: 
       ```bash
@@ -320,6 +313,27 @@ From Parent Template Outputs:
       ssh quickstart@${IP_ADDRESS_FROM_OUTPUT}
       ``` 
       at prompt, enter your **bigIpInstanceId** (see above to obtain from template "Outputs")
+
+#### WebUI 
+
+1. Obtain the URL address of the BIG-IP Management Port.
+    - *NOTE*: Multi-NIC, will use https://host. Single NIC will use https://host:8443. 
+    - **Console**: Navigate to **CloudFormation > *STACK_NAME* > Outputs > *bigIpManagementUrl443* for multi-NIC or *bigIpManagementUrl8443* for single NIC**.
+    - **AWS CLI**: 
+      - 3-NIC (default): 
+          ```bash
+          aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpManagementUrl443'].OutputValue" --output text
+          ```
+      - 1-NIC: 
+          ```bash
+          aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpManagementUrl8443'].OutputValue" --output text
+          ```
+
+2. Open a browser to the Management URL.
+  - *NOTE: By default, the BIG-IP system's WebUI starts with a self-signed cert. Follow your browser's instructions for accepting self-signed certs (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, click "Accept Risk and Continue").*
+  - To Login: 
+    - username: quickstart
+    - password: **bigIpInstanceId** (see above to obtain from template "Outputs")
 
 
 ### Further Exploring
@@ -346,25 +360,27 @@ From Parent Template Outputs:
 ### Testing the WAF Service
 
 To test the WAF service, perform the following steps:
-- Obtain the address of the WAF service:
+
+1. Obtain the address of the WAF service:
   - **Console**: Navigate to **CloudFormation > *STACK_NAME* > Outputs > *vip1PublicUrl***. 
   - **AWS CLI**: 
       ```bash 
       aws --region ${REGION}  cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='vip1PublicUrl'].OutputValue" --output text
       ```
 
-- Verify the application is responding:
+2. Verify the application is responding:
   - Paste the IP address in a browser: ```https://${IP_ADDRESS_FROM_OUTPUT}```
-      - NOTE: By default, the Virtual Service starts with a self-signed cert. Follow your browsers instructions for accepting self-signed certs (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, click "Accept Risk and Continue", etc.).
+      - *NOTE: By default, the Virtual Service starts with a self-signed cert. Follow your browsers instructions for accepting self-signed certs (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, click "Accept Risk and Continue", etc.).*
   - Use curl: 
       ```shell
        curl -sko /dev/null -w '%{response_code}\n' https://${IP_ADDRESS_FROM_OUTPUT}
        ```
-- Verify the WAF is configured to block illegal requests:
+
+3. Verify the WAF is configured to block illegal requests:
     ```shell
     curl -sk -X DELETE https://${IP_ADDRESS_FROM_OUTPUT}
     ```
-  - The response should include a message that the request was blocked, and a reference support ID
+  - The response should include a message that the request was blocked, and a reference support ID.
     Example:
     ```shell
     $ curl -sko /dev/null -w '%{response_code}\n' https://55.55.55.55
