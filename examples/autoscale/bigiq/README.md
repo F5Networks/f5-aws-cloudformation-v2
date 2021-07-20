@@ -1,11 +1,11 @@
-# Deploying the BIG-IP VE in AWS - Example Autoscale BIG-IP WAF (LTM + ASM) - Autoscale Group (Frontend via ALB) - PAYG Licensing
+# Deploying the BIG-IP VE in AWS - Example Autoscale BIG-IP WAF (LTM + ASM) - Autoscale Group (Frontend via NLB) - BIG-IQ Licensing
 
 [![Releases](https://img.shields.io/github/release/f5networks/f5-aws-cloudformation-v2.svg)](https://github.com/f5networks/f5-aws-cloudformation-v2/releases)
 [![Issues](https://img.shields.io/github/issues/f5networks/f5-aws-cloudformation-v2.svg)](https://github.com/f5networks/f5-aws-cloudformation-v2/issues)
 
 ## Contents
 
-- [Deploying the BIG-IP VE in AWS - Example Autoscale BIG-IP WAF (LTM + ASM) - Autoscale Group (Frontend via ALB) - PAYG Licensing](#deploying-the-big-ip-ve-in-aws---example-auto-scale-big-ip-waf-ltm--asm---autoscale-group-frontend-via-alb---payg-licensing)
+- [Deploying the BIG-IP VE in AWS - Example Autoscale BIG-IP WAF (LTM + ASM) - Autoscale Group (Frontend via NLB) - BIG-IQ Licensing](#deploying-the-big-ip-ve-in-aws---example-auto-scale-big-ip-waf-ltm--asm---autoscale-group-frontend-via-nlb---big-iq-licensing)
   - [Contents](#contents)
   - [Introduction](#introduction)
   - [Diagram](#diagram)
@@ -19,13 +19,14 @@
     - [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment)
   - [Validation](#validation)
     - [Validating the Deployment](#validating-the-deployment)
+    - [Testing the WAF Service](#testing-the-waf-service)
+    - [Viewing the CloudWatch Dasbboard](#viewing-the-cloudwatch-dasbboard)
     - [Accessing the BIG-IP](#accessing-the-big-ip)
       - [SSH](#ssh)
       - [WebUI](#webui)
     - [Further Exploring](#further-exploring)
       - [WebUI](#webui-1)
       - [SSH](#ssh-1)
-    - [Testing the WAF Service](#testing-the-waf-service)
   - [Updating this Solution](#updating-this-solution)
   - [Deleting this Solution](#deleting-this-solution)
       - [Deleting this Solution using the AWS Console](#deleting-this-solution-using-the-aws-console)
@@ -52,7 +53,7 @@ The modules below create the following resources:
 - **Access**: This template creates an AWS InstanceProfile, IAM Roles.
 - **BIG-IP**: This template creates the AWS Autoscale Group with F5 BIG-IP Virtual Editions provisioned with Local Traffic Manager (LTM) and Application Security Manager (ASM). Traffic flows from the AWS load balancer to the BIG-IP VE instances and then to the application servers. The BIG-IP VE(s) are configured in single-NIC mode. Auto scaling means that as certain thresholds are reached, the number of BIG-IP VE instances automatically increases or decreases accordingly. The BIG-IP module template can be deployed separately from the example template provided here into an "existing" stack.
 - **Function**: This template creates AWS Lambda functions for revoking licenses from BIG-IP instances that were licensed via a BIG-IQ license pool or utility offer *(BIG-IQ only)*, looking up AMI by name, file cleanup, etc.
-- **Telemetry**: This template creates AWS CloudWatch Log Group, Log Stream, and Dashboard, as well as an S3 bucket for receiving remote logging from BIG-IP instances.
+- **Telemetry**: This template creates resources to support sending metrics and remote logging (for example, an S3 Bucket or AWS CloudWatch Log Group, Log Stream and Dashboard). 
 
 This solution leverages more traditional Autoscale configuration management practices where each instance is created with an identical configuration as defined in the Autoscale Group's "model" (i.e. "launch config"). Scale Max sizes are no longer restricted to the small limitations of the cluster. The BIG-IP's configuration, now defined in a single convenient YAML or JSON [F5 BIG-IP Runtime Init](https://github.com/F5Networks/f5-bigip-runtime-init) configuration file, leverages [F5 Automation Tool Chain](https://www.f5.com/pdf/products/automation-toolchain-overview.pdf) declarations which are easier to author, validate, and maintain as code. For instance, if you need to change the configuration on the BIG-IPs in the deployment, you update the instance model by passing a new config file (which references the updated Automation Toolchain declarations) via the template's bigIpRuntimeInitConfig input parameter. New instances will be deployed with the updated configurations.  
 
@@ -65,23 +66,14 @@ This solution leverages more traditional Autoscale configuration management prac
 
 
 - An SSH Key pair in AWS for management access to BIG-IP VE. For more information about creating and/or importing the key pair in AWS, see AWS SSH key [documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html).
-- Accepted the EULA for the F5 image in the AWS marketplace. If you have not deployed BIG-IP VE in your environment before, search for F5 in the Marketplace and then click **Accept Software Terms**. This only appears the first time you attempt to launch an F5 image. By default, this solution deploys the [F5 BIG-IP Advanced WAF PAYG 25Mbps](https://aws.amazon.com/marketplace/pp/B08R5W828T) images. For more information, see [K14810: Overview of BIG-IP VE license and throughput limits](https://support.f5.com/csp/article/K14810).
-- A BIG-IQ with License Manager (LM) configured with a valid license pool that is reachable by the BIG-IP system. See the [documentation](https://support.f5.com/csp/article/K77706009) for more details. ***NOTE: For this example solution, "reachable" implies the BIG-IQ LM has a Public IP and is reachable over the Internet. However, in a production deployment, the BIG-IQ would be internally routable (for example, with shared services VPC, VPN, etc.) ***
+- Accepted the EULA for the F5 image in the AWS marketplace. If you have not deployed BIG-IP VE in your environment before, search for F5 in the Marketplace and then click **Accept Software Terms**. This only appears the first time you attempt to launch an F5 image. By default, this solution deploys the [F5 BIG-IP VE - ALL (BYOL, 2 Boot Locations)](https://aws.amazon.com/marketplace/pp/prodview-73utu5c5sfyyc) images. For more information, see [K14810: Overview of BIG-IP VE license and throughput limits](https://support.f5.com/csp/article/K14810).
+- A BIG-IQ with License Manager (LM) configured with a valid license pool that is reachable by the BIG-IP system. See the [documentation](https://support.f5.com/csp/article/K77706009) for more details. ***NOTE: For this example solution, "reachable" implies the BIG-IQ LM has a Public IP and is reachable over the Internet. However, in a production deployment, the BIG-IQ would be internally routable (for example, with shared services VPC, VPN, etc.)***
 - A secret stored in AWS [Secrets Manager](https://aws.amazon.com/secrets-manager/) containing the password to use to obtain a license from BIG-IQ.
     ```bash
     # secret-string in single quotes to avoid bash special character interpolation
     aws secretsmanager create-secret --region ${REGION} --name ${YOUR_SECRET_NAME} --secret-string 'YOUR_BIGIQ_PASSWORD'
     ```
-  - *NOTE: You will need both the Name/ID (for example, 'myBigIqSecret') and ARN (for example, 'arn:aws:secretsmanager:us-east-1:111111111111:secret:myBigIqSecret-xdg0kdf')*
-- A remote log destination that is pre-provisioned in the same region. 
-  - By default, this solution logs to a Cloudwatch destination:
-    - logGroup: f5telemetry
-    - logstream: f5-waf-logs
-       ```bash
-       aws logs create-log-group --region ${REGION} --log-group-name f5telemetry
-       aws logs create-log-stream --region ${REGION} --log-group-name f5telemetry --log-stream-name f5-waf-logs
-       ```
-    - **Important**: If the destination above does not exist, the solution will deploy but BIG-IP's Telemetry Streaming will complain. 
+  - *NOTE: You will need both the Name/ID (for example, 'myBigIqSecret') and ARN (for example, 'arn:aws:secretsmanager:us-east-1:111111111111:secret:myBigIqSecret-xdg0kdf').*
   - See AWS [documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/Working-with-log-groups-and-streams.html) for more information and [Changing the BIG-IP Deployment](#remote-logging) for customization details.
 - You need the appropriate permission in AWS to launch CloudFormation Templates (CFT). You must be using an IAM user with the Administrator Access policy attached and have permission to create the objects contained in this solution (VPCs, Routes, EIPs, EC2 Instances, etc.). For details on permissions and all AWS configuration, see AWS [documentation](https://aws.amazon.com/documentation/). 
 - Sufficient **EC2 Resources** to deploy this solution. For more information, see AWS resource limit [documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-resource-limits.html).
@@ -92,7 +84,7 @@ This solution leverages more traditional Autoscale configuration management prac
 - By default, this solution does not create a password authenticated BIG-IP user as it follows the immutable model (in other words, individual instances are not meant to be actively managed post-deployment, and configuration is instead defined through the model). However, sshKey is required here to provide minimal admin access. 
    -  **Disclaimer:** ***Accessing or logging into the instances themselves is for demonstration and debugging purposes only. All configuration changes should be applied by updating the model via the template instead. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more details.***
 
-- In the autoscale model, instances are ephemeral so remote logging is required. By default, this example logs to Cloudwatch. However, there are many possible destinations. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more details.
+- In the autoscale model, instances are ephemeral so remote logging is required. By default, this example logs to Cloudwatch and creates a Log Group, Log Stream and Dashboard. However, there are many possible destinations. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more details.
 
 - This solution requires Internet Access for: 
   1. Downloading additional F5 software components used for onboarding and configuring the BIG-IP (via GitHub.com). By default and as a convenience, this solution provisions Public IPs to enable this, but in a production environment outbound access should be provided by a `routed` SNAT service (for example NAT Gateway, custom firewall, etc.). *NOTE: access via web proxy is not currently supported. Other options include 1) hosting the file locally and modifying the runtime-init package URL and configuration files to point to local URLs instead or 2) baking them into a custom image, using the [F5 Image Generation Tool](https://clouddocs.f5.com/cloud/public/v1/ve-image-gen_index.html) (BYOL only).*
@@ -281,7 +273,7 @@ F5 has provided the following example configuration files in the `examples/autos
 
 See [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) for more examples.
 
-By default, this solution references the example `runtime-init-conf-bigiq.yaml` runtime-init config file. However this file must be customized and republished before deploying. 
+By default, this solution references the example `runtime-init-conf-bigiq.yaml` runtime-init config file. However, this file must always be customized and republished before deploying this solution. 
 
 
 To change the BIG-IQ Licensing configuration:
@@ -314,7 +306,7 @@ Example:
       version: AWSCURRENT
       secretId: <YOUR_SECRET_NAME>
 ```
-  3. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, git, S3, etc.)
+  3. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, git, S3, etc.).
   4. Update the **bigIpRuntimeInitConfig** input parameter to reference the URL of the customized configuration file.
   5. Update the **bigIqSecretArn** input parameter with the ARN that corresponds to the customized **secretId** as well as the other required BIG-IQ related input parameters to match.
       - **bigIqAddress**
@@ -325,35 +317,52 @@ Example:
       - **bigIqTenant**
 
 
-By default, this solution logs to a Cloudwatch destination:
+By default, this solution sends metrics and logs to the following CloudWatch destinations: 
+  - metricsNamespace: f5-scaling-metrics 
   - logGroup: f5telemetry
   - logstream: f5-waf-logs
-See [Prerequisites](#prerequisites).
 
-To change the Cloudwatch logging group:
+Disclaimer: The the default names in the example Telemetry Streaming configuration can only be used once per account as CloudWatch resources must be unique. To deploy more than one of these per account, one must follow customization steps below.
 
-  1. Edit/modify the Telemetry Streaming (TS) declaration in a corresponding runtime-init config file [runtime-init-conf-bigiq.yaml](../bigip-configurations/runtime-init-conf-bigiq.yaml) with the new `logGroup` and `logStream` values. 
+To change the CloudWatch destination values:
+
+  1. Edit/modify the Telemetry Streaming (TS) declaration in a corresponding runtime-init config file [runtime-init-conf-bigiq.yaml](../bigip-configurations/runtime-init-conf-bigiq.yaml) with the new `metricNamespace`, `logGroup`, and `logStream` values. 
 
 Example:
 ```yaml
-        My_Cloudwatch:
-          class: Telemetry_Consumer
-          type: AWS_CloudWatch
-          region: '{{{ REGION }}}'
-          logGroup: <YOUR_CUSTOM_LOG_GROUP>
-          logStream: <YOUR_CUSTOM_LOG_STREAM>
+          My_Cloudwatch_Metrics:
+            class: Telemetry_Consumer
+            type: AWS_CloudWatch
+            region: '{{{REGION}}}'
+            dataType: metrics
+            metricNamespace: <YOUR_CUSTOM_METRICS_NAMESPACE>
+        My_Remote_Logs_Namespace:
+          class: Telemetry_Namespace
+          My_Listener:
+            class: Telemetry_Listener
+            port: 6514
+          My_Cloudwatch_Logs:
+            class: Telemetry_Consumer
+            type: AWS_CloudWatch
+            region: '{{{REGION}}}'
+            logGroup: <YOUR_CUSTOM_LOG_GROUP>
+            logStream: <YOUR_CUSTOM_LOG_STREAM>
 ```
-  2. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, git, S3, etc.).
-  3. Update the **bigIpRuntimeInitConfig** input parameter to reference the URL of the customized configuration file.
-
+  2. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, S3, git, etc.).
+  3. Update the **bigIpRuntimeInitConfig** template input parameter to reference the URL of the customized configuration file.
+  4. Update template input parameters with the custom CloudWatch destinations:
+    - **metricNameSpace**  *(to match the Telemetry Streaming Configuration)*
+    - **cloudWatchLogGroupName** *(to match the Telemetry Streaming Configuration)*
+    - **cloudWatchLogStreamName** *(to match the Telemetry Streaming Configuration)*
+    - **cloudWatchDashboardName** *(to be unique)*
 
 To log to an S3 Bucket:
-  1. Ensure the target S3 Logging destination exists in same region. See AWS [documentation](https://docs.aws.amazon.com/AmazonS3/latest/userguide/creating-buckets-s3.html) for more information.
-  2. Edit/modify the Telemetry Streaming (TS) declaration in the example runtime-init config file in the corresponding `bigiq`[runtime-init-conf-bigiq.yaml](../bigip-configurations/runtime-init-conf-bigiq.yaml) with the new `Telemetry_Consumer` configuration.
+  1. Ensure target S3 Logging destination exists in same region. See AWS's [documentation](https://docs.aws.amazon.com/AmazonS3/latest/userguide/creating-buckets-s3.html) for more information.
+  2. Edit/modify the Telemetry Streaming (TS) declaration in the example runtime-init config file in the corresponding `bigiq` [runtime-init-conf-bigiq.yaml](../bigip-configurations/runtime-init-conf-bigiq.yaml) with the new `Telemetry_Consumer` configuration.
 
-For example, Replace 
+Example: Replace 
 ```yaml
-        My_Cloudwatch:
+        My_Cloudwatch_Logs:
           class: Telemetry_Consumer
           type: AWS_CloudWatch
           region: '{{{ REGION }}}'
@@ -362,12 +371,13 @@ For example, Replace
 ```
 with: 
 ```yaml
-        My_S3:
+        My_S3_Logs:
           class: Telemetry_Consumer
           type: AWS_S3
           region: '{{{ REGION }}}'
           bucket: <YOUR_BUCKET_NAME>
   ```
+
   3. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, git, S3, etc.).
   4. Update the **bigIpRuntimeInitConfig** input parameter to reference the URL of the customized configuration file.
   5. Update the **loggingS3BucketName** input parameter with name of your logging destination. 
@@ -375,7 +385,7 @@ with:
 
 
 To log to another remote destination that may require authentication:
-  1. Edit/modify the `runtime_parameters:` in the runtime-init config file to ADD a secret. Example: Add a section below with your `secretId` value. 
+  1. Edit/modify the `runtime_parameters:` in he runtime-init config file to ADD a secret. Example: Add a section below with your `secretId` value. 
 
 ```yaml
   - name: LOGGING_API_KEY
@@ -416,6 +426,44 @@ To view the status of the example and module stack deployments in the AWS Consol
 Expected Deploy time for entire stack =~ 15 minutes.
 
 If any of the stacks are in a failed state, proceed to the [Troubleshooting Steps](#troubleshooting-steps) section below.
+
+
+### Testing the WAF Service
+
+To test the WAF service, perform the following steps:
+1. Obtain the address of the WAF service:
+    - **Console**: Navigate to **CloudFormation > *STACK_NAME* > Outputs > wafExternalHttpsUrl**.
+    - **AWS CLI**: 
+      ```bash
+      aws cloudformation describe-stacks --region ${REGION} --stack-name ${STACK_NAME}  --query  "Stacks[0].Outputs[?OutputKey=='wafExternalHttpsUrl'].OutputValue" --output text
+      ```
+
+2. Verify the application is responding:
+    - Paste the address in a browser: ```https://${IP_ADDRESS_FROM_OUTPUT}```
+      - NOTE: By default, the Virtual Service starts with a self-signed certificate. Follow your browser's instructions for accepting self-signed certs (For example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click the "Advanced" button, click "Accept Risk and Continue", etc. ).
+    - Use curl: 
+      ```shell
+       curl -sko /dev/null -w '%{response_code}\n' https://${IP_ADDRESS_FROM_OUTPUT}
+       ```
+
+3. Verify the WAF is configured to block illegal requests:
+    ```shell
+    curl -sk -X DELETE https://${IP_ADDRESS_FROM_OUTPUT}
+    ```
+    The response should include a message that the request was blocked, and a reference support ID. For example:
+    ```shell
+    $ curl -sko /dev/null -w '%{response_code}\n' https://55.55.55.55
+    200
+    $ curl -sk -X DELETE https://55.55.55.55
+    <html><head><title>Request Rejected</title></head><body>The requested URL was rejected. Please consult with your administrator.<br><br>Your support ID is: 2394594827598561347<br><br><a href='javascript:history.back();'>[Go Back]</a></body></html>
+    ```
+
+### Viewing the CloudWatch Dasbboard
+
+ - If left at the defaults, a CloudWatch Dashboard named "F5-BIGIP-WAF-View" is created. 
+    - **Console**: Navigate to **Cloudwatch > *DASHBOARD_NAME***.
+      - Review any violations.
+      
 
 ### Accessing the BIG-IP
 
@@ -502,39 +550,6 @@ From Template Outputs:
     ```bash 
     cat /config/cloud/runtime-init.conf
     ```
-
-
-### Testing the WAF Service
-
-To test the WAF service, perform the following steps:
-1. Obtain the address of the WAF service:
-    - **Console**: Navigate to **CloudFormation > *STACK_NAME* > Outputs > wafExternalHttpsUrl**.
-    - **AWS CLI**: 
-      ```bash
-      aws cloudformation describe-stacks --region ${REGION} --stack-name ${STACK_NAME}  --query  "Stacks[0].Outputs[?OutputKey=='wafExternalHttpsUrl'].OutputValue" --output text
-      ```
-
-
-2. Verify the application is responding:
-    - Paste the IP address in a browser: ```https://${IP_ADDRESS_FROM_OUTPUT}```
-      - NOTE: By default, the Virtual Service starts with a self-signed certificate. Follow your browser's instructions for accepting self-signed certs (For example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click the "Advanced" button, click "Accept Risk and Continue", etc. ).
-    - Use curl: 
-      ```shell
-       curl -sko /dev/null -w '%{response_code}\n' https://${IP_ADDRESS_FROM_OUTPUT}
-       ```
-
-3. Verify the WAF is configured to block illegal requests:
-    ```shell
-    curl -sk -X DELETE https://${IP_ADDRESS_FROM_OUTPUT}
-    ```
-    The response should include a message that the request was blocked, and a reference support ID. For example:
-    ```shell
-    $ curl -sko /dev/null -w '%{response_code}\n' https://55.55.55.55
-    200
-    $ curl -sk -X DELETE https://55.55.55.55
-    <html><head><title>Request Rejected</title></head><body>The requested URL was rejected. Please consult with your administrator.<br><br>Your support ID is: 2394594827598561347<br><br><a href='javascript:history.back();'>[Go Back]</a></body></html>
-    ```
-
 
 ## Updating this Solution
 
