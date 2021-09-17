@@ -114,6 +114,7 @@ By default, this solution creates a single Availability Zone VPC with four subne
 | numSubnets | No | Number of Subnets. NOTE: Quickstart requires leaving at Default = 4 as Application Subnet is hardcoded to be in 4th subnet |
 | numNics | No | Number of interfaces to create on BIG-IP instance. Maximum of 3 allowed. Minimum of 1 allowed. |
 | owner | No | Owner Tag. |
+| provisionPublicIp | No | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. |
 | restrictedSrcAddressMgmt | Yes |The IP address range used to SSH and access management GUI on the EC2 instances. IMPORTANT: Please restrict to your client IP |
 | restrictedSrcAddressApp | Yes | The IP address range that can be used to access web traffic (80/443) to the EC2 instances. |
 | s3BucketRegion | No | AWS Region which contains the S3 Bucket containing templates |
@@ -291,7 +292,7 @@ From Parent Template Outputs:
         aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpInstanceId'].OutputValue" --output text
         ```
 
-  - Obtain the IP address of the BIG-IP Management Port:
+  - Obtain the IP address of the BIG-IP Management Port (or bastion host if provisionPublicIP = false):
     - **Console**: Navigate to **CloudFormation > *STACK_NAME* > Outputs > *bigIpManagementPublicIp***.
     - **AWS CLI**: 
       - Public IPs: 
@@ -304,6 +305,11 @@ From Parent Template Outputs:
           ```
 
 #### SSH
+
+NOTE:
+  When false is selected for provisionPublicIp, you must connect to the BIG-IP instance via a bastion host.
+  When connecting to a BIG-IP instance using SSH via a bastion host, you must first copy the private SSH key to the bastion instance and set the correct permissions on the key.
+  
   - **SSH key authentication**: 
       ```bash
       ssh admin@${IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}

@@ -17,7 +17,6 @@ Metadata:
         Parameters:
           - numAzs
           - numSubnets
-          - setPublicSubnet1
           - subnetMask
           - vpcCidr
       - Label:
@@ -72,6 +71,11 @@ Metadata:
           - appScalingMaxSize
           - appScalingMinSize
       - Label:
+          default: Bastion Configuration
+        Parameters:
+          - bastionScalingMaxSize
+          - bastionScalingMinSize
+      - Label:
           default: Revoke Function
         Parameters:
           - lambdaS3BucketName
@@ -106,6 +110,12 @@ Metadata:
         default: Application
       artifactLocation:
         default: Path to directory where the modules folder is located. ex. "examples/"
+      bastionScalingMaxSize:
+        default: Maximum number of Bastion instances that can be created in the Autoscale
+          Group
+      bastionScalingMinSize:
+        default: Minimum number of Bastion instances that can be created in the Autoscale
+          Group
       bigIpCustomImageId:
         default: Custom Image Id
       bigIpImage:
@@ -211,8 +221,6 @@ Metadata:
         default: S3 Bucket Region where Templates are Located
       secretArn:
         default: ARN of Secrets Manager secret
-      setPublicSubnet1:
-        default: Set Subnet1 Public
       snsEvents:
         default: Provides list of SNS Events used for sending Notifications on Autoscale
           group
@@ -267,6 +275,11 @@ Outputs:
     Value: !GetAtt
       - Application
       - Outputs.appAutoscaleGroupName
+  bastionAutoscaleGroupName:
+    Condition: noPublicIp
+    Value: !GetAtt
+      - Bastion
+      - Outputs.bastionAutoscaleGroupName
 Parameters:
   appContainerName:
     Default: 'f5devcentral/f5-demo-app:latest'
@@ -301,6 +314,22 @@ Parameters:
       include numbers, lowercase letters, uppercase letters, hyphens (-), and forward
       slash (/).
     Type: String
+  bastionScalingMaxSize:
+    ConstraintDescription: Must be a number between 2-50
+    Default: 50
+    Description: Maximum number of Bastion instances (2-50) that can be created in
+      the Auto Scale Group.
+    MaxValue: 50
+    MinValue: 2
+    Type: Number
+  bastionScalingMinSize:
+    ConstraintDescription: Must be a number between 1-49
+    Default: 1
+    Description: Minimum number of Bastion instances (1-49) you want available in
+      the Auto Scale Group.
+    MaxValue: 49
+    MinValue: 1
+    Type: Number
   bigIpCustomImageId:
     Default: ''
     Description: Provide BIG-IP AMI ID you wish to deploy.
@@ -555,7 +584,7 @@ Parameters:
     AllowedValues:
       - 'true'
       - 'false'
-    Default: 'true'
+    Default: 'false'
     Description: Whether or not to provision Public IP Addresses for the BIG-IP Network
       Interfaces.
     Type: String
@@ -594,14 +623,6 @@ Parameters:
   secretArn:
     Default: ''
     Description: ARN of Secrets Manager secret
-    Type: String
-  setPublicSubnet1:
-    AllowedValues:
-      - 'true'
-      - 'false'
-    Default: 'false'
-    Description: 'Value of true sets subnet1 in each AZ as a public subnet, value
-      of false sets subnet1 as private network.'
     Type: String
   snsEvents:
     Description: Provides list of SNS Topics used on Autoscale Group.
@@ -669,6 +690,9 @@ Conditions:
   noCustomImageId: !Equals
     - ''
     - !Ref 'bigIpCustomImageId'
+  noPublicIp: !Equals
+    - 'false'
+    - !Ref 'provisionPublicIp'
   useLoggingS3Bucket: !Not
     - !Equals
       - ''
@@ -724,7 +748,7 @@ Resources:
         applicationSubnet: !Join
           - ','
           - - !Select
-              - '1'
+              - '2'
               - !Split
                 - ','
                 - !GetAtt
@@ -733,14 +757,14 @@ Resources:
         applicationSubnets: !Join
           - ','
           - - !Select
-              - '1'
+              - '2'
               - !Split
                 - ','
                 - !GetAtt
                   - Network
                   - Outputs.subnetsA
             - !Select
-              - '1'
+              - '2'
               - !Split
                 - ','
                 - !GetAtt
@@ -752,10 +776,60 @@ Resources:
         environment: !Ref 'environment'
         group: !Ref 'group'
         sshKey: !Ref 'sshKey'
-        restrictedSrcAddress: 0.0.0.0/0
+        restrictedSrcAddress: !Ref 'restrictedSrcAddressApp'
         scalingMinSize: !Ref 'appScalingMinSize'
         scalingMaxSize: !Ref 'appScalingMaxSize'
         provisionPublicIp: 'false'
+        uniqueString: !Ref 'uniqueString'
+        vpc: !GetAtt
+          - Network
+          - Outputs.vpcId
+  Bastion:
+    Type: 'AWS::CloudFormation::Stack'
+    Condition: noPublicIp
+    Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/bastion/bastion.yaml'
+        - S3Region: !Ref 's3BucketRegion'
+          S3Bucket: !Ref 's3BucketName'
+      Parameters:
+        application: !Ref 'application'
+        mgmtSubnet: !Join
+          - ','
+          - - !Select
+              - '0'
+              - !Split
+                - ','
+                - !GetAtt
+                  - Network
+                  - Outputs.subnetsA
+        mgmtSubnets: !Join
+          - ','
+          - - !Select
+              - '0'
+              - !Split
+                - ','
+                - !GetAtt
+                  - Network
+                  - Outputs.subnetsA
+            - !Select
+              - '0'
+              - !Split
+                - ','
+                - !GetAtt
+                  - Network
+                  - Outputs.subnetsB
+        bastionSecurityGroupId: !GetAtt
+          - Dag
+          - Outputs.bigIpExternalSecurityGroup
+        cost: !Ref 'cost'
+        createAutoscaleGroup: 'true'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        sshKey: !Ref 'sshKey'
+        restrictedSrcAddress: !Ref 'restrictedSrcAddressMgmt'
+        scalingMinSize: !Ref 'bastionScalingMinSize'
+        scalingMaxSize: !Ref 'bastionScalingMaxSize'
         uniqueString: !Ref 'uniqueString'
         vpc: !GetAtt
           - Network
@@ -835,14 +909,14 @@ Resources:
         subnets: !Join
           - ','
           - - !Select
-              - '0'
+              - '1'
               - !Split
                 - ','
                 - !GetAtt
                   - Network
                   - Outputs.subnetsA
             - !Select
-              - '0'
+              - '1'
               - !Split
                 - ','
                 - !GetAtt
@@ -947,7 +1021,7 @@ Resources:
         group: !Ref 'group'
         numAzs: !Ref 'numAzs'
         numSubnets: !Ref 'numSubnets'
-        setPublicSubnet1: !Ref 'setPublicSubnet1'
+        setPublicSubnet1: !Ref 'provisionPublicIp'
         subnetMask: !Ref 'subnetMask'
         uniqueString: !Ref 'uniqueString'
         vpcCidr: !Ref 'vpcCidr'

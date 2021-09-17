@@ -8,6 +8,7 @@ DOCKER IMAGE: 'f5devcentral/f5-demo-app:latest'
 LICENSE TYPE: payg
 NIC COUNT: 3
 PUBLIC MGMT: 'true'
+PROVISION PUBLIC IP: 'true'
 REGION: us-east-1
 RUNTIME INIT CONFIG: https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/quickstart/bigip-configurations/<DEWPOINT JOB ID>.yaml
 SOLUTION TYPE: standalone

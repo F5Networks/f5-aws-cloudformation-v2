@@ -15,6 +15,18 @@ Conditions:
   3nic: !Equals
     - 3
     - !Ref 'numNics'
+  2nicPublic: !And
+    - !Condition '2nic'
+    - !Condition 'publicIp'
+  1nicPublic: !And
+    - !Condition '1nic'
+    - !Condition 'publicIp'
+  noPublicIp: !Equals
+    - 'false'
+    - !Ref 'provisionPublicIp'
+  publicIp: !Equals
+    - 'true'
+    - !Ref 'provisionPublicIp'
   isPaygLicensing: !Equals
     - payg
     - !Ref 'licenseType'
@@ -428,6 +440,7 @@ Metadata:
           - numNics
           - bigIpRuntimeInitConfig
           - bigIpRuntimeInitPackageUrl
+          - provisionPublicIp
       - Label:
           default: Application Configuration
         Parameters:
@@ -474,6 +487,8 @@ Metadata:
         default: Subnets
       owner:
         default: Owner
+      provisionPublicIp:
+        default: Provision Public IP addresses for the BIG-IP management interface
       restrictedSrcAddressApp:
         default: Restricted source address to application
       restrictedSrcAddressMgmt:
@@ -495,14 +510,20 @@ Outputs:
   bigIpInstanceId:
     Description: bigip's instance-id
     Value: !GetAtt [BigipStandalone, Outputs.bigIpInstanceId]
+  bastionInstanceId:
+    Condition: noPublicIp
+    Description: bastion's instance-id
+    Value: !GetAtt [Bastion, Outputs.bastionInstanceId]
   bigIpManagementPrivateIp:
     Description: bigip's private management address
     Value: !GetAtt [BigipStandalone, Outputs.bigIpManagementInterfacePrivateIp]
   bigIpManagementPublicIp:
+    Condition: publicIp
     Description: bigip's public management address. WARNING - For eval purposes only.
       Production should never have the management interface exposed to Internet
     Value: !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
   bigIpManagementSsh:
+    Condition: publicIp
     Description: ssh login to bigip's management address. WARNING - For eval purposes
       only. Production should never have the management interface exposed to Internet
     Value: !Join
@@ -510,7 +531,7 @@ Outputs:
       - - 'ssh admin@'
         - !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
   bigIpManagementUrl443:
-    Condition: 2nic
+    Condition: 2nicPublic
     Description: url to bigip's management address. WARNING - For eval purposes only.
       Production should never have the management interface exposed to Internet
     Value: !Join
@@ -518,7 +539,7 @@ Outputs:
       - - 'https://'
         - !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
   bigIpManagementUrl8443:
-    Condition: 1nic
+    Condition: 1nicPublic
     Description: url to bigip's management address. WARNING - For eval purposes only.
       Production should never have the management interface exposed to Internet
     Value: !Join
@@ -649,6 +670,14 @@ Parameters:
     Default: f5owner-quickstart
     Description: Owner Tag.
     Type: String
+  provisionPublicIp:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'true'
+    Description: Whether or not to provision Public IP Addresses for the BIG-IP Network
+      Interfaces.
+    Type: String
   restrictedSrcAddressApp:
     AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
     ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
@@ -732,6 +761,38 @@ Resources:
         vpc: !GetAtt
           - Network
           - Outputs.vpcId
+  Bastion:
+    Type: 'AWS::CloudFormation::Stack'
+    Condition: noPublicIp
+    Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/bastion/bastion.yaml'
+        - S3Region: !Ref 's3BucketRegion'
+          S3Bucket: !Ref 's3BucketName'
+      Parameters:
+        application: !Ref 'application'
+        mgmtSubnet: !Join
+          - ','
+          - - !Select
+              - '0'
+              - !Split
+                - ','
+                - !GetAtt
+                  - Network
+                  - Outputs.subnetsA
+        bastionSecurityGroupId: !GetAtt
+          - Dag
+          - Outputs.bigIpExternalSecurityGroup
+        cost: !Ref 'cost'
+        createAutoscaleGroup: 'false'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        sshKey: !Ref 'sshKey'
+        restrictedSrcAddress: !Ref 'restrictedSrcAddressMgmt'
+        uniqueString: !Ref 'uniqueString'
+        vpc: !GetAtt
+          - Network
+          - Outputs.vpcId
   BigipStandalone:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -745,9 +806,9 @@ Resources:
         externalPublicIpIds: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId02]
         externalSecurityGroupId: !If [2nic, !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup],
           !Ref 'AWS::NoValue']
-        externalSelfIp: !If [2nic, "10.0.1.11", !Ref 'AWS::NoValue']
-        externalServiceIps: !If [1nic, "10.0.0.101", "10.0.1.101"]
-        externalSubnetId: !If [2nic, !Select [1, !Split [',', !GetAtt [Network, Outputs.subnetsA]]],
+        externalSelfIp: !If [2nic, "10.0.0.11", !Ref 'AWS::NoValue']
+        externalServiceIps: !If [1nic, "10.0.1.101", "10.0.0.101"]
+        externalSubnetId: !If [2nic, !Select [0, !Split [',', !GetAtt [Network, Outputs.subnetsA]]],
           !Ref 'AWS::NoValue']
         imageId: !If [noCustomImageId, !If [isPaygLicensing, !FindInMap [!FindInMap [
                 VERSION, !Ref 'version', REGIONMAP], !Ref 'AWS::Region', !FindInMap [
@@ -758,10 +819,10 @@ Resources:
         internalSelfIp: !If [3nic, "10.0.2.11", !Ref 'AWS::NoValue']
         internalSubnetId: !If [3nic, !Select [2, !Split [',', !GetAtt [Network, Outputs.subnetsA]]],
           !Ref 'AWS::NoValue']
-        mgmtPublicIpId: !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId01]
+        mgmtPublicIpId: !If [noPublicIp, !Ref 'AWS::NoValue', !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId01]]
         mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup]
-        mgmtSelfIp: "10.0.0.11"
-        mgmtSubnetId: !Select [0, !Split [',', !GetAtt [Network, Outputs.subnetsA]]]
+        mgmtSelfIp: "10.0.1.11"
+        mgmtSubnetId: !Select [1, !Split [',', !GetAtt [Network, Outputs.subnetsA]]]
         numSecondaryPrivateIpAddress: 1
         sshKey: !Ref 'sshKey'
         uniqueString: !Ref 'uniqueString'
@@ -779,7 +840,7 @@ Resources:
         environment: !Ref 'environment'
         group: !Ref 'group'
         numberPublicExternalIpAddresses: 2
-        numberPublicMgmtIpAddresses: 1
+        numberPublicMgmtIpAddresses: !If [noPublicIp, 0, 1]
         restrictedSrcAddressApp: !Ref 'restrictedSrcAddressApp'
         restrictedSrcAddressMgmt: !Ref 'restrictedSrcAddressMgmt'
         restrictedSrcPort: !If [1nic, 8443, 443]
@@ -801,7 +862,7 @@ Resources:
         group: !Ref 'group'
         numAzs: !Ref 'numAzs'
         numSubnets: !Ref 'numSubnets'
-        setPublicSubnet1: 'true'
+        setPublicSubnet1: !Ref 'provisionPublicIp'
         subnetMask: 24
         uniqueString: !Ref 'uniqueString'
         vpcCidr: 10.0.0.0/16

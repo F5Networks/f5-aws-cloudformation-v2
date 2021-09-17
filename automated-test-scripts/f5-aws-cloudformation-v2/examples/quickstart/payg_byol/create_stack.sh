@@ -84,6 +84,10 @@ cat <<EOF > parameters.json
         "ParameterValue": "<NIC COUNT>"
     },
     {
+        "ParameterKey": "provisionPublicIp",
+        "ParameterValue": "<PROVISION PUBLIC IP>"
+    },
+    {
         "ParameterKey": "restrictedSrcAddressApp",
         "ParameterValue": "0.0.0.0/0"
     },

@@ -138,7 +138,7 @@ extension_services:
             serviceMain:
               class: Service_HTTP
               virtualAddresses:
-                - 10.0.1.101
+                - 10.0.0.101
               snat: auto
               policyWAF:
                 use: WAFPolicy
@@ -155,7 +155,7 @@ extension_services:
             serviceMain:
               class: Service_HTTPS
               virtualAddresses:
-                - 10.0.1.101
+                - 10.0.0.101
               snat: auto
               policyWAF:
                 use: WAFPolicy
