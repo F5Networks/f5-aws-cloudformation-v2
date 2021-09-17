@@ -20,6 +20,14 @@
     "ParameterValue": "f5-aws-cloudformation-v2/v1.0.1.0/examples/"
   },
   {
+    "ParameterKey": "bastionScalingMaxSize",
+    "ParameterValue": 50
+  },
+  {
+    "ParameterKey": "bastionScalingMinSize",
+    "ParameterValue": 1
+  },
+  {
     "ParameterKey": "bigIpCustomImageId",
     "ParameterValue": ""
   },
@@ -181,7 +189,7 @@
   },
   {
     "ParameterKey": "provisionPublicIp",
-    "ParameterValue": "true"
+    "ParameterValue": "false"
   },
   {
     "ParameterKey": "restrictedSrcAddressMgmt",
@@ -202,10 +210,6 @@
   {
     "ParameterKey": "secretArn",
     "ParameterValue": ""
-  },
-  {
-    "ParameterKey": "setPublicSubnet1",
-    "ParameterValue": "false"
   },
   {
     "ParameterKey": "snsEvents",

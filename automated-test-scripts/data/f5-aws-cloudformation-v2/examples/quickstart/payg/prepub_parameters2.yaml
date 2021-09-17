@@ -7,8 +7,9 @@ CUSTOM IMAGE: ''
 DOCKER IMAGE: 'f5devcentral/f5-demo-app:latest'
 LICENSE TYPE: payg
 NIC COUNT: 2
-PUBLIC MGMT: 'true'
-REGION: eu-west-2
+PUBLIC MGMT: 'false'
+PROVISION PUBLIC IP: 'false'
+REGION: us-west-2
 RUNTIME INIT CONFIG: https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/quickstart/bigip-configurations/<DEWPOINT JOB ID>.yaml
 SOLUTION TYPE: standalone
 SSH KEY: dewpt

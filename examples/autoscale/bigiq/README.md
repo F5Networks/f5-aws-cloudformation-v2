@@ -117,6 +117,8 @@ This solution leverages more traditional Autoscale configuration management prac
 | appScalingMaxSize | No | Maximum number of Application instances (2-50) that can be created in the Autoscale Group. |
 | appScalingMinSize | No | Minimum number of Application instances (1-49) you want available in the Autoscale Group. |
 | artifactLocation | No | The path in the S3Bucket where the modules folder is located. |
+| bastionScalingMaxSize | No | Maximum number of Bastion instances (2-50) that can be created in the Autoscale Group. |
+| bastionScalingMinSize | No | Minimum number of Bastion instances (1-49) you want available in the Autoscale Group. |
 | bigIpCustomImageId | No | Provide BIG-IP AMI ID you wish to deploy. bigIpCustomImageId is required when bigIpImage is not specified. |
 | bigIpImage | No | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. bigIpImage is required when bigIpCustomImageId is not specified. | 
 | bigIpInstanceType | No | Enter valid instance type. |
@@ -153,7 +155,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | metricNameSpace | Yes | CloudWatch namespace used for custom metrics. This should match the namespace defined in your Telemetry Streaming declaration within bigipRuntimInitConfig. |
 | notificationEmail | Yes | Valid email address to send Autoscaling event notifications. |
 | numAzs | No | Number of Availability Zones to use in the VPC. The region must support the number of availability zones entered. The minimum is 1 and the maximum is 4. |
-| numSubnets | No | Number of subnets per Availability Zone to create. Subnets are labeled `subnetx` where x is the subnet number. The minimum is 1 and the maximum is 8. |
+| numSubnets | No | Number of subnets per Availability Zone to create. Subnets are labeled `subnetx` where x is the subnet number. The minimum is 2 and the maximum is 8. In a case when BIGIP has no public ip, |numSubnets needs to be set to 3 |
 | owner | No | Application Tag. |
 | provisionExternalBigipLoadBalancer | No | Flag to provision external Load Balancer. |
 | provisionInternalBigipLoadBalancer | No | Flag to provision internal Load Balancer. |
@@ -163,7 +165,6 @@ This solution leverages more traditional Autoscale configuration management prac
 | s3BucketName | No | S3 bucket name for the modules. S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen. |
 | s3BucketRegion | No | The AWS Region where the Quick Start S3 bucket (s3BucketName) is hosted. When using your own bucket, you must specify this value. |
 | secretArn | No | The ARN of a Secrets Manager secret. |
-| setPublicSubnet1 | No | Value of true sets subnet1 in each AZ as a public subnet, value of false sets subnet1 as private network. |
 | snsEvents | No | Provides list of SNS Topics used on Autoscale Group. | 
 | sshKey | Yes | Enter the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. For example, `myAWSkey`. |
 | subnetMask | No | Mask for subnets. Valid values include 16-28. Note: supernetting of VPC occurs based on the mask provided; therefore, number of networks must be greater than or equal to the number of subnets created. |
@@ -175,6 +176,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | Name | Description | Type |
 | --- | --- | --- |
 | appAutoScaleGroupName | Application Autoscale Group Name| String |
+| bastionAutoscaleGroupName | Application Autoscale Group Name| String |
 | bigIpAutoScaleGroupName | BIG-IP Autoscale Group Name | String |
 | wafExternalDnsName | WAF External DNS Name | String |
 | wafExternalHttpsUrl | WAF External HTTPS URL | String |

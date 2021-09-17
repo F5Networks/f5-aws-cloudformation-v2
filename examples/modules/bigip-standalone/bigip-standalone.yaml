@@ -820,7 +820,7 @@ Resources:
           Value: !Join
             - ''
             - - !Ref 'uniqueString'
-              - '-bigip'
+              - '-bigip-instance'
         - Key: owner
           Value: !Ref 'owner'
       UserData: !Base64
@@ -974,7 +974,7 @@ Resources:
           Value: !Join
             - ''
             - - !Ref 'uniqueString'
-              - '-bigip'
+              - '-bigip-instance'
         - Key: owner
           Value: !Ref 'owner'
       UserData: !Base64
@@ -1122,7 +1122,7 @@ Resources:
           Value: !Join
             - ''
             - - !Ref 'uniqueString'
-              - '-bigip'
+              - '-bigip-instance'
         - Key: owner
           Value: !Ref 'owner'
       UserData: !Base64

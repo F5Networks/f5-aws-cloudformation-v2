@@ -16,6 +16,12 @@
 ../../examples/modules/application/sample_linked.yaml:
 - No Key Diff
 - No Value Diff
+../../examples/modules/bastion/bastion.yaml:
+- No Key Diff
+- No Value Diff
+../../examples/modules/bastion/sample_linked.yaml:
+- No Key Diff
+- No Value Diff
 ../../examples/modules/bigip-autoscale/bigip-autoscale.yaml:
 - No Key Diff
 - No Value Diff

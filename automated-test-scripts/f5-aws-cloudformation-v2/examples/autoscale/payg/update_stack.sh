@@ -49,6 +49,14 @@ cat <<EOF > parameters.json
         "ParameterValue": "<APP SCALE MIN SIZE>"
     },
     {
+        "ParameterKey": "bastionScalingMaxSize",
+        "ParameterValue": "<BASTION SCALE MAX SIZE>"
+    },
+    {
+        "ParameterKey": "bastionScalingMinSize",
+        "ParameterValue": "<BASTION SCALE MIN SIZE>"
+    },
+    {
         "ParameterKey": "bigIpCustomImageId",
         "ParameterValue": "<CUSTOM IMAGE ID>"
     },
@@ -163,10 +171,6 @@ cat <<EOF > parameters.json
     {
         "ParameterKey": "secretArn",
         "ParameterValue": "$secret_arn"
-    },
-    {
-        "ParameterKey": "setPublicSubnet1",
-        "ParameterValue": "<SUBNET1 PUBLIC>"
     },
     {
         "ParameterKey": "snsEvents",

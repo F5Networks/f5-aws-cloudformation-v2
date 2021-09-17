@@ -34,7 +34,7 @@ Metadata:
           default: Autoscale Group
         Parameters:
           - scalingMinSize
-          - scalingMaxSizes
+          - scalingMaxSize
           - scaleInCpuThreshold
           - scaleInThroughputThreshold
           - scaleOutCpuThreshold

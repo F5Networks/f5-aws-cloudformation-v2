@@ -36,6 +36,10 @@
     "ParameterValue": "f5group-quickstart"
   },
   {
+    "ParameterKey": "provisionPublicIp",
+    "ParameterValue": "true"
+  },
+  {
     "ParameterKey": "bigIpImage",
     "ParameterValue": "Best"
   },
