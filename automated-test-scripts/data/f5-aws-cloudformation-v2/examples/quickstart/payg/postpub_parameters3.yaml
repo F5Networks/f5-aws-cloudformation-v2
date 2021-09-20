@@ -19,4 +19,4 @@ TEMPLATE NAME: quickstart-3nic-payg
 TEMPLATE URL: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/main/examples/quickstart/quickstart.yaml'
 THROUGHPUT: 1000Mbps
 UNIQUESTRING: dew<DEWPOINT JOB ID>
-VERSION: 14-1-4-0011
+VERSION: 14-1-4-4004

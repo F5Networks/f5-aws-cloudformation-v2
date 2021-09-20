@@ -33,7 +33,7 @@
   },
   {
     "ParameterKey": "bigIpImage",
-    "ParameterValue": "*16.0.1.1-0.0.6**BYOL-All Modules 2Boot*"
+    "ParameterValue": "*16.1.0-0.0.19**BYOL-All Modules 2Boot*"
   },
   {
     "ParameterKey": "bigIpInstanceType",

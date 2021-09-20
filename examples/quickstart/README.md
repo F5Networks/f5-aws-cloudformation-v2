@@ -505,8 +505,8 @@ These templates have been tested and validated with the following versions of BI
 
 | BIG-IP Version | Build Number |
 | --- | --- |
-| 16.0.1.1 | 0.0.6 |
-| 14.1.4 | 0.0.11 |
+| 16.1.0 | 0.0.19 |
+| 14.1.4.4 | 0.0.4 |
 
 
 ## Documentation
