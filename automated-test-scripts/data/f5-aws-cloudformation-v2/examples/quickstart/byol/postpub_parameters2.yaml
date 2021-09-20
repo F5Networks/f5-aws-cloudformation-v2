@@ -20,4 +20,4 @@ TEMPLATE NAME: quickstart-<NIC COUNT>nic-<LICENSE TYPE>
 TEMPLATE URL: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/main/examples/quickstart/quickstart.yaml'
 THROUGHPUT: 1000Mbps
 UNIQUESTRING: dew<DEWPOINT JOB ID>
-VERSION: 16-0-1-1006
+VERSION: 16-1-0-0019

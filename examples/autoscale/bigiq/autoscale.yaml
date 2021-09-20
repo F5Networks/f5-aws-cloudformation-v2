@@ -337,7 +337,7 @@ Parameters:
     Type: String
   bigIpImage:
     ConstraintDescription: Must be a valid F5 BIG-IP market place image
-    Default: '*16.0.1.1-0.0.6**BYOL-All Modules 2Boot*'
+    Default: '*16.1.0-0.0.19**BYOL-All Modules 2Boot*'
     Description: F5 BIG-IP market place image
     Type: String
   bigIpInstanceType:
