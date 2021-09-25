@@ -53,15 +53,15 @@
   },
   {
     "ParameterKey": "numAzs",
-    "ParameterValue": 1
+    "ParameterValue": "1"
   },
   {
     "ParameterKey": "numNics",
-    "ParameterValue": 3
+    "ParameterValue": "3"
   },
   {
     "ParameterKey": "numSubnets",
-    "ParameterValue": 4
+    "ParameterValue": "4"
   },
   {
     "ParameterKey": "owner",
@@ -97,6 +97,6 @@
   },
   {
     "ParameterKey": "version",
-    "ParameterValue": "16-0-1-1006"
+    "ParameterValue": "16-1-0-0019"
   }
 ]

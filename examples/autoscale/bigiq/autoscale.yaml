@@ -315,19 +315,19 @@ Parameters:
       slash (/).
     Type: String
   bastionScalingMaxSize:
-    ConstraintDescription: Must be a number between 2-50
-    Default: 50
-    Description: Maximum number of Bastion instances (2-50) that can be created in
+    ConstraintDescription: Must be a number between 2-10
+    Default: 2
+    Description: Maximum number of Bastion instances (2-10) that can be created in
       the Auto Scale Group.
-    MaxValue: 50
+    MaxValue: 10
     MinValue: 2
     Type: Number
   bastionScalingMinSize:
-    ConstraintDescription: Must be a number between 1-49
+    ConstraintDescription: Must be a number between 1-9
     Default: 1
-    Description: Minimum number of Bastion instances (1-49) you want available in
-      the Auto Scale Group.
-    MaxValue: 49
+    Description: Minimum number of Bastion instances (1-9) you want available in the
+      Auto Scale Group.
+    MaxValue: 9
     MinValue: 1
     Type: Number
   bigIpCustomImageId:
@@ -584,7 +584,7 @@ Parameters:
     AllowedValues:
       - 'true'
       - 'false'
-    Default: 'false'
+    Default: 'true'
     Description: Whether or not to provision Public IP Addresses for the BIG-IP Network
       Interfaces.
     Type: String

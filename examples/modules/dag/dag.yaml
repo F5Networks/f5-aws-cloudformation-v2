@@ -716,6 +716,10 @@ Resources:
     Properties:
       GroupDescription: 'Public or External interface rules, including BIG-IP management'
       SecurityGroupIngress:
+        - CidrIp: !Ref vpcCidr
+          FromPort: 22
+          IpProtocol: tcp
+          ToPort: 22
         - CidrIp: !Ref restrictedSrcAddressMgmt
           FromPort: 22
           IpProtocol: tcp
