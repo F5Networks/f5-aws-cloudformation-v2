@@ -117,8 +117,8 @@ This solution leverages more traditional Autoscale configuration management prac
 | appScalingMaxSize | No | Maximum number of Application instances (2-50) that can be created in the Autoscale Group. |
 | appScalingMinSize | No | Minimum number of Application instances (1-49) you want available in the Autoscale Group. |
 | artifactLocation | No | The path in the S3Bucket where the modules folder is located. |
-| bastionScalingMaxSize | No | Maximum number of Bastion instances (2-50) that can be created in the Autoscale Group. |
-| bastionScalingMinSize | No | Minimum number of Bastion instances (1-49) you want available in the Autoscale Group. |
+| bastionScalingMaxSize | No | Maximum number of Bastion instances (2-10) that can be created in the Autoscale Group. |
+| bastionScalingMinSize | No | Minimum number of Bastion instances (1-9) you want available in the Autoscale Group. |
 | bigIpCustomImageId | No | Provide BIG-IP AMI ID you wish to deploy. bigIpCustomImageId is required when bigIpImage is not specified. |
 | bigIpImage | No | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. bigIpImage is required when bigIpCustomImageId is not specified. | 
 | bigIpInstanceType | No | Enter valid instance type. |
@@ -159,7 +159,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | owner | No | Application Tag. |
 | provisionExternalBigipLoadBalancer | No | Flag to provision external Load Balancer. |
 | provisionInternalBigipLoadBalancer | No | Flag to provision internal Load Balancer. |
-| provisionPublicIp | No | Whether or not to provision Public IP Addresses for the BIG-IP Network Interfaces. By default no Public IP addresses are provisioned. |
+| provisionPublicIp | No | Whether or not to provision Public IP Addresses for the BIG-IP Network Interfaces. By default, Public IP addresses are provisioned. |
 | restrictedSrcAddressApp | Yes | The IP address range that can be used to access web traffic (80/443) to the EC2 instances. |
 | restrictedSrcAddressMgmt | Yes | The IP address range used to SSH and access management GUI on the EC2 instances. **IMPORTANT**: Please restrict to your client IP. |
 | s3BucketName | No | S3 bucket name for the modules. S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen. |
