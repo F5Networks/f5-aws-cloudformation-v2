@@ -1,29 +1,32 @@
-AWSTemplateFormatVersion: 2010-09-09
-Description: This template represents an example of a linked deployment of the BIG-IP Autoscale template
+AWSTemplateFormatVersion: '2010-09-09'
+Description: This template represents an example of a linked deployment of the BIG-IP
+  Autoscale template
 Resources:
   Access:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: >-
-        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.0.1.0/examples/modules/bigip-autoscale/bigip-autoscale.yaml
+        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.1.0.0/examples/modules/bigip-autoscale/bigip-autoscale.yaml
       Parameters:
         bigIpExternalSecurityGroup: example-security-group
         bigIpInstanceProfile: example-instance-profile
         bigIpRuntimeInitConfig: https://some-delivery-locatoion.com/config.yaml
-        bigIpRuntimeInitPackageUrl: https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run
+        bigIpRuntimeInitPackageUrl: https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.3.2/dist/f5-bigip-runtime-init-1.3.2-1.gz.run
         bigIqLicenseRevokeSnsTopic: ''
         bigIqNotificationRole: ''
         externalTargetGroupHttp: example-target-group-http
         externalTargetGroupHttps: example-target-group-https
-        scaleOutCpuThreshold: 80
+        scaleOutCpuThreshold: 0
         imageId: ami-id
         instanceType: m5.4xlarge
         internalTargetGroupHttp: ''
         internalTargetGroupHttps: ''
         licenseType: payg
-        scaleOutCpuThreshold: 0
+        maxBatchSize: 5
         metricNameSpace: bigip-throughput
+        minInstancesInService: 1
         notificationEmail: example@mail.com
+        pauseTime: 480
         provisionPublicIp: 'true'
         scaleInThroughputThreshold: 10000
         scaleOutThroughputThreshold: 35000
@@ -37,8 +40,8 @@ Resources:
           - subnet-000003
 Outputs:
   stackName:
-    Value: !GetAtt BigIp.Outputs.stackName
+    Value: !GetAtt 'BigIp.Outputs.stackName'
   bigIpAutoscaleGroup:
-    Value: !GetAtt BigIp.Outputs.bigIpAutoscaleGroup
+    Value: !GetAtt 'BigIp.Outputs.bigIpAutoscaleGroup'
   snsTopic:
-    Value: !GetAtt BigIp.Outputs.snsTopic
+    Value: !GetAtt 'BigIp.Outputs.snsTopic'

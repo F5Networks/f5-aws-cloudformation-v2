@@ -26,13 +26,16 @@ if [[ '<RUNTIME INIT CONFIG>' == *{* ]]; then
 else
     # Modify Runtime-init, then upload to s3.
     cp /$PWD/examples/quickstart/bigip-configurations/runtime-init-conf-<NIC COUNT>nic-<LICENSE TYPE>.yaml <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTPS_Service.WAFPolicy.url = \"https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/quickstart/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTP_Service.WAFPolicy.url = \"https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/quickstart/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTPS_Service.WAFPolicy.url = \"https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/quickstart/bigip-configurations/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTP_Service.WAFPolicy.url = \"https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/quickstart/bigip-configurations/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>.yaml
+
+    # Disable AutoPhoneHome
+    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>.yaml
 
     # print out config file
     /usr/bin/yq e <DEWPOINT JOB ID>.yaml
     # upload to s3
-    aws s3 cp --region <REGION> /$PWD/examples/quickstart/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml s3://"$bucket_name"/examples/quickstart/bigip-configurations/Rapid_Depolyment_Policy_13_1.xml --acl public-read
+    aws s3 cp --region <REGION> /$PWD/examples/quickstart/bigip-configurations/Rapid_Deployment_Policy_13_1.xml s3://"$bucket_name"/examples/quickstart/bigip-configurations/Rapid_Deployment_Policy_13_1.xml --acl public-read
     aws s3 cp --region <REGION> <DEWPOINT JOB ID>.yaml s3://"$bucket_name"/examples/quickstart/bigip-configurations/<DEWPOINT JOB ID>.yaml --acl public-read
 fi
 echo "RUNTIME CONFIG:$runtimeConfig"
@@ -79,6 +82,10 @@ cat <<EOF > parameters.json
     {
         "ParameterKey": "numNics",
         "ParameterValue": "<NIC COUNT>"
+    },
+    {
+        "ParameterKey": "provisionPublicIp",
+        "ParameterValue": "<PROVISION PUBLIC IP>"
     },
     {
         "ParameterKey": "restrictedSrcAddressApp",

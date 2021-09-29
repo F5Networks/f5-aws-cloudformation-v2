@@ -71,12 +71,24 @@ cat <<EOF > parameters.json
         "ParameterValue": "<BIGIP INSTANCE TYPE>"
     },
     {
+        "ParameterKey": "maxBatchSize",
+        "ParameterValue": "<UPDATE MAX BATCH SIZE>"
+    },
+    {
         "ParameterKey": "metricNameSpace",
         "ParameterValue": "<METRIC NAME SPACE>"
     },
     {
+        "ParameterKey": "minInstancesInService",
+        "ParameterValue": "<UPDATE MIN INSTANCES>"
+    },
+    {
         "ParameterKey": "notificationEmail",
         "ParameterValue": "<NOTIFICATION EMAIL>"
+    },
+    {
+        "ParameterKey": "pauseTime",
+        "ParameterValue": "<UPDATE PAUSE TIME>"
     },
     {
         "ParameterKey": "provisionPublicIp",

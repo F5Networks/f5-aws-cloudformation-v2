@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This template represents an example of a linked deployment of the Bastion template
+Resources:
+  Access:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: >-
+        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.1.0.0/examples/modules/bastion/bastion.yaml
+      Parameters:
+        bastionSecurityGroupId: mgmt-00002
+        bastionlicationSubnet: ''
+        bastionlicationSubnets: subnet-abcdefg
+        createAutoscaleGroup: 'false'
+        customImageId: ''
+        instanceType: t2.small
+        restrictedSrcAddress: 0.0.0.0/0
+        scalingMaxSize: 2
+        scalingMinSize: 1
+        provisionPublicIp: 'false'
+        sshKey: example-ssh-key-name
+        staticIp: ''
+        vpc: example-vpc-name
+Outputs:
+  stackName:
+    Value: !GetAtt Bastion.Outputs.stackName
+  bastionAutoscaleGroupName:
+    Value: !GetAtt Bastion.Outputs.bastionAutoscaleGroupName
+  bastionInstanceId:
+    Value: !GetAtt Bastion.Outputs.bastionInstanceId

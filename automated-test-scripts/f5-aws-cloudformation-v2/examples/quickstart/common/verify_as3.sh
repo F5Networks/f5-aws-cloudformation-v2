@@ -22,12 +22,29 @@ fi
 
 echo "BIGIP Instance Id: $test_instance_id"
 PASSWORD="$test_instance_id"
-test_instance_public_ip=$(aws ec2 describe-instances --region  <REGION> --instance-ids $test_instance_id | jq .Reservations[0].Instances[0].PublicIpAddress | tr -d '"')
 
-echo "BIGIP Public IP: $test_instance_public_ip"
+if [[ "<PROVISION PUBLIC IP>" == "false" ]]; then
+    bastion_instance_id=$(aws cloudformation describe-stacks --stack-name <STACK NAME> --region <REGION> | jq -r '.Stacks[].Outputs[] | select (.OutputKey=="bastionInstanceId") | .OutputValue')
 
-AS3_RESPONSE=$(curl -sku <BIGIP USER>:${PASSWORD} https://${test_instance_public_ip}:${MGMT_PORT}/mgmt/shared/appsvcs/declare | jq -r .)
+    echo "Bastion Name: $bastion_instance_id"
+
+	bastion_ip=$(aws ec2 describe-instances --region <REGION> --instance-ids ${bastion_instance_id} --query "Reservations[*].Instances[*].PublicIpAddress" --output=text)
+    bigip_private_ip=$(aws ec2 describe-instances  --region <REGION> --instance-ids $test_instance_id |jq -r '.Reservations[0].Instances[0].PrivateIpAddress')
+
+    echo "Bastion IP: $bastion_ip"
+    echo "BIGIP Private Ip: $bigip_private_ip"
+
+    AS3_RESPONSE=$(ssh -o "StrictHostKeyChecking=no" -o ConnectTimeout=7 -i /etc/ssl/private/dewpt_private.pem ubuntu@"$bastion_ip" "curl -skvvu <BIGIP USER>:${PASSWORD} https://${bigip_private_ip}:${MGMT_PORT}/mgmt/shared/appsvcs/declare" | jq -r .)
+else
+  test_instance_public_ip=$(aws ec2 describe-instances --region  <REGION> --instance-ids $test_instance_id | jq .Reservations[0].Instances[0].PublicIpAddress | tr -d '"')
+
+    echo "BIGIP Public IP: $test_instance_public_ip"
+
+    AS3_RESPONSE=$(curl -sku <BIGIP USER>:${PASSWORD} https://${test_instance_public_ip}:${MGMT_PORT}/mgmt/shared/appsvcs/declare | jq -r .)
+fi
+
 echo "AS3_RESPONSE: ${AS3_RESPONSE}"
+
 
 if echo ${AS3_RESPONSE} | grep -q "Quickstart"; then
     FLAG='SUCCESS'

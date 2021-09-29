@@ -20,8 +20,8 @@
   - [Validation](#validation)
     - [Validating the Deployment](#validating-the-deployment)
     - [Accessing the BIG-IP](#accessing-the-big-ip)
-      - [WebUI](#webui)
       - [SSH](#ssh)
+      - [WebUI](#webui)
     - [Further Exploring](#further-exploring)
       - [WebUI](#webui-1)
       - [SSH](#ssh-1)
@@ -41,7 +41,7 @@
 
 With this solution, you can quickly deploy a BIG-IP and begin exploring the BIG-IP platform in a working full-stack deployment that can pass traffic.
 
-This solution uses a parent template to launch several linked child templates (modules) to create a full example stack for the BIG-IP. The linked templates are in the `examples/modules` directory in this repository. *F5 recommends you clone this repository and modify these templates to fit your use case.*
+This solution uses a parent template to launch several linked child templates (modules) to create a full example stack for the BIG-IP. The linked templates are in the [examples/modules](https://github.com/F5Networks/f5-aws-cloudformation-v2/tree/main/examples/modules) directory in this repository. *F5 recommends you clone this repository and modify these templates to fit your use case.*
 
 The modules below create the following resources:
 
@@ -114,8 +114,9 @@ By default, this solution creates a single Availability Zone VPC with four subne
 | numSubnets | No | Number of Subnets. NOTE: Quickstart requires leaving at Default = 4 as Application Subnet is hardcoded to be in 4th subnet |
 | numNics | No | Number of interfaces to create on BIG-IP instance. Maximum of 3 allowed. Minimum of 1 allowed. |
 | owner | No | Owner Tag. |
-| restrictedSrcAddressMgmt | Yes |The IP address range used to SSH and access management GUI on the EC2 instances. IMPORTANT: Please restrict to your client IP |
-| restrictedSrcAddressApp | Yes | The IP address range that can be used to access web traffic (80/443) to the EC2 instances. |
+| provisionPublicIp | No | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host will be provisioned instead. See [diagram](diagram-w-bastion.png). |
+| restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The vpc cidr is automatically added for internal usage, ex. access via bastion host, clustering, etc. **IMPORTANT**: Please restrict to your client, for example 'X.X.X.X/32'. WARNING - For eval purposes only. Production should never have the BIG-IP Management interface exposed to Internet.|
+| restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to access web traffic (80/443) to the EC2 instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. NOTE: The vpc cidr is automatically added for internal usage. |
 | s3BucketRegion | No | AWS Region which contains the S3 Bucket containing templates |
 | s3BucketName | No | S3 bucket name for the modules. S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-). |
 | artifactLocation | No | S3 key prefix for the Quickstart assets. Quickstart key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/). |
@@ -148,7 +149,7 @@ Two options for deploying this solution:
 The easiest way to deploy this CloudFormation template is to use the Launch button.<br>
 **Important**: By default, the link takes you to an AWS console set to the us-east-1 region. Select the AWS region (upper right) in which you want to deploy after clicking the Launch Stack button. 
 
-<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Quickstart-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/quickstart/quickstart.yaml">
+<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Quickstart-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/quickstart/quickstart.yaml">
     <img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png"/></a>
 
 
@@ -178,14 +179,14 @@ By default, the templates in this repository are also publicly hosted on S3 at [
 
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/quickstart/quickstart.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/quickstart/quickstart.yaml \
   --parameters "ParameterKey=<KEY>,ParameterValue=<VALUE> ParameterKey=<KEY>,ParameterValue=<VALUE>"
 ```
 
 or with a local parameters file (see `autoscale-parameters.json` example in this directory):
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/quickstart/quickstart.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/quickstart/quickstart.yaml \
   --parameters file://quickstart-parameters.json
 ```
 
@@ -193,7 +194,7 @@ Example:
 
 ```bash
  aws cloudformation create-stack --region us-east-1 --stack-name myQuickstart \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/quickstart/quickstart.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/quickstart/quickstart.yaml \
   --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0"
 ```
 
@@ -237,7 +238,7 @@ Some changes require republishing/rehosting configuration files (git, s3, etc). 
 
 To deploy a **BYOL** instance:
 
-  1. edit/modify the Declarative Onboarding (DO) declaration in a corresponding `byol` runtime-init config file with the new `regKey` value. 
+  1. Edit/modify the Declarative Onboarding (DO) declaration in a corresponding `byol` runtime-init config file with the new `regKey` value. 
 
 Example:
 ```yaml
@@ -246,7 +247,7 @@ Example:
             licenseType: regKey
             regKey: AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE
 ```
-  2. publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example: git, S3, etc.). 
+  2. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example: git, S3, etc.). 
   3. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL of the updated configuration.
   4. Update the **licenseType** input parameter to use `byol` or **bigIpCustomImageId** input parameter to a valid byol image.
 
@@ -258,10 +259,10 @@ For illustration purposes, this solution pre-provisions IP addresses needed for 
       - [Assigning a Private IP](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/MultipleIP.html#ManageMultipleIP)
       - [Allocating a Public IP](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html#using-instance-addressing-eips-allocating)
       - [Associating a Public IP](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html#using-instance-addressing-eips-associating)
-  2. *BIG-IP* - Creating Virtual Services that match those additional Secondary IPs 
+  2. *BIG-IP* - Creating Virtual Services that match those additional Secondary IPs.
       - Updating the [AS3](https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/latest/userguide/composing-a-declaration.html) declaration with additional Virtual Services (see **virtualAddresses:**).
 
-*NOTE: For cloud resources, templates can be customized to pre-provision and update addtional resources (for example, various combinations of NICs, IPs, Public IPs, etc). Please see [Getting Help](#getting-help) for more information. For BIG-IP configurations, you can leverage any REST or Automation Tool Chain clients like [Ansible](https://ansible.github.io/workshops/exercises/ansible_f5/3.0-as3-intro/),[Terraform](https://registry.terraform.io/providers/F5Networks/bigip/latest/docs/resources/bigip_as3),etc.*
+*NOTE: For cloud resources, templates can be customized to pre-provision and update addtional resources (for example, various combinations of NICs, IPs, Public IPs, etc). Please see [Getting Help](#getting-help) for more information. For BIG-IP configurations, you can leverage any REST or Automation Tool Chain clients like [Ansible](https://ansible.github.io/workshops/exercises/ansible_f5/3.0-as3-intro/),[Terraform](https://registry.terraform.io/providers/F5Networks/bigip/latest/docs/resources/bigip_as3), etc.*
 
 ## Validation
 
@@ -302,15 +303,12 @@ From Parent Template Outputs:
           ```bash 
           aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpManagementPrivateIp'].OutputValue" --output text
           ```
+    - Or if you are going through a bastion host (when **provisionPublicIP** = **false**):
 
-#### WebUI 
-- Open a browser to the Management IP
-  - NOTE: By default, the BIG-IP's WebUI starts with a self-signed cert. Follow your browser's instructions for accepting self-signed certs (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, click "Accept Risk and Continue").
-  - To Login: 
-    - username: quickstart
-    - password: **bigIpInstanceId** (see above to obtain from template "Outputs")
-
+        Obtain the Public IP address of the bastion host:
+            - **Console**: **EC2 > Instances > *INSTANCE_ID* > Instance Summary > Public IPv4 address** 
 #### SSH
+  
   - **SSH key authentication**: 
       ```bash
       ssh admin@${IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
@@ -320,6 +318,57 @@ From Parent Template Outputs:
       ssh quickstart@${IP_ADDRESS_FROM_OUTPUT}
       ``` 
       at prompt, enter your **bigIpInstanceId** (see above to obtain from template "Outputs")
+
+
+- OR if you are going through a bastion host (when **provisionPublicIP** = **false**):
+
+    From your desktop client/shell, create an SSH tunnel:
+    ```bash
+    ssh -i [keyname-passed-to-template.pem] -o ProxyCommand='ssh -i [keyname-passed-to-template.pem] -W %h:%p ubuntu@[BASTION-HOST-PUBLIC-IP]' admin@[BIG-IP-MGMT-PRIVATE-IP]
+    ```
+
+    Replace the variables in brackets before submitting the command.
+
+    For example:
+    ```bash
+    ssh -i ~/.ssh/mykey.pem -o ProxyCommand='ssh -i ~/.ssh/mykey.pem -W %h:%p ubuntu@34.82.102.190' admin@10.0.1.11
+
+#### WebUI 
+
+1. Obtain the URL address of the BIG-IP Management Port.
+    - *NOTE*: Multi-NIC, will use https://host. Single NIC will use https://host:8443. 
+    - **Console**: Navigate to **CloudFormation > *STACK_NAME* > Outputs > *bigIpManagementUrl443* for multi-NIC or *bigIpManagementUrl8443* for single NIC**.
+    - **AWS CLI**: 
+      - 3-NIC (default): 
+          ```bash
+          aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpManagementUrl443'].OutputValue" --output text
+          ```
+      - 1-NIC: 
+          ```bash
+          aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpManagementUrl8443'].OutputValue" --output text
+
+    - OR when you are going through a bastion host (when **provisionPublicIP** = **false**):
+
+        From your desktop client/shell, create an SSH tunnel:
+        ```bash
+        ssh -i [keyname-passed-to-template.pem] ubuntu@[BASTION-HOST-PUBLIC-IP] -L 8443:[BIG-IP-MGMT-PRIVATE-IP]:[BIGIP-GUI-PORT]
+        ```
+        For example:
+        ```bash
+        ssh -i ~/.ssh/mykey.pem ubuntu@34.82.102.190 -L 8443:10.0.1.11:443
+        ```
+
+        You should now be able to open a browser to the BIG-IP UI from your desktop:
+
+        https://localhost:8443
+
+
+
+2. Open a browser to the Management URL.
+  - *NOTE: By default, the BIG-IP system's WebUI starts with a self-signed cert. Follow your browser's instructions for accepting self-signed certs (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, click "Accept Risk and Continue").*
+  - To Login: 
+    - username: quickstart
+    - password: **bigIpInstanceId** (see above to obtain from template "Outputs")
 
 
 ### Further Exploring
@@ -346,25 +395,27 @@ From Parent Template Outputs:
 ### Testing the WAF Service
 
 To test the WAF service, perform the following steps:
-- Obtain the address of the WAF service:
+
+1. Obtain the address of the WAF service:
   - **Console**: Navigate to **CloudFormation > *STACK_NAME* > Outputs > *vip1PublicUrl***. 
   - **AWS CLI**: 
       ```bash 
       aws --region ${REGION}  cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='vip1PublicUrl'].OutputValue" --output text
       ```
 
-- Verify the application is responding:
+2. Verify the application is responding:
   - Paste the IP address in a browser: ```https://${IP_ADDRESS_FROM_OUTPUT}```
-      - NOTE: By default, the Virtual Service starts with a self-signed cert. Follow your browsers instructions for accepting self-signed certs (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, click "Accept Risk and Continue", etc.).
+      - *NOTE: By default, the Virtual Service starts with a self-signed cert. Follow your browsers instructions for accepting self-signed certs (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, click "Accept Risk and Continue", etc.).*
   - Use curl: 
       ```shell
        curl -sko /dev/null -w '%{response_code}\n' https://${IP_ADDRESS_FROM_OUTPUT}
        ```
-- Verify the WAF is configured to block illegal requests:
+
+3. Verify the WAF is configured to block illegal requests:
     ```shell
     curl -sk -X DELETE https://${IP_ADDRESS_FROM_OUTPUT}
     ```
-  - The response should include a message that the request was blocked, and a reference support ID
+  - The response should include a message that the request was blocked, and a reference support ID.
     Example:
     ```shell
     $ curl -sko /dev/null -w '%{response_code}\n' https://55.55.55.55
@@ -436,9 +487,9 @@ aws ec2 get-console-output --region ${REGION}  --instance-id <ID>'
 
 This CloudFormation template downloads helper code to configure the BIG-IP system:
 
-- f5-bigip-runtime-init.gz.run: The self-extracting installer for the F5 BIG-IP Runtime Init RPM can be verified against a SHA256 checksum provided as a release asset on the F5 BIG-IP Runtime Init public GitHub repository, for example: https://github.com/F5Networks/f5-bigip-runtime-init/releases/download/1.2.1/f5-bigip-runtime-init-1.2.1-1.gz.run.sha256.
+- f5-bigip-runtime-init.gz.run: The self-extracting installer for the F5 BIG-IP Runtime Init RPM can be verified against a SHA256 checksum provided as a release asset on the F5 BIG-IP Runtime Init public GitHub repository, for example: https://github.com/F5Networks/f5-bigip-runtime-init/releases/download/1.3.2/f5-bigip-runtime-init-1.3.2-1.gz.run.sha256.
 - F5 BIG-IP Runtime Init: The self-extracting installer script extracts, verifies, and installs the F5 BIG-IP Runtime Init RPM package. Package files are signed by F5 and automatically verified using GPG.
-- F5 Automation Toolchain components: F5 BIG-IP Runtime Init downloads, installs, and configures the F5 Automation Toolchain components. Although it is optional, F5 recommends adding the extensionHash field to each extension install operation in the configuration file. The presence of this field triggers verification of the downloaded component package checksum against the provided value. The checksum values are published as release assets on each extension's public GitHub repository, for example: https://github.com/F5Networks/f5-appsvcs-extension/releases/download/v3.26.0/f5-appsvcs-3.26.0-5.noarch.rpm.sha256
+- F5 Automation Toolchain components: F5 BIG-IP Runtime Init downloads, installs, and configures the F5 Automation Toolchain components. Although it is optional, F5 recommends adding the extensionHash field to each extension install operation in the configuration file. The presence of this field triggers verification of the downloaded component package checksum against the provided value. The checksum values are published as release assets on each extension's public GitHub repository, for example: https://github.com/F5Networks/f5-appsvcs-extension/releases/download/v3.30.0/f5-appsvcs-3.26.0-0.noarch.rpm.sha256
 
 The following configuration file will verify the Declarative Onboarding and Application Services extensions before configuring AS3 from a local file:
 
@@ -447,11 +498,11 @@ runtime_parameters: []
 extension_packages:
     install_operations:
         - extensionType: do
-          extensionVersion: 1.16.0
-          extensionHash: 536eccb9dbf40aeabd31e64da8c5354b57d893286ddc6c075ecc9273fcca10a1
+          extensionVersion: 1.23.0
+          extensionHash: bfe88c7cf3fdb24adc4070590c27488e203351fc808d57ae6bbb79b615d66d27
         - extensionType: as3
-          extensionVersion: 3.23.0
-          extensionHash: de615341b91beaed59195dceefc122932580d517600afce1ba8d3770dfe42d28
+          extensionVersion: 3.30.0
+          extensionHash: 47cc7bb6962caf356716e7596448336302d1d977715b6147a74a142dc43b391b
 extension_services:
     service_operations:
       - extensionType: as3
@@ -483,8 +534,8 @@ These templates have been tested and validated with the following versions of BI
 
 | BIG-IP Version | Build Number |
 | --- | --- |
-| 16.0.1.1 | 0.0.6 |
-| 14.1.4 | 0.0.11 |
+| 16.1.0 | 0.0.19 |
+| 14.1.4.4 | 0.0.4 |
 
 
 ## Documentation

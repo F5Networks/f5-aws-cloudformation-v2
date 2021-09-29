@@ -10,6 +10,9 @@
 ../../examples/modules/application/application.yaml:
 - No Key Diff
 - No Value Diff
+../../examples/modules/bastion/bastion.yaml:
+- No Key Diff
+- No Value Diff
 ../../examples/modules/bigip-autoscale/bigip-autoscale.yaml:
 - No Key Diff
 - No Value Diff
@@ -23,6 +26,9 @@
 - No Key Diff
 - No Value Diff
 ../../examples/modules/network/network.yaml:
+- No Key Diff
+- No Value Diff
+../../examples/modules/telemetry/telemetry.yaml:
 - No Key Diff
 - No Value Diff
 ../../examples/quickstart/quickstart.yaml:

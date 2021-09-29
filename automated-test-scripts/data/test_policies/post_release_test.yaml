@@ -1,10 +1,24 @@
 # Pre release test plan - Templates 2.0 only
 # AWS autoscale example tests
-aws-autoscale-example-test:
+aws-autoscale-bigiq-example-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/bigiq/daily_test.yaml"
+  run: "all"
+  parameters-files:
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/postpub_parameters.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/postpub_parameters1.yaml"
+
+aws-autoscale-payg-example-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/payg/daily_test.yaml"
   run: "all"
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/postpub_parameters.yaml"
+
+# Autoscale PAYG Defaults Example Test
+aws-autoscale-defaults-example-test:
+    test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/payg/defaults_test.yaml"
+    run: "all"
+    parameters-files:
+       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/parameters.yaml"
 
 # AWS quickstart example tests
 aws-quickstart-example-test:
@@ -12,6 +26,14 @@ aws-quickstart-example-test:
   run: "all"
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/postpub_parameters.yaml"
+
+# Quickstart PAYG Defaults Tests
+aws-quickstart-defaults-example-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/defaults_test.yaml"
+  run: "all"
+  parameters-files:
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/parameters.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/parameters.yaml"
 
 # AWS autoscale bigip example tests
 aws-autoscale-bigip-example-test:
@@ -54,3 +76,10 @@ aws-application-example-test:
   run: "all"
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/application/postpub_parameters.yaml"
+
+# AWS telemetry example tests
+aws-telemetry-example-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/telemetry/daily_test.yaml"
+  run: "all"
+  parameters-files:
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/telemetry/postpub_parameters.yaml"
