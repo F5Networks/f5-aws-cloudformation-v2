@@ -1,5 +1,5 @@
 
-# Deploying Bastiob Template
+# Deploying Bastion Template
 
 [![Releases](https://img.shields.io/github/release/f5networks/f5-aws-cloudformation-v2.svg)](https://github.com/f5networks/f5-aws-cloudformation-v2/releases)
 [![Issues](https://img.shields.io/github/issues/f5networks/f5-aws-cloudformation-v2.svg)](https://github.com/f5networks/f5-aws-cloudformation-v2/issues)
@@ -16,7 +16,7 @@
 
 ## Introduction
 
-This template deploys a simple example Bastion host(s). It launches a Ubuntu OS Linux VM used for hosting bastion and can be customized to deploy your own startup script
+This template deploys a simple example Bastion host(s). It launches a Ubuntu OS Linux VM used for hosting bastion and can be customized to deploy your own startup script.
 
 
 ## Prerequisites
@@ -46,7 +46,7 @@ This template deploys a simple example Bastion host(s). It launches a Ubuntu OS 
 | customImageId | No | Custom Image AMI ID you wish to deploy. |
 | environment | No | Environment Tag. |
 | group | No | Group Tag. |
-| instanceType | No | App EC2 instance type. For example, 't2.small'. |
+| instanceType | No | App EC2 instance type. For example: `t2.small`. |
 | owner | No | Application Tag. |
 | restrictedSrcAddress | Yes | The IP address range that can be used to SSH to the EC2 instances. |
 | scalingMaxSize | No | The maximum number of BIG-IP instances (2-100) that can be created in the Autoscale Group. |
