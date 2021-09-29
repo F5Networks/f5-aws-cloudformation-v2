@@ -132,7 +132,7 @@ Metadata:
         default: Unique string
       vpc:
         default: VPC Id
-  Version: 1.0.1.0
+  Version: 1.1.0.0
 Outputs:
   stackName:
     Description: dag nested stack name
@@ -437,6 +437,10 @@ Resources:
       TargetGroupAttributes:
         - Key: deregistration_delay.timeout_seconds
           Value: '20'
+        - Key: stickiness.enabled
+          Value: 'true'
+        - Key: stickiness.type
+          Value: 'source_ip'
       VpcId: !Ref vpc
   ExternalTargetGroupHttp:
     Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
@@ -712,6 +716,10 @@ Resources:
     Properties:
       GroupDescription: 'Public or External interface rules, including BIG-IP management'
       SecurityGroupIngress:
+        - CidrIp: !Ref vpcCidr
+          FromPort: 22
+          IpProtocol: tcp
+          ToPort: 22
         - CidrIp: !Ref restrictedSrcAddressMgmt
           FromPort: 22
           IpProtocol: tcp
@@ -728,6 +736,14 @@ Resources:
           FromPort: 443
           IpProtocol: tcp
           ToPort: 443
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: !Ref vpcCidr
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: !Ref vpcCidr
       Tags:
         - Key: costcenter
           Value: !Ref cost

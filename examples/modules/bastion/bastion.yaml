@@ -1,0 +1,349 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  This template deploys all components to support the bastion, with the
+  exception of those related to BIG-IP. An autoscaling group for the
+  bastion is created.
+Conditions:
+  useBastionSecurityGroupId: !Not
+    - !Equals
+      - !Ref bastionSecurityGroupId
+      - ''
+  useStaticIp: !Not
+    - !Equals
+      - !Ref staticIp
+      - ''
+  useCustomImage: !Not
+    - !Equals
+      - !Ref customImageId
+      - ''
+  Standalone: !Equals
+    - 'false'
+    - !Ref createAutoscaleGroup
+  Autoscale: !Equals
+      - 'true'
+      - !Ref createAutoscaleGroup
+Mappings:
+  imageRegionMap:
+    af-south-1:
+      AMI: ami-022666956ad401a16
+    ap-northeast-1:
+      AMI: ami-015f1a68ce825a8d2
+    ap-northeast-2:
+      AMI: ami-0be9734c9e68b99f4
+    ap-south-1:
+      AMI: ami-00aaac1f2ef4ce965
+    ap-southeast-1:
+      AMI: ami-0012ffabeb7413479
+    ap-southeast-2:
+      AMI: ami-03ec1fe05b3849c74
+    ca-central-1:
+      AMI: ami-04c56d394d31cdeac
+    eu-central-1:
+      AMI: ami-0980c5102b5ef10cc
+    me-south-1:
+      AMI: ami-03cc0b5db8321f2e5
+    ap-east-1:
+      AMI: ami-0c7e5903bee96ef81
+    eu-north-1:
+      AMI: ami-0663a4867a210287a
+    eu-south-1:
+      AMI: ami-035e213233577516f
+    eu-west-1:
+      AMI: ami-0213344887e47003a
+    eu-west-2:
+      AMI: ami-0add0a5a0cf9afc6c
+    eu-west-3:
+      AMI: ami-01019e7343a5f361d
+    sa-east-1:
+      AMI: ami-0312c74c38dc7bae6
+    us-east-1:
+      AMI: ami-0db6c6238a40c0681
+    us-east-2:
+      AMI: ami-03b6c8bd55e00d5ed
+    us-west-1:
+      AMI: ami-0f5868930cb63c89c
+    us-west-2:
+      AMI: ami-038a0ccaaedae6406
+Metadata:
+  'AWS::CloudFormation::Interface':
+    ParameterGroups:
+      - Label:
+          default: Application Settings
+        Parameters:
+          - bastionSecurityGroupId
+          - mgmtSubnet
+          - mgmtSubnets
+          - createAutoscaleGroup
+          - customImageId
+          - instanceType
+          - restrictedSrcAddress
+          - scalingMaxSize
+          - scalingMinSize
+          - sshKey
+          - staticIp
+          - vpc
+    ParameterLabels:
+      application:
+        default: Application
+      cost:
+        default: Cost Center
+      environment:
+        default: Environment
+      group:
+        default: Group
+      owner:
+        default: Owner
+      bastionSecurityGroupId:
+        default: The resource ID of a security group to apply to the mgmt
+      mgmtSubnet:
+        default: Management Subnet ID used in case of standalone mgmt
+      mgmtSubnets:
+        default: Management Subnet IDs
+      createAutoscaleGroup:
+        default: The ARN of the AWS secret containing the password used during BIG-IP licensing via BIG-IQ
+      instanceType:
+        default: Must be a valid EC2 instance type for BIG-IP
+      restrictedSrcAddress:
+        default: The IP address range used to SSH and access management GUI on the EC2 instances
+      scalingMaxSize:
+        default: Maximum number of BIG-IP instances (2-100) that can be created in the Auto Scale Group
+      scalingMinSize:
+        default: Minimum number of BIG-IP instances (1-99) you want available in the Auto Scale Group
+      sshKey:
+        default: Supply the public key that will be used for SSH authentication to the BIG-IP and Bastion virtual machines
+      staticIp:
+        default: The private IP address to apply as primary private address
+      uniqueString:
+        default: Unique string
+      vpc:
+        default: VPC ID
+  Version: 1.1.0.0
+Outputs:
+  stackName:
+    Description: bastion nested stack name
+    Value: !Ref "AWS::StackName"
+  bastionAutoscaleGroupName:
+    Condition: Autoscale
+    Value: !Ref bastionAutoscaleGroup
+  bastionInstanceId:
+    Condition: Standalone
+    Description: Bastion server instance-id
+    Value: !Ref BastionInstance
+Parameters:
+  bastionSecurityGroupId:
+    Default: ''
+    Description: The resource ID of a security group to apply to the Bastion.
+    Type: String
+  application:
+    Default: f5app
+    Description: Application Tag.
+    MaxLength: 50
+    Type: String
+  mgmtSubnet:
+    Default: ''
+    Description: Management Subnet ID used in case of standalone Bastion host.
+    Type: String
+  mgmtSubnets:
+    Default: ''
+    Description: Management Subnet IDs.
+    Type: CommaDelimitedList
+  cost:
+    Default: f5cost
+    Description: Cost Center Tag.
+    Type: String
+  createAutoscaleGroup:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+    Description: Choose true to create the Bastion instances in an autoscaling configuration.
+    Type: String
+  customImageId:
+    Default: ''
+    Description: Provide Custom Image AMI ID you wish to deploy.
+    Type: String
+  environment:
+    Default: f5env
+    MaxLength: 50
+    Type: String
+  group:
+    Default: f5group
+    MaxLength: 50
+    Type: String
+  instanceType:
+    AllowedValues:
+      - t2.small
+    ConstraintDescription: Must be a valid EC2 instance type for BIG-IP
+    Default: t2.small
+    Description: Enter valid instance type.
+    Type: String
+  owner:
+    Default: f5owner
+    MaxLength: 50
+    Type: String
+  restrictedSrcAddress:
+    AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
+    Description: REQUIRED - The IP address range used to SSH and access management GUI on the EC2 instances.
+    MaxLength: '18'
+    MinLength: '9'
+    Type: String
+  scalingMaxSize:
+    ConstraintDescription: Must be a number between 2-100
+    Default: 2
+    Description: Maximum number of BIG-IP instances (2-100) that can be created in the Auto Scale Group.
+    MaxValue: 100
+    MinValue: 2
+    Type: Number
+  scalingMinSize:
+    ConstraintDescription: Must be a number between 1-99
+    Default: 1
+    Description: Minimum number of BIG-IP instances (1-99) you want available in the Auto Scale Group.
+    MaxValue: 99
+    MinValue: 1
+    Type: Number
+  sshKey:
+    Description: REQUIRED - Supply the public key that will be used for SSH authentication to the bastion virtual machines.
+    Type: AWS::EC2::KeyPair::KeyName
+  staticIp:
+    Default: ''
+    Description: The private IP address to apply as primary private address. The address must reside in the subnet provided in the subnetId parameter. ***NOTE:*** When set to empty string, DHCP will be used for allocating ip address.
+    Type: String
+  uniqueString:
+    AllowedPattern: ^[a-zA-Z][a-zA-Z0-9]{1,11}$
+    ConstraintDescription: Must Contain between 1 and 12 alphanumeric characters with first character as a letter.
+    Default: myUniqStr
+    Description: Unique String used when creating object names or Tags.
+    Type: String
+  vpc:
+    Description: REQUIRED - VPC ID.
+    Type: AWS::EC2::VPC::Id
+Resources:
+  BastionInstance:
+    Condition: Standalone
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId:
+        !If
+        - useCustomImage
+        - !Ref customImageId
+        - !FindInMap
+          - imageRegionMap
+          - !Ref 'AWS::Region'
+          - AMI
+      InstanceType: !Ref instanceType
+      KeyName: !Ref sshKey
+      NetworkInterfaces:
+        !If
+        - useStaticIp
+        -
+          - AssociatePublicIpAddress: true
+            DeviceIndex: "0"
+            SubnetId: !Ref mgmtSubnet
+            GroupSet:
+              - !If
+                - useBastionSecurityGroupId
+                -
+                  !Ref bastionSecurityGroupId
+                - !Ref AWS::NoValue
+            PrivateIpAddress: !Ref staticIp
+        -
+          - AssociatePublicIpAddress: true
+            DeviceIndex: "0"
+            SubnetId: !Ref mgmtSubnet
+            GroupSet:
+              - !If
+                - useBastionSecurityGroupId
+                -
+                  !Ref bastionSecurityGroupId
+                - !Ref AWS::NoValue
+      UserData: !Base64
+        'Fn::Join':
+          - ''
+          - - |
+              #!/bin/bash
+            - |
+              sudo sh -c 'echo "***** Welcome to Bastion Host *****" > /etc/motd'
+      Tags:
+        - Key: application
+          Value: !Ref application
+        - Key: cost
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-bastion-instance'
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
+  bastionLaunchConfig:
+    Condition: Autoscale
+    Type: 'AWS::AutoScaling::LaunchConfiguration'
+    Properties:
+      ImageId: !FindInMap
+        - imageRegionMap
+        - !Ref 'AWS::Region'
+        - AMI
+      InstanceType: !Ref instanceType
+      AssociatePublicIpAddress: true
+      KeyName: !Ref sshKey
+      SecurityGroups:
+        - !If
+          - useBastionSecurityGroupId
+          - !Ref bastionSecurityGroupId
+          - !Ref AWS::NoValue
+      UserData: !Base64
+        'Fn::Join':
+          - ''
+          - - |
+              #!/bin/bash
+            - |
+              sudo sh -c 'echo "***** Welcome to Bastion Host *****" > /etc/motd'
+
+  bastionAutoscaleGroup:
+    Condition: Autoscale
+    Type: 'AWS::AutoScaling::AutoScalingGroup'
+    Properties:
+      AutoScalingGroupName: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-bastion-autoscale-group'
+      Tags:
+        - Key: application
+          PropagateAtLaunch: true
+          Value: !Ref application
+        - Key: cost
+          PropagateAtLaunch: true
+          Value: !Ref cost
+        - Key: environment
+          PropagateAtLaunch: true
+          Value: !Ref environment
+        - Key: group
+          PropagateAtLaunch: true
+          Value: !Ref group
+        - Key: Name
+          PropagateAtLaunch: true
+          Value: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-bastion-autoscale-instance'
+        - Key: owner
+          PropagateAtLaunch: true
+          Value: !Ref owner
+      VPCZoneIdentifier: !Ref mgmtSubnets
+      Cooldown: '600'
+      HealthCheckGracePeriod: 120
+      LaunchConfigurationName: !Ref bastionLaunchConfig
+      MaxSize: !Ref scalingMaxSize
+      MinSize: !Ref scalingMinSize
+      MetricsCollection:
+        - Granularity: 1Minute
+    UpdatePolicy:
+      AutoScalingRollingUpdate:
+        MaxBatchSize: 1
+        MinInstancesInService: 1
+        PauseTime: PT3M

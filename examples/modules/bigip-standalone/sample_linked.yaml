@@ -1,15 +1,16 @@
-AWSTemplateFormatVersion: 2010-09-09
-Description: This template represents an example of a linked deployment of the BIG-IP Standalone template
+AWSTemplateFormatVersion: '2010-09-09'
+Description: This template represents an example of a linked deployment of the BIG-IP
+  Standalone template
 Resources:
   Access:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: >-
-        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.0.1.0/examples/modules/bigip-standalone/bigip-standalone.yaml
+        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.1.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml
       Parameters:
         bigIpInstanceProfile: ''
         bigIpRuntimeInitConfig: 'https://some-delivery-locatoion.com/config.yaml'
-        bigIpRuntimeInitPackageUrl: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run'
+        bigIpRuntimeInitPackageUrl: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.3.2/dist/f5-bigip-runtime-init-1.3.2-1.gz.run'
         customImageId: ami-id
         externalPrimaryPublicId: eip-000003
         externalPublicIpIds: 'eip-00003,eip-00004,eip-00005'
@@ -31,12 +32,12 @@ Resources:
         uniqueString: myUniqStr
 Outputs:
   stackName:
-    Value: !GetAtt BigIp.Outputs.stackName
+    Value: !GetAtt 'BigIp.Outputs.stackName'
   bigIpInstanceId:
-    Value: !GetAtt BigIp.Outputs.bigIpInstanceId
+    Value: !GetAtt 'BigIp.Outputs.bigIpInstanceId'
   bigIp2nicExternalInterfacePrivateIp:
-    Value: !GetAtt BigIp.Outputs.bigIp2nicExternalInterfacePrivateIp
+    Value: !GetAtt 'BigIp.Outputs.bigIp2nicExternalInterfacePrivateIp'
   bigIp3NicExternalInterfacePrivateIp:
-    Value: !GetAtt BigIp.Outputs.bigIp3NicExternalInterfacePrivateIp
+    Value: !GetAtt 'BigIp.Outputs.bigIp3NicExternalInterfacePrivateIp'
   bigIp3NicInternalInterfacePrivateIp:
-    Value: !GetAtt BigIp.Outputs.bigIp3NicInternalInterfacePrivateIp
+    Value: !GetAtt 'BigIp.Outputs.bigIp3NicInternalInterfacePrivateIp'
