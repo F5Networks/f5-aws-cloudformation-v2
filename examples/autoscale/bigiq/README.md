@@ -43,7 +43,7 @@
 
 ## Introduction
 
-This solution uses a parent template to launch several linked child templates (modules) to create a full example stack for the BIG-IP Autoscale solution. The linked templates are located in the examples/modules directories in this repository. **F5 recommends you clone this repository and modify these templates to fit your use case.** 
+This solution uses a parent template to launch several linked child templates (modules) to create a full example stack for the BIG-IP Autoscale solution. The linked templates are located in the [examples/modules](https://github.com/F5Networks/f5-aws-cloudformation-v2/tree/main/examples/modules) directory in this repository. **F5 recommends you clone this repository and modify these templates to fit your use case.** 
 
 The modules below create the following resources:
 
@@ -159,9 +159,9 @@ This solution leverages more traditional Autoscale configuration management prac
 | owner | No | Application Tag. |
 | provisionExternalBigipLoadBalancer | No | Flag to provision external Load Balancer. |
 | provisionInternalBigipLoadBalancer | No | Flag to provision internal Load Balancer. |
-| provisionPublicIp | No | Whether or not to provision Public IP Addresses for the BIG-IP Network Interfaces. By default, Public IP addresses are provisioned. |
-| restrictedSrcAddressApp | Yes | The IP address range that can be used to access web traffic (80/443) to the EC2 instances. |
-| restrictedSrcAddressMgmt | Yes | The IP address range used to SSH and access management GUI on the EC2 instances. **IMPORTANT**: Please restrict to your client IP. |
+| provisionPublicIp | No | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host tier will be provisioned instead. See [diagram](diagram-w-bastion.png). |
+| restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The vpc cidr is automatically added for internal usage, ex. access via bastion host, clustering, etc. **IMPORTANT**: Please restrict to your client, for example 'X.X.X.X/32'. WARNING - For eval purposes only. Production should never have the BIG-IP Management interface exposed to Internet.|
+| restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to access web traffic (80/443) to the EC2 instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. NOTE: The vpc cidr is automatically added for internal usage. |
 | s3BucketName | No | S3 bucket name for the modules. S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen. |
 | s3BucketRegion | No | The AWS Region where the Quick Start S3 bucket (s3BucketName) is hosted. When using your own bucket, you must specify this value. |
 | secretArn | No | The ARN of a Secrets Manager secret. |
@@ -469,42 +469,47 @@ To test the WAF service, perform the following steps:
 
 ### Accessing the BIG-IP
 
-As mentioned in [Configuration notes](#important-configuration-notes), by default, this solution does not create a password-authenticated user, and accessing or logging into the instances themselves is for demonstration or debugging purposes only.
+As mentioned in [Configuration notes](#important-configuration-notes), by default, this solution does not create a password authenticated user and accessing or logging into the instances themselves is for demonstration or debugging purposes only.
 
 From Template Outputs:
-
-1. 
-   - **Console**: Navigate to **CloudFormation > *STACK_NAME* > Outputs**
-   - **AWS CLI**: 
+  - **Console**: Navigate to **CloudFormation > *STACK_NAME* > Outputs**.
+  - **AWS CLI**: 
       ```bash
       aws cloudformation describe-stacks --region ${REGION} --stack-name ${STACK_NAME}  --query  "Stacks[0].Outputs"
       ```
 
-2. Obtain an Instance ID of one of the instances from the Autoscale Group:
+  - Obtain an Instance ID of one of the instances from the BIG-IP Autoscale Group:
     - **Console**:
-      - Gather BigipAutoscaleGroup name.
-      - Navigate to **CloudFormation > *STACK_NAME* > Outputs > BigipAutoscaleGroup** 
-      - Navigate to **EC2 > Auto Scaling Groups > BigipAutoscaleGroup > Instance Management**
+      - Navigate to **CloudFormation > *STACK_NAME* > Outputs > *bigIpAutoscaleGroupName***. 
+      - Navigate to **EC2 > Autos Scaling Groups > *bigIpAutoscaleGroupName* > Instance Management**
     - **AWS CLI**: 
         ```bash
-        aws cloudformation describe-stacks --region ${REGION} --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpAutoscaleGroup'].OutputValue" --output text
+        aws cloudformation describe-stacks --region ${REGION} --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpAutoscaleGroupName'].OutputValue" --output text
         ```
         ```bash
         aws autoscaling describe-auto-scaling-groups --region ${REGION} --auto-scaling-group-name ${bigIpAutoscaleGroup} --query 'AutoScalingGroups[*].Instances[*]'
         ```
 
-3. Obtain the IP address of the BIG-IP Management Port:
-    - **Console**: Navigate to **EC2 > Instances > *INSTANCE_ID* > Instance Summary > Public IPv4 address** or **Private IPv4 address**
-    - **AWS CLI**: 
-      - Public IPs: 
-          ```bash
-          aws ec2 describe-instances --region ${REGION} --filters "Name=instance-state-name,Values=running" "Name=instance-id,Values=${INSTANCE_ID}" --query 'Reservations[*].Instances[*].[PublicIpAddress]' --output text
-          ```
-      - Private IPs: 
-          ```bash
-          aws ec2 describe-instances --region ${REGION} --filters "Name=instance-state-name,Values=running" "Name=instance-id,Values=${INSTANCE_ID}" --query 'Reservations[*].Instances[*].[PrivateIpAddress]' --output text
-          ```
+  - Obtain the Public IP address of the BIG-IP Management Port:
+      - **Console**: Navigate to **EC2 > Instances > *INSTANCE_ID* > Instance Summary > Public IPv4 address**.
+      - **AWS CLI**: 
+        - Public IPs: 
+            ```bash
+            aws ec2 describe-instances --region ${REGION} --filters "Name=instance-state-name,Values=running" "Name=instance-id,Values=${INSTANCE_ID}" --query 'Reservations[*].Instances[*].[PublicIpAddress]' --output text
+            ```
 
+  - Or if you are going through a bastion host (when **provisionPublicIP** = **false**):
+      - Follow steps above for the BIG-IP but substitute **bigIpAutoscaleGroup** with **bastionAutoscaleGroupName** 
+         - Obtain an Instance ID of one of the Bastion Host instances
+         - Obtain the Public IP of the Bastion Host instance
+
+       - Obtain the Private IP address of the bigip host instead: 
+         -  **Console**: Navigate to **EC2 > Instances > *INSTANCE_ID* > Instance Summary > Public IPv4 address**.
+         -  **AWS CLI**: 
+         - Private IPs: 
+              ```bash
+              aws ec2 describe-instances --region ${REGION} --filters "Name=instance-state-name,Values=running" "Name=instance-id,Values=${INSTANCE_ID}" --query 'Reservations[*].Instances[*].[PrivateIpAddress]' --output text
+              ```
 #### SSH
 
   - **SSH key authentication**: 
@@ -512,25 +517,58 @@ From Template Outputs:
       ssh admin@${IP_ADDRESS_FROM_OUTPUT} -i ${YOUR_PRIVATE_SSH_KEY}
       ```
 
+    - OR if you are going through a bastion host (when **provisionPublicIP** = **false**):
+
+        From your desktop client/shell, create an SSH tunnel:
+        ```bash
+        ssh -i [keyname-passed-to-template.pem] -o ProxyCommand='ssh -i [keyname-passed-to-template.pem] -W %h:%p ubuntu@[BASTION-HOST-PUBLIC-IP]' admin@[BIG-IP-MGMT-PRIVATE-IP]
+        ```
+
+        Replace the variables in brackets before submitting the command.
+
+        For example:
+        ```bash
+        ssh -i ~/.ssh/mykey.pem -o ProxyCommand='ssh -i ~/.ssh/mykey.pem -W %h:%p ubuntu@34.82.102.190' admin@10.0.1.11
+
 #### WebUI 
 
-- As mentioned above, no password is configured by default. If you would like or need to login to the GUI for debugging or inspection, you can create a custom username/password by logging in to admin account via SSH (as shown above) and use TMSH to create one:
-    At the TMSH prompt ```admin@(ip-10-0-0-100)(cfg-sync Standalone)(Active)(/Common)(tmos)#``` :
-      
-    ```shell
-        create auth user <YOUR_WEBUI_USERNAME> password <YOUR_STRONG_PASSWORD> partition-access add { all-partitions { role admin } }
-        save sys config
-    ```  
+- Login in via WebUI:
+  - As mentioned above, no password is configured by default. If you would like or need to login to the GUI for debugging or inspection, you can create a custom username/password by logging in to admin account via SSH (per above) and use tmsh to create one:
+    At the TMSH prompt ```admin@(bigip1)(cfg-sync Standalone)(Active)(/Common)(tmos)#```:
+      ```shell
+      create auth user <YOUR_WEBUI_USERNAME> password <YOUR_STRONG_PASSWORD> partition-access add { all-partitions { role admin } }
 
-- Open a browser to the Management IP
-  - ```https://${IP_ADDRESS_FROM_OUTPUT}:8443```
+      save sys config
+      ```
+
+  - Open a browser to the Management IP
+    - ```https://${IP_ADDRESS_FROM_OUTPUT}:8443```
+
+        
+
+    - OR when you are going through a bastion host (when **provisionPublicIP** = **false**):
+
+        From your desktop client/shell, create an SSH tunnel:
+        ```bash
+        ssh -i [keyname-passed-to-template.pem] ubuntu@[BASTION-HOST-PUBLIC-IP] -L 8443:[BIG-IP-MGMT-PRIVATE-IP]:[BIGIP-GUI-PORT]
+        ```
+        For example:
+        ```bash
+        ssh -i ~/.ssh/mykey.pem ubuntu@34.82.102.190 -L 8443:10.0.1.11:8443
+        ```
+
+        You should now be able to open a browser to the BIG-IP UI from your desktop:
+
+        https://localhost:8443
+
+
   - NOTE: 
     - By default, for Single NIC deployments, the management port is 8443.
-    - By default, the BIG-IP WebUI starts with a self-signed certificate. Follow your browser's instructions for accepting self-signed certs (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, click "Accept Risk and Continue").
+    - By default, the BIG-IP's WebUI starts with a self-signed cert. Follow your browsers instructions for accepting self-signed certs (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, Click "Accept Risk and Continue" ).
+
   - To Login: 
     - username: `<YOUR_WEBUI_USERNAME>`
     - password: `<YOUR_STRONG_PASSWORD>`
-
 
 ### Further Exploring
 
