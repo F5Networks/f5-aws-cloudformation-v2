@@ -198,7 +198,7 @@ An easy first way to deploy this solution is to use the deploy button below. How
 
 **NOTE**: By default, the link takes you to an AWS console set to the us-east-1 region. Select the AWS region (upper right) in which you want to deploy after clicking the Launch Stack button. 
 
-<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Autoscale-WAF-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/autoscale/bigiq/autoscale.yaml">
+<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Autoscale-WAF-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigiq/autoscale.yaml">
     <img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png"/></a>
 
 
@@ -238,14 +238,14 @@ By default, the templates in this repository are also publicly hosted on S3 at [
 
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/autoscale/bigiq/autoscale.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigiq/autoscale.yaml \
   --parameters "ParameterKey=<KEY>,ParameterValue=<VALUE> ParameterKey=<KEY>,ParameterValue=<VALUE>"
 ```
 
 or with a local parameters file (see `autoscale-parameters.json` example in this directory):
 ```bash
  aws cloudformation create-stack --region us-east-1 --stack-name mywaf \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/autoscale/bigiq/autoscale.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigiq/autoscale.yaml \
   --parameters file://autoscale-parameters.json
 ```
 
@@ -253,7 +253,7 @@ Example:
 
 ```bash
  aws cloudformation create-stack --region us-east-1 --stack-name mywaf \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/autoscale/bigiq/autoscale.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigiq/autoscale.yaml \
   --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0 ParameterKey=uniqueString,ParameterValue=mywaf ParameterKey=bigIqAddress,ParameterValue=1.1.1.1 ParameterKey=bigIqAddressType,ParameterValue=public ParameterKey=bigIqUsername,ParameterValue=bigiq_license_user ParameterKey=bigIqSecretArn ParameterValue=arn:aws:secretsmanager:us-east-1:111111111111:secret:myBigIqSecret-xdg0kdf ParameterKey=bigIqLicensePool ParameterValue=myUtilityPool ParameterKey=bigIqUtilitySku,ParameterValue=F5-BIG-MSP-BT-1G ParameterKey=bigIqTenant,ParameterValue=myAutoScaleDeployment ParameterKey=bigIpRuntimeInitConfig,ParameterValue=https://raw.githubusercontent.com/myAccount/myRepo/0.0.1/runtime-init.conf" 
 ```
 
@@ -379,7 +379,6 @@ with:
           region: '{{{ REGION }}}'
           bucket: <YOUR_BUCKET_NAME>
   ```
-
   3. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, git, S3, etc.).
   4. Update the **bigIpRuntimeInitConfig** input parameter to reference the URL of the customized configuration file.
   5. Update the **loggingS3BucketName** input parameter with name of your logging destination. 
@@ -608,7 +607,7 @@ To update the BIG-IP configuration:
   4. Update the CloudFormation Stack with the new **bigIpRuntimeInitConfig** parameter:
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
-        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/autoscale/bigiq/autoscale.yaml \
+        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigiq/autoscale.yaml \
         --parameters "ParameterKey=bigIpRuntimeInitConfig,ParameterValue=https://<YOUR_NEW_LOCATION> ParameterKey=<KEY>,ParameterValue=<VALUE>"
       ```
 
@@ -618,7 +617,7 @@ To update the BIG-IP OS version:
   1. Update the CloudFormation Stack with new **imageName** parameter:
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
-        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/autoscale/bigiq/autoscale.yaml \
+        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigiq/autoscale.yaml \
         --parameters "ParameterKey=imageName,ParameterValue=${imageName} ParameterKey=<KEY>,ParameterValue=<VALUE>"
       ```
 
@@ -627,7 +626,7 @@ To update the BIG-IP instance size:
   2. Update the CloudFormation Stack with new **instanceType** parameter:
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
-        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/autoscale/bigiq/autoscale.yaml \
+        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigiq/autoscale.yaml \
         --parameters "ParameterKey=instanceSize,ParameterValue=${instanceType} ParameterKey=<KEY>,ParameterValue=<VALUE>"
       ```
 
@@ -750,9 +749,9 @@ If Licenses are not revoked from BIG-IQ after scaling down, check the Revoke Fun
 
 This CloudFormation template downloads helper code to configure the BIG-IP system:
 
-- f5-bigip-runtime-init.gz.run: The self-extracting installer for the F5 BIG-IP Runtime Init RPM can be verified against a SHA256 checksum provided as a release asset on the F5 BIG-IP Runtime Init public GitHub repository, for example: https://github.com/F5Networks/f5-bigip-runtime-init/releases/download/1.2.1/f5-bigip-runtime-init-1.2.1-1.gz.run.sha256.
+- f5-bigip-runtime-init.gz.run: The self-extracting installer for the F5 BIG-IP Runtime Init RPM can be verified against a SHA256 checksum provided as a release asset on the F5 BIG-IP Runtime Init public GitHub repository, for example: https://github.com/F5Networks/f5-bigip-runtime-init/releases/download/1.3.2/f5-bigip-runtime-init-1.3.2-1.gz.run.sha256.
 - F5 BIG-IP Runtime Init: The self-extracting installer script extracts, verifies, and installs the F5 BIG-IP Runtime Init RPM package. Package files are signed by F5 and automatically verified using GPG.
-- F5 Automation Toolchain components: F5 BIG-IP Runtime Init downloads, installs, and configures the F5 Automation Toolchain components. Although it is optional, F5 recommends adding the extensionHash field to each extension install operation in the configuration file. The presence of this field triggers verification of the downloaded component package checksum against the provided value. The checksum values are published as release assets on each extension's public GitHub repository, for example: https://github.com/F5Networks/f5-appsvcs-extension/releases/download/v3.26.0/f5-appsvcs-3.26.0-5.noarch.rpm.sha256
+- F5 Automation Toolchain components: F5 BIG-IP Runtime Init downloads, installs, and configures the F5 Automation Toolchain components. Although it is optional, F5 recommends adding the extensionHash field to each extension install operation in the configuration file. The presence of this field triggers verification of the downloaded component package checksum against the provided value. The checksum values are published as release assets on each extension's public GitHub repository, for example: https://github.com/F5Networks/f5-appsvcs-extension/releases/download/v3.30.0/f5-appsvcs-3.30.0-5.noarch.rpm.sha256
 
 The following configuration file will verify the Declarative Onboarding and Application Services extensions before configuring AS3 from a local file:
 
@@ -761,11 +760,11 @@ runtime_parameters: []
 extension_packages:
     install_operations:
         - extensionType: do
-          extensionVersion: 1.16.0
-          extensionHash: 536eccb9dbf40aeabd31e64da8c5354b57d893286ddc6c075ecc9273fcca10a1
+          extensionVersion: 1.23.0
+          extensionHash: bfe88c7cf3fdb24adc4070590c27488e203351fc808d57ae6bbb79b615d66d27
         - extensionType: as3
-          extensionVersion: 3.23.0
-          extensionHash: de615341b91beaed59195dceefc122932580d517600afce1ba8d3770dfe42d28
+          extensionVersion: 3.30.0
+          extensionHash: 47cc7bb6962caf356716e7596448336302d1d977715b6147a74a142dc43b391b
 extension_services:
     service_operations:
       - extensionType: as3

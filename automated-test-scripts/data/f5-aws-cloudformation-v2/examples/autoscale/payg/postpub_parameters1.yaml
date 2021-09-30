@@ -7,14 +7,14 @@ BASTION SCALE MIN SIZE: 1
 BIGIP IMAGE: '*16.1.0-0.0.19**PAYG-Best 1Gbps*'
 BIGIP INSTANCE TYPE: m5.2xlarge
 BIGIP MGMT PORT: 8443
-BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run'
+BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.3.2/dist/f5-bigip-runtime-init-1.3.2-1.gz.run'
 BIGIQ PASSWORD: b1gAdminPazz
 CIDR: 10.0.0.0/16
 CLOUDWATCH LOG GROUP NAME: f5telemetry
 CLOUDWATCH LOG STREAM NAME: f5-waf-logs
 CLOUDWATCH DASHBOARD NAME: F5-BIGIP-WAF-View
 CREATE LOG DESTINATION: 'false'
-CUSTOM IMAGE ID: ami-0bc48624caf86a320 # F5 BIGIP-16.0.1.1-0.0.6 PAYG-Best 1Gbps-210129034806 for us-west-2
+CUSTOM IMAGE ID: ''
 HIGH CPU THRESHOLD: 80
 LICENSE TYPE: payg
 LOW CPU THRESHOLD: 20
