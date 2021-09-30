@@ -9,11 +9,11 @@
   },
   {
     "ParameterKey": "artifactLocation",
-    "ParameterValue": "f5-aws-cloudformation-v2/v1.0.1.0/examples/"
+    "ParameterValue": "f5-aws-cloudformation-v2/v1.1.0.0/examples/"
   },
   {
     "ParameterKey": "bigIpRuntimeInitConfig",
-    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.0.1.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml"
+    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml"
   },
   {
     "ParameterKey": "bigIpRuntimeInitPackageUrl",
@@ -36,10 +36,6 @@
     "ParameterValue": "f5group-quickstart"
   },
   {
-    "ParameterKey": "provisionPublicIp",
-    "ParameterValue": "true"
-  },
-  {
     "ParameterKey": "bigIpImage",
     "ParameterValue": "Best"
   },
@@ -53,19 +49,23 @@
   },
   {
     "ParameterKey": "numAzs",
-    "ParameterValue": "1"
+    "ParameterValue": 1
   },
   {
     "ParameterKey": "numNics",
-    "ParameterValue": "3"
+    "ParameterValue": 3
   },
   {
     "ParameterKey": "numSubnets",
-    "ParameterValue": "4"
+    "ParameterValue": 4
   },
   {
     "ParameterKey": "owner",
     "ParameterValue": "f5owner-quickstart"
+  },
+  {
+    "ParameterKey": "provisionPublicIp",
+    "ParameterValue": "true"
   },
   {
     "ParameterKey": "restrictedSrcAddressApp",

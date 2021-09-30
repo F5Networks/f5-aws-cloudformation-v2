@@ -292,7 +292,7 @@ Metadata:
         default: EC2 KeyPair
       uniqueString:
         default: Unique string
-  Version: 1.0.1.0
+  Version: 1.1.0.0
 Outputs:
   stackName:
     Description: BIG-IP nested stack name

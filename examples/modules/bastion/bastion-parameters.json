@@ -1,6 +1,6 @@
 [
   {
-    "ParameterKey": "mgmtSecurityGroupId",
+    "ParameterKey": "bastionSecurityGroupId",
     "ParameterValue": ""
   },
   {
@@ -8,7 +8,7 @@
     "ParameterValue": "f5app"
   },
   {
-    "ParameterKey": "applicationSubnet",
+    "ParameterKey": "mgmtSubnet",
     "ParameterValue": ""
   },
   {
@@ -44,20 +44,16 @@
     "ParameterValue": "f5owner"
   },
   {
-    "ParameterKey": "provisionPublicIp",
-    "ParameterValue": "false"
-  },
-  {
     "ParameterKey": "restrictedSrcAddress",
     "ParameterValue": ""
   },
   {
     "ParameterKey": "scalingMaxSize",
-    "ParameterValue": "2"
+    "ParameterValue": 2
   },
   {
     "ParameterKey": "scalingMinSize",
-    "ParameterValue": "1"
+    "ParameterValue": 1
   },
   {
     "ParameterKey": "sshKey",

@@ -149,7 +149,7 @@ Metadata:
         default: Public or external subnets for the availability zones
       uniqueString:
         default: Unique string
-  Version: 1.0.1.0
+  Version: 1.1.0.0
 Outputs:
   stackName:
     Description: bigip-autoscale nested stack name

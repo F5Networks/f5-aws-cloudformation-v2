@@ -17,11 +17,11 @@
   },
   {
     "ParameterKey": "numAzs",
-    "ParameterValue": "2"
+    "ParameterValue": 2
   },
   {
     "ParameterKey": "numSubnets",
-    "ParameterValue": "3"
+    "ParameterValue": 3
   },
   {
     "ParameterKey": "owner",
@@ -33,7 +33,7 @@
   },
   {
     "ParameterKey": "subnetMask",
-    "ParameterValue": "24"
+    "ParameterValue": 24
   },
   {
     "ParameterKey": "uniqueString",

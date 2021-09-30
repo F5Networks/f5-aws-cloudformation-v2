@@ -9,7 +9,7 @@ AUTOFILL CLPV2 LICENSE KEY: null
 BIGIP IMAGE: ''
 BIGIP INSTANCE TYPE: m5.2xlarge
 BIGIP MGMT PORT: 8443
-BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.2.1/dist/f5-bigip-runtime-init-1.2.1-1.gz.run'
+BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.3.2/dist/f5-bigip-runtime-init-1.3.2-1.gz.run'
 BIGIQ LICENSE POOL: production
 BIGIQ LICENSE S3 ARN: 'arn:aws:s3:::bigiqtest/bigiq.txt'
 BIGIQ PASSWORD: b1gAdminPazz
@@ -17,7 +17,7 @@ CLOUDWATCH LOG GROUP NAME: f5telemetry
 CLOUDWATCH LOG STREAM NAME: f5-waf-logs
 CLOUDWATCH DASHBOARD NAME: F5-BIGIP-WAF-View
 CREATE LOG DESTINATION: 'true'
-CUSTOM IMAGE ID: ami-08257c0c5bb79a3f1 # F5 BIGIP-16.0.1.1-0.0.6 BYOL-All Modules 2Boot Loc-210129034806-5f5a1994-65df-4235-b79c-a3ea049dc1db-ami-02ba492b68266b54b.4 in us-west-1
+CUSTOM IMAGE ID: ''
 HIGH CPU THRESHOLD: 80
 LICENSE TYPE: bigiq
 LOW CPU THRESHOLD: 0

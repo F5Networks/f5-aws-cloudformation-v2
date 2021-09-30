@@ -132,7 +132,7 @@ Metadata:
         default: Unique string
       vpc:
         default: VPC Id
-  Version: 1.0.1.0
+  Version: 1.1.0.0
 Outputs:
   stackName:
     Description: dag nested stack name
