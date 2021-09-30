@@ -30,7 +30,7 @@ PROVISION EXTERNAL LB: 'true'
 PROVISION INTERNAL LB: 'false'
 PROVISION PUBLIC IP: 'false'
 PUBLIC IP: 'true'
-REGION: us-west-2
+REGION: us-east-1
 RUNTIME INIT CONFIG: https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/autoscale/bigip-configurations/<DEWPOINT JOB ID>.yaml
 S3 BUCKET: ''
 SCALE DOWN BYTES THRESHOLD: 35000

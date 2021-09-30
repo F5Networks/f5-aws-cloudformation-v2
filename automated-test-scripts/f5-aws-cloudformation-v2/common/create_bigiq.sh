@@ -20,7 +20,7 @@ bigiq)
     source_cidr=0.0.0.0/0
     bucket_name=`echo <STACK NAME>|cut -c -60|tr '[:upper:]' '[:lower:]'| sed 's:-*$::'`
     aws cloudformation create-stack --disable-rollback --region <REGION> --stack-name <STACK NAME>-bigiq --tags Key=creator,Value=dewdrop Key=delete,Value=True \
-    --template-url https://"$bucket_name".s3-<REGION>.amazonaws.com/f5-existing-stack-byol-2nic-bigiq-licmgmt.template \
+    --template-url https://"$bucket_name".s3.amazonaws.com/f5-existing-stack-byol-2nic-bigiq-licmgmt.template \
     --capabilities CAPABILITY_IAM --parameters \
     ParameterKey=allowUsageAnalytics,ParameterValue=No ParameterKey=Vpc,ParameterValue=$vpc ParameterKey=instanceType,ParameterValue=m4.2xlarge ParameterKey=restrictedSrcAddress,ParameterValue="$source_cidr" \
     ParameterKey=restrictedSrcAddressApp,ParameterValue="$source_cidr" ParameterKey=sshKey,ParameterValue=<SSH KEY> ParameterKey=managementSubnetAz1,ParameterValue=$subnetAz1 \

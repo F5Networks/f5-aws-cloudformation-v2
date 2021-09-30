@@ -525,10 +525,12 @@ Parameters:
     Description: Group Tag.
     Type: String
   lambdaS3BucketName:
+    Default: f5-aws-bigiq-revoke
     Description: REQUIRED - The name of the S3 bucket where the lambdaBigiqRevoke
       lambda function is located.
     Type: String
   lambdaS3Key:
+    Default: main/
     Description: REQUIRED - The top-level key in the lambda S3 bucket where the lambda
       function is located.
     Type: String
