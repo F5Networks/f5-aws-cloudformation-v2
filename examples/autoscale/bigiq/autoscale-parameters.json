@@ -149,11 +149,11 @@
   },
   {
     "ParameterKey": "lambdaS3BucketName",
-    "ParameterValue": ""
+    "ParameterValue": "f5-aws-bigiq-revoke"
   },
   {
     "ParameterKey": "lambdaS3Key",
-    "ParameterValue": ""
+    "ParameterValue": "main/"
   },
   {
     "ParameterKey": "loggingS3BucketName",
