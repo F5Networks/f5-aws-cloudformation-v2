@@ -907,7 +907,7 @@ Resources:
             - |
               # Run
             - |
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws'
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v1.1.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
             - |2+
 
             - |
@@ -1061,7 +1061,7 @@ Resources:
             - |
               # Run
             - |
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws'
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v1.1.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
             - |2+
 
             - |
@@ -1209,7 +1209,7 @@ Resources:
             - |
               # Run
             - |
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws'
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v1.1.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
             - |2+
 
             - |

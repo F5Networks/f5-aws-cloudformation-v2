@@ -347,8 +347,8 @@ aws_bigip_autoscale_module_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/*
-      - automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/*
+      - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/**/*
+      - automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/**/*
       - examples/modules/bigip-autoscale/bigip-autoscale.yaml
   except:
     refs:
