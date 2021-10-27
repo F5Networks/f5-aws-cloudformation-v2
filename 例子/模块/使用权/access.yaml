@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: 2010-09-09
+AWSTemplateFormatVersion: 2021-10-27
 Description: >-
   Access Template is intended to deploy IAM roles for all BIG-IP Cloud Solutions
   (i.e. High-Availability or Autoscale)
