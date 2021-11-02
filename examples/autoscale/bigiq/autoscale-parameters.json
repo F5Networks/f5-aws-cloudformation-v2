@@ -84,16 +84,8 @@
     "ParameterValue": 1
   },
   {
-    "ParameterKey": "bigIqAddress",
-    "ParameterValue": ""
-  },
-  {
     "ParameterKey": "bigIqAddressType",
     "ParameterValue": "private"
-  },
-  {
-    "ParameterKey": "bigIqLicensePool",
-    "ParameterValue": ""
   },
   {
     "ParameterKey": "bigIqSecretArn",
@@ -105,18 +97,6 @@
   },
   {
     "ParameterKey": "bigIqSubnetId",
-    "ParameterValue": ""
-  },
-  {
-    "ParameterKey": "bigIqTenant",
-    "ParameterValue": ""
-  },
-  {
-    "ParameterKey": "bigIqUsername",
-    "ParameterValue": ""
-  },
-  {
-    "ParameterKey": "bigIqUtilitySku",
     "ParameterValue": ""
   },
   {
