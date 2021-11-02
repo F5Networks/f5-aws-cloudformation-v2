@@ -55,13 +55,8 @@ Metadata:
       - Label:
           default: BIG-IQ configuration
         Parameters:
-          - bigIqAddress
           - bigIqAddressType
-          - bigIqUsername
           - bigIqSecretArn
-          - bigIqLicensePool
-          - bigIqUtilitySku
-          - bigIqTenant
           - bigIqSubnetId
           - bigIqSecurityGroupId
       - Label:
@@ -146,18 +141,11 @@ Metadata:
       bigIpScalingMinSize:
         default: Minimum number of BIG-IP instances that can be created in the Autoscale
           Group
-      bigIqAddress:
-        default: The IP address (or hostname) for the BIG-IQ used when licensing the
-          BIG-IP.
       bigIqAddressType:
         default: 'The type (public or private) of IP address or hostname for the BIG-IQ
           to be used when licensing the BIG-IP. When using a private IP address or
           hostname, you must provide values for the bigIqSecurityGroupId and bigIqSubnetId
           parameters.'
-      bigIqLicensePool:
-        default: The BIG-IQ license pool to use during BIG-IP licensing via BIG-IQ.
-          This value should match the BIG-IQ license pool specified in the F5 Declarative
-          Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter.
       bigIqSecretArn:
         default: The ARN of the BIG-IQ secret to use during BIG-IP licensing via BIG-IQ.
       bigIqSecurityGroupId:
@@ -166,14 +154,6 @@ Metadata:
       bigIqSubnetId:
         default: The ID of the subnet where BIG-IQ is deployed. You must provide a
           value for this parameter when using a private BIG-IP address.
-      bigIqTenant:
-        default: The BIG-IQ tenant used during BIG-IP licensing via BIG-IQ. This value
-          should match the BIG-IQ tenant specified in the F5 Declarative Onboarding
-          declaration passed to the bigIpRuntimeInitConfig template parameter.
-      bigIqUtilitySku:
-        default: The BIG-IQ utility license SKU used during BIG-IP licensing via BIG-IQ.
-          This value should match the BIG-IQ utilty SKU specified in the F5 Declarative
-          Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter
       cloudWatchLogGroupName:
         default: CloudWatch Log Group Name
       cloudWatchLogStreamName:
@@ -436,15 +416,6 @@ Parameters:
     MaxValue: 99
     MinValue: 1
     Type: Number
-  bigIqAddress:
-    Default: ''
-    Description: 'The IP address (or hostname) for the BIG-IQ used when licensing
-      the BIG-IP.  Note: The AWS function created by this template will make a REST
-      call to the BIG-IQ (already existing) to revoke a license assignment when a
-      BIG-IP instance is deallocated. This value should match the BIG-IQ address specified
-      in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig
-      template parameter.'
-    Type: String
   bigIqAddressType:
     AllowedValues:
       - private
@@ -455,10 +426,6 @@ Parameters:
       to be used when licensing the BIG-IP.  Note: When using a private IP address
       or hostname, you must provide values for the bigIqSecurityGroupId and bigIqSubnetId
       parameters.'
-    Type: String
-  bigIqLicensePool:
-    Default: ''
-    Description: The BIG-IQ license pool to use during BIG-IP licensing via BIG-IQ.
     Type: String
   bigIqSecretArn:
     Description: The ARN of the AWS secret containing the password used during BIG-IP
@@ -473,24 +440,6 @@ Parameters:
     Default: ''
     Description: The ID of the subnet where BIG-IQ is deployed. You must provide a
       value for this parameter when using a private BIG-IP address.
-    Type: String
-  bigIqTenant:
-    Default: ''
-    Description: The BIG-IQ tenant used during BIG-IP licensing via BIG-IQ. This value
-      should match the BIG-IQ tenant specified in the F5 Declarative Onboarding declaration
-      passed to the bigIpRuntimeInitConfig template parameter.
-    Type: String
-  bigIqUsername:
-    Default: ''
-    Description: The BIG-IQ username used during BIG-IP licensing via BIG-IQ. This
-      value should match the BIG-IQ username specified in the F5 Declarative Onboarding
-      declaration passed to the bigIpRuntimeInitConfig template parameter.
-    Type: String
-  bigIqUtilitySku:
-    Default: ''
-    Description: The BIG-IQ utility license SKU used during BIG-IP licensing via BIG-IQ.
-      This value should match the BIG-IQ utility SKU specified in the F5 Declarative
-      Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter.
     Type: String
   cloudWatchLogGroupName:
     Default: ''
@@ -988,13 +937,9 @@ Resources:
         amiLookupRole: !GetAtt
           - Access
           - Outputs.lambdaAmiExecutionRole
-        bigIqAddress: !Ref 'bigIqAddress'
+        bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig'
         bigIqAddressType: !Ref 'bigIqAddressType'
-        bigIqUsername: !Ref 'bigIqUsername'
         bigIqSecretArn: !Ref 'bigIqSecretArn'
-        bigIqLicensePool: !Ref 'bigIqLicensePool'
-        bigIqUtilitySku: !Ref 'bigIqUtilitySku'
-        bigIqTenant: !Ref 'bigIqTenant'
         bigIqSecurityGroupId: !Ref 'bigIqSecurityGroupId'
         bigIqSubnetId: !Ref 'bigIqSubnetId'
         copyZipsRole: !GetAtt
@@ -1010,6 +955,7 @@ Resources:
           - Outputs.lambdaAccessRole
         lambdaS3BucketName: !Ref 'lambdaS3BucketName'
         lambdaS3Key: !Ref 'lambdaS3Key'
+        uniqueString: !Ref 'uniqueString'
   Network:
     Type: 'AWS::CloudFormation::Stack'
     Properties:

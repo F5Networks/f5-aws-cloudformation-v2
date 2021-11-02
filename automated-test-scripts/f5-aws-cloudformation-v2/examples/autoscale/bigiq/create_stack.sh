@@ -160,32 +160,12 @@ cat <<EOF > parameters.json
         "ParameterValue": "<SCALE UP BYTES THRESHOLD>"
     },
     {
-        "ParameterKey": "bigIqAddress",
-        "ParameterValue": "$bigiq_address"
-    },
-    {
         "ParameterKey": "bigIqAddressType",
         "ParameterValue": "public"
     },
     {
-        "ParameterKey": "bigIqLicensePool",
-        "ParameterValue": "production"
-    },
-    {
         "ParameterKey": "bigIqSecretArn",
         "ParameterValue": "$secret_arn"
-    },
-    {
-        "ParameterKey": "bigIqTenant",
-        "ParameterValue": "myTenant"
-    },
-    {
-        "ParameterKey": "bigIqUsername",
-        "ParameterValue": "admin"
-    },
-    {
-        "ParameterKey": "bigIqUtilitySku",
-        "ParameterValue": "F5-BIG-MSP-BT-1G"
     },
     {
         "ParameterKey": "lambdaS3BucketName",
