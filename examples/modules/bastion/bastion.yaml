@@ -129,6 +129,10 @@ Outputs:
     Condition: Standalone
     Description: Bastion server instance-id
     Value: !Ref BastionInstance
+  bastionPublicIp:
+    Condition: Standalone
+    Description: bastion's public IP address
+    Value: !GetAtt BastionInstance.PublicIp
 Parameters:
   bastionSecurityGroupId:
     Default: ''

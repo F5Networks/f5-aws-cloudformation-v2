@@ -59,5 +59,13 @@ Outputs:
     Value: !GetAtt Dag.Outputs.bigIpExternalEipAllocationId03
   bigIpExternalEipAllocationId04:
     Value: !GetAtt Dag.Outputs.bigIpExternalEipAllocationId04
+  bigIpExternalSecurityGroup:
+    Value: !GetAtt Dag.Outputs.bigIpExternalSecurityGroup
+  bigIpInternalSecurityGroup:
+    Value: !GetAtt Dag.Outputs.bigIpInternalSecurityGroup
+  bigIpMgmtSecurityGroup:
+    Value: !GetAtt Dag.Outputs.bigIpMgmtSecurityGroup
   appSecurityGroupId:
     Value: !GetAtt Dag.Outputs.appSecurityGroupId
+  bastionSecurityGroupId:
+    Value: !GetAtt Dag.Outputs.bastionSecurityGroupId

@@ -720,7 +720,7 @@ Resources:
                   - Outputs.subnetsB
         bastionSecurityGroupId: !GetAtt
           - Dag
-          - Outputs.bigIpExternalSecurityGroup
+          - Outputs.bastionSecurityGroupId
         cost: !Ref 'cost'
         createAutoscaleGroup: 'true'
         environment: !Ref 'environment'
@@ -744,7 +744,7 @@ Resources:
         application: !Ref 'application'
         bigIpExternalSecurityGroup: !GetAtt
           - Dag
-          - Outputs.bigIpExternalSecurityGroup
+          - Outputs.bigIpMgmtSecurityGroup
         bigIpInstanceProfile: !GetAtt
           - Access
           - Outputs.bigIpInstanceProfile
@@ -826,6 +826,9 @@ Resources:
         application: !Ref 'application'
         cost: !Ref 'cost'
         createAppSecurityGroup: 'true'
+        createBastionSecurityGroup: !If [noPublicIp, 'true', 'false']
+        createExternalSecurityGroup: 'false'
+        createInternalSecurityGroup: 'false'
         environment: !Ref 'environment'
         externalSubnetAz1: !Select
           - '0'

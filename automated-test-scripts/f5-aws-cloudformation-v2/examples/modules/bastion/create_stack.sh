@@ -15,10 +15,10 @@ else
 fi
 
 # test for App security group
-if [[ "<CREATE APP SECURITY GROUP>" == "No" ]]; then
+if [[ <CREATE BASTION SECURITY GROUP> == 'false' ]]; then
    bastionSecurityGroupId=''
 else
-   bastionSecurityGroupId=$(aws cloudformation describe-stacks --region <REGION> --stack-name <DAG STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="appSecurityGroupId").OutputValue')
+   bastionSecurityGroupId=$(aws cloudformation describe-stacks --region <REGION> --stack-name <DAG STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="bastionSecurityGroupId").OutputValue')
 fi
 vpcId=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="vpcId").OutputValue')
 subnetAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 2)

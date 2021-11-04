@@ -17,7 +17,7 @@ if [[ <CREATE REVOKE FUNCTION> == 'true' ]]; then
     bigiq_secret_arn=$(aws secretsmanager describe-secret --secret-id <DEWPOINT JOB ID>-secret-runtime --region <REGION> | jq -r .ARN)
 
     if [[ <BIGIQ ADDRESS TYPE> == 'private' ]]; then
-        security_group_id=$(aws cloudformation describe-stacks --region <REGION> --stack-name <DAG STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="bigIpExternalSecurityGroup").OutputValue' | cut -d ',' -f 1)
+        security_group_id=$(aws cloudformation describe-stacks --region <REGION> --stack-name <DAG STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="bigIpMgmtSecurityGroup").OutputValue' | cut -d ',' -f 1)
         subnet_id=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 1)
     fi
     revoke_parameters="\

@@ -14,6 +14,9 @@ subnetAz2=$(aws cloudformation describe-stacks --region <REGION> --stack-name <N
 parameters="\
 ParameterKey=application,ParameterValue=f5-app-<DEWPOINT JOB ID> \
 ParameterKey=createAppSecurityGroup,ParameterValue=<CREATE APP SECURITY GROUP> \
+ParameterKey=createBastionSecurityGroup,ParameterValue=<CREATE BASTION SECURITY GROUP> \
+ParameterKey=createExternalSecurityGroup,ParameterValue=<CREATE EXTERNAL SECURITY GROUP> \
+ParameterKey=createInternalSecurityGroup,ParameterValue=<CREATE INTERNAL SECURITY GROUP> \
 ParameterKey=externalSubnetAz1,ParameterValue=$subnetAz1 \
 ParameterKey=externalSubnetAz2,ParameterValue=$subnetAz2 \
 ParameterKey=internalSubnetAz1,ParameterValue=$subnetAz1 \

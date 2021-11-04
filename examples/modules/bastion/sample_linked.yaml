@@ -27,3 +27,5 @@ Outputs:
     Value: !GetAtt Bastion.Outputs.bastionAutoscaleGroupName
   bastionInstanceId:
     Value: !GetAtt Bastion.Outputs.bastionInstanceId
+  bastionPublicIp:
+    Value: !GetAtt Bastion.Outputs.PublicIp

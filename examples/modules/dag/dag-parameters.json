@@ -12,6 +12,18 @@
     "ParameterValue": "false"
   },
   {
+    "ParameterKey": "createBastionSecurityGroup",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "createExternalSecurityGroup",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "createInternalSecurityGroup",
+    "ParameterValue": "false"
+  },
+  {
     "ParameterKey": "createFailoverIngress",
     "ParameterValue": "false"
   },

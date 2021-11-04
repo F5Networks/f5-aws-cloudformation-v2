@@ -19,7 +19,16 @@ function get_ip() {
 bucket_name=`echo <STACK NAME>|cut -c -60|tr '[:upper:]' '[:lower:]'| sed 's:-*$::'`
 echo "bucket_name=$bucket_name"
 
-bigIpExternalSecurityGroup=$(aws cloudformation describe-stacks --region <REGION> --stack-name <DAG STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="bigIpExternalSecurityGroup").OutputValue')
+bigIpMgmtSecurityGroup=$(aws cloudformation describe-stacks --region <REGION> --stack-name <DAG STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="bigIpMgmtSecurityGroup").OutputValue')
+bigIpExternalSecurityGroup=''
+bigIpInternalSecurityGroup=''
+if [[ <NIC COUNT> -gt 1 ]]; then
+    bigIpExternalSecurityGroup=$(aws cloudformation describe-stacks --region <REGION> --stack-name <DAG STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="bigIpExternalSecurityGroup").OutputValue')
+fi
+if [[ <NIC COUNT> -gt 2 ]]; then
+    bigIpInternalSecurityGroup=$(aws cloudformation describe-stacks --region <REGION> --stack-name <DAG STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="bigIpInternalSecurityGroup").OutputValue')
+fi
+
 bigiMgmtPublicIpAllocationId=$(aws cloudformation describe-stacks --region <REGION> --stack-name <DAG STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="bigIpManagementEipAllocationId01").OutputValue')
 bigiExternalPublicIpAllocationId=$(aws cloudformation describe-stacks --region <REGION> --stack-name <DAG STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="bigIpExternalEipAllocationId00").OutputValue')
 bigIpInstanceProfile=$(aws cloudformation describe-stacks --region <REGION> --stack-name <ACCESS STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="bigIpInstanceProfile").OutputValue')
@@ -67,7 +76,7 @@ else
     subnet3Az1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 3)
 fi
 
-security_groups_param="$bigIpExternalSecurityGroup,$bigIpExternalSecurityGroup,$bigIpExternalSecurityGroup"
+security_groups_param="$bigIpExternalSecurityGroup,$bigIpInternalSecurityGroup,$bigIpMgmtSecurityGroup"
 
 runtimeConfig='"<RUNTIME INIT CONFIG>"'
 if [[ "<RUNTIME INIT CONFIG>" == *{* ]]; then
@@ -114,17 +123,17 @@ ParameterKey=bigIpRuntimeInitConfig,ParameterValue=$runtimeConfig \
 ParameterKey=bigIpRuntimeInitPackageUrl,ParameterValue=<RUNTIME_URL> \
 ParameterKey=externalPrimaryPublicId,ParameterValue=$bigiExternalPublicIpAllocationId \
 ParameterKey=externalPublicIpIds,ParameterValue=\"${externalPublicIpIds}\" \
+ParameterKey=mgmtSecurityGroupId,ParameterValue=$bigIpMgmtSecurityGroup \
 ParameterKey=externalSecurityGroupId,ParameterValue=$bigIpExternalSecurityGroup \
+ParameterKey=internalSecurityGroupId,ParameterValue=$bigIpInternalSecurityGroup \
 ParameterKey=externalSelfIp,ParameterValue=$externalSelfIp \
 ParameterKey=externalServiceIps,ParameterValue=\"${externalServiceIps}\" \
 ParameterKey=externalSubnetId,ParameterValue=$subnet2Az1 \
 ParameterKey=imageId,ParameterValue=<BIGIP AMI> \
 ParameterKey=instanceType,ParameterValue=<BIGIP INSTANCE TYPE> \
-ParameterKey=internalSecurityGroupId,ParameterValue="${bigIpExternalSecurityGroup}" \
 ParameterKey=internalSelfIp,ParameterValue=$internalSelfIp \
 ParameterKey=internalSubnetId,ParameterValue=$subnet3Az1 \
 ParameterKey=mgmtPublicIpId,ParameterValue=$bigiMgmtPublicIpAllocationId \
-ParameterKey=mgmtSecurityGroupId,ParameterValue=$bigIpExternalSecurityGroup \
 ParameterKey=mgmtSelfIp,ParameterValue=$mgmt_ip \
 ParameterKey=mgmtSubnetId,ParameterValue=$subnet1Az1 \
 ParameterKey=numSecondaryPrivateIpAddress,ParameterValue=<NUM SECONDARY PRIVATE IP> \
