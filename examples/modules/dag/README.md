@@ -44,6 +44,10 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | --- | --- | --- |
 | application | No | Application Tag. |
 | cost | No | Cost Center Tag. |
+| createAppSecurityGroup | No | Select true if you would like to create a Security Group for your Application. Required if you are deploying an application. |
+| createBastionSecurityGroup | No | Select true if you would like to create a Security Group for your Bastion. Required if you are deploying BIG-IP without a public management IP address. |
+| createExternalSecurityGroup | No | Select true if you would like to create a Security Group for the external BIG-IP interface. Required if you are deploying a BIG-IP with 2 or more interfaces. |
+| createInternalSecurityGroup | No | Select true if you would like to create a Security Group for the internal BIG-IP interface. Required if you are deploying a BIG-IP with 3 or more interfaces. |
 | createFailoverIngress | No | Creates Security Group rules to allow Config Sync and HA between peer BIG-IP instances. |
 | environment | No | Environment Tag. |
 | externalSubnetAz1 | No | Availability Zone 1 External Subnet ID. |
@@ -94,8 +98,11 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | bigIpExternalEipAllocationId03 | Allocation ID for Elastic IP for BIG-IP External Interface. | None | String | 
 | bigIpExternalEipAddress04 | BIG-IP External Public IP.  | None | String |
 | bigIpExternalEipAllocationId04 | Allocation ID for Elastic IP for BIG-IP External Interface. | None | String | 
-| bigIpExternalSecurityGroup | BIG-IP Security Group ID. | None | String |
-| appSecurityGroupId | Application Security Group ID. | None | String |  
+| bigIpExternalSecurityGroup | BIG-IP External Security Group ID. | None | String |
+| bigIpInternalSecurityGroup | BIG-IP Internal Security Group ID. | None | String |
+| bigIpMgmtSecurityGroup | BIG-IP Management Security Group ID. | None | String |
+| appSecurityGroupId | Application Security Group ID. | None | String | 
+| bastionSecurityGroupId | Bastion Security Group ID. | None | String |  
 
 ## Resource Creation Flow Chart
 

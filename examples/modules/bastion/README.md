@@ -63,3 +63,4 @@ This template deploys a simple example Bastion host(s). It launches a Ubuntu OS 
 | stackName | Bastion nested stack name. | String |
 | bastionAutoscaleGroupName | Autoscale Group name. | String |
 | bastionInstanceId | Standalone Bastion Instance ID. | String |
+| bastionPublicIp | Standalone Bastion Public IP address. | String |

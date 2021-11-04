@@ -130,6 +130,8 @@ By default, this solution creates a single Availability Zone VPC with four subne
 
 | Name | Description | Required Resource | Type |
 | --- | --- | --- | --- |
+| bastionInstanceId | Instance ID of standalone Bastion instance. | Bastion Module | string |
+| bastionPublicIp | Public IP address of standalone Bastion instance. | Bastion Module | string |
 | bigIpInstanceId | Instance ID of BIG-IP VE instance | BigipStandalone Module | string |
 | bigIpManagementPrivateIp | Private management address | BigipStandalone Module | string |
 | bigIpManagementPublicIp | Public management address | Dag Module | string |
@@ -306,7 +308,9 @@ From Parent Template Outputs:
     - Or if you are going through a bastion host (when **provisionPublicIP** = **false**):
 
         Obtain the Public IP address of the bastion host:
-            - **Console**: **EC2 > Instances > *INSTANCE_ID* > Instance Summary > Public IPv4 address** 
+            ```bash 
+            aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bastionPublicIp'].OutputValue" --output text
+            ```
 #### SSH
   
   - **SSH key authentication**: 

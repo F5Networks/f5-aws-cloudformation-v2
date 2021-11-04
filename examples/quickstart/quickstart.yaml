@@ -542,6 +542,10 @@ Outputs:
     Condition: noPublicIp
     Description: bastion's instance-id
     Value: !GetAtt [Bastion, Outputs.bastionInstanceId]
+  bastionPublicIp:
+    Condition: noPublicIp
+    Description: bastion's public IP address
+    Value: !GetAtt [Bastion, Outputs.bastionPublicIp]
   bigIpManagementPrivateIp:
     Description: bigip's private management address
     Value: !GetAtt [BigipStandalone, Outputs.bigIpManagementInterfacePrivateIp]
@@ -810,7 +814,7 @@ Resources:
                   - Outputs.subnetsA
         bastionSecurityGroupId: !GetAtt
           - Dag
-          - Outputs.bigIpExternalSecurityGroup
+          - Outputs.bastionSecurityGroupId
         cost: !Ref 'cost'
         createAutoscaleGroup: 'false'
         environment: !Ref 'environment'
@@ -844,11 +848,13 @@ Resources:
               !FindInMap [VERSION, !Ref 'version', REGIONMAP], !Ref 'AWS::Region',
               AllTwoBootLocations]], !Ref 'bigIpCustomImageId']
         instanceType: !Ref 'bigIpInstanceType'
+        internalSecurityGroupId: !If [3nic, !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup],
+          !Ref 'AWS::NoValue']
         internalSelfIp: !If [3nic, "10.0.2.11", !Ref 'AWS::NoValue']
         internalSubnetId: !If [3nic, !Select [2, !Split [',', !GetAtt [Network, Outputs.subnetsA]]],
           !Ref 'AWS::NoValue']
         mgmtPublicIpId: !If [noPublicIp, !Ref 'AWS::NoValue', !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId01]]
-        mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup]
+        mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpMgmtSecurityGroup]
         mgmtSelfIp: "10.0.1.11"
         mgmtSubnetId: !Select [1, !Split [',', !GetAtt [Network, Outputs.subnetsA]]]
         numSecondaryPrivateIpAddress: 1
@@ -865,6 +871,9 @@ Resources:
         application: !Ref 'application'
         cost: !Ref 'cost'
         createAppSecurityGroup: 'true'
+        createBastionSecurityGroup: !If [noPublicIp, 'true', 'false']
+        createExternalSecurityGroup: !If [2nic, 'true', 'false']
+        createInternalSecurityGroup: !If [3nic, 'true', 'false']
         environment: !Ref 'environment'
         group: !Ref 'group'
         numberPublicExternalIpAddresses: 2
