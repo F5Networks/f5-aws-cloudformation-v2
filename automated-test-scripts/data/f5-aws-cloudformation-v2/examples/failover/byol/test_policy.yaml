@@ -1,0 +1,10 @@
+---
+# Failover BYOL Example Test
+aws-failover-byol-example-test:
+    test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/failover/byol/daily_test.yaml"
+    run: "all"
+    parameters-files:
+        # using ami lookup to deploy in us-east-2; no public ip on BIGIP and Applicaiton; deploys Bastion Host
+       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/byol/prepub_parameters.yaml"
+        # using ami lookup to deploy in us-east-2; with public ip on BIGIP and Applicaiton
+       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/byol/prepub_parameters1.yaml"

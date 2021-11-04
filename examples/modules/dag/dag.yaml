@@ -306,6 +306,14 @@ Parameters:
     Default: f5cost
     Description: Cost Center Tag.
     Type: String
+  cfeTag:
+    Description: Cloud Failover deployment tag value.
+    Type: String
+    Default: ''
+  cfeVipTag:
+    Description: Cloud Failover VIP tag value; provides private ip addresses to be assigned to VIP public ip.
+    Type: String
+    Default: ''
   createAppSecurityGroup:
     AllowedValues:
       - 'true'
@@ -705,6 +713,18 @@ Resources:
           Value: !Ref environment
         - Key: group
           Value: !Ref group
+        - 'Fn::If':
+            - Failover
+            -
+              Key: f5_cloud_failover_label
+              Value: !Ref cfeTag
+            - !Ref 'AWS::NoValue'
+        - 'Fn::If':
+            - Failover
+            -
+              Key:  f5_cloud_failover_vips
+              Value: !Ref cfeVipTag
+            - !Ref 'AWS::NoValue'
         - Key: Name
           Value: !Join
             - ''

@@ -1,0 +1,123 @@
+---
+extension_packages:
+  install_operations:
+    - extensionHash: bfe88c7cf3fdb24adc4070590c27488e203351fc808d57ae6bbb79b615d66d27
+      extensionType: do
+      extensionVersion: 1.23.0
+    - extensionHash: 47cc7bb6962caf356716e7596448336302d1d977715b6147a74a142dc43b391b
+      extensionType: as3
+      extensionVersion: 3.30.0
+    - extensionHash: da3118eacc4fe9ff925d95d4bf8d1993810560e07260825306cb0721862defdf
+      extensionType: cf
+      extensionVersion: 1.9.0
+extension_services:
+  service_operations:
+    - extensionType: do
+      type: inline
+      value:
+        schemaVersion: 1.0.0
+        class: Device
+        async: true
+        label: Standalone 3NIC BIG-IP declaration for Declarative Onboarding with BYOL license
+        Common:
+          class: Tenant
+          myNtp:
+            class: NTP
+            servers:
+              - 0.pool.ntp.org
+              - 1.pool.ntp.org
+            timezone: UTC
+          myDns:
+            class: DNS
+            nameServers:
+              - 169.254.169.253
+            search:
+              - f5.com
+          mySystem:
+            autoPhonehome: true
+            class: System
+            hostname: 'failover1.local'
+          myLicense:
+            class: License
+            licenseType: regKey
+            regKey: REPLACE_WITH_VALID_REGKEY
+          admin:
+            class: User
+            userType: regular
+            password: '{{{BIGIP_PASSWORD}}}'
+            shell: bash
+          external:
+            class: VLAN
+            tag: 4094
+            mtu: 1500
+            interfaces:
+              - name: '1.1'
+                tagged: false
+          externalSelf:
+            class: SelfIp
+            address: '{{{SELF_IP_EXTERNAL}}}'
+            vlan: external
+            allowService: 'default'
+            trafficGroup: traffic-group-local-only
+          internal:
+            class: Route
+            gw: '{{{DEFAULT_ROUTE}}}'
+            network: 10.0.0.0/16
+            mtu: 1500
+            localOnly: true
+          configSync:
+            class: ConfigSync
+            configsyncIp: /Common/externalSelf/address
+          failoverAddress:
+            class: FailoverUnicast
+            address: /Common/externalSelf/address
+          failoverGroup:
+            class: DeviceGroup
+            type: sync-failover
+            members:
+              - failover0.local
+              - failover1.local
+            owner: /Common/failoverGroup/members/0
+            autoSync: true
+            saveOnAutoSync: false
+            networkFailover: true
+            fullLoadOnSync: false
+            asmSync: false
+          trust:
+            class: DeviceTrust
+            localUsername: admin
+            localPassword: '{{{BIGIP_PASSWORD}}}'
+            remoteHost: 10.0.1.11
+            remoteUsername: admin
+            remotePassword: '{{{BIGIP_PASSWORD}}}'
+          dbVars:
+            class: DbVariables
+            config.allow.rfc3927: enable
+            tm.tcpudptxchecksum: Software-only
+post_onboard_enabled: []
+pre_onboard_enabled:
+  - name: disable_1nic_config
+    type: inline
+    commands:
+      - /usr/bin/setdb provision.1nicautoconfig disable
+runtime_parameters:
+  - name: HOST_NAME
+    type: metadata
+    metadataProvider:
+      environment: aws
+      type: compute
+      field: hostname
+  - name: SELF_IP_EXTERNAL
+    type: metadata
+    metadataProvider:
+      environment: aws
+      type: network
+      field: local-ipv4s
+      index: 1
+  - name: DEFAULT_ROUTE
+    type: metadata
+    metadataProvider:
+      environment: aws
+      type: network
+      field: subnet-ipv4-cidr-block
+      index: 1

@@ -1,0 +1,186 @@
+#  expectValue = "StackId"
+#  scriptTimeout = 10
+#  replayEnabled = false
+#  replayTimeout = 0
+
+
+bucket_name=`echo <STACK NAME>|cut -c -60|tr '[:upper:]' '[:lower:]'| sed 's:-*$::'`
+echo "bucket_name=$bucket_name"
+
+# update this path once we move to a separate repo
+artifact_location=$(cat /$PWD/examples/failover/<LICENSE TYPE>/failover.yaml | yq -r .Parameters.artifactLocation.Default)
+echo "artifact_location=$artifact_location"
+
+runtimeConfig01='"<RUNTIME INIT CONFIG 01>"'
+runtimeConfig02='"<RUNTIME INIT CONFIG 02>"'
+secret_name=$(aws secretsmanager describe-secret --secret-id <DEWPOINT JOB ID>-secret-runtime --region <REGION> | jq -r .Name)
+secret_arn=$(aws secretsmanager describe-secret --secret-id <DEWPOINT JOB ID>-secret-runtime --region <REGION> | jq -r .ARN)
+
+region=$(aws s3api get-bucket-location --bucket $bucket_name | jq -r .LocationConstraint)
+
+if [ -z $region ] || [ $region == null ]; then
+    region="us-east-1"
+    echo "bucket region:$region"
+else
+    echo "bucket region:$region"
+fi
+
+regKey01=<AUTOFILL EVAL LICENSE KEY>
+regKey02=<AUTOFILL EVAL LICENSE KEY 2>
+
+if [[ "<RUNTIME INIT CONFIG 01>" == *{* ]]; then
+    config_with_added_secret_id="${runtimeConfig01/<SECRET_ID>/$secret_name}"
+    config_with_added_ids="${config_with_added_secret_id/<BUCKET_ID>/$bucket_name}"
+    runtimeConfig01=$config_with_added_ids
+    runtimeConfig01="${runtimeConfig01/<ARTIFACT LOCATION>/$artifact_location}"
+
+
+    config_with_added_secret_id="${runtimeConfig02/<SECRET_ID>/$secret_name}"
+    config_with_added_ids="${config_with_added_secret_id/<BUCKET_ID>/$bucket_name}"
+    runtimeConfig02=$config_with_added_ids
+    runtimeConfig02="${runtimeConfig02/<ARTIFACT LOCATION>/$artifact_location}"
+else
+    declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-byol-instance-01.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-byol-instance-02.yaml)
+    counter=1
+    for config_path in "${runtime_init_config_files[@]}"; do
+        # Modify Runtime-init, then upload to s3.
+        cp $config_path <DEWPOINT JOB ID>-0$counter.yaml
+
+        # Create user for login tests
+        /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.class = \"User\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+        /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.password = \"{{{BIGIP_PASSWORD}}}\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+        /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.shell = \"bash\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+        /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.userType = \"regular\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+
+        # Disable AutoPhoneHome
+        /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>-0$counter.yaml
+
+        # Runtime parameters
+        /usr/bin/yq e ".runtime_parameters += {\"name\":\"BIGIP_PASSWORD\"}" -i <DEWPOINT JOB ID>-0$counter.yaml
+        /usr/bin/yq e ".runtime_parameters.[3].type = \"secret\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+        /usr/bin/yq e ".runtime_parameters.[3].secretProvider.environment = \"aws\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+        /usr/bin/yq e ".runtime_parameters.[3].secretProvider.secretId = \"$secret_name\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+        /usr/bin/yq e ".runtime_parameters.[3].secretProvider.type = \"SecretsManager\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+        /usr/bin/yq e ".runtime_parameters.[3].secretProvider.version = \"AWSCURRENT\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+
+        # Add BYOL License to declaration
+        if [[ counter == 0 ]]; then
+            /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.myLicense.regKey = \"$regKey01\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+        else
+            /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.myLicense.regKey = \"$regKey02\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+        fi
+
+        # print out config file
+        /usr/bin/yq e <DEWPOINT JOB ID>-0$counter.yaml
+
+        # update copy
+        cp <DEWPOINT JOB ID>-0$counter.yaml update_<DEWPOINT JOB ID>-0$counter.yaml
+
+        # upload to s3
+        aws s3 cp --region <REGION> update_<DEWPOINT JOB ID>-0$counter.yaml s3://"$bucket_name"/examples/failover/bigip-configurations/update_<DEWPOINT JOB ID>-0$counter.yaml --acl public-read
+        aws s3 cp --region <REGION> <DEWPOINT JOB ID>-0$counter.yaml s3://"$bucket_name"/examples/failover/bigip-configurations/<DEWPOINT JOB ID>-0$counter.yaml --acl public-read
+
+        ((counter=counter+1))
+    done
+fi
+
+# Set Parameters using file to eiliminate issues when passing spaces in parameter values
+cat <<EOF > parameters.json
+[
+    {
+        "ParameterKey": "artifactLocation",
+        "ParameterValue": "$artifact_location"
+    },
+    {
+        "ParameterKey": "application",
+        "ParameterValue": "f5-app-<DEWPOINT JOB ID>"
+    },
+    {
+        "ParameterKey": "bigIpCustomImageId",
+        "ParameterValue": "<CUSTOM IMAGE ID>"
+    },
+    {
+        "ParameterKey": "bigIpImage",
+        "ParameterValue": "<BIGIP IMAGE>"
+    },
+    {
+        "ParameterKey": "bigIpInstanceType",
+        "ParameterValue": "<BIGIP INSTANCE TYPE>"
+    },
+    {
+        "ParameterKey": "bigIpRuntimeInitConfig01",
+        "ParameterValue": $runtimeConfig01
+    },
+    {
+        "ParameterKey": "bigIpRuntimeInitConfig02",
+        "ParameterValue": $runtimeConfig02
+    },
+    {
+        "ParameterKey": "bigIpRuntimeInitPackageUrl",
+        "ParameterValue": "<BIGIP RUNTIME INIT PACKAGEURL>"
+    },
+    {
+        "ParameterKey": "numAzs",
+        "ParameterValue": "<NUMBER AZS>"
+    },
+    {
+        "ParameterKey": "numSubnets",
+        "ParameterValue": "<NUMBER SUBNETS>"
+    },
+    {
+        "ParameterKey": "provisionPublicIpMgmt",
+        "ParameterValue": "<PROVISION MGMT PUBLIC IP>"
+    },
+    {
+        "ParameterKey": "provisionExampleApp",
+        "ParameterValue": "<PROVISION EXAMPLE APP>"
+    },
+    {
+        "ParameterKey": "restrictedSrcAddressApp",
+        "ParameterValue": "0.0.0.0/0"
+    },
+    {
+        "ParameterKey": "restrictedSrcAddressMgmt",
+        "ParameterValue": "0.0.0.0/0"
+    },
+    {
+        "ParameterKey": "cfeS3Bucket",
+        "ParameterValue": "bigip-ha-solution-<DEWPOINT JOB ID>"
+    },
+    {
+        "ParameterKey": "s3BucketName",
+        "ParameterValue": "$bucket_name"
+    },
+    {
+        "ParameterKey": "s3BucketRegion",
+        "ParameterValue": "$region"
+    },
+    {
+        "ParameterKey": "secretArn",
+        "ParameterValue": "$secret_arn"
+    },
+    {
+        "ParameterKey": "sshKey",
+        "ParameterValue": "<SSH KEY>"
+    },
+    {
+        "ParameterKey": "subnetMask",
+        "ParameterValue": "<SUBNETMASK>"
+    },
+    {
+        "ParameterKey": "uniqueString",
+        "ParameterValue": "<UNIQUESTRING>"
+    },
+    {
+        "ParameterKey": "vpcCidr",
+        "ParameterValue": "<CIDR>"
+    }
+]
+EOF
+
+cat parameters.json
+
+aws cloudformation create-stack --disable-rollback --region <REGION> --stack-name <STACK NAME> --tags Key=creator,Value=dewdrop Key=delete,Value=True \
+--template-url https://s3.amazonaws.com/"$bucket_name"/<TEMPLATE NAME> \
+--capabilities CAPABILITY_IAM \
+--parameters file://parameters.json

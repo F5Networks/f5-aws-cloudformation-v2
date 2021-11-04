@@ -1,0 +1,106 @@
+[
+  {
+    "ParameterKey": "appContainerName",
+    "ParameterValue": "f5devcentral/f5-demo-app:latest"
+  },
+  {
+    "ParameterKey": "application",
+    "ParameterValue": "f5app"
+  },
+  {
+    "ParameterKey": "artifactLocation",
+    "ParameterValue": "f5-aws-cloudformation-v2/v1.1.0.0/examples/"
+  },
+  {
+    "ParameterKey": "bigIpCustomImageId",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "bigIpImage",
+    "ParameterValue": "*16.1.0-0.0.19**BYOL-Adv WAF Plus 25Mbps*"
+  },
+  {
+    "ParameterKey": "bigIpInstanceType",
+    "ParameterValue": "m5.xlarge"
+  },
+  {
+    "ParameterKey": "bigIpRuntimeInitConfig01",
+    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/failover/bigip-configurations/runtime-init-conf-payg-instance-01.yaml"
+  },
+  {
+    "ParameterKey": "bigIpRuntimeInitConfig02",
+    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/failover/bigip-configurations/runtime-init-conf-payg-instance-02.yaml"
+  },
+  {
+    "ParameterKey": "bigIpRuntimeInitPackageUrl",
+    "ParameterValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.3.2/dist/f5-bigip-runtime-init-1.3.2-1.gz.run"
+  },
+  {
+    "ParameterKey": "cost",
+    "ParameterValue": "f5cost"
+  },
+  {
+    "ParameterKey": "environment",
+    "ParameterValue": "f5env"
+  },
+  {
+    "ParameterKey": "group",
+    "ParameterValue": "f5group"
+  },
+  {
+    "ParameterKey": "cfeS3Bucket",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "numAzs",
+    "ParameterValue": 2
+  },
+  {
+    "ParameterKey": "numSubnets",
+    "ParameterValue": 3
+  },
+  {
+    "ParameterKey": "owner",
+    "ParameterValue": "f5owner"
+  },
+  {
+    "ParameterKey": "provisionPublicIpMgmt",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "restrictedSrcAddressMgmt",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "restrictedSrcAddressApp",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "s3BucketName",
+    "ParameterValue": "f5-cft-v2"
+  },
+  {
+    "ParameterKey": "s3BucketRegion",
+    "ParameterValue": "us-east-1"
+  },
+  {
+    "ParameterKey": "secretArn",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "sshKey",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "subnetMask",
+    "ParameterValue": 24
+  },
+  {
+    "ParameterKey": "uniqueString",
+    "ParameterValue": "myUniqStr"
+  },
+  {
+    "ParameterKey": "vpcCidr",
+    "ParameterValue": "10.0.0.0/16"
+  }
+]
