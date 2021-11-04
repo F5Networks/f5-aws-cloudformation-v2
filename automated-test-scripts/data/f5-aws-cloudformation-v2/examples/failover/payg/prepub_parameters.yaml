@@ -1,0 +1,38 @@
+---
+ACCESS: 0.0.0.0/0
+BIGIP IMAGE: '*16.1.0-0.0.19**PAYG-Best 1Gbps*'
+BIGIP INSTANCE TYPE: m5.2xlarge
+BIGIP MGMT PORT: 443
+BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.3.2/dist/f5-bigip-runtime-init-1.3.2-1.gz.run'
+BIGIQ PASSWORD: b1gAdminPazz
+CIDR: 10.0.0.0/16
+CUSTOM IMAGE ID: ''
+LICENSE TYPE: payg
+METRIC NAME SPACE: dd-<DEWPOINT JOB ID>
+NIC COUNT: 1
+NTP SERVER: 0.us.pool.ntp.org
+NUMBER AZS: 2
+NUMBER SUBNETS: 3
+PRIVATE IP TYPE: STATIC
+PROVISION MGMT PUBLIC IP: 'false'
+REGION: us-east-2
+RUNTIME INIT CONFIG 01: https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/failover/bigip-configurations/<DEWPOINT JOB ID>-01.yaml
+RUNTIME INIT CONFIG 02: https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/failover/bigip-configurations/<DEWPOINT JOB ID>-02.yaml
+PROVISION EXAMPLE APP: 'true'
+S3 BUCKET: ''
+SECRET VALUE: b1gAdminPazz
+SOLUTION TYPE: failover
+SSH KEY: dewpt
+STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
+STACK TYPE: existing-stack
+SUBNET1 PUBLIC: 'false'
+SUBNETMASK: 24
+TEMPLATE NAME: payg-failover
+TEMPLATE URL: 'file://$PWD/examples/failover/payg/failover.yaml'
+TENANCY: default
+TIMEZONE: US/Pacific
+UPDATE CONFIG: https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/failover/bigip-configurations/update_<DEWPOINT JOB ID>.yaml
+UNIQUESTRING: dew<DEWPOINT JOB ID>
+UPDATE MAX BATCH SIZE: 5
+UPDATE MIN INSTANCES: 1
+UPDATE PAUSE TIME: 480
