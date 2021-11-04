@@ -322,6 +322,7 @@ Parameters:
     Type: String
   bigIpInstanceType:
     AllowedValues:
+      - t3.large
       - m3.2xlarge
       - m4.xlarge
       - m4.2xlarge
