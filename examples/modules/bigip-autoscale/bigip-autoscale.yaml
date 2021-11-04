@@ -225,6 +225,7 @@ Parameters:
       - m5.xlarge
       - m5.2xlarge
       - m5.4xlarge
+      - t3.large
       - c3.4xlarge
       - c3.8xlarge
       - c4.4xlarge
