@@ -23,7 +23,11 @@ fi
 runtimeConfig01='"<RUNTIME INIT CONFIG 01>"'
 runtimeConfig02='"<RUNTIME INIT CONFIG 02>"'
 
-declare -a runtime_init_config_files=(runtime-init-conf-payg-instance-01.yaml runtime-init-conf-payg-instance-02.yaml)
+if [[ "<PROVISION EXAMPLE APP>" == "false" ]]; then
+    declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg_instance01.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg_instance02.yaml)
+else
+    declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg_instance01_with_app.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg_instance02_with_app.yaml)
+fi
 counter=1
 for config_name in "${runtime_init_config_files[@]}"; do
 

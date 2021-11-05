@@ -20,15 +20,15 @@ runtime_parameters:
 bigip_ready_enabled: []
 extension_packages:
   install_operations:
-    - extensionHash: bfe88c7cf3fdb24adc4070590c27488e203351fc808d57ae6bbb79b615d66d27
-      extensionType: do
-      extensionVersion: 1.23.0
-    - extensionHash: 47cc7bb6962caf356716e7596448336302d1d977715b6147a74a142dc43b391b
-      extensionType: as3
-      extensionVersion: 3.30.0
-    - extensionHash: bff1b0695b7408e05a5e22492c8fce4805fc84c10408f82b60b14a0a206406a7
-      extensionType: ts
-      extensionVersion: 1.22.0
+    - extensionType: do
+      extensionVersion: 1.25.0
+      extensionHash: 2c990f6185b16acf0234ebba02afc24863f538c955f51c7a3ebe01d5db58b859
+    - extensionType: as3
+      extensionVersion: 3.32.0
+      extensionHash: a0746531a70b86316a68ab1eb9b3be5b18606f1bf0032ddc5c41a01c32d452a7
+    - extensionType: ts
+      extensionVersion: 1.24.0
+      extensionHash: f20c4dd3b06986a29d1f79823dab0efd3d46d4d9406dbc90bb861e24912dd222
 extension_services:
   service_operations:
     - extensionType: do

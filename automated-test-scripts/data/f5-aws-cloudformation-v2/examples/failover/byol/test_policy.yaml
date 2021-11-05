@@ -8,3 +8,5 @@ aws-failover-byol-example-test:
        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/byol/prepub_parameters.yaml"
         # using ami lookup to deploy in us-east-2; with public ip on BIGIP and Applicaiton
        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/byol/prepub_parameters1.yaml"
+        # using ami lookup to deploy in us-east-2; with public ip on BIGIP and no Application
+       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/byol/prepub_parameters2.yaml"

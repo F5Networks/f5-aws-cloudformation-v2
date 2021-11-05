@@ -16,7 +16,7 @@ bigip2_instance_id=$(aws cloudformation describe-stacks --stack-name  ${bigip2_s
 echo "BIGIP1 Instance Id: $bigip1_instance_id"
 echo "BIGIP2 Instance Id: $bigip2_instance_id"
 
-if [[ <PROVISION MGMT PUBLIC IP> == 'false' ]]; then
+if [[ '<PROVISION MGMT PUBLIC IP>' == 'false' ]]; then
     echo 'MGMT PUBLIC IP IS NOT ENABLED'
 
     bastion_instance_id=$(aws cloudformation describe-stacks --stack-name <STACK NAME> --region <REGION> | jq -r '.Stacks[].Outputs[] | select (.OutputKey=="bastionHostInstanceId") | .OutputValue')
