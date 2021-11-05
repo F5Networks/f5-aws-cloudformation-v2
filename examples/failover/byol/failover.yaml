@@ -256,7 +256,7 @@ Parameters:
     Description: Cloud Failover VIP tag value; provides private ip addresses to be
       assigned to VIP public ip.
     Type: String
-    Default: '10.0.12.101,10.0.22.101'
+    Default: '10.0.0.101,10.0.3.101'
   cost:
     Default: f5cost
     Description: Cost Center Tag.
@@ -432,9 +432,6 @@ Conditions:
   usePublicIpVip: !Equals
     - 'true'
     - !Ref 'provisionExampleApp'
-  provisionExampleApp: !Equals
-    - !Ref 'provisionExampleApp'
-    - 'true'
 Resources:
   Access:
     Type: 'AWS::CloudFormation::Stack'
@@ -462,7 +459,7 @@ Resources:
       ServiceToken: !GetAtt [Function, Outputs.lambdaARN]
   Application:
     Type: 'AWS::CloudFormation::Stack'
-    Condition: provisionExampleApp
+    Condition: usePublicIpVip
     Properties:
       TemplateURL: !Sub
         - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/application/application.yaml'
@@ -580,18 +577,28 @@ Resources:
         externalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup]
         externalSelfIp: !Ref 'externalSelfAddress01'
         externalServiceIps: !Ref 'externalSecondarySelfAddress01'
-        externalSubnetId: !Join
-          - ','
-          - - !Select
-              - '0'
-              - !Split
-                - ','
-                - !GetAtt
-                  - Network
-                  - Outputs.subnetsA
+        externalSubnetId: !If
+          - usePublicIpVip
+          - !Join
+            - ','
+            - - !Select
+                - '0'
+                - !Split
+                  - ','
+                  - !GetAtt
+                    - Network
+                    - Outputs.subnetsA
+          - !Join
+            - ','
+            - - !Select
+                - '3'
+                - !Split
+                  - ','
+                  - !GetAtt
+                    - Network
+                    - Outputs.subnetsA
         instanceType: !Ref 'bigIpInstanceType'
         internalSelfIp: !Ref 'internalSelfAddress01'
-        internalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup]
         internalSubnetId: !Join
           - ','
           - - !Select
@@ -601,6 +608,7 @@ Resources:
                 - !GetAtt
                   - Network
                   - Outputs.subnetsA
+        internalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup]
         mgmtPublicIpId: !If [usePublicIpMgmt, !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId01],
           '']
         mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpMgmtSecurityGroup]
@@ -633,20 +641,33 @@ Resources:
             - AmiInfo
             - Id
           - !Ref 'bigIpCustomImageId'
-        externalPrimaryPublicId: ''
-        externalPublicIpIds: ''
+        externalPrimaryPublicId: !If [usePublicIpVip, !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId03],
+          '']
+        externalPublicIpIds: !If [usePublicIpVip, !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId04],
+          '']
         externalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup]
         externalSelfIp: !Ref 'externalSelfAddress02'
         externalServiceIps: !Ref 'externalSecondarySelfAddress02'
-        externalSubnetId: !Join
-          - ','
-          - - !Select
-              - '0'
-              - !Split
-                - ','
-                - !GetAtt
-                  - Network
-                  - Outputs.subnetsB
+        externalSubnetId: !If
+          - usePublicIpVip
+          - !Join
+            - ','
+            - - !Select
+                - '0'
+                - !Split
+                  - ','
+                  - !GetAtt
+                    - Network
+                    - Outputs.subnetsB
+          - !Join
+            - ','
+            - - !Select
+                - '3'
+                - !Split
+                  - ','
+                  - !GetAtt
+                    - Network
+                    - Outputs.subnetsB
         instanceType: !Ref 'bigIpInstanceType'
         internalSelfIp: !Ref 'internalSelfAddress02'
         internalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup]
@@ -693,20 +714,46 @@ Resources:
         cfeTag: !Ref 'cfeTag'
         cfeVipTag: !Ref 'cfeVipTag'
         environment: !Ref 'environment'
-        externalSubnetAz1: !Select
-          - '0'
-          - !Split
+        externalSubnetAz1: !If
+          - usePublicIpVip
+          - !Join
             - ','
-            - !GetAtt
-              - Network
-              - Outputs.subnetsA
-        externalSubnetAz2: !Select
-          - '0'
-          - !Split
+            - - !Select
+                - '0'
+                - !Split
+                  - ','
+                  - !GetAtt
+                    - Network
+                    - Outputs.subnetsA
+          - !Join
             - ','
-            - !GetAtt
-              - Network
-              - Outputs.subnetsB
+            - - !Select
+                - '3'
+                - !Split
+                  - ','
+                  - !GetAtt
+                    - Network
+                    - Outputs.subnetsA
+        externalSubnetAz2: !If
+          - usePublicIpVip
+          - !Join
+            - ','
+            - - !Select
+                - '0'
+                - !Split
+                  - ','
+                  - !GetAtt
+                    - Network
+                    - Outputs.subnetsB
+          - !Join
+            - ','
+            - - !Select
+                - '3'
+                - !Split
+                  - ','
+                  - !GetAtt
+                    - Network
+                    - Outputs.subnetsB
         group: !Ref 'group'
         internalSubnetAz1: !Select
           - '0'
@@ -728,6 +775,7 @@ Resources:
         provisionInternalBigipLoadBalancer: 'false'
         restrictedSrcAddressApp: !Ref 'restrictedSrcAddressApp'
         restrictedSrcAddressMgmt: !Ref 'restrictedSrcAddressMgmt'
+        restrictedSrcPort: 443
         uniqueString: !Ref 'uniqueString'
         vpc: !GetAtt
           - Network

@@ -78,18 +78,18 @@ Outputs:
     Value: !If
       - standard
       - !Ref BigIpStandardInstanceProfile
-      - !If 
+      - !If
         - secret
-        - !Ref BigIpSecretInstanceProfile 
-        - !If 
+        - !Ref BigIpSecretInstanceProfile
+        - !If
           - s3
           - !Ref BigIpS3InstanceProfile
-          - !If 
+          - !If
             - secretS3
             - !Ref BigIpSecretS3InstanceProfile
-            - !If 
+            - !If
               - failover
-              - !Ref BigIpHighAvailabilityInstanceProfile 
+              - !Ref BigIpHighAvailabilityInstanceProfile
               - !Ref AWS::NoValue
   lambdaAccessRole:
     Condition: createBigIqRoles
@@ -398,7 +398,7 @@ Resources:
           PolicyName: !Join
             - ''
             - - !Ref uniqueString
-              - '-BigipStandardAcccessPolicy' 
+              - '-BigipStandardAcccessPolicy'
       Tags:
         - Key: Name
           Value: !Join
@@ -467,12 +467,12 @@ Resources:
                   - 'secretsmanager:GetSecretValue'
                   - 'secretsmanager:ListSecretVersionIds'
                 Effect: Allow
-                Resource: 
-                  - !If 
+                Resource:
+                  - !If
                     - useSecretArn
                     - !Ref secretArn
                     - !Ref AWS::NoValue
-                  - !If 
+                  - !If
                     - useBigIqSecretArn
                     - !Ref bigIqSecretArn
                     - !Ref AWS::NoValue
@@ -480,7 +480,7 @@ Resources:
           PolicyName: !Join
             - ''
             - - !Ref uniqueString
-              - '-BigipSecretAcccessPolicy' 
+              - '-BigipSecretAcccessPolicy'
       Tags:
         - Key: Name
           Value: !Join
@@ -548,7 +548,7 @@ Resources:
               - Action:
                   - 's3:ListBucket'
                 Effect: Allow
-                Resource: !Join 
+                Resource: !Join
                   - ''
                   - - 'arn:*:s3:::'
                     - !Ref s3Bucket
@@ -557,7 +557,7 @@ Resources:
                   - 's3:GetObject'
                   - 's3:DeleteObject'
                 Effect: Allow
-                Resource: !Join 
+                Resource: !Join
                   - ''
                   - - 'arn:*:s3:::'
                     - !Ref s3Bucket
@@ -636,18 +636,18 @@ Resources:
                   - 'secretsmanager:ListSecretVersionIds'
                 Effect: Allow
                 Resource:
-                  - !If 
+                  - !If
                     - useSecretArn
                     - !Ref secretArn
                     - !Ref AWS::NoValue
-                  - !If 
+                  - !If
                     - useBigIqSecretArn
                     - !Ref bigIqSecretArn
                     - !Ref AWS::NoValue
               - Action:
                   - 's3:ListBucket'
                 Effect: Allow
-                Resource: !Join 
+                Resource: !Join
                   - ''
                   - - 'arn:*:s3:::'
                     - !Ref s3Bucket
@@ -656,7 +656,7 @@ Resources:
                   - 's3:GetObject'
                   - 's3:DeleteObject'
                 Effect: Allow
-                Resource: !Join 
+                Resource: !Join
                   - ''
                   - - 'arn:*:s3:::'
                     - !Ref s3Bucket
@@ -698,23 +698,23 @@ Resources:
         - PolicyDocument:
             Statement:
               - Action:
-                  - 'autoscaling:DescribeAutoScalingGroups'
-                  - 'autoscaling:DescribeAutoScalingInstances'
                   - 'ec2:DescribeAddresses'
                   - 'ec2:DescribeInstances'
                   - 'ec2:DescribeInstanceStatus'
                   - 'ec2:DescribeNetworkInterfaces'
                   - 'ec2:DescribeNetworkInterfaceAttribute'
                   - 'ec2:DescribeTags'
-                Effect: Allow
-                Resource:
-                  - '*'
-              - Action:
+                  - 'ec2:DescribeSubnets'
                   - 'ec2:AssociateAddress'
-                  - 'ec2:assignprivateipaddresses'
                   - 'ec2:DescribeRouteTables'
                   - 'ec2:DisassociateAddress'
                   - 'ec2:ReplaceRoute'
+                  - 'ec2:AssignPrivateIpAddresses'
+                  - 'ec2:UnassignPrivateIpAddresses'
+                  - 'ec2:AssignIpv6Addresses'
+                  - 'ec2:UnassignIpv6Addresses'
+                  - 's3:ListAllMyBuckets'
+                  - 's3:GetBucketLocation'
                 Effect: Allow
                 Resource:
                   - '*'
@@ -746,12 +746,7 @@ Resources:
                 Resource: !Ref secretArn
               - Action:
                   - 's3:ListBucket'
-                Effect: Allow
-                Resource: !Join
-                  - ''
-                  - - 'arn:*:s3:::'
-                    - !Ref s3Bucket
-              - Action:
+                  - 's3:GetBucketTagging'
                   - 's3:PutObject'
                   - 's3:GetObject'
                   - 's3:DeleteObject'
@@ -760,7 +755,6 @@ Resources:
                   - ''
                   - - 'arn:*:s3:::'
                     - !Ref s3Bucket
-                    - /*
             Version: 2012-10-17
           PolicyName: !Join
             - ''

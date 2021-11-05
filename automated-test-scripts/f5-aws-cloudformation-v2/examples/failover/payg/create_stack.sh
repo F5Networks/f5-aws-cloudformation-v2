@@ -37,11 +37,15 @@ if [[ "<RUNTIME INIT CONFIG 01>" == *{* ]]; then
     runtimeConfig02=$config_with_added_ids
     runtimeConfig02="${runtimeConfig02/<ARTIFACT LOCATION>/$artifact_location}"
 else
-    declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-payg-instance-01.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-payg-instance-02.yaml)
+    if [[ "<PROVISION EXAMPLE APP>" == "false" ]]; then
+        declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg_instance01.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg_instance02.yaml)
+    else
+        declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg_instance01_with_app.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg_instance02_with_app.yaml)
+    fi
     counter=1
     for config_path in "${runtime_init_config_files[@]}"; do
         # Modify Runtime-init, then upload to s3.
-        cp $config_path <DEWPOINT JOB ID>-0$counter.yaml
+        cp -avr $config_path <DEWPOINT JOB ID>-0$counter.yaml
 
         # Create user for login tests
         /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.class = \"User\"" -i <DEWPOINT JOB ID>-0$counter.yaml
@@ -50,15 +54,10 @@ else
         /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.userType = \"regular\"" -i <DEWPOINT JOB ID>-0$counter.yaml
 
         # Disable AutoPhoneHome
-        /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>-0$counter.yaml
+        /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.mySystem.autoPhonehome = false" -i <DEWPOINT JOB ID>-0$counter.yaml
 
         # Runtime parameters
-        /usr/bin/yq e ".runtime_parameters += {\"name\":\"BIGIP_PASSWORD\"}" -i <DEWPOINT JOB ID>-0$counter.yaml
-        /usr/bin/yq e ".runtime_parameters.[3].type = \"secret\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-        /usr/bin/yq e ".runtime_parameters.[3].secretProvider.environment = \"aws\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-        /usr/bin/yq e ".runtime_parameters.[3].secretProvider.secretId = \"$secret_name\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-        /usr/bin/yq e ".runtime_parameters.[3].secretProvider.type = \"SecretsManager\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-        /usr/bin/yq e ".runtime_parameters.[3].secretProvider.version = \"AWSCURRENT\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+        /usr/bin/yq e ".runtime_parameters.[0].secretProvider.secretId = \"$secret_name\"" -i <DEWPOINT JOB ID>-0$counter.yaml
 
         # print out config file
         /usr/bin/yq e <DEWPOINT JOB ID>-0$counter.yaml
@@ -164,10 +163,43 @@ cat <<EOF > parameters.json
     {
         "ParameterKey": "vpcCidr",
         "ParameterValue": "<CIDR>"
+
+EOF
+if [[ "<PROVISION EXAMPLE APP>" == "false" ]]; then
+cat <<EOF >> parameters.json
+    },
+    {
+        "ParameterKey": "externalSelfAddress01",
+        "ParameterValue": "10.0.3.11"
+    },
+    {
+        "ParameterKey": "externalSecondarySelfAddress01",
+        "ParameterValue": "10.0.3.101"
+    },
+    {
+        "ParameterKey": "externalSelfAddress02",
+        "ParameterValue": "10.0.7.11"
+    },
+    {
+        "ParameterKey": "externalSecondarySelfAddress02",
+        "ParameterValue": "10.0.7.101"
+    },
+    {
+        "ParameterKey": "internalSelfAddress02",
+        "ParameterValue": "10.0.6.11"
+    },
+    {
+        "ParameterKey": "mgmtSelfAddress02",
+        "ParameterValue": "10.0.5.11"
     }
 ]
 EOF
-
+else
+cat <<EOF >> parameters.json
+    }
+]
+EOF
+fi
 cat parameters.json
 
 aws cloudformation create-stack --disable-rollback --region <REGION> --stack-name <STACK NAME> --tags Key=creator,Value=dewdrop Key=delete,Value=True \

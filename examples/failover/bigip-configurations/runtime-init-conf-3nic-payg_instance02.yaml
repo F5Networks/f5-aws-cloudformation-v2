@@ -1,15 +1,15 @@
 ---
 extension_packages:
   install_operations:
-    - extensionHash: bfe88c7cf3fdb24adc4070590c27488e203351fc808d57ae6bbb79b615d66d27
-      extensionType: do
-      extensionVersion: 1.23.0
-    - extensionHash: 47cc7bb6962caf356716e7596448336302d1d977715b6147a74a142dc43b391b
-      extensionType: as3
-      extensionVersion: 3.30.0
-    - extensionHash: da3118eacc4fe9ff925d95d4bf8d1993810560e07260825306cb0721862defdf
-      extensionType: cf
+    - extensionType: do
+      extensionVersion: 1.25.0
+      extensionHash: 2c990f6185b16acf0234ebba02afc24863f538c955f51c7a3ebe01d5db58b859
+    - extensionType: as3
+      extensionVersion: 3.32.0
+      extensionHash: a0746531a70b86316a68ab1eb9b3be5b18606f1bf0032ddc5c41a01c32d452a7
+    - extensionType: cf
       extensionVersion: 1.9.0
+      extensionHash: da3118eacc4fe9ff925d95d4bf8d1993810560e07260825306cb0721862defdf
 extension_services:
   service_operations:
     - extensionType: do
@@ -36,7 +36,7 @@ extension_services:
           mySystem:
             autoPhonehome: true
             class: System
-            hostname: 'failover0.local'
+            hostname: 'failover1.local'
           admin:
             class: User
             userType: regular
@@ -56,9 +56,22 @@ extension_services:
             allowService: 'default'
             trafficGroup: traffic-group-local-only
           internal:
+            class: VLAN
+            interfaces:
+              - name: '1.2'
+                tagged: false
+            mtu: 1500
+            tag: 4093
+          internal-self:
+            class: SelfIp
+            address: '{{{SELF_IP_INTERNAL}}}'
+            allowService: default
+            trafficGroup: traffic-group-local-only
+            vlan: internal
+          default:
             class: Route
             gw: '{{{DEFAULT_ROUTE}}}'
-            network: 10.0.0.0/16
+            network: default
             mtu: 1500
             localOnly: true
           configSync:
@@ -83,13 +96,30 @@ extension_services:
             class: DeviceTrust
             localUsername: admin
             localPassword: '{{{BIGIP_PASSWORD}}}'
-            remoteHost: /Common/failoverGroup/members/0
+            remoteHost: 10.0.1.11
             remoteUsername: admin
             remotePassword: '{{{BIGIP_PASSWORD}}}'
           dbVars:
             class: DbVariables
             config.allow.rfc3927: enable
             tm.tcpudptxchecksum: Software-only
+    - extensionType: cf
+      type: inline
+      value:
+        schemaVersion: 1.0.0
+        class: Cloud_Failover
+        environment: aws
+        controls:
+          class: Controls
+          logLevel: info
+        externalStorage:
+          scopingTags:
+            f5_cloud_failover_label: bigip-high-availability-solution
+        failoverAddresses:
+          enabled: true
+          scopingTags:
+            f5_cloud_failover_label: bigip-high-availability-solution
+          requireScopingTags: false
 post_onboard_enabled: []
 pre_onboard_enabled:
   - name: disable_1nic_config
@@ -97,6 +127,13 @@ pre_onboard_enabled:
     commands:
       - /usr/bin/setdb provision.1nicautoconfig disable
 runtime_parameters:
+  - name: BIGIP_PASSWORD
+    type: secret
+    secretProvider:
+      environment: aws
+      secretId: mySecretId
+      type: SecretsManager
+      version: AWSCURRENT
   - name: HOST_NAME
     type: metadata
     metadataProvider:
@@ -110,6 +147,13 @@ runtime_parameters:
       type: network
       field: local-ipv4s
       index: 1
+  - name: SELF_IP_INTERNAL
+    type: metadata
+    metadataProvider:
+      type: network
+      environment: aws
+      field: local-ipv4s
+      index: 2
   - name: DEFAULT_ROUTE
     type: metadata
     metadataProvider:

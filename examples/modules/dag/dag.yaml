@@ -906,18 +906,18 @@ Resources:
     Condition: Failover
     Properties:
       FromPort: 4353
-      GroupId: !Ref BigipMgmtSecurityGroup
+      GroupId: !Ref BigipExternalSecurityGroup
       IpProtocol: tcp
-      SourceSecurityGroupId: !Ref BigipMgmtSecurityGroup
+      SourceSecurityGroupId: !Ref BigipExternalSecurityGroup
       ToPort: 4353
     Type: 'AWS::EC2::SecurityGroupIngress'
   BigipSecurityGroupIngressHa:
     Condition: Failover
     Properties:
       FromPort: 1026
-      GroupId: !Ref BigipMgmtSecurityGroup
+      GroupId: !Ref BigipExternalSecurityGroup
       IpProtocol: udp
-      SourceSecurityGroupId: !Ref BigipMgmtSecurityGroup
+      SourceSecurityGroupId: !Ref BigipExternalSecurityGroup
       ToPort: 1026
     Type: 'AWS::EC2::SecurityGroupIngress'
   BigipSecurityGroupIngressManagementGuiPort:
