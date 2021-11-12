@@ -4,10 +4,10 @@
 ../../examples/autoscale/payg/autoscale.yaml:
 - No Key Diff
 - No Value Diff
-../../examples/failover/byol/failover.yaml:
+../../examples/failover/failover-existing-network.yaml:
 - No Key Diff
 - No Value Diff
-../../examples/failover/payg/failover.yaml:
+../../examples/failover/failover.yaml:
 - No Key Diff
 - No Value Diff
 ../../examples/modules/access/access.yaml:
