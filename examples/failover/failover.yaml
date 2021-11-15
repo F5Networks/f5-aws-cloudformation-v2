@@ -1,8 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >-
   This template creates BIG-IP PAYG or BYOL High Availability WAF solution. The template
-  uses nested templates for provisioning network, access, compute resources for hosting
-  BIG-IP Failover solution.
+  uses nested templates for provisioning network, access, and compute resources for
+  hosting BIG-IP Failover solution.
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -147,28 +147,79 @@ Outputs:
   amiId:
     Condition: noCustomImageId
     Description: Ami lookup returned ami id.
-    Value: !GetAtt
-      - AmiInfo
-      - Id
+    Value: !GetAtt [AmiInfo, Id]
   bastionHostInstanceId:
     Condition: noPublicIp
     Description: bastion instance id
     Value: !GetAtt [Bastion, Outputs.bastionInstanceId]
+  bastionPublicIp:
+    Condition: noPublicIp
+    Description: bastion's public IP address
+    Value: !GetAtt [Bastion, Outputs.bastionPublicIp]
   bigIpAInstance:
     Description: BIGIP instance A nested stack name
     Value: !GetAtt [BigIpAInstance, Outputs.stackName]
-  bigIpBInstance:
-    Description: BIGIP instance B nested stack name
-    Value: !GetAtt [BigIpBInstance, Outputs.stackName]
   bigIpAInstanceMgmtPrivateIp:
     Description: private management ip for BIGIP instance A
     Value: !GetAtt [BigIpAInstance, Outputs.bigIpManagementInterfacePrivateIp]
+  bigIpAManagementPublicIp:
+    Condition: usePublicIpMgmt
+    Description: bigip A public management address. WARNING - For eval purposes only.
+      Production should never have the management interface exposed to Internet
+    Value: !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
+  bigIpAManagementSsh:
+    Condition: usePublicIpMgmt
+    Description: ssh login to bigip A management address. WARNING - For eval purposes
+      only. Production should never have the management interface exposed to Internet
+    Value: !Join
+      - ''
+      - - 'ssh admin@'
+        - !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
+  bigIpAManagementUrl443:
+    Condition: usePublicIpMgmt
+    Description: url to bigip A management address. WARNING - For eval purposes only.
+      Production should never have the management interface exposed to Internet
+    Value: !Join
+      - ''
+      - - 'https://'
+        - !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
+  bigIpBInstance:
+    Description: BIGIP instance B nested stack name
+    Value: !GetAtt [BigIpBInstance, Outputs.stackName]
   bigIpBInstanceMgmtPrivateIp:
     Description: private management ip for BIGIP instance B
     Value: !GetAtt [BigIpBInstance, Outputs.bigIpManagementInterfacePrivateIp]
+  bigIpBManagementPublicIp:
+    Condition: usePublicIpMgmt
+    Description: bigip B public management address. WARNING - For eval purposes only.
+      Production should never have the management interface exposed to Internet
+    Value: !GetAtt [Dag, Outputs.bigIpManagementEipAddress02]
+  bigIpBManagementSsh:
+    Condition: usePublicIpMgmt
+    Description: ssh login to bigip B management address. WARNING - For eval purposes
+      only. Production should never have the management interface exposed to Internet
+    Value: !Join
+      - ''
+      - - 'ssh admin@'
+        - !GetAtt [Dag, Outputs.bigIpManagementEipAddress02]
+  bigIpBManagementUrl443:
+    Condition: usePublicIpMgmt
+    Description: url to bigip B management address. WARNING - For eval purposes only.
+      Production should never have the management interface exposed to Internet
+    Value: !Join
+      - ''
+      - - 'https://'
+        - !GetAtt [Dag, Outputs.bigIpManagementEipAddress02]
   cfeS3Bucket:
     Description: cfe s3 bucket created and used for cloud-failover-extension
     Value: !Ref 'cfeS3Bucket'
+  vipPublicUrl:
+    Condition: usePublicIpVip
+    Description: url to public vip address
+    Value: !Join
+      - ''
+      - - 'https://'
+        - !GetAtt [Dag, Outputs.bigIpExternalEipAddress02]
 Parameters:
   appDockerImageName:
     Default: 'f5devcentral/f5-demo-app:latest'
@@ -224,13 +275,13 @@ Parameters:
     Description: Enter valid instance type.
     Type: String
   bigIpARuntimeInitConfig:
-    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/failover/bigip-configurations/runtime-init-conf-payg-01.yaml'
+    Default: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.2.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg_instance01.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
       file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
       configuration.'
     Type: String
   bigIpBRuntimeInitConfig:
-    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/failover/bigip-configurations/runtime-init-conf-payg-02.yaml'
+    Default: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.2.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg_instance01.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
       file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
       configuration.'

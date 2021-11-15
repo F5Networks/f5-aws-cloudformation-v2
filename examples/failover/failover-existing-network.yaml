@@ -59,8 +59,6 @@ Metadata:
         Parameters:
           - appDockerImageName
           - provisionPublicIpVip
-          - publicSubnet1VipAddress
-          - publicSubnet2VipAddress
       - Label:
           default: Resources Tags
         Parameters:
@@ -157,24 +155,71 @@ Outputs:
   amiId:
     Condition: noCustomImageId
     Description: Ami lookup returned ami id.
-    Value: !GetAtt
-      - AmiInfo
-      - Id
+    Value: !GetAtt [AmiInfo, Id]
   bigIpAInstance:
     Description: BIGIP instance A nested stack name
     Value: !GetAtt [BigIpAInstance, Outputs.stackName]
-  bigIpBInstance:
-    Description: BIGIP instance B nested stack name
-    Value: !GetAtt [BigIpBInstance, Outputs.stackName]
   bigIpAInstanceMgmtPrivateIp:
     Description: private management ip for BIGIP instance A
     Value: !GetAtt [BigIpAInstance, Outputs.bigIpManagementInterfacePrivateIp]
+  bigIpAManagementPublicIp:
+    Condition: usePublicIpMgmt
+    Description: bigip A public management address. WARNING - For eval purposes only.
+      Production should never have the management interface exposed to Internet
+    Value: !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
+  bigIpAManagementSsh:
+    Condition: usePublicIpMgmt
+    Description: ssh login to bigip A management address. WARNING - For eval purposes
+      only. Production should never have the management interface exposed to Internet
+    Value: !Join
+      - ''
+      - - 'ssh admin@'
+        - !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
+  bigIpAManagementUrl443:
+    Condition: usePublicIpMgmt
+    Description: url to bigip A management address. WARNING - For eval purposes only.
+      Production should never have the management interface exposed to Internet
+    Value: !Join
+      - ''
+      - - 'https://'
+        - !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
+  bigIpBInstance:
+    Description: BIGIP instance B nested stack name
+    Value: !GetAtt [BigIpBInstance, Outputs.stackName]
   bigIpBInstanceMgmtPrivateIp:
     Description: private management ip for BIGIP instance B
     Value: !GetAtt [BigIpBInstance, Outputs.bigIpManagementInterfacePrivateIp]
+  bigIpBManagementPublicIp:
+    Condition: usePublicIpMgmt
+    Description: bigip B public management address. WARNING - For eval purposes only.
+      Production should never have the management interface exposed to Internet
+    Value: !GetAtt [Dag, Outputs.bigIpManagementEipAddress02]
+  bigIpBManagementSsh:
+    Condition: usePublicIpMgmt
+    Description: ssh login to bigip B management address. WARNING - For eval purposes
+      only. Production should never have the management interface exposed to Internet
+    Value: !Join
+      - ''
+      - - 'ssh admin@'
+        - !GetAtt [Dag, Outputs.bigIpManagementEipAddress02]
+  bigIpBManagementUrl443:
+    Condition: usePublicIpMgmt
+    Description: url to bigip B management address. WARNING - For eval purposes only.
+      Production should never have the management interface exposed to Internet
+    Value: !Join
+      - ''
+      - - 'https://'
+        - !GetAtt [Dag, Outputs.bigIpManagementEipAddress02]
   cfeS3Bucket:
     Description: cfe s3 bucket created and used for cloud-failover-extension
     Value: !Ref 'cfeS3Bucket'
+  vipPublicUrl:
+    Condition: usePublicIpVip
+    Description: url to public vip address
+    Value: !Join
+      - ''
+      - - 'https://'
+        - !GetAtt [Dag, Outputs.bigIpExternalEipAddress02]
 Parameters:
   application:
     Default: f5app
