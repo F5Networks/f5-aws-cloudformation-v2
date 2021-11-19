@@ -168,7 +168,6 @@ class Setup:
         print("Setting DNS servers")
         self.session.post(Setup.BASE_URL + "/mgmt/setup/dns", json={ "servers": dns_servers, "search": [ "localhost" ] }).raise_for_status()
 
-
     def launch_bigiq(self):
         print("Launching BIG-IQ")
         result = self.session.post(Setup.BASE_URL + "/mgmt/setup/launch")
@@ -282,13 +281,41 @@ class Setup:
                 )
             result.raise_for_status()
             result_body = result.json()
-            print("License not ready:" + str(result_body))
+            print("License not ready:" + str(result_body.get("status")))
             print("Waiting for 5 seconds")
             time.sleep(5)
         if i == 120:
-            print("MAX try's reached, exiting")
+            print("MAX tries reached, exiting")
         else:
             print("License ready:" + str(result_body))
+
+    def verify_utility_key(self, utility):
+        if not utility:
+            print("No license provided, skipping license pool activation verification")
+            return
+        result = self.session.get(
+            Setup.BASE_URL + "/mgmt/cm/device/licensing/pool/utility/licenses"
+            )
+        result.raise_for_status()
+        result_body = result.json()
+        i = 0
+        while "READY" not in result_body.get("items")[0].get("status") and i < 120:
+            if "ACTIVATION_FAILED_OFFERING" in result_body.get("items")[0].get("status"):
+                print("Offering failed activation")
+                self.touch("/config/cloud/activation_failed")
+            i+=1
+            result = self.session.get(
+                Setup.BASE_URL + "/mgmt/cm/device/licensing/pool/utility/licenses"
+                )
+            result.raise_for_status()
+            result_body = result.json()
+            print("License key not really ready:" + str(result_body.get("items")[0].get("status")))
+            print("Waiting for 10 seconds for license to really be ready")
+            time.sleep(10)
+        if i == 120:
+            print("MAX tries reached, exiting")
+        else:
+            print("License really ready:" + str(result_body))
             self.touch("/config/cloud/config_complete")
 
     def touch(self, path):
@@ -314,15 +341,16 @@ class Setup:
             })
         self.set_services(ntp_servers=args.ntp_servers, timezone=args.timezone, dns_servers=args.dns_servers)
         self.launch_bigiq()
-        time.sleep(60)
+        time.sleep(120)
         self.enable_basic_auth()
         self.auth(args.user,args.password)
         self.wait_for_initial_activation()
-        time.sleep(15)
+        time.sleep(60)
         self.create_utility_pool(args.utility)
-        time.sleep(15)
+        time.sleep(60)
         self.activate_utility_pool(args.utility)
         self.verify_utility_activation(args.utility)
+        self.verify_utility_key(args.utility)
 
 if __name__ == "__main__":
     setup = Setup()

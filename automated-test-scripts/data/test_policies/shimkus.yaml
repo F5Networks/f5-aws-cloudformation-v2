@@ -9,18 +9,19 @@ aws-autoscale-example-payg-test:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/prepub_parameters1.yaml"
 
 aws-autoscale-bigiq-example-test:
-  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/payg/daily_test.yaml"
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/bigiq/daily_test.yaml"
   run: "random"
-  random-num-of-tests: 0
+  random-num-of-tests: 3
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/prepub_parameters.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/prepub_parameters2.yaml"
 
 # AWS quickstart example tests
 aws-quickstart-payg-example-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/daily_test.yaml"
   run: "random"
-  random-num-of-tests: 2
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/prepub_parameters1.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/prepub_parameters2.yaml"
@@ -29,7 +30,7 @@ aws-quickstart-payg-example-test:
 aws-quickstart-byol-example-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/daily_test.yaml"
   run: "random"
-  random-num-of-tests: 2
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/prepub_parameters1.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/prepub_parameters2.yaml"
@@ -39,7 +40,7 @@ aws-quickstart-byol-example-test:
 aws-autoscale-bigip-example-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/daily_test.yaml"
   run: "random"
-  random-num-of-tests: 1
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/prepub_parameters.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/prepub_parameters1.yaml"
@@ -48,7 +49,7 @@ aws-autoscale-bigip-example-test:
 aws-standalone-bigip-example-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/daily_test.yaml"
   run: "random"
-  random-num-of-tests: 1
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/prepub_parameters.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/prepub_parameters1.yaml"
@@ -75,7 +76,7 @@ aws-access-example-test:
 aws-function-example-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/function/daily_test.yaml"
   run: "random"
-  random-num-of-tests: 1
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/function/prepub_parameters.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/function/prepub_parameters1.yaml"
@@ -85,7 +86,7 @@ aws-function-example-test:
 aws-application-example-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/application/daily_test.yaml"
   run: "random"
-  random-num-of-tests: 1
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/application/prepub_parameters.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/application/prepub_parameters1.yaml"
@@ -94,7 +95,7 @@ aws-application-example-test:
 aws-bastion-example-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/bastion/daily_test.yaml"
   run: "random"
-  random-num-of-tests: 1
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bastion/prepub_parameters.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bastion/prepub_parameters1.yaml"
