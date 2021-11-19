@@ -9,7 +9,7 @@ echo "template url: <TEMPLATE URL>"
 curl -k <TEMPLATE URL> -o /tmp/<DEWPOINT JOB ID>/<TEMPLATE NAME>
 
 echo "uploading local bigiq template"
-curl -k file://$PWD/automated-test-scripts/f5-aws-cloudformation-v2/common/f5-existing-stack-byol-2nic-bigiq-licmgmt.template -o /tmp/<DEWPOINT JOB ID>/f5-existing-stack-byol-2nic-bigiq-licmgmt.template
+curl -k file://$PWD/automated-test-scripts/f5-aws-cloudformation-v2/bigiq/templates/f5-existing-stack-byol-2nic-bigiq-licmgmt.template -o /tmp/<DEWPOINT JOB ID>/f5-existing-stack-byol-2nic-bigiq-licmgmt.template
 
 # r=$(date +%s | sha256sum | base64 | head -c 32)
 bucket_name=`echo <STACK NAME>|cut -c -60|tr '[:upper:]' '[:lower:]'| sed 's:-*$::'`
