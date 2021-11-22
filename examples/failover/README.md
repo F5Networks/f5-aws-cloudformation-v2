@@ -87,7 +87,7 @@ By default (failover.yaml), this solution creates a VPN with 3 subnets, an examp
     - *Operation*:
         - [F5 Application Services 3](https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/latest/) - for features like Service Discovery
         - [Cloud Failover Extension (CFE)](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/) - for updating ip and routes mappings
-    - Additional cloud services like [Private endpoints](https://docs.microsoft.com/en-us/aws/storage/common/storage-private-endpoints#connecting-to-private-endpoints) can be used to address calls to native services traversing the Internet.
+    - Additional cloud services like [Private endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints.html) can be used to address calls to native services traversing the Internet.
   - See [Security](#security) section for more details. 
 
 - This solution template provides an **initial** deployment only for an "infrastructure" use case (meaning that it does not support managing the entire deployment exclusively via the template's "Redeploy" function). This solution leverages wa-agent to send the instance **customData**, which is only used to provide an initial BIG-IP configuration and not as the primary configuration API for a long-running platform. Although "Redeploy" can be used to update some cloud resources, as the BIG-IP configuration needs to align with the cloud resources, like IPs to NICs, updating one without the other can result in inconsistent states, while updating other resources, like the **image** or **instanceType**, can trigger an entire instance re-deloyment. For instance, to upgrade software versions, traditional in-place upgrades should be leveraged. See [AskF5 Knowledge Base](https://support.f5.com/csp/article/K84554955) and [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more information.
@@ -328,7 +328,7 @@ F5 has provided the following example configuration files in the `examples/failo
 
 See [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) for more examples.
 
-- When specifying values for the bigIpInstanceType parameter, ensure that the instance type you select is appropriate for the deployment scenario. See [AWS Virtual Machine Instance Types](https://docs.microsoft.com/en-us/aws/virtual-machines/dv2-dsv2-series) for more information.
+- When specifying values for the bigIpInstanceType parameter, ensure that the instance type you select is appropriate for the deployment scenario. See [AWS Virtual Machine Instance Types](https://aws.amazon.com/ec2/instance-types/) for more information.
 
 However, most changes require modifying the configurations themselves. For example:
 
