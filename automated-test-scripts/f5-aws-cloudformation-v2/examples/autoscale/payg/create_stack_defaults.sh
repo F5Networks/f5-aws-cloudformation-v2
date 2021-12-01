@@ -21,7 +21,7 @@ fi
 runtimeConfig='"<RUNTIME INIT CONFIG>"'
 
 # Download and modify runtime-init, then upload to s3.
-curl https://f5-cft-v2.s3.amazonaws.com/${artifact_location}autoscale/bigip-configurations/runtime-init-conf-payg.yaml -o <DEWPOINT JOB ID>-config.yaml
+curl https://f5-cft-v2.s3.amazonaws.com/${artifact_location}autoscale/bigip-configurations/runtime-init-conf-payg_with_app.yaml -o <DEWPOINT JOB ID>-config.yaml
 
 # Create user for tests that connect to the REST API
 /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.class = \"User\"" -i <DEWPOINT JOB ID>-config.yaml

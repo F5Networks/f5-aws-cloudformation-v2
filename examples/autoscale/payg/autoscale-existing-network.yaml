@@ -15,10 +15,14 @@ Metadata:
       - Label:
           default: Network Configuration
         Parameters:
-          - numAzs
-          - numSubnets
-          - subnetMask
           - vpcCidr
+          - vpcId
+          - bigIpSubnetAz1
+          - bigIpSubnetAz2
+          - externalSubnetAz1
+          - externalSubnetAz2
+          - internalSubnetAz1
+          - internalSubnetAz2
       - Label:
           default: Amazon EC2 Configuration
         Parameters:
@@ -53,17 +57,6 @@ Metadata:
           - secretArn
           - snsEvents
       - Label:
-          default: Application Configuration
-        Parameters:
-          - appContainerName
-          - appScalingMaxSize
-          - appScalingMinSize
-      - Label:
-          default: Bastion Configuration
-        Parameters:
-          - bastionScalingMaxSize
-          - bastionScalingMinSize
-      - Label:
           default: Telemetry Configuration
         Parameters:
           - createLogDestination
@@ -81,24 +74,22 @@ Metadata:
           - group
           - owner
     ParameterLabels:
-      appContainerName:
-        default: Application docker image name
-      appScalingMaxSize:
-        default: Maximum number of Application instances that can be created in the
-          Autoscale Group
-      appScalingMinSize:
-        default: Minimum number of Application instances that can be created in the
-          Autoscale Group
       application:
         default: Application
       artifactLocation:
         default: Path to directory where the modules folder is located. ex. "examples/"
-      bastionScalingMaxSize:
-        default: Maximum number of Bastion instances that can be created in the Autoscale
-          Group
-      bastionScalingMinSize:
-        default: Minimum number of Bastion instances that can be created in the Autoscale
-          Group
+      bigIpSubnetAz1:
+        default: Subnet id for BIGIP Availability Zone 1 interface
+      bigIpSubnetAz2:
+        default: Subnet id for BIGIP Availability Zone 2 interface
+      externalSubnetAz1:
+        default: Subnet id for external Availability Zone 1 interface
+      externalSubnetAz2:
+        default: Subnet id for external Availability Zone 2 interface
+      internalSubnetAz1:
+        default: Subnet id for internal Availability Zone 1 interface
+      internalSubnetAz2:
+        default: Subnet id for internal Availability Zone 2 interface
       bigIpCustomImageId:
         default: Custom Image Id
       bigIpImage:
@@ -149,10 +140,6 @@ Metadata:
         default: CloudWatch custom metric name space
       notificationEmail:
         default: Notification Email
-      numAzs:
-        default: Number of Availability Zones
-      numSubnets:
-        default: Number of Subnets
       owner:
         default: Owner
       provisionExternalBigipLoadBalancer:
@@ -177,12 +164,12 @@ Metadata:
       sshKey:
         default: Supply the public key that will be used for SSH authentication to
           the BIG-IP and application virtual machines
-      subnetMask:
-        default: Subnet Mask
       uniqueString:
         default: Unique string
       vpcCidr:
         default: VPC CIDR
+      vpcId:
+        default: VPC ID
   Version: 1.1.0.0
 Outputs:
   wafExternalDnsName:
@@ -221,40 +208,11 @@ Outputs:
     Value: !GetAtt
       - BigipAutoscale
       - Outputs.bigIpAutoscaleGroup
-  appAutoscaleGroupName:
-    Value: !GetAtt
-      - Application
-      - Outputs.appAutoscaleGroupName
-  bastionAutoscaleGroupName:
-    Condition: noPublicIp
-    Value: !GetAtt
-      - Bastion
-      - Outputs.bastionAutoscaleGroupName
 Parameters:
-  appContainerName:
-    Default: 'f5devcentral/f5-demo-app:latest'
-    Description: Application docker image name
-    Type: String
   application:
     Default: f5app
     Description: Application Tag.
     Type: String
-  appScalingMaxSize:
-    ConstraintDescription: Must be a number between 2-50
-    Default: 50
-    Description: Maximum number of Application instances (2-50) that can be created
-      in the Auto Scale Group.
-    MaxValue: 50
-    MinValue: 2
-    Type: Number
-  appScalingMinSize:
-    ConstraintDescription: Must be a number between 1-49
-    Default: 1
-    Description: Minimum number of Application instances (1-49) you want available
-      in the Auto Scale Group.
-    MaxValue: 49
-    MinValue: 1
-    Type: Number
   artifactLocation:
     AllowedPattern: ^.*[a-zA-Z]+/$
     ConstraintDescription: key prefix can include numbers, lowercase letters, uppercase
@@ -264,22 +222,30 @@ Parameters:
       include numbers, lowercase letters, uppercase letters, hyphens (-), and forward
       slash (/).
     Type: String
-  bastionScalingMaxSize:
-    ConstraintDescription: Must be a number between 2-10
-    Default: 2
-    Description: Maximum number of Bastion instances (2-10) that can be created in
-      the Auto Scale Group.
-    MaxValue: 10
-    MinValue: 2
-    Type: Number
-  bastionScalingMinSize:
-    ConstraintDescription: Must be a number between 1-9
-    Default: 1
-    Description: Minimum number of Bastion instances (1-9) you want available in the
-      Auto Scale Group.
-    MaxValue: 9
-    MinValue: 1
-    Type: Number
+  bigIpSubnetAz1:
+    ConstraintDescription: Must be a valid subnet id
+    Description: Availability Zone 1 BIG-IP Subnet ID.
+    Type: AWS::EC2::Subnet::Id
+  bigIpSubnetAz2:
+    ConstraintDescription: Must be a valid subnet id
+    Description: Availability Zone 2 BIG-IP Subnet ID.
+    Type: AWS::EC2::Subnet::Id
+  externalSubnetAz1:
+    ConstraintDescription: Must be a valid subnet id
+    Description: Availability Zone 1 External Subnet ID.
+    Type: AWS::EC2::Subnet::Id
+  externalSubnetAz2:
+    ConstraintDescription: Must be a valid subnet id
+    Description: Availability Zone 2 External Subnet ID.
+    Type: AWS::EC2::Subnet::Id
+  internalSubnetAz1:
+    ConstraintDescription: Must be a valid subnet id
+    Description: Availability Zone 1 Internal Subnet ID.
+    Type: AWS::EC2::Subnet::Id
+  internalSubnetAz2:
+    ConstraintDescription: Must be a valid subnet id
+    Description: Availability Zone 2 Internal Subnet ID.
+    Type: AWS::EC2::Subnet::Id
   bigIpCustomImageId:
     Default: ''
     Description: Provide BIG-IP AMI ID you wish to deploy.
@@ -338,7 +304,7 @@ Parameters:
     MinValue: 0
     Type: Number
   bigIpRuntimeInitConfig:
-    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg_with_app.yaml'
+    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
       file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
       configuration.'
@@ -434,19 +400,6 @@ Parameters:
     ConstraintDescription: Must be a valid email address.
     Description: REQUIRED - Valid email address to send Auto Scaling event notifications.
     Type: String
-  numAzs:
-    Default: 2
-    Description: Number of Availability Zones to use in the VPC. Region must support
-      number of availability  zones entered. Min 1 Max 4.
-    MaxValue: 4
-    MinValue: 1
-    Type: Number
-  numSubnets:
-    Default: 3
-    Description: Indicate the number of subnets to create.
-    MaxValue: 8
-    MinValue: 2
-    Type: Number
   owner:
     Default: f5owner
     Description: Owner Tag.
@@ -519,19 +472,6 @@ Parameters:
     Description: REQUIRED - Supply the public key that will be used for SSH authentication
       to the BIG-IP and application virtual machines.
     Type: 'AWS::EC2::KeyPair::KeyName'
-  subnetMask:
-    ConstraintDescription: 'Subnet mask must be in value of 16-28. Total number of
-      subnets created from VPC must be greater than or equal to number of regions
-      multiplied by number of subnets. Example: 4 AZ with 8 subnets requires VPC supernetting
-      support 32 subnets.'
-    Default: 24
-    Description: 'Mask for subnets. Valid values include 16-28. Note supernetting
-      of VPC occurs based on mask provided; therefore, number of networks must be
-      >= to the number of subnets created. Mask for subnets. Valid values include
-      16-28.'
-    MaxValue: 28
-    MinValue: 16
-    Type: Number
   uniqueString:
     ConstraintDescription: 'Must Contain between 1 and 12 alphanumeric characters
       with first character as a letter.'
@@ -545,6 +485,10 @@ Parameters:
     Default: 10.0.0.0/16
     Description: CIDR block for the VPC.
     Type: String
+  vpcId:
+    Description: Id for VPC to use with deployment
+    ConstraintDescription: Must be valid VPC ID
+    Type: AWS::EC2::VPC::Id
 Conditions:
   createLogDestination: !Equals
     - 'true'
@@ -634,105 +578,6 @@ Resources:
       OwnerId: 'aws-marketplace'
       Region: !Ref 'AWS::Region'
       ServiceToken: !GetAtt [Function, Outputs.lambdaARN]
-  Application:
-    Type: 'AWS::CloudFormation::Stack'
-    Properties:
-      TemplateURL: !Sub
-        - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/application/application.yaml'
-        - S3Region: !Ref 's3BucketRegion'
-          S3Bucket: !Ref 's3BucketName'
-      Parameters:
-        appContainerName: !Ref 'appContainerName'
-        application: !Ref 'application'
-        applicationSubnet: !Join
-          - ','
-          - - !Select
-              - '2'
-              - !Split
-                - ','
-                - !GetAtt
-                  - Network
-                  - Outputs.subnetsA
-        applicationSubnets: !Join
-          - ','
-          - - !Select
-              - '2'
-              - !Split
-                - ','
-                - !GetAtt
-                  - Network
-                  - Outputs.subnetsA
-            - !Select
-              - '2'
-              - !Split
-                - ','
-                - !GetAtt
-                  - Network
-                  - Outputs.subnetsB
-        appSecurityGroupId: !GetAtt [Dag, Outputs.appSecurityGroupId]
-        cost: !Ref 'cost'
-        createAutoscaleGroup: 'true'
-        environment: !Ref 'environment'
-        group: !Ref 'group'
-        sshKey: !Ref 'sshKey'
-        restrictedSrcAddress: !Ref 'restrictedSrcAddressApp'
-        scalingMinSize: !Ref 'appScalingMinSize'
-        scalingMaxSize: !Ref 'appScalingMaxSize'
-        provisionPublicIp: 'false'
-        uniqueString: !Ref 'uniqueString'
-        vpc: !GetAtt
-          - Network
-          - Outputs.vpcId
-  Bastion:
-    Type: 'AWS::CloudFormation::Stack'
-    Condition: noPublicIp
-    Properties:
-      TemplateURL: !Sub
-        - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/bastion/bastion.yaml'
-        - S3Region: !Ref 's3BucketRegion'
-          S3Bucket: !Ref 's3BucketName'
-      Parameters:
-        application: !Ref 'application'
-        mgmtSubnet: !Join
-          - ','
-          - - !Select
-              - '0'
-              - !Split
-                - ','
-                - !GetAtt
-                  - Network
-                  - Outputs.subnetsA
-        mgmtSubnets: !Join
-          - ','
-          - - !Select
-              - '0'
-              - !Split
-                - ','
-                - !GetAtt
-                  - Network
-                  - Outputs.subnetsA
-            - !Select
-              - '0'
-              - !Split
-                - ','
-                - !GetAtt
-                  - Network
-                  - Outputs.subnetsB
-        bastionSecurityGroupId: !GetAtt
-          - Dag
-          - Outputs.bastionSecurityGroupId
-        cost: !Ref 'cost'
-        createAutoscaleGroup: 'true'
-        environment: !Ref 'environment'
-        group: !Ref 'group'
-        sshKey: !Ref 'sshKey'
-        restrictedSrcAddress: !Ref 'restrictedSrcAddressMgmt'
-        scalingMinSize: !Ref 'bastionScalingMinSize'
-        scalingMaxSize: !Ref 'bastionScalingMaxSize'
-        uniqueString: !Ref 'uniqueString'
-        vpc: !GetAtt
-          - Network
-          - Outputs.vpcId
   BigipAutoscale:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -800,20 +645,8 @@ Resources:
         sshKey: !Ref 'sshKey'
         subnets: !Join
           - ','
-          - - !Select
-              - '1'
-              - !Split
-                - ','
-                - !GetAtt
-                  - Network
-                  - Outputs.subnetsA
-            - !Select
-              - '1'
-              - !Split
-                - ','
-                - !GetAtt
-                  - Network
-                  - Outputs.subnetsB
+          - - !Ref 'bigIpSubnetAz1'
+            - !Ref 'bigIpSubnetAz2'
         uniqueString: !Ref 'uniqueString'
   Dag:
     Type: 'AWS::CloudFormation::Stack'
@@ -830,35 +663,11 @@ Resources:
         createExternalSecurityGroup: 'false'
         createInternalSecurityGroup: 'false'
         environment: !Ref 'environment'
-        externalSubnetAz1: !Select
-          - '0'
-          - !Split
-            - ','
-            - !GetAtt
-              - Network
-              - Outputs.subnetsA
-        externalSubnetAz2: !Select
-          - '0'
-          - !Split
-            - ','
-            - !GetAtt
-              - Network
-              - Outputs.subnetsB
+        externalSubnetAz1: !Ref 'externalSubnetAz1'
+        externalSubnetAz2: !Ref 'externalSubnetAz2'
         group: !Ref 'group'
-        internalSubnetAz1: !Select
-          - '0'
-          - !Split
-            - ','
-            - !GetAtt
-              - Network
-              - Outputs.subnetsA
-        internalSubnetAz2: !Select
-          - '0'
-          - !Split
-            - ','
-            - !GetAtt
-              - Network
-              - Outputs.subnetsB
+        internalSubnetAz1: !Ref 'internalSubnetAz1'
+        internalSubnetAz2: !Ref 'internalSubnetAz2'
         numberPublicMgmtIpAddresses: 0
         numberPublicExternalIpAddresses: 0
         provisionExternalBigipLoadBalancer: !Ref 'provisionExternalBigipLoadBalancer'
@@ -866,9 +675,7 @@ Resources:
         restrictedSrcAddressApp: !Ref 'restrictedSrcAddressApp'
         restrictedSrcAddressMgmt: !Ref 'restrictedSrcAddressMgmt'
         uniqueString: !Ref 'uniqueString'
-        vpc: !GetAtt
-          - Network
-          - Outputs.vpcId
+        vpc: !Ref 'vpcId'
         vpcCidr: !Ref 'vpcCidr'
   Function:
     Type: 'AWS::CloudFormation::Stack'
@@ -882,24 +689,6 @@ Resources:
           - Access
           - Outputs.lambdaAmiExecutionRole
         createAmiLookupFunction: 'true'
-  Network:
-    Type: 'AWS::CloudFormation::Stack'
-    Properties:
-      TemplateURL: !Sub
-        - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/network/network.yaml'
-        - S3Region: !Ref 's3BucketRegion'
-          S3Bucket: !Ref 's3BucketName'
-      Parameters:
-        cost: !Ref 'cost'
-        environment: !Ref 'environment'
-        group: !Ref 'group'
-        numAzs: !Ref 'numAzs'
-        numSubnets: !Ref 'numSubnets'
-        setPublicSubnet1: !Ref 'provisionPublicIp'
-        subnetMask: !Ref 'subnetMask'
-        uniqueString: !Ref 'uniqueString'
-        vpcCidr: !Ref 'vpcCidr'
-        vpcTenancy: default
   Telemetry:
     Type: 'AWS::CloudFormation::Stack'
     Condition: createLogDestination

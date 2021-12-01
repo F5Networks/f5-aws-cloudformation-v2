@@ -13,7 +13,7 @@ CIDR: 10.0.0.0/16
 CLOUDWATCH LOG GROUP NAME: f5telemetry
 CLOUDWATCH LOG STREAM NAME: f5-waf-logs
 CLOUDWATCH DASHBOARD NAME: F5-BIGIP-WAF-View
-CREATE LOG DESTINATION: 'false'
+CREATE LOG DESTINATION: 'true'
 CUSTOM IMAGE ID: ''
 HIGH CPU THRESHOLD: 80
 LICENSE TYPE: payg
@@ -25,11 +25,12 @@ NTP SERVER: 0.us.pool.ntp.org
 NUMBER AZS: 2
 NUMBER SUBNETS: 3
 PRIVATE IP TYPE: STATIC
+PROVISION EXAMPLE APP: 'true'
 PROVISION EXTERNAL LB: 'true'
 PROVISION INTERNAL LB: 'false'
 PROVISION PUBLIC IP: 'true'
 PUBLIC IP: 'true'
-REGION: us-west-2
+REGION: us-east-2
 RUNTIME INIT CONFIG: https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/autoscale/bigip-configurations/<DEWPOINT JOB ID>.yaml
 S3 BUCKET: ''
 SCALE DOWN BYTES THRESHOLD: 35000
@@ -41,8 +42,7 @@ SNS EVENTS: 'autoscaling:EC2_INSTANCE_LAUNCH,autoscaling:EC2_INSTANCE_LAUNCH_ERR
 SOLUTION TYPE: autoscale
 SSH KEY: dewpt
 STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
-STACK TYPE: existing-stack
-SUBNET1 PUBLIC: 'false'
+STACK TYPE: full-stack
 SUBNETMASK: 24
 TEMPLATE NAME: payg-autoscale
 TEMPLATE URL: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/main/examples/autoscale/payg/autoscale.yaml'
