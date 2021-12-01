@@ -30,7 +30,11 @@ test_instance_id=$(aws autoscaling describe-auto-scaling-groups --region  <REGIO
 echo "BIGIP Instance Id: $test_instance_id"
 
 if [[ "<PROVISION PUBLIC IP>" == "false" ]]; then
-    bastion_autoscale_group_name=$(aws cloudformation describe-stacks --stack-name <STACK NAME> --region <REGION> | jq -r '.Stacks[].Outputs[] | select (.OutputKey=="bastionAutoscaleGroupName") | .OutputValue')
+    if [[ "<STACK TYPE>" == "existing-stack" ]]; then
+        bastion_autoscale_group_name=$(aws cloudformation describe-stacks --stack-name bastion-<STACK NAME> --region <REGION> | jq -r '.Stacks[].Outputs[] | select (.OutputKey=="bastionAutoscaleGroupName") | .OutputValue')
+    else
+        bastion_autoscale_group_name=$(aws cloudformation describe-stacks --stack-name <STACK NAME> --region <REGION> | jq -r '.Stacks[].Outputs[] | select (.OutputKey=="bastionAutoscaleGroupName") | .OutputValue')
+    fi
 
 	echo "Autoscale group name: $bastion_autoscale_group_name"
 

@@ -19,15 +19,18 @@ HIGH CPU THRESHOLD: 80
 LICENSE TYPE: payg
 LOW CPU THRESHOLD: 20
 METRIC NAME SPACE: dd-<DEWPOINT JOB ID>
+NETWORK STACK NAME: dewdrop-<NETWORK TEMPLATE NAME>-<DEWPOINT JOB ID>
+NETWORK TEMPLATE NAME: network
 NIC COUNT: 1
 NOTIFICATION EMAIL: dewpoint@f5.com
 NTP SERVER: 0.us.pool.ntp.org
 NUMBER AZS: 2
 NUMBER SUBNETS: 3
 PRIVATE IP TYPE: STATIC
+PROVISION EXAMPLE APP: 'true'
 PROVISION EXTERNAL LB: 'true'
 PROVISION INTERNAL LB: 'false'
-PROVISION PUBLIC IP: 'true'
+PROVISION PUBLIC IP: 'false'
 PUBLIC IP: 'true'
 REGION: us-east-2
 RUNTIME INIT CONFIG: https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/autoscale/bigip-configurations/<DEWPOINT JOB ID>.yaml
@@ -41,11 +44,10 @@ SNS EVENTS: 'autoscaling:EC2_INSTANCE_LAUNCH,autoscaling:EC2_INSTANCE_LAUNCH_ERR
 SOLUTION TYPE: autoscale
 SSH KEY: dewpt
 STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
-STACK TYPE: existing-stack
-SUBNET1 PUBLIC: 'false'
+STACK TYPE: full-stack
 SUBNETMASK: 24
 TEMPLATE NAME: payg-autoscale
-TEMPLATE URL: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/main/examples/autoscale/payg/autoscale.yaml'
+TEMPLATE URL: 'file://$PWD/examples/autoscale/payg/autoscale.yaml'
 TENANCY: default
 TIMEZONE: US/Pacific
 UPDATE CONFIG: https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/autoscale/bigip-configurations/update_<DEWPOINT JOB ID>.yaml

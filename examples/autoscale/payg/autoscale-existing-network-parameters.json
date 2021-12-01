@@ -1,31 +1,35 @@
 [
   {
-    "ParameterKey": "appContainerName",
-    "ParameterValue": "f5devcentral/f5-demo-app:latest"
-  },
-  {
     "ParameterKey": "application",
     "ParameterValue": "f5app"
-  },
-  {
-    "ParameterKey": "appScalingMaxSize",
-    "ParameterValue": 50
-  },
-  {
-    "ParameterKey": "appScalingMinSize",
-    "ParameterValue": 1
   },
   {
     "ParameterKey": "artifactLocation",
     "ParameterValue": "f5-aws-cloudformation-v2/v1.1.0.0/examples/"
   },
   {
-    "ParameterKey": "bastionScalingMaxSize",
-    "ParameterValue": 2
+    "ParameterKey": "bigIpSubnetAz1",
+    "ParameterValue": ""
   },
   {
-    "ParameterKey": "bastionScalingMinSize",
-    "ParameterValue": 1
+    "ParameterKey": "bigIpSubnetAz2",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "externalSubnetAz1",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "externalSubnetAz2",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "internalSubnetAz1",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "internalSubnetAz2",
+    "ParameterValue": ""
   },
   {
     "ParameterKey": "bigIpCustomImageId",
@@ -53,7 +57,7 @@
   },
   {
     "ParameterKey": "bigIpRuntimeInitConfig",
-    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg_with_app.yaml"
+    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg.yaml"
   },
   {
     "ParameterKey": "bigIpRuntimeInitPackageUrl",
@@ -124,14 +128,6 @@
     "ParameterValue": ""
   },
   {
-    "ParameterKey": "numAzs",
-    "ParameterValue": 2
-  },
-  {
-    "ParameterKey": "numSubnets",
-    "ParameterValue": 3
-  },
-  {
     "ParameterKey": "owner",
     "ParameterValue": "f5owner"
   },
@@ -176,15 +172,15 @@
     "ParameterValue": ""
   },
   {
-    "ParameterKey": "subnetMask",
-    "ParameterValue": 24
-  },
-  {
     "ParameterKey": "uniqueString",
     "ParameterValue": "myUniqStr"
   },
   {
     "ParameterKey": "vpcCidr",
     "ParameterValue": "10.0.0.0/16"
+  },
+  {
+    "ParameterKey": "vpcId",
+    "ParameterValue": ""
   }
 ]

@@ -20,7 +20,7 @@ fi
 parameters="\
 ParameterKey=numAzs,ParameterValue=<NUMBER AZS> \
 ParameterKey=numSubnets,ParameterValue=<NUMBER SUBNETS> \
-ParameterKey=setPublicSubnet1,ParameterValue=<SUBNET1 PUBLIC> \
+ParameterKey=setPublicSubnet1,ParameterValue=<PROVISION PUBLIC IP> \
 ParameterKey=subnetMask,ParameterValue=<SUBNETMASK> \
 ParameterKey=vpcCidr,ParameterValue=<CIDR> \
 ParameterKey=vpcTenancy,ParameterValue=<TENANCY>"

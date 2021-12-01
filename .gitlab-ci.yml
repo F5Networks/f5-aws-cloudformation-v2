@@ -475,7 +475,7 @@ aws_bigip_autoscale_payg_example_test_job:
     refs:
       - branches
     changes:
-      - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/*
+      - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/full/*
       - automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/payg/*
       - examples/autoscale/payg/autoscale.yaml
   except:
@@ -486,7 +486,39 @@ aws_bigip_autoscale_payg_example_test_job:
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
   variables:
-    TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/test_policy.yaml
+    TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/test_policy_full.yaml
+    STACK_TYPE: dewdrop-preproduction
+  script:
+    - pip install -r cloud-tools/master-job/requirements.txt
+    - cloud-tools/master-job/sprinkler.py --test-plan $TEST_POLICY --token $CI_JOB_TOKEN --branch $CI_COMMIT_REF_NAME --stack-type $STACK_TYPE --project-id $CI_PROJECT_ID
+  retry:
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+
+# Example: AWS BIGIP PAYG Existing Stack Autoscale Template
+aws_bigip_autoscale_payg_existing_test_job:
+  image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
+  stage: sprinkle-tests
+  tags:
+    - docker-executor
+  only:
+    refs:
+      - branches
+    changes:
+      - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/existing/*
+      - automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/payg/*
+      - examples/autoscale/payg/autoscale-existing-network.yaml
+  except:
+    refs:
+      - schedules
+      - triggers
+      - pipelines
+    variables:
+      - $RELEASE_RUNTIME_INIT_TESTS == "true"
+  variables:
+    TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/test_policy_existing.yaml
     STACK_TYPE: dewdrop-preproduction
   script:
     - pip install -r cloud-tools/master-job/requirements.txt
