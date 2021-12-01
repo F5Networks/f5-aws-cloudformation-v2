@@ -6,6 +6,7 @@ BIGIQ LICENSE S3 ARN: 'arn:aws:s3:::bigiqtest/bigiq.txt'
 BIGIQ PASSWORD: b1gAdminPazz
 LICENSE TYPE: bigiq
 NTP SERVER: 0.us.pool.ntp.org
+PROVISION PUBLIC IP: 'true'
 REGION: us-east-1
 S3 BUCKET: ''
 SCHEDULED BIGIQ: true
