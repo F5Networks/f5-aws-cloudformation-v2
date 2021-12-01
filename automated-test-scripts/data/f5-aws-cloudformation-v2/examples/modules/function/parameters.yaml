@@ -21,3 +21,4 @@ ACCESS TEMPLATE NAME: access
 ACCESS TEMPLATE URL: 'file://$PWD/examples/modules/access/access.yaml'
 ACCESS SOLUTION TYPE: standard
 S3 BUCKET: ''
+PROVISION PUBLIC IP: 'true'
