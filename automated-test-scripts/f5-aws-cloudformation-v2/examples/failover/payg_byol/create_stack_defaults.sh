@@ -45,11 +45,11 @@ for config_name in "${runtime_init_config_files[@]}"; do
 
     # Runtime parameters
     /usr/bin/yq e ".runtime_parameters += {\"name\":\"BIGIP_PASSWORD\"}" -i <DEWPOINT JOB ID>-0$counter.yaml
-    /usr/bin/yq e ".runtime_parameters.[3].type = \"secret\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-    /usr/bin/yq e ".runtime_parameters.[3].secretProvider.environment = \"aws\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-    /usr/bin/yq e ".runtime_parameters.[3].secretProvider.secretId = \"$secret_name\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-    /usr/bin/yq e ".runtime_parameters.[3].secretProvider.type = \"SecretsManager\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-    /usr/bin/yq e ".runtime_parameters.[3].secretProvider.version = \"AWSCURRENT\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+    /usr/bin/yq e ".runtime_parameters.[4].type = \"secret\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+    /usr/bin/yq e ".runtime_parameters.[4].secretProvider.environment = \"aws\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+    /usr/bin/yq e ".runtime_parameters.[4].secretProvider.secretId = \"$secret_name\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+    /usr/bin/yq e ".runtime_parameters.[4].secretProvider.type = \"SecretsManager\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+    /usr/bin/yq e ".runtime_parameters.[4].secretProvider.version = \"AWSCURRENT\"" -i <DEWPOINT JOB ID>-0$counter.yaml
 
     # print out config file
     /usr/bin/yq e <DEWPOINT JOB ID>-config.yaml

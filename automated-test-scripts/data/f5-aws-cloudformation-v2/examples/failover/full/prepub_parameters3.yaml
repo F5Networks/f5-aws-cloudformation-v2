@@ -5,7 +5,7 @@ AUTOFILL EVAL LICENSE KEY 2: null
 BIGIP IMAGE: '*16.1.0-0.0.19**BYOL-All Modules 2Boot*'
 BIGIP INSTANCE TYPE: m5.2xlarge
 BIGIP MGMT PORT: 443
-BIGIP RUNTIME INIT PACKAGEURL: https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.3.2/dist/f5-bigip-runtime-init-1.3.2-1.gz.run
+BIGIP RUNTIME INIT PACKAGEURL: https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.4.0-1.gz.run
 BIGIQ PASSWORD: b1gAdminPazz
 CIDR: 10.0.0.0/16
 CUSTOM IMAGE ID: ''

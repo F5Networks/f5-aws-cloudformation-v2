@@ -17,10 +17,16 @@ else
    prefix="<S3 PREFIX>/"
 fi
 
+if [[ "<PROVISION PUBLIC IP>" == *"<"* ]]; then
+    provisionMgmtPublicIp="<PROVISION MGMT PUBLIC IP>"
+else
+    provisionMgmtPublicIp="<PROVISION PUBLIC IP>"
+fi
+
 parameters="\
 ParameterKey=numAzs,ParameterValue=<NUMBER AZS> \
 ParameterKey=numSubnets,ParameterValue=<NUMBER SUBNETS> \
-ParameterKey=setPublicSubnet1,ParameterValue=<PROVISION PUBLIC IP> \
+ParameterKey=setPublicSubnet1,ParameterValue=$provisionMgmtPublicIp \
 ParameterKey=subnetMask,ParameterValue=<SUBNETMASK> \
 ParameterKey=vpcCidr,ParameterValue=<CIDR> \
 ParameterKey=vpcTenancy,ParameterValue=<TENANCY>"
