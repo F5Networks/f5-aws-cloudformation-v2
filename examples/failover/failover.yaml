@@ -55,8 +55,6 @@ Metadata:
         Parameters:
           - appDockerImageName
           - provisionExampleApp
-          - publicSubnet1VipAddress
-          - publicSubnet2VipAddress
       - Label:
           default: Resources Tags
         Parameters:
@@ -608,6 +606,7 @@ Resources:
           S3Bucket: !Ref 's3BucketName'
       Parameters:
         bigIpInstanceProfile: !GetAtt [Access, Outputs.bigIpInstanceProfile]
+        bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         bigIpRuntimeInitConfig: !Ref 'bigIpARuntimeInitConfig'
         cfeS3Bucket: !Ref 'cfeS3Bucket'
         imageId: !If
@@ -680,6 +679,7 @@ Resources:
           S3Bucket: !Ref 's3BucketName'
       Parameters:
         bigIpInstanceProfile: !GetAtt [Access, Outputs.bigIpInstanceProfile]
+        bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         bigIpRuntimeInitConfig: !Ref 'bigIpBRuntimeInitConfig'
         imageId: !If
           - noCustomImageId

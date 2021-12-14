@@ -57,7 +57,6 @@ Metadata:
       - Label:
           default: Application Configuration
         Parameters:
-          - appDockerImageName
           - provisionPublicIpVip
       - Label:
           default: Resources Tags
@@ -514,6 +513,7 @@ Resources:
           S3Bucket: !Ref 's3BucketName'
       Parameters:
         bigIpInstanceProfile: !GetAtt [Access, Outputs.bigIpInstanceProfile]
+        bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         bigIpRuntimeInitConfig: !Ref 'bigIpARuntimeInitConfig'
         cfeS3Bucket: !Ref 'cfeS3Bucket'
         imageId: !If
@@ -551,6 +551,7 @@ Resources:
           S3Bucket: !Ref 's3BucketName'
       Parameters:
         bigIpInstanceProfile: !GetAtt [Access, Outputs.bigIpInstanceProfile]
+        bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         bigIpRuntimeInitConfig: !Ref 'bigIpBRuntimeInitConfig'
         imageId: !If
           - noCustomImageId

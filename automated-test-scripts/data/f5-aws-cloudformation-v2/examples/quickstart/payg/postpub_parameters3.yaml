@@ -15,7 +15,7 @@ SOLUTION TYPE: standalone
 SSH KEY: dewpt
 STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
 # have to be explicit here because dewdrop only runs one substitution
-TEMPLATE NAME: quickstart-3nic-payg
+TEMPLATE NAME: quickstart-<NIC COUNT>nic-payg
 TEMPLATE URL: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/main/examples/quickstart/quickstart.yaml'
 THROUGHPUT: 1000Mbps
 UNIQUESTRING: dew<DEWPOINT JOB ID>
