@@ -129,11 +129,11 @@ cat <<EOF > parameters.json
         "ParameterValue": "<BIGIP INSTANCE TYPE>"
     },
     {
-        "ParameterKey": "bigIpARuntimeInitConfig",
+        "ParameterKey": "bigIpRuntimeInitConfig01",
         "ParameterValue": $runtimeConfig01
     },
     {
-        "ParameterKey": "bigIpBRuntimeInitConfig",
+        "ParameterKey": "bigIpRuntimeInitConfig02",
         "ParameterValue": $runtimeConfig02
     },
     {
@@ -141,27 +141,27 @@ cat <<EOF > parameters.json
         "ParameterValue": "<BIGIP RUNTIME INIT PACKAGEURL>"
     },
     {
-        "ParameterKey": "bigIpAMgmtSubnetId",
+        "ParameterKey": "bigIpMgmtSubnetId01",
         "ParameterValue": "$mgmtAz1"
     },
     {
-        "ParameterKey": "bigIpBMgmtSubnetId",
+        "ParameterKey": "bigIpMgmtSubnetId02",
         "ParameterValue": "$mgmtAz2"
     },
     {
-        "ParameterKey": "bigIpAExternalSubnetId",
+        "ParameterKey": "bigIpExternalSubnetId01",
         "ParameterValue": "$extAz1"
     },
     {
-        "ParameterKey": "bigIpBExternalSubnetId",
+        "ParameterKey": "bigIpExternalSubnetId02",
         "ParameterValue": "$extAz2"
     },
     {
-        "ParameterKey": "bigIpAInternalSubnetId",
+        "ParameterKey": "bigIpInternalSubnetId01",
         "ParameterValue": "$intAz1"
     },
     {
-        "ParameterKey": "bigIpBInternalSubnetId",
+        "ParameterKey": "bigIpInternalSubnetId02",
         "ParameterValue": "$intAz2"
     },
     {
@@ -216,27 +216,27 @@ if [[ "<PROVISION EXAMPLE APP>" == "false" ]]; then
 cat <<EOF >> parameters.json
     },
     {
-        "ParameterKey": "bigIpAExternalSelfIp",
+        "ParameterKey": "bigIpExternalSelfIp01",
         "ParameterValue": "10.0.3.11"
     },
     {
-        "ParameterKey": "bigIpAExternalSecondarySelfIp",
+        "ParameterKey": "bigIpExternalSecondarySelfIp01",
         "ParameterValue": "10.0.3.101"
     },
     {
-        "ParameterKey": "bigIpBExternalSelfIp",
+        "ParameterKey": "bigIpExternalSelfIp02",
         "ParameterValue": "10.0.7.11"
     },
     {
-        "ParameterKey": "bigIpBExternalSecondarySelfIp",
+        "ParameterKey": "bigIpExternalSecondarySelfIp02",
         "ParameterValue": "10.0.7.101"
     },
     {
-        "ParameterKey": "bigIpBInternalSelfIp",
+        "ParameterKey": "bigIpInternalSelfIp02",
         "ParameterValue": "10.0.6.11"
     },
     {
-        "ParameterKey": "bigIpBMgmtSelfIp",
+        "ParameterKey": "bigIpMgmtSelfIp02",
         "ParameterValue": "10.0.5.11"
     }
 ]

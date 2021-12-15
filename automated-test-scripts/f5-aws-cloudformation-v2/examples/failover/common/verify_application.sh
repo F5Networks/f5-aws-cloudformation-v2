@@ -7,7 +7,7 @@
 if [[ "<PROVISION EXAMPLE APP>" == 'false' ]]; then
     echo "SUCCESS"
 else
-    bigip1_stack_name=$(aws cloudformation describe-stacks --stack-name <STACK NAME> --region <REGION> | jq -r '.Stacks[].Outputs[] | select (.OutputKey=="bigIpAInstance") | .OutputValue')
+    bigip1_stack_name=$(aws cloudformation describe-stacks --stack-name <STACK NAME> --region <REGION> | jq -r '.Stacks[].Outputs[] | select (.OutputKey=="bigIpInstance01") | .OutputValue')
 
     bigip1_instanceid=$(aws cloudformation describe-stacks --stack-name $bigip1_stack_name --region <REGION> | jq -r '.Stacks[].Outputs[] | select (.OutputKey=="bigIpInstanceId") | .OutputValue')
 
