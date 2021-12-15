@@ -20,11 +20,11 @@
     "ParameterValue": "m5.xlarge"
   },
   {
-    "ParameterKey": "bigIpARuntimeInitConfig",
+    "ParameterKey": "bigIpRuntimeInitConfig01",
     "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/failover/bigip-configurations/runtime-init-conf-payg-01.yaml"
   },
   {
-    "ParameterKey": "bigIpBRuntimeInitConfig",
+    "ParameterKey": "bigIpRuntimeInitConfig02",
     "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/failover/bigip-configurations/runtime-init-conf-payg-02.yaml"
   },
   {
@@ -52,27 +52,27 @@
     "ParameterValue": "f5env"
   },
   {
-    "ParameterKey": "bigIpAExternalSelfIp",
+    "ParameterKey": "bigIpExternalSelfIp01",
     "ParameterValue": "10.0.0.11"
   },
   {
-    "ParameterKey": "bigIpBExternalSelfIp",
+    "ParameterKey": "bigIpExternalSelfIp02",
     "ParameterValue": "10.0.3.11"
   },
   {
-    "ParameterKey": "bigIpAExternalSecondarySelfIp",
+    "ParameterKey": "bigIpExternalSecondarySelfIp01",
     "ParameterValue": "10.0.0.101"
   },
   {
-    "ParameterKey": "bigIpBExternalSecondarySelfIp",
+    "ParameterKey": "bigIpExternalSecondarySelfIp02",
     "ParameterValue": "10.0.3.101"
   },
   {
-    "ParameterKey": "bigIpAExternalSubnetId",
+    "ParameterKey": "bigIpExternalSubnetId01",
     "ParameterValue": ""
   },
   {
-    "ParameterKey": "bigIpBExternalSubnetId",
+    "ParameterKey": "bigIpExternalSubnetId02",
     "ParameterValue": ""
   },
   {
@@ -80,35 +80,35 @@
     "ParameterValue": "f5group"
   },
   {
-    "ParameterKey": "bigIpAInternalSelfIp",
+    "ParameterKey": "bigIpInternalSelfIp01",
     "ParameterValue": "10.0.2.11"
   },
   {
-    "ParameterKey": "bigIpBInternalSelfIp",
+    "ParameterKey": "bigIpInternalSelfIp02",
     "ParameterValue": "10.0.5.11"
   },
   {
-    "ParameterKey": "bigIpAInternalSubnetId",
+    "ParameterKey": "bigIpInternalSubnetId01",
     "ParameterValue": ""
   },
   {
-    "ParameterKey": "bigIpBInternalSubnetId",
+    "ParameterKey": "bigIpInternalSubnetId02",
     "ParameterValue": ""
   },
   {
-    "ParameterKey": "bigIpAMgmtSelfIp",
+    "ParameterKey": "bigIpMgmtSelfIp01",
     "ParameterValue": "10.0.1.11"
   },
   {
-    "ParameterKey": "bigIpBMgmtSelfIp",
+    "ParameterKey": "bigIpMgmtSelfIp02",
     "ParameterValue": "10.0.4.11"
   },
   {
-    "ParameterKey": "bigIpAMgmtSubnetId",
+    "ParameterKey": "bigIpMgmtSubnetId01",
     "ParameterValue": ""
   },
   {
-    "ParameterKey": "bigIpBMgmtSubnetId",
+    "ParameterKey": "bigIpMgmtSubnetId02",
     "ParameterValue": ""
   },
   {

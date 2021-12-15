@@ -17,20 +17,20 @@ Metadata:
         Parameters:
           - vpcCidr
           - vpcId
-          - bigIpAMgmtSubnetId
-          - bigIpAExternalSubnetId
-          - bigIpAInternalSubnetId
-          - bigIpBMgmtSubnetId
-          - bigIpBExternalSubnetId
-          - bigIpBInternalSubnetId
-          - bigIpAMgmtSelfIp
-          - bigIpAExternalSelfIp
-          - bigIpAExternalSecondarySelfIp
-          - bigIpAInternalSelfIp
-          - bigIpBMgmtSelfIp
-          - bigIpBExternalSelfIp
-          - bigIpBExternalSecondarySelfIp
-          - bigIpBInternalSelfIp
+          - bigIpMgmtSubnetId01
+          - bigIpExternalSubnetId01
+          - bigIpInternalSubnetId01
+          - bigIpMgmtSubnetId02
+          - bigIpExternalSubnetId02
+          - bigIpInternalSubnetId02
+          - bigIpMgmtSelfIp01
+          - bigIpExternalSelfIp01
+          - bigIpExternalSecondarySelfIp01
+          - bigIpInternalSelfIp01
+          - bigIpMgmtSelfIp02
+          - bigIpExternalSelfIp02
+          - bigIpExternalSecondarySelfIp02
+          - bigIpInternalSelfIp02
       - Label:
           default: Amazon EC2 Configuration
         Parameters:
@@ -45,8 +45,8 @@ Metadata:
           default: BIG-IP Configuration
         Parameters:
           - bigIpRuntimeInitPackageUrl
-          - bigIpARuntimeInitConfig
-          - bigIpBRuntimeInitConfig
+          - bigIpRuntimeInitConfig01
+          - bigIpRuntimeInitConfig02
           - bigIpImage
           - bigIpCustomImageId
           - bigIpInstanceType
@@ -78,9 +78,9 @@ Metadata:
         default: F5 BIG-IP Image
       bigIpInstanceType:
         default: Enter valid instance type.
-      bigIpARuntimeInitConfig:
+      bigIpRuntimeInitConfig01:
         default: BIG-IP Runtime Init config used for BIGIP instance A
-      bigIpBRuntimeInitConfig:
+      bigIpRuntimeInitConfig02:
         default: BIG-IP Runtime Init config used for BIGIP instance B
       bigIpRuntimeInitPackageUrl:
         default: Runtime Init Package
@@ -94,35 +94,35 @@ Metadata:
         default: Cost Center
       environment:
         default: Environment
-      bigIpAExternalSelfIp:
+      bigIpExternalSelfIp01:
         default: External private ip address for BIGIP instance A
-      bigIpBExternalSelfIp:
+      bigIpExternalSelfIp02:
         default: External private ip address for BIGIP instance B
-      bigIpAExternalSubnetId:
+      bigIpExternalSubnetId01:
         default: External subnet id for BIGIP instance A
-      bigIpBExternalSubnetId:
+      bigIpExternalSubnetId02:
         default: External subnet id for BIGIP instance B
-      bigIpAExternalSecondarySelfIp:
+      bigIpExternalSecondarySelfIp01:
         default: External secondary ip address for BIGIP instance A
-      bigIpBExternalSecondarySelfIp:
+      bigIpExternalSecondarySelfIp02:
         default: External secondary ip address for BIGIP instance B
       group:
         default: Group
-      bigIpAInternalSelfIp:
+      bigIpInternalSelfIp01:
         default: Internal private ip address for BIGIP instance A
-      bigIpBInternalSelfIp:
+      bigIpInternalSelfIp02:
         default: Internal private ip address for BIGIP instance B
-      bigIpAInternalSubnetId:
+      bigIpInternalSubnetId01:
         default: Internal subnet id for BIGIP instance A
-      bigIpBInternalSubnetId:
+      bigIpInternalSubnetId02:
         default: Internal subnet id for BIGIP instance B
-      bigIpAMgmtSelfIp:
+      bigIpMgmtSelfIp01:
         default: Management private ip address for BIGIP instance A
-      bigIpBMgmtSelfIp:
+      bigIpMgmtSelfIp02:
         default: Management private ip address for BIGIP instance B
-      bigIpAMgmtSubnetId:
+      bigIpMgmtSubnetId01:
         default: Management subnet id for BIGIP instance A
-      bigIpBMgmtSubnetId:
+      bigIpMgmtSubnetId02:
         default: Management subnet id for BIGIP instance B
       owner:
         default: Owner
@@ -155,18 +155,18 @@ Outputs:
     Condition: noCustomImageId
     Description: Ami lookup returned ami id.
     Value: !GetAtt [AmiInfo, Id]
-  bigIpAInstance:
+  bigIpInstance01:
     Description: BIGIP instance A nested stack name
-    Value: !GetAtt [BigIpAInstance, Outputs.stackName]
-  bigIpAInstanceMgmtPrivateIp:
+    Value: !GetAtt [BigIpInstance01, Outputs.stackName]
+  bigIpInstanceMgmtPrivateIp01:
     Description: private management ip for BIGIP instance A
-    Value: !GetAtt [BigIpAInstance, Outputs.bigIpManagementInterfacePrivateIp]
-  bigIpAManagementPublicIp:
+    Value: !GetAtt [BigIpInstance01, Outputs.bigIpManagementInterfacePrivateIp]
+  bigIpManagementPublicIp01:
     Condition: usePublicIpMgmt
     Description: bigip A public management address. WARNING - For eval purposes only.
       Production should never have the management interface exposed to Internet
     Value: !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
-  bigIpAManagementSsh:
+  bigIpManagementSsh01:
     Condition: usePublicIpMgmt
     Description: ssh login to bigip A management address. WARNING - For eval purposes
       only. Production should never have the management interface exposed to Internet
@@ -174,7 +174,7 @@ Outputs:
       - ''
       - - 'ssh admin@'
         - !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
-  bigIpAManagementUrl443:
+  bigIpManagement01Url443:
     Condition: usePublicIpMgmt
     Description: url to bigip A management address. WARNING - For eval purposes only.
       Production should never have the management interface exposed to Internet
@@ -182,18 +182,18 @@ Outputs:
       - ''
       - - 'https://'
         - !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
-  bigIpBInstance:
+  bigIpInstance02:
     Description: BIGIP instance B nested stack name
-    Value: !GetAtt [BigIpBInstance, Outputs.stackName]
-  bigIpBInstanceMgmtPrivateIp:
+    Value: !GetAtt [BigIpInstance02, Outputs.stackName]
+  bigIpInstanceMgmtPrivateIp02:
     Description: private management ip for BIGIP instance B
-    Value: !GetAtt [BigIpBInstance, Outputs.bigIpManagementInterfacePrivateIp]
-  bigIpBManagementPublicIp:
+    Value: !GetAtt [BigIpInstance02, Outputs.bigIpManagementInterfacePrivateIp]
+  bigIpManagementPublicIp02:
     Condition: usePublicIpMgmt
     Description: bigip B public management address. WARNING - For eval purposes only.
       Production should never have the management interface exposed to Internet
     Value: !GetAtt [Dag, Outputs.bigIpManagementEipAddress02]
-  bigIpBManagementSsh:
+  bigIpManagementSsh02:
     Condition: usePublicIpMgmt
     Description: ssh login to bigip B management address. WARNING - For eval purposes
       only. Production should never have the management interface exposed to Internet
@@ -201,7 +201,7 @@ Outputs:
       - ''
       - - 'ssh admin@'
         - !GetAtt [Dag, Outputs.bigIpManagementEipAddress02]
-  bigIpBManagementUrl443:
+  bigIpManagement02Url443:
     Condition: usePublicIpMgmt
     Description: url to bigip B management address. WARNING - For eval purposes only.
       Production should never have the management interface exposed to Internet
@@ -269,13 +269,13 @@ Parameters:
     Default: m5.xlarge
     Description: Enter valid instance type.
     Type: String
-  bigIpARuntimeInitConfig:
+  bigIpRuntimeInitConfig01:
     Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/failover/bigip-configurations/runtime-init-conf-payg-01.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
       file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
       configuration.'
     Type: String
-  bigIpBRuntimeInitConfig:
+  bigIpRuntimeInitConfig02:
     Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/failover/bigip-configurations/runtime-init-conf-payg-02.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
       file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
@@ -309,35 +309,35 @@ Parameters:
     Default: f5env
     Description: Environment Tag.
     Type: String
-  bigIpAExternalSelfIp:
+  bigIpExternalSelfIp01:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: External Private IP Address for BIGIP instance A.
     Default: 10.0.0.11
     Type: String
-  bigIpBExternalSelfIp:
+  bigIpExternalSelfIp02:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: External Private IP Address for BIGIP instance B.
     Default: 10.0.3.11
     Type: String
-  bigIpAExternalSecondarySelfIp:
+  bigIpExternalSecondarySelfIp01:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: External Secondary Private IP Address for BIGIP instance A.
     Default: 10.0.0.101
     Type: String
-  bigIpBExternalSecondarySelfIp:
+  bigIpExternalSecondarySelfIp02:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: External Secondary Private IP Address for BIGIP instance B.
     Default: 10.0.3.101
     Type: String
-  bigIpAExternalSubnetId:
+  bigIpExternalSubnetId01:
     ConstraintDescription: Must be a valid subnet id
     Description: Subnet id used for BIGIP instance A external interface
     Type: AWS::EC2::Subnet::Id
-  bigIpBExternalSubnetId:
+  bigIpExternalSubnetId02:
     ConstraintDescription: Must be a valid subnet id
     Description: Subnet id used for BIGIP instance B external interface
     Type: AWS::EC2::Subnet::Id
@@ -345,43 +345,43 @@ Parameters:
     Default: f5group
     Description: Group Tag.
     Type: String
-  bigIpAInternalSelfIp:
+  bigIpInternalSelfIp01:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: Internal Private IP Address for BIGIP instance A.
     Default: 10.0.2.11
     Type: String
-  bigIpBInternalSelfIp:
+  bigIpInternalSelfIp02:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: Internal Private IP Address for BIGIP instance B.
     Default: 10.0.5.11
     Type: String
-  bigIpAInternalSubnetId:
+  bigIpInternalSubnetId01:
     ConstraintDescription: Must be a valid subnet id
     Description: Subnet id used for BIGIP instance A internal interface
     Type: AWS::EC2::Subnet::Id
-  bigIpBInternalSubnetId:
+  bigIpInternalSubnetId02:
     ConstraintDescription: Must be a valid subnet id
     Description: Subnet id used for BIGIP instance B internal interface
     Type: AWS::EC2::Subnet::Id
-  bigIpAMgmtSelfIp:
+  bigIpMgmtSelfIp01:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: Management Private IP Address for BIGIP instance A.
     Default: 10.0.1.11
     Type: String
-  bigIpBMgmtSelfIp:
+  bigIpMgmtSelfIp02:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: Management Private IP Address for BIGIP instance B.
     Default: 10.0.4.11
     Type: String
-  bigIpAMgmtSubnetId:
+  bigIpMgmtSubnetId01:
     ConstraintDescription: Must be a valid subnet id
     Description: Subnet id used for BIGIP instance A management interface
     Type: AWS::EC2::Subnet::Id
-  bigIpBMgmtSubnetId:
+  bigIpMgmtSubnetId02:
     ConstraintDescription: Must be a valid subnet id
     Description: Subnet id used for BIGIP instance B management interface
     Type: AWS::EC2::Subnet::Id
@@ -504,7 +504,7 @@ Resources:
       OwnerId: 'aws-marketplace'
       Region: !Ref 'AWS::Region'
       ServiceToken: !GetAtt [Function, Outputs.lambdaARN]
-  BigIpAInstance:
+  BigIpInstance01:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: !Sub
@@ -514,7 +514,7 @@ Resources:
       Parameters:
         bigIpInstanceProfile: !GetAtt [Access, Outputs.bigIpInstanceProfile]
         bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
-        bigIpRuntimeInitConfig: !Ref 'bigIpARuntimeInitConfig'
+        bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig01'
         cfeS3Bucket: !Ref 'cfeS3Bucket'
         imageId: !If
           - noCustomImageId
@@ -527,22 +527,22 @@ Resources:
         externalPublicIpIds: !If [usePublicIpVip, !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId02],
           '']
         externalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup]
-        externalSelfIp: !Ref 'bigIpAExternalSelfIp'
-        externalServiceIps: !Ref 'bigIpAExternalSecondarySelfIp'
-        externalSubnetId: !Ref 'bigIpAExternalSubnetId'
+        externalSelfIp: !Ref 'bigIpExternalSelfIp01'
+        externalServiceIps: !Ref 'bigIpExternalSecondarySelfIp01'
+        externalSubnetId: !Ref 'bigIpExternalSubnetId01'
         instanceType: !Ref 'bigIpInstanceType'
-        internalSelfIp: !Ref 'bigIpAInternalSelfIp'
-        internalSubnetId: !Ref 'bigIpAInternalSubnetId'
+        internalSelfIp: !Ref 'bigIpInternalSelfIp01'
+        internalSubnetId: !Ref 'bigIpInternalSubnetId01'
         internalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup]
         mgmtPublicIpId: !If [usePublicIpMgmt, !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId01],
           '']
         mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpMgmtSecurityGroup]
-        mgmtSelfIp: !Ref 'bigIpAMgmtSelfIp'
-        mgmtSubnetId: !Ref 'bigIpAMgmtSubnetId'
+        mgmtSelfIp: !Ref 'bigIpMgmtSelfIp01'
+        mgmtSubnetId: !Ref 'bigIpMgmtSubnetId01'
         numSecondaryPrivateIpAddress: 1
         sshKey: !Ref 'sshKey'
         uniqueString: !Ref 'uniqueString'
-  BigIpBInstance:
+  BigIpInstance02:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: !Sub
@@ -552,7 +552,7 @@ Resources:
       Parameters:
         bigIpInstanceProfile: !GetAtt [Access, Outputs.bigIpInstanceProfile]
         bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
-        bigIpRuntimeInitConfig: !Ref 'bigIpBRuntimeInitConfig'
+        bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig02'
         imageId: !If
           - noCustomImageId
           - !GetAtt
@@ -564,18 +564,18 @@ Resources:
         externalPublicIpIds: !If [usePublicIpVip, !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId04],
           '']
         externalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup]
-        externalSelfIp: !Ref 'bigIpBExternalSelfIp'
-        externalServiceIps: !Ref 'bigIpBExternalSecondarySelfIp'
-        externalSubnetId: !Ref 'bigIpBExternalSubnetId'
+        externalSelfIp: !Ref 'bigIpExternalSelfIp02'
+        externalServiceIps: !Ref 'bigIpExternalSecondarySelfIp02'
+        externalSubnetId: !Ref 'bigIpExternalSubnetId02'
         instanceType: !Ref 'bigIpInstanceType'
-        internalSelfIp: !Ref 'bigIpBInternalSelfIp'
+        internalSelfIp: !Ref 'bigIpInternalSelfIp02'
         internalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup]
-        internalSubnetId: !Ref 'bigIpBInternalSubnetId'
+        internalSubnetId: !Ref 'bigIpInternalSubnetId02'
         mgmtPublicIpId: !If [usePublicIpMgmt, !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId02],
           '']
         mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpMgmtSecurityGroup]
-        mgmtSelfIp: !Ref 'bigIpBMgmtSelfIp'
-        mgmtSubnetId: !Ref 'bigIpBMgmtSubnetId'
+        mgmtSelfIp: !Ref 'bigIpMgmtSelfIp02'
+        mgmtSubnetId: !Ref 'bigIpMgmtSubnetId02'
         numSecondaryPrivateIpAddress: 1
         sshKey: !Ref 'sshKey'
         uniqueString: !Ref 'uniqueString'
@@ -597,11 +597,11 @@ Resources:
         cfeTag: !Ref 'cfeTag'
         cfeVipTag: !Ref 'cfeVipTag'
         environment: !Ref 'environment'
-        externalSubnetAz1: !Ref 'bigIpAExternalSubnetId'
-        externalSubnetAz2: !Ref 'bigIpBExternalSubnetId'
+        externalSubnetAz1: !Ref 'bigIpExternalSubnetId01'
+        externalSubnetAz2: !Ref 'bigIpExternalSubnetId02'
         group: !Ref 'group'
-        internalSubnetAz1: !Ref 'bigIpAInternalSubnetId'
-        internalSubnetAz2: !Ref 'bigIpBInternalSubnetId'
+        internalSubnetAz1: !Ref 'bigIpInternalSubnetId01'
+        internalSubnetAz2: !Ref 'bigIpInternalSubnetId02'
         numberPublicExternalIpAddresses: !If [usePublicIpVip, 4, 0]
         numberPublicMgmtIpAddresses: !If [usePublicIpMgmt, 2, 0]
         provisionExternalBigipLoadBalancer: false

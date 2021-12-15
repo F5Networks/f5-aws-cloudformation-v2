@@ -92,7 +92,7 @@ By default (failover.yaml), this solution creates a VPN with 3 subnets, an examp
 
 - This solution template provides an **initial** deployment only for an "infrastructure" use case (meaning that it does not support managing the entire deployment exclusively via the template's "Redeploy" function). This solution leverages wa-agent to send the instance **customData**, which is only used to provide an initial BIG-IP configuration and not as the primary configuration API for a long-running platform. Although "Redeploy" can be used to update some cloud resources, as the BIG-IP configuration needs to align with the cloud resources, like IPs to NICs, updating one without the other can result in inconsistent states, while updating other resources, like the **image** or **instanceType**, can trigger an entire instance re-deloyment. For instance, to upgrade software versions, traditional in-place upgrades should be leveraged. See [AskF5 Knowledge Base](https://support.f5.com/csp/article/K84554955) and [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more information.
 
-- If you have cloned this repository to modify the templates or BIG-IP config files and published to your own location, you can use the **templateBaseUrl** and **artifactLocation** input parameters to specify the new location of the customized templates and the **bigIpARuntimeInitConfig** and **bigIpBRuntimeInitConfig** input parameters to specify the new location of the BIG-IP Runtime-Init configs. See main [/examples/README.md](../README.md#cloud-configuration) for more template customization details. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details.
+- If you have cloned this repository to modify the templates or BIG-IP config files and published to your own location, you can use the **templateBaseUrl** and **artifactLocation** input parameters to specify the new location of the customized templates and the **bigIpRuntimeInitConfig01** and **bigIpRuntimeInitConfig02** input parameters to specify the new location of the BIG-IP Runtime-Init configs. See main [/examples/README.md](../README.md#cloud-configuration) for more template customization details. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details.
 
 - In this solution, the BIG-IP VE has the [LTM](https://f5.com/products/big-ip/local-traffic-manager-ltm) and [ASM](https://f5.com/products/big-ip/application-security-manager-asm) (when **provisionExampleApp** is set to **true**) modules enabled to provide advanced traffic management and web application security functionality. 
 
@@ -107,16 +107,16 @@ By default (failover.yaml), this solution creates a VPN with 3 subnets, an examp
 | appDockerImageName | No | The name of a container to download and install which is used for the example application server(s). If this value is left blank, the application module template is not deployed. |
 | application | No | Application Tag. |
 | artifactLocation | No | The directory, relative to the templateBaseUrl, where the modules folder is located. |
-| bigIpAExternalSecondarySelfIp | Yes | External Secondary Private IP Address for BIGIP instance A. |
-| bigIpAExternalSelfIp | No | External Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
-| bigIpAInternalSelfIp | No | Internal Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
-| bigIpAMgmtSelfIp | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
-| bigIpARuntimeInitConfig | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
-| bigIpBExternalSecondarySelfIp | Yes | External Secondary Private IP Address for BIGIP instance B. |
-| bigIpBExternalSelfIp | No | External Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
-| bigIpBInternalSelfIp | No | Internal Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
-| bigIpBMgmtSelfIp | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
-| bigIpBRuntimeInitConfig | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
+| bigIpExternalSecondarySelfIp01 | Yes | External Secondary Private IP Address for BIGIP instance A. |
+| bigIpExternalSelfIp01 | No | External Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
+| bigIpInternalSelfIp01 | No | Internal Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtSelfIp01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpRuntimeInitConfig01 | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
+| bigIpExternalSecondarySelfIp02 | Yes | External Secondary Private IP Address for BIGIP instance B. |
+| bigIpExternalSelfIp02 | No | External Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
+| bigIpInternalSelfIp02 | No | Internal Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtSelfIp02 | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpRuntimeInitConfig02 | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
 | bigIpCustomImageId | No | Provide BIG-IP AMI ID you wish to deploy. |
 | bigIpImage | No | F5 BIG-IP Performance Type. |
 | bigIpInstanceType | No | Enter a valid instance type. |
@@ -151,10 +151,10 @@ By default (failover.yaml), this solution creates a VPN with 3 subnets, an examp
 | --- | --- | --- | --- |
 | amiId | ami-id used for deployment | Function Module | string |
 | bastionInstanceId | Instance ID of standalone Bastion instance. | Bastion Module | string |
-| bigIpAInstance | Instance ID of BIG-IP VE instance | BigipStandalone Module | string |
-| bigIpAInstanceMgmtPrivateIp | Private management address | BigipStandalone Module | string |
-| bigIpBInstance | Instance ID of BIG-IP VE instance | BigipStandalone Module | string |
-| bigIpBInstanceMgmtPrivateIp | Private management address | BigipStandalone Module | string |
+| bigIpInstance01 | Instance ID of BIG-IP VE instance | BigipStandalone Module | string |
+| bigIpInstanceMgmtPrivateIp01 | Private management address | BigipStandalone Module | string |
+| bigIpInstance02 | Instance ID of BIG-IP VE instance | BigipStandalone Module | string |
+| bigIpInstanceMgmtPrivateIp02 | Private management address | BigipStandalone Module | string |
 | cfeS3Bucket | s3 bucket used for cloud failover extension | BigipStandalone Module | string |
 
 
@@ -165,22 +165,22 @@ By default (failover.yaml), this solution creates a VPN with 3 subnets, an examp
 | --- | --- | --- |
 | application | No | Application Tag. |
 | artifactLocation | No | The directory, relative to the templateBaseUrl, where the modules folder is located. |
-| bigIpAExternalSecondarySelfIp | Yes | External Secondary Private IP Address for BIGIP instance A. |
-| bigIpAExternalSelfIp | No | External Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
-| bigIpAExternalSubnetId | Yes | Subnet id used for BIGIP instance A external interface. |
-| bigIpAInternalSelfIp | No | Internal Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
-| bigIpAInternalSubnetId | Yes | Subnet id used for BIGIP instance A internal interface. |
-| bigIpAMgmtSelfIp | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
-| bigIpAMgmtSubnetId | Yes | Subnet id used for BIGIP instance A management interface. |
-| bigIpARuntimeInitConfig | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
-| bigIpBExternalSecondarySelfIp | Yes | External Secondary Private IP Address for BIGIP instance B. |
-| bigIpBExternalSelfIp | No | External Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
-| bigIpBExternalSubnetId | Yes | Subnet id used for BIGIP instance B external interface. |
-| bigIpBInternalSelfIp | No | Internal Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
-| bigIpBInternalSubnetId | Yes | Subnet id used for BIGIP instance B internal interface. |
-| bigIpBMgmtSelfIp | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
-| bigIpBMgmtSubnetId | Yes | Subnet id used for BIGIP instance B management interface. |
-| bigIpBRuntimeInitConfig | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
+| bigIpExternalSecondarySelfIp01 | Yes | External Secondary Private IP Address for BIGIP instance A. |
+| bigIpExternalSelfIp01 | No | External Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
+| bigIpExternalSubnetId01 | Yes | Subnet id used for BIGIP instance A external interface. |
+| bigIpInternalSelfIp01 | No | Internal Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
+| bigIpInternalSubnetId01 | Yes | Subnet id used for BIGIP instance A internal interface. |
+| bigIpMgmtSelfIp01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtSubnetId01 | Yes | Subnet id used for BIGIP instance A management interface. |
+| bigIpRuntimeInitConfig01 | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
+| bigIpExternalSecondarySelfIp02 | Yes | External Secondary Private IP Address for BIGIP instance B. |
+| bigIpExternalSelfIp02 | No | External Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
+| bigIpExternalSubnetId02 | Yes | Subnet id used for BIGIP instance B external interface. |
+| bigIpInternalSelfIp02 | No | Internal Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
+| bigIpInternalSubnetId02 | Yes | Subnet id used for BIGIP instance B internal interface. |
+| bigIpMgmtSelfIp02 | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtSubnetId02 | Yes | Subnet id used for BIGIP instance B management interface. |
+| bigIpRuntimeInitConfig02 | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
 | bigIpCustomImageId | No | Provide BIG-IP AMI ID you wish to deploy. |
 | bigIpImage | No | F5 BIG-IP Performance Type. |
 | bigIpInstanceType | No | Enter a valid instance type. |
@@ -212,10 +212,10 @@ By default (failover.yaml), this solution creates a VPN with 3 subnets, an examp
 | Name | Description | Required Resource | Type |
 | --- | --- | --- | --- |
 | amiId | ami-id used for deployment | Function Module | string |
-| bigIpAInstance | Instance ID of BIG-IP VE instance | BigipStandalone Module | string |
-| bigIpAInstanceMgmtPrivateIp | Private management address | BigipStandalone Module | string |
-| bigIpBInstance | Instance ID of BIG-IP VE instance | BigipStandalone Module | string |
-| bigIpBInstanceMgmtPrivateIp | Private management address | BigipStandalone Module | string |
+| bigIpInstance01 | Instance ID of BIG-IP VE instance | BigipStandalone Module | string |
+| bigIpInstanceMgmtPrivateIp01 | Private management address | BigipStandalone Module | string |
+| bigIpInstance02 | Instance ID of BIG-IP VE instance | BigipStandalone Module | string |
+| bigIpInstanceMgmtPrivateIp02 | Private management address | BigipStandalone Module | string |
 | cfeS3Bucket | s3 bucket used for cloud failover extension | BigipStandalone Module | string |
 
 ## Deploying this Solution
@@ -292,16 +292,16 @@ For next steps, see [Validating the Deployment](#validating-the-deployment).
 
 ### Changing the BIG-IP Deployment
 
-You will most likely want or need to change the BIG-IP configuration. This generally involves referencing or customizing a [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) configuration file and passing it through the **bigIpARuntimeInitConfig** and **bigIpBRuntimeInitConfig** template parameters as a URL or inline json. 
+You will most likely want or need to change the BIG-IP configuration. This generally involves referencing or customizing a [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) configuration file and passing it through the **bigIpRuntimeInitConfig01** and **bigIpRuntimeInitConfig02** template parameters as a URL or inline json. 
 
 Example from failover-parameters.json
 ```json
   {
-    "ParameterKey": "bigIpARuntimeInitConfig",
+    "ParameterKey": "bigIpRuntimeInitConfig01",
     "ParameterValue": "https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/main/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg_instance01.yaml"
   },
   {
-    "ParameterKey": "bigIpBRuntimeInitConfig",
+    "ParameterKey": "bigIpRuntimeInitConfig02",
     "ParameterValue": "https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/main/examples/failover/bigip-configurations/runtime-init-conf-payg-02.yaml"
   },
 ```
@@ -344,7 +344,7 @@ Example:
             regKey: AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE
 ```
   2. Publish/host the customized runtime-init config files at a location reachable by the BIG-IP at deploy time (for example: github, AWS Storage, etc.)
-  3. Update the **bigIpARuntimeInitConfig** and **bigIpBRuntimeInitConfig** input parameters to reference the new URL of the updated configuration.
+  3. Update the **bigIpRuntimeInitConfig01** and **bigIpRuntimeInitConfig02** input parameters to reference the new URL of the updated configuration.
   4. Update the **bigIpImage** input parameter to use `byol` image.
         Example:
         ```json
@@ -400,13 +400,13 @@ From Parent Template Outputs:
     - **AWS CLI**: 
       - Public IPs: 
           ```bash
-          aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpAInstanceMgmtPublicIp'].OutputValue" --output text
-          aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpBInstanceMgmtPublicIp'].OutputValue" --output text
+          aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpInstanceMgmtPublicIp01'].OutputValue" --output text
+          aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpInstanceMgmtPublicIp02'].OutputValue" --output text
           ```
       - Private IPs: 
           ```bash
-          aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpAInstanceMgmtPrivateIp'].OutputValue" --output text
-          aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpBInstanceMgmtPrivateIp'].OutputValue" --output text
+          aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpInstanceMgmtPrivateIp01'].OutputValue" --output text
+          aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpInstanceMgmtPrivateIp02'].OutputValue" --output text
           ```
     - Or if you are going through a bastion host (when **provisionPublicIP** = **false**):
 
@@ -443,12 +443,12 @@ From Parent Template Outputs:
 #### WebUI 
 
 1. Obtain the URL address of the BIG-IP Management Port.
-    - **Console**: Navigate to **CloudFormation > *STACK_NAME* > Outputs > *bigIpAManagementUrl443 or bigIpBManagementUrl443***.
+    - **Console**: Navigate to **CloudFormation > *STACK_NAME* > Outputs > *bigIpManagement01Url443 or bigIpManagement02Url443***.
     - **AWS CLI**: 
           ```bash
-          aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpAManagementUrl443'].OutputValue" --output text
+          aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpManagement01Url443'].OutputValue" --output text
 
-          aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpBManagementUrl443'].OutputValue" --output text
+          aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpManagement02Url443'].OutputValue" --output text
           ```
 
     - OR when you are going through a bastion host (when **provisionPublicIpMgmt** = **false**):
