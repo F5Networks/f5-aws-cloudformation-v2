@@ -28,9 +28,9 @@ NTP SERVER: 0.us.pool.ntp.org
 PRIVATE IP TYPE: STATIC
 PROVISION EXTERNAL LB: 'true'
 PROVISION INTERNAL LB: 'false'
-PROVISION PUBLIC IP: 'true'
+PROVISION PUBLIC IP: 'false'
 PUBLIC IP: 'true'
-REGION: us-west-1
+REGION: us-west-2
 RUNTIME INIT CONFIG: https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/autoscale/bigip-configurations/<DEWPOINT JOB ID>.yaml
 S3 BUCKET: ''
 SCHEDULED BIGIQ: false
@@ -43,7 +43,7 @@ SNS EVENTS: 'autoscaling:EC2_INSTANCE_LAUNCH,autoscaling:EC2_INSTANCE_LAUNCH_ERR
 SOLUTION TYPE: autoscale
 SSH KEY: dewpt
 STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
-STACK TYPE: existing-stack
+STACK TYPE: full-stack
 TEMPLATE NAME: bigiq-autoscale
 TEMPLATE URL: 'file://$PWD/examples/autoscale/bigiq/autoscale.yaml'
 TIMEZONE: US/Pacific

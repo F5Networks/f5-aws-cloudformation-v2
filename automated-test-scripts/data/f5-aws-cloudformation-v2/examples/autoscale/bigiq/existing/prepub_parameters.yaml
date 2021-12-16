@@ -26,11 +26,12 @@ NIC COUNT: 1
 NOTIFICATION EMAIL: dewpoint@f5.com
 NTP SERVER: 0.us.pool.ntp.org
 PRIVATE IP TYPE: STATIC
+PROVISION EXAMPLE APP: 'true'
 PROVISION EXTERNAL LB: 'true'
 PROVISION INTERNAL LB: 'false'
-PROVISION PUBLIC IP: 'false'
+PROVISION PUBLIC IP: 'true'
 PUBLIC IP: 'true'
-REGION: us-west-2
+REGION: us-east-2
 RUNTIME INIT CONFIG: https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/autoscale/bigip-configurations/<DEWPOINT JOB ID>.yaml
 S3 BUCKET: ''
 SCHEDULED BIGIQ: false
@@ -44,8 +45,8 @@ SOLUTION TYPE: autoscale
 SSH KEY: dewpt
 STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
 STACK TYPE: existing-stack
-TEMPLATE NAME: bigiq-autoscale
-TEMPLATE URL: 'file://$PWD/examples/autoscale/bigiq/autoscale.yaml'
+TEMPLATE NAME: bigiq-autoscale-existing
+TEMPLATE URL: 'file://$PWD/examples/autoscale/bigiq/autoscale-existing-network.yaml'
 TIMEZONE: US/Pacific
 UPDATE CONFIG: https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/autoscale/bigip-configurations/update_<DEWPOINT JOB ID>.yaml
 UNIQUESTRING: dew<DEWPOINT JOB ID>

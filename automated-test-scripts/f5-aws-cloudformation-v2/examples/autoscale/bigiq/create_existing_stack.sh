@@ -12,6 +12,14 @@ echo "bucket_name=$bucket_name"
 artifact_location=$(cat /$PWD/examples/autoscale/<LICENSE TYPE>/autoscale.yaml | yq -r .Parameters.artifactLocation.Default)
 echo "artifact_location=$artifact_location"
 
+mgmtAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 2)
+extAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 1)
+intAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 3)
+mgmtAz2=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsB").OutputValue' | cut -d ',' -f 2)
+extAz2=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsB").OutputValue' | cut -d ',' -f 1)
+intAz2=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsB").OutputValue' | cut -d ',' -f 3)
+vpcId=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="vpcId").OutputValue')
+
 runtimeConfig='"<RUNTIME INIT CONFIG>"'
 secret_arn=$(aws secretsmanager describe-secret --secret-id <DEWPOINT JOB ID>-secret-runtime --region <REGION> | jq -r .ARN)
 secret_name=$(aws secretsmanager describe-secret --secret-id <DEWPOINT JOB ID>-secret-runtime --region <REGION> | jq -r .Name)
@@ -121,22 +129,6 @@ cat <<EOF > parameters.json
         "ParameterValue": "f5-app-<DEWPOINT JOB ID>"
     },
     {
-        "ParameterKey": "appScalingMaxSize",
-        "ParameterValue": "<APP SCALE MAX SIZE>"
-    },
-    {
-        "ParameterKey": "appScalingMinSize",
-        "ParameterValue": "<APP SCALE MIN SIZE>"
-    },
-    {
-        "ParameterKey": "bastionScalingMaxSize",
-        "ParameterValue": "<BASTION SCALE MAX SIZE>"
-    },
-    {
-        "ParameterKey": "bastionScalingMinSize",
-        "ParameterValue": "<BASTION SCALE MIN SIZE>"
-    },
-    {
         "ParameterKey": "bigIpCustomImageId",
         "ParameterValue": "<CUSTOM IMAGE ID>"
     },
@@ -229,14 +221,6 @@ cat <<EOF > parameters.json
         "ParameterValue": "<UPDATE PAUSE TIME>"
     },
     {
-        "ParameterKey": "numAzs",
-        "ParameterValue": "<NUMBER AZS>"
-    },
-    {
-        "ParameterKey": "numSubnets",
-        "ParameterValue": "<NUMBER SUBNETS>"
-    },
-    {
         "ParameterKey": "provisionExternalBigipLoadBalancer",
         "ParameterValue": "<PROVISION EXTERNAL LB>"
     },
@@ -277,12 +261,36 @@ cat <<EOF > parameters.json
         "ParameterValue": "<SSH KEY>"
     },
     {
-        "ParameterKey": "subnetMask",
-        "ParameterValue": "<SUBNETMASK>"
-    },
-    {
         "ParameterKey": "uniqueString",
         "ParameterValue": "<UNIQUESTRING>"
+    },
+    {
+        "ParameterKey": "bigIpSubnetAz1",
+        "ParameterValue": "$mgmtAz1"
+    },
+    {
+        "ParameterKey": "bigIpSubnetAz2",
+        "ParameterValue": "$mgmtAz2"
+    },
+    {
+        "ParameterKey": "externalSubnetAz1",
+        "ParameterValue": "$extAz1"
+    },
+    {
+        "ParameterKey": "externalSubnetAz2",
+        "ParameterValue": "$extAz2"
+    },
+    {
+        "ParameterKey": "internalSubnetAz1",
+        "ParameterValue": "$extAz1"
+    },
+    {
+        "ParameterKey": "internalSubnetAz2",
+        "ParameterValue": "$extAz2"
+    },
+    {
+        "ParameterKey": "vpcId",
+        "ParameterValue": "$vpcId"
     },
     {
         "ParameterKey": "vpcCidr",
