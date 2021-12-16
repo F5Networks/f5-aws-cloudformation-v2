@@ -1,3 +1,6 @@
+../../examples/autoscale/bigiq/autoscale-existing-network.yaml:
+- No Key Diff
+- No Value Diff
 ../../examples/autoscale/bigiq/autoscale.yaml:
 - No Key Diff
 - No Value Diff

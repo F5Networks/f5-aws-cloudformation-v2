@@ -43,7 +43,7 @@ SNS EVENTS: 'autoscaling:EC2_INSTANCE_LAUNCH,autoscaling:EC2_INSTANCE_LAUNCH_ERR
 SOLUTION TYPE: autoscale
 SSH KEY: dewpt
 STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
-STACK TYPE: existing-stack
+STACK TYPE: full-stack
 TEMPLATE NAME: bigiq-autoscale
 TEMPLATE URL: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/main/examples/autoscale/bigiq/autoscale.yaml'
 TIMEZONE: US/Pacific

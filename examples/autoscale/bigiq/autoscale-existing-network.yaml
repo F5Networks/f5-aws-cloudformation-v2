@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >-
-  This template creates BIG-IP PAYG Autoscale WAF solution. The template uses nested
-  templates for provisioning access, compute resources for hosting BIG-IP Autoscale
+  This template creates BIG-IQ-based BIG-IP Autoscale WAF solution. The template uses
+  nested templates for provisioning access, compute resources for hosting BIG-IP Autoscale
   solution.
 Metadata:
   AWS::CloudFormation::Interface:
@@ -56,6 +56,18 @@ Metadata:
           - notificationEmail
           - secretArn
           - snsEvents
+      - Label:
+          default: BIG-IQ configuration
+        Parameters:
+          - bigIqAddressType
+          - bigIqSecretArn
+          - bigIqSubnetId
+          - bigIqSecurityGroupId
+      - Label:
+          default: Revoke Function
+        Parameters:
+          - lambdaS3BucketName
+          - lambdaS3Key
       - Label:
           default: Telemetry Configuration
         Parameters:
@@ -120,6 +132,19 @@ Metadata:
       bigIpScalingMinSize:
         default: Minimum number of BIG-IP instances that can be created in the Autoscale
           Group
+      bigIqAddressType:
+        default: 'The type (public or private) of IP address or hostname for the BIG-IQ
+          to be used when licensing the BIG-IP. When using a private IP address or
+          hostname, you must provide values for the bigIqSecurityGroupId and bigIqSubnetId
+          parameters.'
+      bigIqSecretArn:
+        default: The ARN of the BIG-IQ secret to use during BIG-IP licensing via BIG-IQ.
+      bigIqSecurityGroupId:
+        default: The ID of the security group where BIG-IQ is deployed. You must provide
+          a value for this parameter when using a private BIG-IP address.
+      bigIqSubnetId:
+        default: The ID of the subnet where BIG-IQ is deployed. You must provide a
+          value for this parameter when using a private BIG-IP address.
       cloudWatchLogGroupName:
         default: CloudWatch Log Group Name
       cloudWatchLogStreamName:
@@ -134,6 +159,11 @@ Metadata:
         default: Environment
       group:
         default: Group
+      lambdaS3BucketName:
+        default: S3 bucket with BIG-IQ Revoke function
+      lambdaS3Key:
+        default: The top-level key in the lambda S3 bucket where the lambda function
+          is located
       loggingS3BucketName:
         default: S3 Bucket for BIG-IP logging.
       metricNameSpace:
@@ -253,7 +283,7 @@ Parameters:
     Type: String
   bigIpImage:
     ConstraintDescription: Must be a valid F5 BIG-IP market place image
-    Default: '*16.1.0-0.0.19**PAYG-Adv WAF Plus 25Mbps*'
+    Default: '*16.1.0-0.0.19**BYOL-All Modules 2Boot*'
     Description: F5 BIG-IP market place image
     Type: String
   bigIpInstanceType:
@@ -353,6 +383,31 @@ Parameters:
     MaxValue: 99
     MinValue: 1
     Type: Number
+  bigIqAddressType:
+    AllowedValues:
+      - private
+      - public
+    ConstraintDescription: Must be either private or public
+    Default: private
+    Description: 'The type (public or private) of IP address or hostname for the BIG-IQ
+      to be used when licensing the BIG-IP.  Note: When using a private IP address
+      or hostname, you must provide values for the bigIqSecurityGroupId and bigIqSubnetId
+      parameters.'
+    Type: String
+  bigIqSecretArn:
+    Description: The ARN of the AWS secret containing the password used during BIG-IP
+      licensing via BIG-IQ.
+    Type: String
+  bigIqSecurityGroupId:
+    Default: ''
+    Description: The ID of the security group where BIG-IQ is deployed. You must provide
+      a value for this parameter when using a private BIG-IP address.
+    Type: String
+  bigIqSubnetId:
+    Default: ''
+    Description: The ID of the subnet where BIG-IQ is deployed. You must provide a
+      value for this parameter when using a private BIG-IP address.
+    Type: String
   cloudWatchLogGroupName:
     Default: ''
     Description: The name of the CloudWatch Log Group
@@ -384,6 +439,16 @@ Parameters:
   group:
     Default: f5group
     Description: Group Tag.
+    Type: String
+  lambdaS3BucketName:
+    Default: f5-aws-bigiq-revoke
+    Description: REQUIRED - The name of the S3 bucket where the lambdaBigiqRevoke
+      lambda function is located.
+    Type: String
+  lambdaS3Key:
+    Default: main/
+    Description: REQUIRED - The top-level key in the lambda S3 bucket where the lambda
+      function is located.
     Type: String
   loggingS3BucketName:
     Default: ''
@@ -532,9 +597,6 @@ Conditions:
     - !Equals
       - ''
       - !Ref 'secretArn'
-  useSecretLoggingS3Bucket: !And
-    - !Condition 'useLoggingS3Bucket'
-    - !Condition 'useSecretArn'
 Resources:
   Access:
     Type: 'AWS::CloudFormation::Stack'
@@ -545,9 +607,10 @@ Resources:
           S3Bucket: !Ref 's3BucketName'
       Parameters:
         application: !Ref 'application'
+        bigIqSecretArn: !Ref 'bigIqSecretArn'
         cost: !Ref 'cost'
         createAmiRole: 'true'
-        createBigIqRoles: 'false'
+        createBigIqRoles: 'true'
         environment: !Ref 'environment'
         group: !Ref 'group'
         s3Bucket: !If
@@ -560,19 +623,9 @@ Resources:
             - !Ref 'loggingS3BucketName'
             - !Ref 'AWS::NoValue'
         secretArn: !If [useSecretArn, !Ref 'secretArn', !Ref 'AWS::NoValue']
-        solutionType: !If
-          - useSecretLoggingS3Bucket
-          - secretS3
-          - !If
-            - useSecretArn
-            - secret
-            - !If
-              - useLoggingS3Bucket
-              - s3
-              - standard
+        solutionType: !If [useLoggingS3Bucket, secretS3, secret]
   AmiInfo:
     Type: 'Custom::AMIInfo'
-    Condition: noCustomImageId
     Properties:
       OSName: !Ref 'bigIpImage'
       OwnerId: 'aws-marketplace'
@@ -590,11 +643,17 @@ Resources:
         bigIpExternalSecurityGroup: !GetAtt
           - Dag
           - Outputs.bigIpMgmtSecurityGroup
+        bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig'
+        bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         bigIpInstanceProfile: !GetAtt
           - Access
           - Outputs.bigIpInstanceProfile
-        bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig'
-        bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
+        bigIqLicenseRevokeSnsTopic: !GetAtt
+          - Function
+          - Outputs.snsTopic
+        bigIqNotificationRole: !GetAtt
+          - Access
+          - Outputs.bigIqNotificationRole
         cost: !Ref 'cost'
         environment: !Ref 'environment'
         externalTargetGroupHttp: !If
@@ -629,6 +688,7 @@ Resources:
             - Dag
             - Outputs.internalTargetGroupHttps
           - !Ref 'AWS::NoValue'
+        licenseType: 'bigiq'
         maxBatchSize: !Ref 'bigIpMaxBatchSize'
         metricNameSpace: !Ref 'metricNameSpace'
         minInstancesInService: !Ref 'bigIpMinInstancesInService'
@@ -688,7 +748,25 @@ Resources:
         amiLookupRole: !GetAtt
           - Access
           - Outputs.lambdaAmiExecutionRole
+        bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig'
+        bigIqAddressType: !Ref 'bigIqAddressType'
+        bigIqSecretArn: !Ref 'bigIqSecretArn'
+        bigIqSecurityGroupId: !Ref 'bigIqSecurityGroupId'
+        bigIqSubnetId: !Ref 'bigIqSubnetId'
+        copyZipsRole: !GetAtt
+          - Access
+          - Outputs.copyZipsRole
+        cost: !Ref 'cost'
         createAmiLookupFunction: 'true'
+        createRevokeFunction: 'true'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        lambdaAccessRole: !GetAtt
+          - Access
+          - Outputs.lambdaAccessRole
+        lambdaS3BucketName: !Ref 'lambdaS3BucketName'
+        lambdaS3Key: !Ref 'lambdaS3Key'
+        uniqueString: !Ref 'uniqueString'
   Telemetry:
     Type: 'AWS::CloudFormation::Stack'
     Condition: createLogDestination

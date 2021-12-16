@@ -4,7 +4,7 @@
 
 
 stack_outputs=$(aws cloudformation describe-stacks --region <REGION> --stack-name dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID> | jq .Stacks[0].Outputs)
-autoscaleGroup='bigIputoscaleGroup01'
+autoscaleGroup='bigIpAutoscaleGroup'
 snsTopic='snsTopic'
 
 if echo $stack_outputs | grep $autoscaleGroup; then
