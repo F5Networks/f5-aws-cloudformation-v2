@@ -58,6 +58,22 @@ run_link_checker:
   script:
     - make link_check
 
+# validate test policy parameters are present
+run_test_param_checker:
+  image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7
+  stage: smoke-tests
+  tags:
+    - docker-executor
+  except:
+    refs:
+      - schedules
+      - triggers
+      - pipelines
+    variables:
+      - $RELEASE_RUNTIME_INIT_TESTS == "true"
+  script:
+    - make test_policy_check
+
 # validate parameters match style guide
 verify_parameters_match_style_guide:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
@@ -133,6 +149,7 @@ aws_network_module_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -165,6 +182,7 @@ aws_function_module_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/function/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -197,6 +215,7 @@ aws_access_module_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/access/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -229,6 +248,7 @@ aws_dag_module_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/dag/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -261,6 +281,7 @@ aws_application_module_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/application/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -293,6 +314,7 @@ aws_bastion_module_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bastion/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -325,6 +347,7 @@ aws_telemetry_module_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/telemetry/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -357,6 +380,7 @@ aws_bigip_autoscale_module_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -389,6 +413,7 @@ aws_bigip_standalone_module_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -414,6 +439,13 @@ aws_bigip_failover_payg_byol_example_test_job:
       - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/full/**/*
       - automated-test-scripts/f5-aws-cloudformation-v2/examples/failover/payg_byol/**/*
       - examples/failover/failover.yaml
+      - examples/modules/bigip-standalone/bigip-standalone.yaml
+      - examples/modules/access/access.yaml
+      - examples/modules/application/application.yaml
+      - examples/modules/bastion/bastion.yaml
+      - examples/modules/dag/dag.yaml
+      - examples/modules/function/function.yaml
+      - examples/modules/network/network.yaml
   except:
     refs:
       - schedules
@@ -421,6 +453,7 @@ aws_bigip_failover_payg_byol_example_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -453,6 +486,7 @@ aws_bigip_failover_existing_payg_byol_example_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/test_policy_existing.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -478,6 +512,14 @@ aws_bigip_autoscale_payg_example_test_job:
       - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/full/*
       - automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/payg/*
       - examples/autoscale/payg/autoscale.yaml
+      - examples/modules/bigip-autoscale/bigip-autoscale.yaml
+      - examples/modules/access/access.yaml
+      - examples/modules/application/application.yaml
+      - examples/modules/bastion/bastion.yaml
+      - examples/modules/dag/dag.yaml
+      - examples/modules/function/function.yaml
+      - examples/modules/network/network.yaml
+      - examples/modules/telemetry/telemetry.yaml
   except:
     refs:
       - schedules
@@ -485,6 +527,7 @@ aws_bigip_autoscale_payg_example_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/test_policy_full.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -517,6 +560,7 @@ aws_bigip_autoscale_payg_existing_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/test_policy_existing.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -542,6 +586,14 @@ aws_bigip_autoscale_bigiq_example_test_job:
       - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/*
       - automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/bigiq/*
       - examples/autoscale/bigiq/autoscale.yaml
+      - examples/modules/bigip-autoscale/bigip-autoscale.yaml
+      - examples/modules/access/access.yaml
+      - examples/modules/application/application.yaml
+      - examples/modules/bastion/bastion.yaml
+      - examples/modules/dag/dag.yaml
+      - examples/modules/function/function.yaml
+      - examples/modules/network/network.yaml
+      - examples/modules/telemetry/telemetry.yaml
   except:
     refs:
       - schedules
@@ -549,6 +601,7 @@ aws_bigip_autoscale_bigiq_example_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/test_policy_full.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -581,6 +634,7 @@ aws_bigip_autoscale_bigiq_existing_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/test_policy_existing.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -606,6 +660,12 @@ aws_payg_quickstart_test_job:
       - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/**/*
       - automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/**/*
       - examples/quickstart/quickstart.yaml
+      - examples/modules/bigip-standalone/bigip-standalone.yaml
+      - examples/modules/application/application.yaml
+      - examples/modules/bastion/bastion.yaml
+      - examples/modules/dag/dag.yaml
+      - examples/modules/function/function.yaml
+      - examples/modules/network/network.yaml
   except:
     refs:
       - schedules
@@ -613,6 +673,7 @@ aws_payg_quickstart_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -638,6 +699,12 @@ aws_byol_quickstart_test_job:
       - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/**/*
       - automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/**/*
       - examples/quickstart/quickstart.yaml
+      - examples/modules/bigip-standalone/bigip-standalone.yaml
+      - examples/modules/application/application.yaml
+      - examples/modules/bastion/bastion.yaml
+      - examples/modules/dag/dag.yaml
+      - examples/modules/function/function.yaml
+      - examples/modules/network/network.yaml
   except:
     refs:
       - schedules
@@ -645,6 +712,7 @@ aws_byol_quickstart_test_job:
       - pipelines
     variables:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
+      - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
     TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
