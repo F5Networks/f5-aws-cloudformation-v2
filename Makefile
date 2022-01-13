@@ -55,7 +55,7 @@ run_outputs_parser:
 run_compare_outputs: run_outputs_parser
 	echo "Comparing given outputs config file against golden outputs config file"
 	cd ${PARSER_DIR} && python compare_parameters.py -g golden_outputs.yaml --output-file outputs_diff.yaml --input-parameters-file outputs_config.yaml -l 2 &&	echo '*********' && echo 'The following files have outputs that do not match what is in golden_outputs.yaml' && cat outputs_diff.yaml
-	
+
 run_expected_outputs_diff:
 	# Need to run run_compare_parser before running expected diff or DIFF_VAR variable will not be correct
 	if [ -n ${DIFF_VAR_OUTPUTS} ]; then echo "Diff files for outputs match!"; else echo "========================================"; echo "Diff files do not match: ${DIFF_VAR_OUTPUTS}"; exit 1; fi
