@@ -28,6 +28,7 @@ ParameterKey=numAzs,ParameterValue=<NUMBER AZS> \
 ParameterKey=numSubnets,ParameterValue=<NUMBER SUBNETS> \
 ParameterKey=setPublicSubnet1,ParameterValue=$provisionMgmtPublicIp \
 ParameterKey=subnetMask,ParameterValue=<SUBNETMASK> \
+ParameterKey=uniqueString,ParameterValue=<UNIQUESTRING> \
 ParameterKey=vpcCidr,ParameterValue=<CIDR> \
 ParameterKey=vpcTenancy,ParameterValue=<TENANCY>"
 

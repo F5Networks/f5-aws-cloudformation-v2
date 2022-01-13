@@ -50,10 +50,10 @@ Use failover-existing-network.yaml parent template to deploy HA solution into an
 
 The modules below create the following cloud resources:
 
-- **Network**: A virtual network (also known as VPC), subnets, internet/NAT gateways, DHCP options, network ACLs, and other network-related resources. **Not included in failover-existing-network.yaml*
+- **Network**: A virtual network (also known as VPC), subnets, internet/NAT gateways, DHCP options, network ACLs, and other network-related resources. **Not included in failover-existing-network.yaml**
 - **Access**: This template creates AWS InstanceProfiles and IAM Roles.
-- **Application**: This template creates a generic example application for use when demonstrating live traffic through the BIG-IP instance. **Not included in failover-existing-network.yaml*
-- **Bastion**: This template creates a bastion host for accessing the BIG-IP instances when no public IP address is used for the management interfaces. **Not included in failover-existing-network.yaml*
+- **Application**: This template creates a generic example application for use when demonstrating live traffic through the BIG-IP instance. **Not included in failover-existing-network.yaml**
+- **Bastion**: This template creates a bastion host for accessing the BIG-IP instances when no public IP address is used for the management interfaces. **Not included in failover-existing-network.yaml**
 - **Disaggregation** *(DAG/Ingress)*: This template creates resources required to get traffic to the BIG-IP, including Network Security Groups, Public IP Addresses, NAT rules and probes.
 - **BIG-IP**: This template creates F5 BIG-IP Virtual Edition instances provisioned with Local Traffic Manager (LTM) and (optionally) Application Security Manager (ASM). 
 

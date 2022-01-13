@@ -1,5 +1,5 @@
 ---
-AUTOFILL EVAL LICENSE KEY:
+AUTOFILL EVAL LICENSE KEY: null
 BIGIP IMAGE: Best
 BIGIP INSTANCE TYPE: m5.2xlarge
 BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.4.0-1.gz.run'
@@ -16,7 +16,7 @@ RUNTIME INIT CONFIG: >-
 SOLUTION TYPE: standalone
 SSH KEY: dewpt
 STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
-TEMPLATE NAME: quickstart-<NIC COUNT>nic-<LICENSE TYPE>
+TEMPLATE NAME: quickstart-1nic-<LICENSE TYPE>
 TEMPLATE URL: 'file://$PWD/examples/quickstart/quickstart.yaml'
 THROUGHPUT: 1000Mbps
 UNIQUESTRING: dew<DEWPOINT JOB ID>

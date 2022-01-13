@@ -1,15 +1,39 @@
 [
   {
-    "ParameterKey": "appContainerName",
-    "ParameterValue": "f5devcentral/f5-demo-app:latest"
-  },
-  {
     "ParameterKey": "application",
     "ParameterValue": "f5app-quickstart"
   },
   {
     "ParameterKey": "artifactLocation",
     "ParameterValue": "f5-aws-cloudformation-v2/v1.1.0.0/examples/"
+  },
+  {
+    "ParameterKey": "bigIpExternalSelfIp",
+    "ParameterValue": "10.0.0.11"
+  },
+  {
+    "ParameterKey": "bigIpExternalServiceIps",
+    "ParameterValue": "10.0.1.101,10.0.0.101"
+  },
+  {
+    "ParameterKey": "bigIpExternalSubnetId",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "bigIpInternalSelfIp",
+    "ParameterValue": "10.0.2.11"
+  },
+  {
+    "ParameterKey": "bigIpInternalSubnetId",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "bigIpMgmtSelfIp",
+    "ParameterValue": "10.0.1.11"
+  },
+  {
+    "ParameterKey": "bigIpMgmtSubnetId",
+    "ParameterValue": ""
   },
   {
     "ParameterKey": "bigIpRuntimeInitConfig",
@@ -48,16 +72,8 @@
     "ParameterValue": "payg"
   },
   {
-    "ParameterKey": "numAzs",
-    "ParameterValue": 1
-  },
-  {
     "ParameterKey": "numNics",
     "ParameterValue": 3
-  },
-  {
-    "ParameterKey": "numSubnets",
-    "ParameterValue": 4
   },
   {
     "ParameterKey": "owner",
@@ -98,5 +114,13 @@
   {
     "ParameterKey": "version",
     "ParameterValue": "16-1-0-0019"
+  },
+  {
+    "ParameterKey": "vpcCidr",
+    "ParameterValue": "10.0.0.0/16"
+  },
+  {
+    "ParameterKey": "vpcId",
+    "ParameterValue": ""
   }
 ]
