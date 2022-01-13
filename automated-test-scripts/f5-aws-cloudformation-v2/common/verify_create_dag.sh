@@ -1,4 +1,5 @@
 #  expectValue = "SUCCESS"
+#  expectFailValue = "failed to create:"
 #  scriptTimeout = 3
 #  replayEnabled = true
 #  replayTimeout = 120
@@ -10,4 +11,5 @@ if echo $bigip | grep 'CREATE_COMPLETE'; then
   echo "SUCCESS"
 else
   echo "FAILED"
+  echo "EVENTS:${events}"
 fi
