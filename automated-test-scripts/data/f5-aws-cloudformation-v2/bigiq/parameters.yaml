@@ -16,6 +16,7 @@ STACK TYPE: existing-stack
 TEMPLATE NAME: bigiq-autoscale
 TEMPLATE URL: 'file://$PWD/examples/autoscale/bigiq/autoscale.yaml'
 TIMEZONE: US/Pacific
+UNIQUESTRING: q<DEWPOINT JOB ID>
 # Network Module Parameters
 CIDR: 10.0.0.0/16
 NETWORK STACK NAME: dewdrop-<NETWORK TEMPLATE NAME>-<DEWPOINT JOB ID>

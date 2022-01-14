@@ -2,7 +2,7 @@
 #  expectFailValue = "FAILED"
 #  scriptTimeout = 2
 #  replayEnabled = true
-#  replayTimeout = 180
+#  replayTimeout = 360
 
 
 TMP_DIR='/tmp/<DEWPOINT JOB ID>'
