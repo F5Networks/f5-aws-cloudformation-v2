@@ -61,9 +61,9 @@ if [[ "<RUNTIME INIT CONFIG 01>" == *{* ]]; then
     runtimeConfig02="${runtimeConfig02/<ARTIFACT LOCATION>/$artifact_location}"
 else
     if [[ "<PROVISION EXAMPLE APP>" == "false" ]]; then
-        declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>_instance01.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>_instance02.yaml)
+        declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance01.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance02.yaml)
     else
-        declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>_instance01_with_app.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>_instance02_with_app.yaml)
+        declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance01-with-app.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance02-with-app.yaml)
     fi
     counter=1
     for config_path in "${runtime_init_config_files[@]}"; do
@@ -85,9 +85,9 @@ else
         if [[ "<LICENSE TYPE>" == "byol" ]]; then
             # Add BYOL License to declaration
             if [[ $counter == 1 ]]; then
-                /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.myLicense.regKey = \"$regKey01\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+                /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.regKey = \"$regKey01\"" -i <DEWPOINT JOB ID>-0$counter.yaml
             else
-                /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.myLicense.regKey = \"$regKey02\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+                /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.regKey = \"$regKey02\"" -i <DEWPOINT JOB ID>-0$counter.yaml
             fi
         fi
 

@@ -373,7 +373,7 @@ Parameters:
       configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.3.2/dist/f5-bigip-runtime-init-1.3.2-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.0/dist/f5-bigip-runtime-init-1.4.0-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   cfeS3Bucket:
@@ -509,7 +509,7 @@ Resources:
       AccessControl: BucketOwnerFullControl
       Tags:
         - Key: f5_cloud_failover_label
-          Value: bigip-high-availability-solution
+          Value: bigip_high_availability_solution
   BigipInternalInterface:
     Condition: useDynamicInternalIpAddr
     Properties:

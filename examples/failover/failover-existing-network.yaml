@@ -282,7 +282,7 @@ Parameters:
       configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.3.2/dist/f5-bigip-runtime-init-1.3.2-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.0/dist/f5-bigip-runtime-init-1.4.0-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   cfeS3Bucket:
@@ -295,7 +295,7 @@ Parameters:
   cfeTag:
     Description: Cloud Failover deployment tag value.
     Type: String
-    Default: bigip-high-availability-solution
+    Default: bigip_high_availability_solution
   cfeVipTag:
     Description: Cloud Failover VIP tag value; provides private ip addresses to be
       assigned to VIP public ip.

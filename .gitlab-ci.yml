@@ -727,7 +727,7 @@ aws_byol_quickstart_test_job:
 
 
 # Example: AWS Quickstart Existing PAYG Template
-aws_payg_quickstart_test_job:
+aws_payg_quickstart_existing_test_job:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
   stage: sprinkle-tests
   tags:
@@ -766,7 +766,7 @@ aws_payg_quickstart_test_job:
       - stuck_or_timeout_failure
 
 # Example: AWS Quickstart Existing BYOL Template
-aws_byol_quickstart_test_job:
+aws_byol_quickstart_existing_test_job:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
   stage: sprinkle-tests
   tags:
