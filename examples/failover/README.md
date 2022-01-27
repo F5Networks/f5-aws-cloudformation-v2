@@ -298,7 +298,7 @@ Example from failover-parameters.json
 ```json
   {
     "ParameterKey": "bigIpRuntimeInitConfig01",
-    "ParameterValue": "https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/main/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg_instance01.yaml"
+    "ParameterValue": "https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/main/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml"
   },
   {
     "ParameterKey": "bigIpRuntimeInitConfig02",
@@ -313,17 +313,17 @@ Example from failover-parameters.json
 F5 has provided the following example configuration files in the `examples/failover/bigip-configurations` folder:
 
 - These examples install Automation Tool Chain packages for a PAYG licensed deployment.
-  - `runtime-init-conf-3nic-payg_instance01.yaml`
-  - `runtime-init-conf-3nic-payg_instance02.yaml`
+  - `runtime-init-conf-3nic-payg-instance01.yaml`
+  - `runtime-init-conf-3nic-payg-instance02.yaml`
 - These examples install Automation Tool Chain packages and create WAF-protected services for a PAYG licensed deployment.
-  - `runtime-init-conf-3nic-payg_instance01_with_app.yaml`
-  - `runtime-init-conf-3nic-payg_instance02_with_app.yaml`
+  - `runtime-init-conf-3nic-payg-instance01-with-app.yaml`
+  - `runtime-init-conf-3nic-payg-instance02-with-app.yaml`
 - These examples install Automation Tool Chain packages for a BYOL licensed deployment.
-  - `runtime-init-conf-3nic-byol_instance01.yaml`
-  - `runtime-init-conf-3nic-byol_instance02.yaml`
+  - `runtime-init-conf-3nic-byol-instance01.yaml`
+  - `runtime-init-conf-3nic-byol-instance02.yaml`
 - These examples install Automation Tool Chain packages and create WAF-protected services for a BYOL licensed deployment.
-  - `runtime-init-conf-3nic-byol_instance01_with_app.yaml`
-  - `runtime-init-conf-3nic-byol_instance02_with_app.yaml`
+  - `runtime-init-conf-3nic-byol-instance01-with-app.yaml`
+  - `runtime-init-conf-3nic-byol-instance02-with-app.yaml`
 - `Rapid_Deployment_Policy_13_1.xml` - This ASM security policy is supported for BIG-IP 13.1 and later.
 
 See [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) for more examples.

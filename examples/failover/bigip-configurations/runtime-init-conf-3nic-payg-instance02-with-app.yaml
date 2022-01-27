@@ -1,11 +1,14 @@
+controls:
+  logLevel: info
+  logFilename: /var/log/cloud/bigIpRuntimeInit.log
 extension_packages:
   install_operations:
     - extensionType: do
-      extensionVersion: 1.26.0
-      extensionHash: f1f4a23cd7d3ac3d9f38fed520c373f5a16284fab001ebd26593ddc97c011ef3
+      extensionVersion: 1.27.0
+      extensionHash: 2aee4a29ac64b38ac5af7d41607a966cac063c99a339b228225ffa38f8f9a4cf
     - extensionType: as3
-      extensionVersion: 3.33.0
-      extensionHash: 368d7b22738fe707655ca3a104c7c79c5c185eb07021e41eebe0e19d70ca63ee
+      extensionVersion: 3.34.0
+      extensionHash: 05a80ec0848dc5b8876b78a8fbee2980d5a1671d635655b3af604dc830d5fed4
     - extensionType: cf
       extensionVersion: 1.10.0
       extensionHash: d758c985cac4dbef4b0732fe5900317ae97e67c6efca621a5b2b02c8c4bbeace
@@ -17,30 +20,30 @@ extension_services:
         schemaVersion: 1.0.0
         class: Device
         async: true
-        label: Standalone 2NIC BIG-IP declaration for Declarative Onboarding with
+        label: Standalone 3NIC BIG-IP declaration for Declarative Onboarding with
           PAYG license
         Common:
           class: Tenant
-          myNtp:
+          My_Ntp:
             class: NTP
             servers:
               - 0.pool.ntp.org
               - 1.pool.ntp.org
             timezone: UTC
-          myDns:
+          My_Provisioning:
+            asm: nominal
+            class: Provision
+            ltm: nominal
+          My_Dns:
             class: DNS
             nameServers:
               - 169.254.169.253
             search:
               - f5.com
-          mySystem:
+          My_System:
             autoPhonehome: true
             class: System
             hostname: 'failover1.local'
-          myLicense:
-            class: License
-            licenseType: regKey
-            regKey: REPLACE_WITH_VALID_REGKEY
           admin:
             class: User
             userType: regular
@@ -53,7 +56,7 @@ extension_services:
             interfaces:
               - name: '1.1'
                 tagged: false
-          externalSelf:
+          external-self:
             class: SelfIp
             address: '{{{SELF_IP_EXTERNAL}}}'
             vlan: external
@@ -80,10 +83,10 @@ extension_services:
             localOnly: true
           configSync:
             class: ConfigSync
-            configsyncIp: /Common/externalSelf/address
+            configsyncIp: /Common/external-self/address
           failoverAddress:
             class: FailoverUnicast
-            address: /Common/externalSelf/address
+            address: /Common/external-self/address
           failoverGroup:
             class: DeviceGroup
             type: sync-failover
@@ -115,14 +118,14 @@ extension_services:
         environment: aws
         controls:
           class: Controls
-          logLevel: info
+          logLevel: silly
         externalStorage:
           scopingTags:
-            f5_cloud_failover_label: bigip-high-availability-solution
+            f5_cloud_failover_label: bigip_high_availability_solution
         failoverAddresses:
           enabled: true
           scopingTags:
-            f5_cloud_failover_label: bigip-high-availability-solution
+            f5_cloud_failover_label: bigip_high_availability_solution
           requireScopingTags: false
     - extensionType: as3
       type: inline
@@ -136,7 +139,7 @@ extension_services:
           Shared:
             class: Application
             template: shared
-            shared_pool:
+            Service_01_Pool:
               class: Pool
               remark: Service 1 shared pool
               members:
@@ -149,62 +152,81 @@ extension_services:
                   addressRealm: private
               monitors:
                 - http
-            serviceAddress01:
+            Custom_HTTP_Profile:
+              class: HTTP_Profile
+              xForwardedFor: true
+            Custom_WAF_Policy:
+              class: WAF_Policy
+              url: >-
+                https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
+              enforcementMode: blocking
+              ignoreChanges: false
+            Service_Address_01_A:
               class: Service_Address
               virtualAddress: 10.0.0.101
               trafficGroup: none
-            serviceAddress02:
+            Service_Address_01_B:
               class: Service_Address
               virtualAddress: 10.0.3.101
               trafficGroup: none
-          HTTP_Service_01:
+          HTTP_Service_01_A:
             class: Application
             template: http
             serviceMain:
               class: Service_HTTP
               virtualAddresses:
-                - use: /Tenant_1/Shared/serviceAddress02
+                - use: /Tenant_1/Shared/Service_Address_01_A
               snat: auto
-              pool: /Tenant_1/Shared/shared_pool
-          HTTP_Service_02:
+              pool: /Tenant_1/Shared/Service_01_Pool
+              profileHTTP:
+                use: /Tenant_1/Shared/Custom_HTTP_Profile
+              policyWAF:
+                use: /Tenant_1/Shared/Custom_WAF_Policy
+          HTTP_Service_01_B:
             class: Application
             template: http
             serviceMain:
               class: Service_HTTP
               virtualAddresses:
-                - use: /Tenant_1/Shared/serviceAddress01
+                - use: /Tenant_1/Shared/Service_Address_01_B
               snat: auto
-              pool: /Tenant_1/Shared/shared_pool
-          HTTPS_Service_01:
+              pool: /Tenant_1/Shared/Service_01_Pool
+              profileHTTP:
+                use: /Tenant_1/Shared/Custom_HTTP_Profile
+              policyWAF:
+                use: /Tenant_1/Shared/Custom_WAF_Policy
+          HTTPS_Service_01_A:
             class: Application
             template: https
             serviceMain:
               class: Service_HTTPS
               virtualAddresses:
-                - use: /Tenant_1/Shared/serviceAddress02
+                - use: /Tenant_1/Shared/Service_Address_01_A
               snat: auto
-              pool: /Tenant_1/Shared/shared_pool
+              pool: /Tenant_1/Shared/Service_01_Pool
               serverTLS:
                 bigip: /Common/clientssl
               redirect80: false
-          HTTPS_Service_02:
+              profileHTTP:
+                use: /Tenant_1/Shared/Custom_HTTP_Profile
+              policyWAF:
+                use: /Tenant_1/Shared/Custom_WAF_Policy
+          HTTPS_Service_01_B:
             class: Application
             template: https
             serviceMain:
               class: Service_HTTPS
               virtualAddresses:
-                - use: /Tenant_1/Shared/serviceAddress01
+                - use: /Tenant_1/Shared/Service_Address_01_B
               snat: auto
-              pool: /Tenant_1/Shared/shared_pool
+              pool: /Tenant_1/Shared/Service_01_Pool
               serverTLS:
                 bigip: /Common/clientssl
               redirect80: false
-post_onboard_enabled: []
-pre_onboard_enabled:
-  - name: disable_1nic_config
-    type: inline
-    commands:
-      - /usr/bin/setdb provision.1nicautoconfig disable
+              profileHTTP:
+                use: /Tenant_1/Shared/Custom_HTTP_Profile
+              policyWAF:
+                use: /Tenant_1/Shared/Custom_WAF_Policy
 runtime_parameters:
   - name: BIGIP_PASSWORD
     type: secret
