@@ -24,16 +24,20 @@ extension_services:
           PAYG license
         Common:
           class: Tenant
+          My_DbVariables:
+            class: DbVariables
+            config.allow.rfc3927: enable
+            tm.tcpudptxchecksum: Software-only
+          My_Provisioning:
+            asm: nominal
+            class: Provision
+            ltm: nominal
           My_Ntp:
             class: NTP
             servers:
               - 0.pool.ntp.org
               - 1.pool.ntp.org
             timezone: UTC
-          My_Provisioning:
-            asm: nominal
-            class: Provision
-            ltm: nominal
           My_Dns:
             class: DNS
             nameServers:
@@ -43,7 +47,7 @@ extension_services:
           My_System:
             autoPhonehome: true
             class: System
-            hostname: 'failover1.local'
+            hostname: 'failover02.local'
           admin:
             class: User
             userType: regular
@@ -91,8 +95,8 @@ extension_services:
             class: DeviceGroup
             type: sync-failover
             members:
-              - failover0.local
-              - failover1.local
+              - failover01.local
+              - failover02.local
             owner: /Common/failoverGroup/members/0
             autoSync: true
             saveOnAutoSync: false
@@ -106,10 +110,6 @@ extension_services:
             remoteHost: 10.0.1.11
             remoteUsername: admin
             remotePassword: '{{{BIGIP_PASSWORD}}}'
-          dbVars:
-            class: DbVariables
-            config.allow.rfc3927: enable
-            tm.tcpudptxchecksum: Software-only
     - extensionType: cf
       type: inline
       value:
@@ -177,9 +177,9 @@ extension_services:
               virtualAddresses:
                 - use: /Tenant_1/Shared/Service_Address_01_A
               snat: auto
-              pool: /Tenant_1/Shared/Service_01_Pool
               profileHTTP:
                 use: /Tenant_1/Shared/Custom_HTTP_Profile
+              pool: /Tenant_1/Shared/Service_01_Pool
               policyWAF:
                 use: /Tenant_1/Shared/Custom_WAF_Policy
           HTTP_Service_01_B:

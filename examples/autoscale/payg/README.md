@@ -352,7 +352,7 @@ Most changes require republishing/rehosting the BIG-IP configuration to match re
 
 To change the CloudWatch destination values:
 
-  1. Edit/modify the Telemetry Streaming (TS) declaration in a corresponding runtime-init config file [runtime-init-conf-payg_with_app.yaml](../bigip-configurations/runtime-init-conf-payg_with_app.yaml) with the new `metricNamespace`, `logGroup`, and `logStream` values. 
+  1. Edit/modify the Telemetry Streaming (TS) declaration in a corresponding runtime-init config file [runtime-init-conf-payg_with_app.yaml](../bigip-configurations/runtime-init-conf-payg-with-app.yaml) with the new `metricNamespace`, `logGroup`, and `logStream` values. 
 
 Example:
 ```yaml

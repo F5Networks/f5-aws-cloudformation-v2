@@ -363,7 +363,7 @@ By default, this solution references the example `runtime-init-conf-bigiq_with_a
 
 To change the BIG-IQ Licensing configuration:
 
-  1. Edit/modify the Declarative Onboarding (DO) declaration in the runtime-init config file [runtime-init-conf-bigiq_with_app.yaml](../bigip-configurations/runtime-init-conf-bigiq_with_app.yaml) with the new `License` values. 
+  1. Edit/modify the Declarative Onboarding (DO) declaration in the runtime-init config file [runtime-init-conf-bigiq_with_app.yaml](../bigip-configurations/runtime-init-conf-bigiq-with-app.yaml) with the new `License` values. 
 
 Example:
 ```yaml
@@ -380,7 +380,7 @@ Example:
             unitOfMeasure: <YOUR_UNIT_OF_MEASURE>
             reachable: false
 ```
-  2. Edit/modify the BIG-IQ secret runtime-parameter in the runtime-init config file [runtime-init-conf-bigiq_with_app.yaml](../bigip-configurations/runtime-init-conf-bigiq_with_app.yaml) with your `secretId` value. 
+  2. Edit/modify the BIG-IQ secret runtime-parameter in the runtime-init config file [runtime-init-conf-bigiq_with_app.yaml](../bigip-configurations/runtime-init-conf-bigiq-with-app.yaml) with your `secretId` value. 
 
 ```yaml
   - name: BIGIQ_PASSWORD
@@ -408,7 +408,7 @@ Disclaimer: The the default names in the example Telemetry Streaming configurati
 
 To change the CloudWatch destination values:
 
-  1. Edit/modify the Telemetry Streaming (TS) declaration in a corresponding runtime-init config file [runtime-init-conf-bigiq.yaml](../bigip-configurations/runtime-init-conf-bigiq_with_app.yaml) with the new `metricNamespace`, `logGroup`, and `logStream` values. 
+  1. Edit/modify the Telemetry Streaming (TS) declaration in a corresponding runtime-init config file [runtime-init-conf-bigiq.yaml](../bigip-configurations/runtime-init-conf-bigiq-with-app.yaml) with the new `metricNamespace`, `logGroup`, and `logStream` values. 
 
 Example:
 ```yaml
@@ -440,7 +440,7 @@ Example:
 
 To log to an S3 Bucket:
   1. Ensure target S3 Logging destination exists in same region. See AWS's [documentation](https://docs.aws.amazon.com/AmazonS3/latest/userguide/creating-buckets-s3.html) for more information.
-  2. Edit/modify the Telemetry Streaming (TS) declaration in the example runtime-init config file in the corresponding `bigiq` [runtime-init-conf-bigiq.yaml](../bigip-configurations/runtime-init-conf-bigiq_with_app.yaml) with the new `Telemetry_Consumer` configuration.
+  2. Edit/modify the Telemetry Streaming (TS) declaration in the example runtime-init config file in the corresponding `bigiq` [runtime-init-conf-bigiq.yaml](../bigip-configurations/runtime-init-conf-bigiq-with-app.yaml) with the new `Telemetry_Consumer` configuration.
 
 Example: Replace 
 ```yaml

@@ -41,7 +41,7 @@ secret_name=$(aws secretsmanager describe-secret --secret-id <DEWPOINT JOB ID>-s
 bigiq_address=$(aws cloudformation describe-stacks --region $bigiq_stack_region --stack-name $bigiq_stack_name | jq -r '.Stacks[].Outputs[]|select (.OutputKey=="device1ManagementEipAddress")|.OutputValue')
 
 # Download and modify runtime-init, then upload to s3.
-curl https://f5-cft-v2.s3.amazonaws.com/${artifact_location}autoscale/bigip-configurations/runtime-init-conf-bigiq_with_app.yaml -o <DEWPOINT JOB ID>-config.yaml
+curl https://f5-cft-v2.s3.amazonaws.com/${artifact_location}autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml -o <DEWPOINT JOB ID>-config.yaml
 
 # Create user for tests that connect to the REST API
 /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.class = \"User\"" -i <DEWPOINT JOB ID>-config.yaml

@@ -1,3 +1,6 @@
+controls:
+  logLevel: info
+  logFilename: /var/log/cloud/bigIpRuntimeInit.log
 pre_onboard_enabled: []
 runtime_parameters:
   - name: HOST_NAME
@@ -54,19 +57,19 @@ extension_services:
             restjavad.useextramb: true
             ui.advisory.color: blue
             ui.advisory.text: "Provisioned via Runtime Init and DO"
-          My_Dns:
-            class: DNS
-            nameServers:
-              - 169.254.169.253
+          My_Provisioning:
+            asm: nominal
+            class: Provision
+            ltm: nominal
           My_Ntp:
             class: NTP
             servers:
               - 169.254.169.253
             timezone: UTC
-          My_Provisioning:
-            asm: nominal
-            class: Provision
-            ltm: nominal
+          My_Dns:
+            class: DNS
+            nameServers:
+              - 169.254.169.253
           My_System:
             autoPhonehome: true
             class: System
