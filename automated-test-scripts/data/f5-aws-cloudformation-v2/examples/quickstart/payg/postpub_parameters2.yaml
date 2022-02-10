@@ -10,12 +10,12 @@ NIC COUNT: 2
 PUBLIC MGMT: 'false'
 PROVISION PUBLIC IP: 'false'
 REGION: eu-west-2
+TEMPLATE NAME: quickstart-<NIC COUNT>nic-payg
 RUNTIME INIT CONFIG: https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/quickstart/bigip-configurations/<DEWPOINT JOB ID>.yaml
 SOLUTION TYPE: standalone
 SSH KEY: dewpt
 STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
 # have to be explicit here because dewdrop only runs one substitution
-TEMPLATE NAME: quickstart-<NIC COUNT>nic-payg
 TEMPLATE URL: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/main/examples/quickstart/quickstart.yaml'
 THROUGHPUT: 1000Mbps
 UNIQUESTRING: dew<DEWPOINT JOB ID>

@@ -24,16 +24,20 @@ extension_services:
           BYOL license
         Common:
           class: Tenant
+          My_DbVariables:
+            class: DbVariables
+            config.allow.rfc3927: enable
+            tm.tcpudptxchecksum: Software-only
+          My_Provisioning:
+            asm: nominal
+            class: Provision
+            ltm: nominal
           My_Ntp:
             class: NTP
             servers:
               - 0.pool.ntp.org
               - 1.pool.ntp.org
             timezone: UTC
-          My_Provisioning:
-            asm: nominal
-            class: Provision
-            ltm: nominal
           My_Dns:
             class: DNS
             nameServers:
@@ -43,7 +47,7 @@ extension_services:
           My_System:
             autoPhonehome: true
             class: System
-            hostname: 'failover0.local'
+            hostname: 'failover01.local'
           My_License:
             class: License
             licenseType: regKey
@@ -95,8 +99,8 @@ extension_services:
             class: DeviceGroup
             type: sync-failover
             members:
-              - failover0.local
-              - failover1.local
+              - failover01.local
+              - failover02.local
             owner: /Common/failoverGroup/members/0
             autoSync: true
             saveOnAutoSync: false
@@ -110,10 +114,6 @@ extension_services:
             remoteHost: /Common/failoverGroup/members/0
             remoteUsername: admin
             remotePassword: '{{{BIGIP_PASSWORD}}}'
-          dbVars:
-            class: DbVariables
-            config.allow.rfc3927: enable
-            tm.tcpudptxchecksum: Software-only
     - extensionType: cf
       type: inline
       value:

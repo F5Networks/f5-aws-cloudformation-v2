@@ -60,7 +60,7 @@ if [[ "<RUNTIME INIT CONFIG>" == *{* ]]; then
     runtimeConfig="${runtimeConfig/<ARTIFACT LOCATION>/$artifact_location}"
 else
     # Modify Runtime-init, then upload to s3.
-    cp /$PWD/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq_with_app.yaml <DEWPOINT JOB ID>.yaml
+    cp /$PWD/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml <DEWPOINT JOB ID>.yaml
 
     # Create user for login tests
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.class = \"User\"" -i <DEWPOINT JOB ID>.yaml

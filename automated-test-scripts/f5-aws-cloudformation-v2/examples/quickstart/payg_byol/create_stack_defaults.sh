@@ -21,7 +21,7 @@ fi
 runtimeConfig='<RUNTIME INIT CONFIG>'
 
 # Download and modify runtime-init, then upload to s3.
-curl https://f5-cft-v2.s3.amazonaws.com/${artifact_location}quickstart/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>_with_app.yaml -o <DEWPOINT JOB ID>-config.yaml
+curl https://f5-cft-v2.s3.amazonaws.com/${artifact_location}quickstart/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-with-app.yaml -o <DEWPOINT JOB ID>-config.yaml
 
 if [[ <LICENSE TYPE> == "byol" ]]; then
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.regKey = \"<AUTOFILL EVAL LICENSE KEY>\"" -i <DEWPOINT JOB ID>-config.yaml

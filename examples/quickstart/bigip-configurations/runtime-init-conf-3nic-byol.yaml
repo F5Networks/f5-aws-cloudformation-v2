@@ -1,3 +1,6 @@
+controls:
+  logLevel: info
+  logFilename: /var/log/cloud/bigIpRuntimeInit.log
 pre_onboard_enabled:
   - name: provision_rest
     type: inline
@@ -101,6 +104,15 @@ extension_services:
             ui.advisory.enabled: true
             ui.advisory.color: blue
             ui.advisory.text: BIG-IP Quickstart
+          My_Provisioning:
+            class: Provision
+            asm: nominal
+            ltm: nominal
+          My_Ntp:
+            class: NTP
+            servers:
+              - 169.254.169.253
+            timezone: UTC
           My_Dns:
             class: DNS
             nameServers:
@@ -109,15 +121,6 @@ extension_services:
             class: License
             licenseType: regKey
             regKey: AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE
-          My_Ntp:
-            class: NTP
-            servers:
-              - 169.254.169.253
-            timezone: UTC
-          My_Provisioning:
-            class: Provision
-            asm: nominal
-            ltm: nominal
           My_System:
             class: System
             autoPhonehome: true

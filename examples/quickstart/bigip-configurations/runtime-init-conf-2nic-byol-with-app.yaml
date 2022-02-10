@@ -1,3 +1,6 @@
+controls:
+  logLevel: info
+  logFilename: /var/log/cloud/bigIpRuntimeInit.log
 pre_onboard_enabled:
   - name: provision_rest
     type: inline
@@ -45,6 +48,20 @@ runtime_parameters:
         value: some-user-agent
       - name: X-aws-ec2-metadata-token
         value: "{{{AWS_SESSION_TOKEN}}}"
+  - name: SELF_IP_EXTERNAL
+    type: metadata
+    metadataProvider:
+      type: network
+      environment: aws
+      field: local-ipv4s
+      index: 1
+  - name: DEFAULT_ROUTE
+    type: metadata
+    metadataProvider:
+      type: network
+      environment: aws
+      field: subnet-ipv4-cidr-block
+      index: 1
 bigip_ready_enabled: []
 extension_packages:
   install_operations:
@@ -68,7 +85,7 @@ extension_services:
         schemaVersion: 1.0.0
         class: Device
         label: >-
-          Quickstart 1NIC BIG-IP declaration for Declarative Onboarding with BYOL
+          Quickstart 2NIC BIG-IP declaration for Declarative Onboarding with BYOL
           license
         async: true
         Common:
@@ -80,6 +97,15 @@ extension_services:
             ui.advisory.enabled: true
             ui.advisory.color: blue
             ui.advisory.text: BIG-IP Quickstart
+          My_Provisioning:
+            class: Provision
+            asm: nominal
+            ltm: nominal
+          My_Ntp:
+            class: NTP
+            servers:
+              - 169.254.169.253
+            timezone: UTC
           My_Dns:
             class: DNS
             nameServers:
@@ -88,15 +114,6 @@ extension_services:
             class: License
             licenseType: regKey
             regKey: AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE
-          My_Ntp:
-            class: NTP
-            servers:
-              - 169.254.169.253
-            timezone: UTC
-          My_Provisioning:
-            class: Provision
-            asm: nominal
-            ltm: nominal
           My_System:
             class: System
             autoPhonehome: true
@@ -109,6 +126,24 @@ extension_services:
             password: '{{{BIGIP_PASSWORD}}}'
             shell: bash
             userType: regular
+          default:
+            class: Route
+            gw: '{{{DEFAULT_ROUTE}}}'
+            mtu: 1500
+            network: default
+          external:
+            class: VLAN
+            interfaces:
+              - name: '1.1'
+                tagged: false
+            mtu: 1500
+            tag: 4094
+          external-self:
+            class: SelfIp
+            address: '{{{SELF_IP_EXTERNAL}}}'
+            allowService: none
+            trafficGroup: traffic-group-local-only
+            vlan: external
     - extensionType: as3
       type: inline
       value:
@@ -130,41 +165,42 @@ extension_services:
                   servicePort: 80
               monitors:
                 - http
+            Custom_HTTP_Profile:
+              class: HTTP_Profile
+              xForwardedFor: true
+            Custom_WAF_Policy:
+              class: WAF_Policy
+              url: >-
+                https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.1.0.0/examples/quickstart/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
+              enforcementMode: blocking
+              ignoreChanges: false
           HTTP_Service:
             class: Application
             template: http
             serviceMain:
               class: Service_HTTP
               virtualAddresses:
-                - 10.0.1.101
+                - 10.0.0.101
               snat: auto
+              profileHTTP:
+                use: /Tenant_1/Shared/Custom_HTTP_Profile
               policyWAF:
-                use: WAFPolicy
+                use: /Tenant_1/Shared/Custom_WAF_Policy
               pool: /Tenant_1/Shared/shared_pool
-            WAFPolicy:
-              class: WAF_Policy
-              url: >-
-                https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.1.0.0/examples/quickstart/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
-              enforcementMode: blocking
-              ignoreChanges: false
           HTTPS_Service:
             class: Application
             template: https
             serviceMain:
               class: Service_HTTPS
               virtualAddresses:
-                - 10.0.1.101
+                - 10.0.0.101
               snat: auto
+              profileHTTP:
+                use: /Tenant_1/Shared/Custom_HTTP_Profile
               policyWAF:
-                use: WAFPolicy
+                use: /Tenant_1/Shared/Custom_WAF_Policy
               pool: /Tenant_1/Shared/shared_pool
               serverTLS:
                 bigip: /Common/clientssl
               redirect80: false
-            WAFPolicy:
-              class: WAF_Policy
-              url: >-
-                https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.1.0.0/examples/quickstart/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
-              enforcementMode: blocking
-              ignoreChanges: false
 post_onboard_enabled: []

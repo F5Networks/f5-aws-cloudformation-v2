@@ -45,7 +45,7 @@ if [[ "<RUNTIME INIT CONFIG>" == *{* ]]; then
     runtimeConfig="${runtimeConfig/<ARTIFACT LOCATION>/$artifact_location}"
 else
     # Modify Runtime-init, then upload to s3.
-    cp /$PWD/examples/autoscale/bigip-configurations/runtime-init-conf-payg_with_app.yaml <DEWPOINT JOB ID>.yaml
+    cp /$PWD/examples/autoscale/bigip-configurations/runtime-init-conf-payg-with-app.yaml <DEWPOINT JOB ID>.yaml
 
     # Create user for login tests
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.class = \"User\"" -i <DEWPOINT JOB ID>.yaml
@@ -57,10 +57,8 @@ else
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>.yaml
 
     # WAF policy settings
-    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTPS_Service.WAFPolicy.enforcementMode = \"transparent\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTP_Service.WAFPolicy.enforcementMode = \"transparent\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTPS_Service.WAFPolicy.url = \"https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTP_Service.WAFPolicy.url = \"https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.Shared.Custom_WAF_Policy.enforcementMode = \"transparent\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.Shared.Custom_WAF_Policy.url = \"https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>.yaml
 
     # Telemetry settings
     /usr/bin/yq e ".extension_services.service_operations.[2].value.My_Metrics_Namespace.My_Cloudwatch_Metrics.metricNamespace = \"<METRIC NAME SPACE>\"" -i <DEWPOINT JOB ID>.yaml
@@ -87,8 +85,7 @@ else
 
     # update copy
     cp <DEWPOINT JOB ID>.yaml update_<DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTPS_Service.WAFPolicy.enforcementMode = \"blocking\"" -i update_<DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTP_Service.WAFPolicy.enforcementMode = \"blocking\"" -i update_<DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.Shared.Custom_WAF_Policy.enforcementMode = \"blocking\"" -i update_<DEWPOINT JOB ID>.yaml
 
     # upload to s3
     aws s3 cp --region <REGION> /$PWD/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml s3://"$bucket_name"/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml --acl public-read
