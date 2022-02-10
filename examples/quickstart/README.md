@@ -586,13 +586,14 @@ List of endpoints BIG-IP may contact during onboarding:
 
 ## BIG-IP Versions
 
-These templates have been tested and validated with the following versions of BIG-IP. 
+These templates have only been explicitly tested and validated with the following versions of BIG-IP.
 
 | BIG-IP Version | Build Number |
 | --- | --- |
 | 16.1.0 | 0.0.19 |
 | 14.1.4.4 | 0.0.4 |
 
+These templates leverage Runtime-Init, which requires BIG-IP Versions 14.1.2.6 and up, and are assumed compatible to work. 
 
 ## Documentation
 
