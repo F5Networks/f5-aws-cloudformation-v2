@@ -31,6 +31,7 @@ Metadata:
           - bigIpExternalSelfIp02
           - bigIpExternalSecondarySelfIp02
           - bigIpInternalSelfIp02
+          - bigIpPeerAddr
       - Label:
           default: Amazon EC2 Configuration
         Parameters:
@@ -78,6 +79,8 @@ Metadata:
         default: F5 BIG-IP Image
       bigIpInstanceType:
         default: Enter valid instance type.
+      bigIpPeerAddr:
+        default: Static self IP address for peer device.
       bigIpRuntimeInitConfig01:
         default: BIG-IP Runtime Init config used for BIGIP instance A
       bigIpRuntimeInitConfig02:
@@ -269,6 +272,11 @@ Parameters:
     Default: m5.xlarge
     Description: Enter valid instance type.
     Type: String
+  bigIpPeerAddr:
+    Default: '10.0.1.11'
+    Description: Type the static self IP address of the remote host here. Set to empty
+      string if not configuring peering with a remote host on this device.
+    Type: String
   bigIpRuntimeInitConfig01:
     Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/failover/bigip-configurations/runtime-init-conf-payg-01.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
@@ -282,7 +290,7 @@ Parameters:
       configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.0/dist/f5-bigip-runtime-init-1.4.0-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   cfeS3Bucket:
@@ -515,6 +523,7 @@ Resources:
         bigIpInstanceProfile: !GetAtt [Access, Outputs.bigIpInstanceProfile]
         bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig01'
+        bigIpPeerAddr: !Ref 'bigIpPeerAddr'
         cfeS3Bucket: !Ref 'cfeS3Bucket'
         imageId: !If
           - noCustomImageId
@@ -553,6 +562,7 @@ Resources:
         bigIpInstanceProfile: !GetAtt [Access, Outputs.bigIpInstanceProfile]
         bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig02'
+        bigIpPeerAddr: !Ref 'bigIpPeerAddr'
         imageId: !If
           - noCustomImageId
           - !GetAtt

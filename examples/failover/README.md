@@ -121,6 +121,7 @@ By default (failover.yaml), this solution creates a VPN with 3 subnets, an examp
 | bigIpImage | No | F5 BIG-IP Performance Type. |
 | bigIpInstanceType | No | Enter a valid instance type. |
 | bigIpRuntimeInitPackageUrl | No | Supply a URL to the bigip-runtime-init package. |
+| bigIpPeerAddr | No | Type the static self IP address of the remote host here. Set to empty string if not configuring peering with a remote host on this device. |
 | cfeS3Bucket | No | S3 bucket name used by Cloud Failover Extension. |
 | cfeTag | No | Cloud Failover deployment tag value. |
 | cfeVipTag | No | Cloud Failover VIP tag value; provides private ip addresses to be assigned to VIP public ip. |

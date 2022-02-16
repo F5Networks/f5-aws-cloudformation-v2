@@ -123,6 +123,10 @@ cat <<EOF > parameters.json
         "ParameterValue": "<BIGIP RUNTIME INIT PACKAGEURL>"
     },
     {
+        "ParameterKey": "bigIpPeerAddr",
+        "ParameterValue": "<BIGIP PEER ADDR>"
+    },
+    {
         "ParameterKey": "numAzs",
         "ParameterValue": "<NUMBER AZS>"
     },

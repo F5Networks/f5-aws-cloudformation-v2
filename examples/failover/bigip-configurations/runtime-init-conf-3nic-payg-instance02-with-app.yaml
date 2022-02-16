@@ -107,7 +107,7 @@ extension_services:
             class: DeviceTrust
             localUsername: admin
             localPassword: '{{{BIGIP_PASSWORD}}}'
-            remoteHost: 10.0.1.11
+            remoteHost: '{{{REMOTE_HOST}}}'
             remoteUsername: admin
             remotePassword: '{{{BIGIP_PASSWORD}}}'
     - extensionType: cf
@@ -285,3 +285,8 @@ runtime_parameters:
         value: f5-bigip-runtime-init
       - name: X-aws-ec2-metadata-token
         value: "{{{AWS_SESSION_TOKEN}}}"
+  - name: REMOTE_HOST
+    type: tag
+    tagProvider:
+      environment: aws
+      key: bigIpPeerAddr
