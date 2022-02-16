@@ -743,18 +743,34 @@ Resources:
                   - 'secretsmanager:GetSecretValue'
                   - 'secretsmanager:ListSecretVersionIds'
                 Effect: Allow
-                Resource: !Ref secretArn
+                Resource:
+                  - !If
+                    - useSecretArn
+                    - !Ref secretArn
+                    - !Ref AWS::NoValue
+                  - !If
+                    - useBigIqSecretArn
+                    - !Ref bigIqSecretArn
+                    - !Ref AWS::NoValue
               - Action:
-                  - 's3:ListBucket'
-                  - 's3:GetBucketTagging'
-                  - 's3:PutObject'
-                  - 's3:GetObject'
-                  - 's3:DeleteObject'
+                  - s3:ListBucket
+                  - s3:GetBucketLocation
+                  - s3:GetBucketTagging
                 Effect: Allow
                 Resource: !Join
                   - ''
-                  - - 'arn:*:s3:::'
+                  - - "arn:*:s3:::"
                     - !Ref s3Bucket
+              - Action:
+                  - s3:PutObject
+                  - s3:GetObject
+                  - s3:DeleteObject
+                Effect: Allow
+                Resource: !Join
+                  - ''
+                  - - "arn:*:s3:::"
+                    - !Ref s3Bucket
+                    - /*
             Version: 2012-10-17
           PolicyName: !Join
             - ''

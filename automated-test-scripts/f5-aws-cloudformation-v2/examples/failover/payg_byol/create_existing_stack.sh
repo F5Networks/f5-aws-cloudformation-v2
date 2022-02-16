@@ -224,7 +224,7 @@ cat <<EOF >> parameters.json
         "ParameterValue": "10.0.3.11"
     },
     {
-        "ParameterKey": "bigIpExternalSecondarySelfIp01",
+        "ParameterKey": "bigIpExternalVip01",
         "ParameterValue": "10.0.3.101"
     },
     {
@@ -232,7 +232,7 @@ cat <<EOF >> parameters.json
         "ParameterValue": "10.0.7.11"
     },
     {
-        "ParameterKey": "bigIpExternalSecondarySelfIp02",
+        "ParameterKey": "bigIpExternalVip02",
         "ParameterValue": "10.0.7.101"
     },
     {

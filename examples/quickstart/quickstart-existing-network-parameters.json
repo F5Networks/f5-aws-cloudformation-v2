@@ -73,7 +73,7 @@
   },
   {
     "ParameterKey": "numNics",
-    "ParameterValue": 3
+    "ParameterValue": "3"
   },
   {
     "ParameterKey": "owner",

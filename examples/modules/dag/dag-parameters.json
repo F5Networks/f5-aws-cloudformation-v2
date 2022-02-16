@@ -61,11 +61,11 @@
   },
   {
     "ParameterKey": "numberPublicExternalIpAddresses",
-    "ParameterValue": 0
+    "ParameterValue": "0"
   },
   {
     "ParameterKey": "numberPublicMgmtIpAddresses",
-    "ParameterValue": 0
+    "ParameterValue": "0"
   },
   {
     "ParameterKey": "owner",
@@ -89,7 +89,7 @@
   },
   {
     "ParameterKey": "restrictedSrcPort",
-    "ParameterValue": 8443
+    "ParameterValue": "8443"
   },
   {
     "ParameterKey": "uniqueString",

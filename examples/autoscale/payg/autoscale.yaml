@@ -626,6 +626,7 @@ Resources:
               - useLoggingS3Bucket
               - s3
               - standard
+        uniqueString: !Ref 'uniqueString'
   AmiInfo:
     Type: 'Custom::AMIInfo'
     Condition: noCustomImageId

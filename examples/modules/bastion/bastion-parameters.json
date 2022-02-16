@@ -49,11 +49,11 @@
   },
   {
     "ParameterKey": "scalingMaxSize",
-    "ParameterValue": 2
+    "ParameterValue": "2"
   },
   {
     "ParameterKey": "scalingMinSize",
-    "ParameterValue": 1
+    "ParameterValue": "1"
   },
   {
     "ParameterKey": "sshKey",

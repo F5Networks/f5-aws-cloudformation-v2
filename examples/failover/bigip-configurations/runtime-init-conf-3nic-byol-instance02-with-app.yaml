@@ -24,7 +24,7 @@ extension_services:
           BYOL license
         Common:
           class: Tenant
-          My_DbVariables:
+          My_DbVars:
             class: DbVariables
             config.allow.rfc3927: enable
             tm.tcpudptxchecksum: Software-only

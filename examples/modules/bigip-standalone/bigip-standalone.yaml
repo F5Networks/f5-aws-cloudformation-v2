@@ -39,17 +39,13 @@ Conditions:
       - !Equals
         - !Ref 'mgmtSubnetId'
         - ''
-  noExternalServiceIPs: !And
-    - !Condition 'is1Nic'
+  noExternalServiceIPs: !Equals
+    - !Join ['', !Ref 'externalServiceIps']
+    - ''
+  hasExternalServiceIPs: !Not
     - !Equals
       - !Join ['', !Ref 'externalServiceIps']
       - ''
-  hasExternalServiceIPs: !And
-    - !Condition 'is1Nic'
-    - !Not
-      - !Equals
-        - !Join ['', !Ref 'externalServiceIps']
-        - ''
   useMgmtSecondary: !Or
     - !Condition 'useDynamicExternalIpAddr'
     - !Condition 'useStaticExternalIpAddr'
@@ -567,8 +563,11 @@ Resources:
     Properties:
       Description: Management Interface for the BIG-IP
       SecondaryPrivateIpAddressCount: !If
-        - noExternalServiceIPs
-        - !Ref 'numSecondaryPrivateIpAddress'
+        - is1Nic
+        - !If
+          - noExternalServiceIPs
+          - !Ref 'numSecondaryPrivateIpAddress'
+          - !Ref 'AWS::NoValue'
         - !Ref 'AWS::NoValue'
       GroupSet:
         - !Ref 'mgmtSecurityGroupId'
@@ -580,13 +579,16 @@ Resources:
           - !Ref 'AWS::NoValue'
         - !Ref 'mgmtSelfIp'
       PrivateIpAddresses: !If
-        - hasExternalServiceIPs
-        - - Primary: true
-            PrivateIpAddress: !Ref 'mgmtSelfIp'
-          - Primary: false
-            PrivateIpAddress: !Select
-              - '0'
-              - !Ref 'externalServiceIps'
+        - is1Nic
+        - !If
+          - hasExternalServiceIPs
+          - - Primary: true
+              PrivateIpAddress: !Ref 'mgmtSelfIp'
+            - Primary: false
+              PrivateIpAddress: !Select
+                - '0'
+                - !Ref 'externalServiceIps'
+          - !Ref 'AWS::NoValue'
         - !Ref 'AWS::NoValue'
       SubnetId: !Ref 'mgmtSubnetId'
     Type: 'AWS::EC2::NetworkInterface'
@@ -596,13 +598,19 @@ Resources:
       Description: Public External Interface for the BIG-IP
       GroupSet:
         - !Ref 'externalSecurityGroupId'
-      PrivateIpAddresses:
-        - Primary: true
-          PrivateIpAddress: !Ref 'externalSelfIp'
-        - Primary: false
-          PrivateIpAddress: !Select
-            - '0'
-            - !Ref 'externalServiceIps'
+      PrivateIpAddress: !If
+        - noExternalServiceIPs
+        - !Ref 'externalSelfIp'
+        - !Ref 'AWS::NoValue'
+      PrivateIpAddresses: !If
+        - hasExternalServiceIPs
+        - - Primary: true
+            PrivateIpAddress: !Ref 'externalSelfIp'
+          - Primary: false
+            PrivateIpAddress: !Select
+              - '0'
+              - !Ref 'externalServiceIps'
+        - !Ref 'AWS::NoValue'
       SubnetId: !Ref 'externalSubnetId'
     Type: 'AWS::EC2::NetworkInterface'
   BigipVipEipAssociation:

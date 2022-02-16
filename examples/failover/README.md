@@ -28,6 +28,7 @@
       - [WebUI](#webui-1)
       - [SSH](#ssh-1)
     - [Testing the WAF Service](#testing-the-waf-service)
+    - [Testing Failover](#testing-failover)
   - [Deleting this Solution](#deleting-this-solution)
     - [Deleting the deployment via AWS Portal](#deleting-this-solution-using-the-aws-console)
     - [Deleting the deployment using the AWS CLI](#deleting-this-solution-using-the-aws-cli)
@@ -43,21 +44,24 @@
 
 The goal of this solution is to reduce prerequisites and complexity to a minimum so with a few clicks, a user can quickly deploy a BIG-IP, login and begin exploring the BIG-IP platform in a working full-stack deployment capable of passing traffic. 
 
-This solution uses a parent template (failover.yaml or failover-existing-network.yaml) to launch several linked child templates (modules) to create a full example HA stack for the BIG-IP. The linked templates are located in the [`examples/modules`](https://github.com/F5Networks/f5-aws-cloudformation-v2/tree/main/examples/modules) directory in this repository. *F5 recommends cloning this repository and modifying these templates to fit your use case.*
+This solution uses a parent template to launch several linked child templates (modules) to create an example BIG-IP Highly Available (HA) solution using the F5 Cloud Failover Extension (CFE).  For information about this deployment, see the F5 Cloud Failover Extension [documentation](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/userguide/aws.html). The linked templates are located in the [`examples/modules`](https://github.com/F5Networks/f5-aws-cloudformation-v2/tree/main/examples/modules) directory in this repository. *F5 recommends cloning this repository and modifying these templates to fit your use case.*
 
-***Existing Stack Deployments (failover-existing-network.yaml)***<br>
-Use failover-existing-network.yaml parent template to deploy HA solution into an existing infrastructure. This template expects vpc, subnets, and bastion host(s) have already been deployed. A demo application is also not part of this parent template as it intended use is for a production deployment.
+***Full Stack (failover.yaml)***<br>
+Use the *failover.yaml* parent template to deploy an example full stack HA solution, complete with network, bastion *(optional)*, dag/ingress, access, bigip(s) and application.  
+
+***Existing Network Stack (failover-existing-network.yaml)***<br>
+Use the *failover-existing-network.yaml* parent template to deploy HA solution into an existing network infrastructure. This template expects vpc, subnets, and bastion host(s) have already been deployed. A demo application is also not part of this parent template as it intended use is for a production deployment.
 
 The modules below create the following cloud resources:
 
-- **Network**: A virtual network (also known as VPC), subnets, internet/NAT gateways, DHCP options, network ACLs, and other network-related resources. **Not included in failover-existing-network.yaml**
-- **Access**: This template creates AWS InstanceProfiles and IAM Roles.
-- **Application**: This template creates a generic example application for use when demonstrating live traffic through the BIG-IP instance. **Not included in failover-existing-network.yaml**
-- **Bastion**: This template creates a bastion host for accessing the BIG-IP instances when no public IP address is used for the management interfaces. **Not included in failover-existing-network.yaml**
+- **Network**: A virtual network (also known as VPC), subnets, internet/NAT gateways, DHCP options, network ACLs, and other network-related resources. *(Full stack only)*
+- **Bastion**: This template creates a bastion host for accessing the BIG-IP instances when no public IP address is used for the management interfaces. *(Full stack only)*
+- **Application**: This template creates a generic example application for use when demonstrating live traffic through the BIG-IP instance. *(Full stack only)*
 - **Disaggregation** *(DAG/Ingress)*: This template creates resources required to get traffic to the BIG-IP, including Network Security Groups, Public IP Addresses, NAT rules and probes.
+- **Access**: This template creates AWS InstanceProfiles and IAM Roles.
 - **BIG-IP**: This template creates F5 BIG-IP Virtual Edition instances provisioned with Local Traffic Manager (LTM) and (optionally) Application Security Manager (ASM). 
 
-By default (failover.yaml), this solution creates a VPN with 3 subnets, an example Web Application instance two PAYG BIG-IP instances with three network interfaces (one for management and two for dataplane/application traffic - called external and internal). Application traffic from the Internet traverses an external network interface configured with both public and private IP addresses. Traffic to the application traverses an internal network interface configured with a private IP address.
+By default, this solution (failover.yaml) creates a VPN with 3 subnets, an example Web Application instance two PAYG BIG-IP instances with three network interfaces (one for management and two for dataplane/application traffic - called external and internal). Application traffic from the Internet traverses an external network interface configured with both public and private IP addresses. Traffic to the application traverses an internal network interface configured with a private IP address.
 
 ***DISCLAIMER/WARNING***: To reduce prerequisites and complexity to a bare minimum for evaluation purposes only, this example template provides immediate access to the management interface via a Public IP. At the very *minimum*, configure the **restrictedSrcAddressMgmt** parameter to limit access to your client IP or trusted network. In production deployments, management access should never be directly exposed to the Internet and instead should be accessed via typical management best practices like jump boxes/bastion hosts, VPNs, etc.
 
@@ -69,10 +73,21 @@ By default (failover.yaml), this solution creates a VPN with 3 subnets, an examp
 ## Prerequisites
 
   - An SSH Key pair in AWS for management access to BIG-IP VE. For more information about creating and/or importing the key pair in AWS, see AWS SSH key [documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html).
+
+  - An **AWS secret** stored in AWS https://aws.amazon.com/secrets-manager/[Secrets Manager] containing the password used to access and cluster the HA Pair. For example, to create a secret using the AWS CLI:
+    ```bash
+    aws secretsmanager create-secret --region us-east-1 --name mySecretId --secret-string 'YOUR_BIGIP_PASSWORD'
+    ```
+    - *NOTE:*
+      - By default, the secret name used is `mySecretId` and must be created in the region where deploying the template. Otherwise, see [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more details.
+      - Obtain the secret ARN. The ARN format required for the input parameter will look like _arn:aws:secretsmanager:us-east-1:111111111111:secret:mySecretId-xdg0kdf_ You will pass this value to the *secretArn* input parameter.
+      - In the example above, the *--secret-string* value is in single quotes to avoid bash special character interpolation. See the AWS CLI secretsmanager [documentation](https://docs.aws.amazon.com/cli/latest/reference/secretsmanager/index.html#cli-aws-secretsmanager) for a more secure example using a file.
+
+
   - Accepted the EULA for the F5 image in the AWS marketplace. If you have not deployed BIG-IP VE in your environment before, search for F5 in the Marketplace and then click **Accept Software Terms**. This only appears the first time you attempt to launch an F5 image. By default, this solution deploys the [F5 BIG-IP Advanced WAF PAYG 25Mbps](https://aws.amazon.com/marketplace/pp/B08R5W828T) images. For more information, see [K14810: Overview of BIG-IP VE license and throughput limits](https://support.f5.com/csp/article/K14810).
   - The appropriate permission in AWS to launch CloudFormation (CFT) templates. You must be using an IAM user with the AdministratorAccess policy attached and have permission to create the objects contained in this solution. VPCs, Routes, EIPs, EC2 Instances. For details on permissions and all AWS configuration, see AWS [documentation](https://aws.amazon.com/documentation/). 
   - Sufficient **EC2 Resources** to deploy this solution. For more information, see [AWS resource limit documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-resource-limits.html).
-  - This solution requires an AWS Secret Managers secret containing the intended password for the BIG-IP instances, provided in arn format: "arn:aws:secretsmanager:region:0123345678901:secret:myBigipSecret-QnjubV".
+
 
 
 ## Important Configuration Notes
@@ -107,12 +122,12 @@ By default (failover.yaml), this solution creates a VPN with 3 subnets, an examp
 | appDockerImageName | No | The name of a container to download and install which is used for the example application server(s). If this value is left blank, the application module template is not deployed. |
 | application | No | Application Tag. |
 | artifactLocation | No | The directory, relative to the templateBaseUrl, where the modules folder is located. |
-| bigIpExternalSecondarySelfIp01 | Yes | External Secondary Private IP Address for BIGIP instance A. |
+| bigIpExternalVip01 | Yes | External Secondary Private IP Address for BIGIP instance A. |
 | bigIpExternalSelfIp01 | No | External Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
 | bigIpInternalSelfIp01 | No | Internal Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
 | bigIpMgmtSelfIp01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
 | bigIpRuntimeInitConfig01 | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
-| bigIpExternalSecondarySelfIp02 | Yes | External Secondary Private IP Address for BIGIP instance B. |
+| bigIpExternalVip02 | Yes | External Secondary Private IP Address for BIGIP instance B. |
 | bigIpExternalSelfIp02 | No | External Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
 | bigIpInternalSelfIp02 | No | Internal Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
 | bigIpMgmtSelfIp02 | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
@@ -166,7 +181,7 @@ By default (failover.yaml), this solution creates a VPN with 3 subnets, an examp
 | --- | --- | --- |
 | application | No | Application Tag. |
 | artifactLocation | No | The directory, relative to the templateBaseUrl, where the modules folder is located. |
-| bigIpExternalSecondarySelfIp01 | Yes | External Secondary Private IP Address for BIGIP instance A. |
+| bigIpExternalVip01 | Yes | External Secondary Private IP Address for BIGIP instance A. |
 | bigIpExternalSelfIp01 | No | External Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
 | bigIpExternalSubnetId01 | Yes | Subnet id used for BIGIP instance A external interface. |
 | bigIpInternalSelfIp01 | No | Internal Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
@@ -174,7 +189,7 @@ By default (failover.yaml), this solution creates a VPN with 3 subnets, an examp
 | bigIpMgmtSelfIp01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
 | bigIpMgmtSubnetId01 | Yes | Subnet id used for BIGIP instance A management interface. |
 | bigIpRuntimeInitConfig01 | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
-| bigIpExternalSecondarySelfIp02 | Yes | External Secondary Private IP Address for BIGIP instance B. |
+| bigIpExternalVip02 | Yes | External Secondary Private IP Address for BIGIP instance B. |
 | bigIpExternalSelfIp02 | No | External Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
 | bigIpExternalSubnetId02 | Yes | Subnet id used for BIGIP instance B external interface. |
 | bigIpInternalSelfIp02 | No | Internal Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
@@ -273,7 +288,7 @@ By default, the templates in this repository are also publicly hosted on S3 at [
   --parameters "ParameterKey=<KEY>,ParameterValue=<VALUE> ParameterKey=<KEY>,ParameterValue=<VALUE>"
 ```
 
-or with a local parameters file (see `autoscale-parameters.json` example in this directory):
+or with a local parameters file (see `failover-parameters.json` example in this directory):
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
   --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.2.0.0/examples/failover/failover.yaml \
@@ -423,7 +438,7 @@ From Parent Template Outputs:
       ```
   - **Password authentication**: 
       ```bash 
-      ssh quickstart@${IP_ADDRESS_FROM_OUTPUT}
+      ssh admin@${IP_ADDRESS_FROM_OUTPUT}
       ``` 
       at prompt, enter your **bigIpInstanceId** (see above to obtain from template "Outputs")
 
@@ -477,29 +492,36 @@ From Parent Template Outputs:
 
 
 ### Further Exploring
-
 #### WebUI
+
+If you deployed the example application (**provisionExampleApp** = **true**)
+
  - Navigate to **Virtual Services**. 
     - From the drop down menu **Partition** (upper right), select Partition = `Tenant_1`.
     - Navigate to **Local Traffic > Virtual Servers**. You should see two Virtual Services (one for HTTP and one for HTTPS). This should show up as Green. Click on them to look at the configuration *(declared in the AS3 declaration)*.
 
 #### SSH
 
-  - From tmsh shell, type 'bash' to enter the bash shell
-    - Examine BIG-IP configuration via [F5 Automation Toolchain](https://www.f5.com/pdf/products/automation-toolchain-overview.pdf) declarations:
-    ```bash
-    curl -u admin: http://localhost:8100/mgmt/shared/declarative-onboarding | jq .
-    curl -u admin: http://localhost:8100/mgmt/shared/appsvcs/declare | jq .
-    curl -u admin: http://localhost:8100/mgmt/shared/telemetry/declare | jq . 
-    ```
-  - Examine the Runtime-Init Config downloaded: 
+  - From tmsh shell, type 'bash' to enter the bash shell:
+    - Examine the Runtime-Init Config downloaded: 
     ```bash 
     cat /config/cloud/runtime-init.conf
     ```
-
+    - Examine BIG-IP configuration via [F5 Automation Toolchain](https://www.f5.com/pdf/products/automation-toolchain-overview.pdf) declarations:
+    ```bash
+    curl -u admin: http://localhost:8100/mgmt/shared/declarative-onboarding | jq .
+    ```
+    - Exampine the BIG-IP [Cloud Failover Extension (CFE)](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/) declaration:
+    ```bash
+    curl -su admin: http://localhost:8100/mgmt/shared/cloud-failover/declare | jq . 
+    ```
+    - If you deployed the example application (**provisionExampleApp** = **true**)
+    ```bash
+    curl -u admin: http://localhost:8100/mgmt/shared/appsvcs/declare | jq .
+    ```
 ### Testing the WAF Service
 
-To test the WAF service, perform the following steps:
+If you deployed the example application (**provisionExampleApp** = **true**), to test the WAF service, perform the following steps:
 
 1. Obtain the address of the WAF service:
   - **Console**: Navigate to **CloudFormation > *STACK_NAME* > Outputs > *vip1PublicUrl***. 
@@ -529,8 +551,28 @@ To test the WAF service, perform the following steps:
     <html><head><title>Request Rejected</title></head><body>The requested URL was rejected. Please consult with your administrator.<br><br>Your support ID is: 2394594827598561347<br><br><a href='javascript:history.back();'>[Go Back]</a></body></html>
     ```
 
+### Testing Failover
+
+If you have deployed the example application(**provisionExampleApp** = **true**), to test failover, perform the following steps:
+
+1. Log on the BIG-IPs per instructions above:
+
+  - **WebUI**: Go to Device Management of Active Instance -> Traffic-Groups -> Select box next to *traffic-group-1* -> Click the "Force to Standby" button *.
+  - **BIG-IP CLI**: 
+      ```bash 
+      tmsh run sys failover standby
+      ```
+
+Verify the EIP associated w/ the Virtual Service (**vipPublicUrl**) is remapped to the peer BIG-IP (ex. for this deployment, from 10.0.0.101 in AZ1 to 10.0.3.101 in AZ2).
+
+For information on the Cloud Failover solution, see [F5 Cloud Failover Extension](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/userguide/aws.html).
+
+
 ## Deleting this Solution
 
+As Cloudformation does not delete S3 buckets that contain data, in order to delete this deployment, you will first need to manually empty and/or delete the S3 bucket created for the Cloud Failover Extension (provided via *cfeS3Bucket* parameter). Go to *AWS Management Console -> S3* and search for *cfeS3Bucket* bucket name, click the radio button associated with it and then click the "Empty" button. 
+
+You can now delete the deployment.
 
 ### Deleting this Solution using the AWS Console
 
@@ -547,6 +589,8 @@ To test the WAF service, perform the following steps:
 ```bash
  aws cloudformation delete-stack --region ${REGION} --stack-name ${STACK_NAME}
 ```
+
+For more information, see [Troubleshooting AWS CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/troubleshooting.html).
 
 ## Troubleshooting Steps
 
@@ -648,6 +692,7 @@ For more information on F5 solutions for AWS, including manual configuration pro
 
 For information on getting started using F5's CloudFormation templates on GitHub, see [Amazon Web Services: Solutions 101](https://clouddocs.f5.com/cloud/public/v1/aws/AWS_solutions101.html). 
 
+For information on the Cloud Failover solution, see [F5 Cloud Failover Extension](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/).
 
 ## Getting Help
 

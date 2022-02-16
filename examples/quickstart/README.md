@@ -43,19 +43,22 @@
 
 With this solution, you can quickly deploy a BIG-IP and begin exploring the BIG-IP platform in a working full-stack deployment that can pass traffic.
 
-This solution uses a parent template (quickstart.yaml or quickstart-existing-network.yaml) to launch several linked child templates (modules) to create a full example stack for the BIG-IP. The linked templates are in the [examples/modules](https://github.com/F5Networks/f5-aws-cloudformation-v2/tree/main/examples/modules) directory in this repository. *F5 recommends you clone this repository and modify these templates to fit your use case.*
+This solution uses a parent template to launch several linked child templates (modules) to create an example BIG-IP solution. The linked templates are in the [examples/modules](https://github.com/F5Networks/f5-aws-cloudformation-v2/tree/main/examples/modules) directory in this repository. *F5 recommends you clone this repository and modify these templates to fit your use case.*
 
-***Existing Stack Deployments (quickstart-existing-network.yaml)***<br>
-Use quickstart-existing-network.yaml parent template to deploy BIG-IP solution into an existing infrastructure. This template expects vpc and subnets have already been deployed. A demo application is also not part of this parent template as it intended use is for a production deployment.
+***Full Stack (quickstart.yaml)***<br>
+Use the *quickstart.yaml* parent template to deploy an example full stack BIG-IP solution, complete with network, bastion *(optional)*, dag/ingress, bigip and application.  
+
+***Existing Network Stack (quickstart-existing-network.yaml)***<br>
+Use *quickstart-existing-network.yaml* parent template to deploy an example BIG-IP solution into an existing infrastructure. This template expects vpc and subnets have already been deployed. A demo application is also not part of this parent template as it intended use is for an existing environment.
 
 The modules below create the following resources:
 
-- **Network**: A virtual network (also known as VPC), subnets, internet/NAT gateways, DHCP options, network ACLs, and other network-related resources. **Not included in quickstart-existing-network.yaml*
-- **Access**: This template creates AWS InstanceProfiles and IAM Roles. **Not included in quickstart-existing-network.yaml**
-- **Application**: A generic application for use when demonstrating live traffic through the BIG-IP. **Not included in quickstart-existing-network.yaml**
-- **Bastion**: This template creates a bastion host for accessing the BIG-IP instances when no public IP address is used for the management interfaces. **Not included in quickstart-existing-network.yaml**
+- **Network**: A virtual network (also known as VPC), subnets, internet/NAT gateways, DHCP options, network ACLs, and other network-related resources. *(Full stack only)*
+- **Bastion**: This template creates a bastion host for accessing the BIG-IP instances when no public IP address is used for the management interfaces. *(Full stack only)*
+- **Application**: A generic application for use when demonstrating live traffic through the BIG-IP. *(Full stack only)*
 - **Disaggregation** *(DAG/Ingress)*: Resources required to get traffic to the BIG-IP, including AWS Security Groups and Public IP Addresses.
 - **BIG-IP**: a BIG-IP instance provisioned with Local Traffic Manager (LTM) and Application Security Manager (ASM). 
+
 
 By default, this solution creates a single Availability Zone VPC with four subnets, an example Web Application instance and a PAYG BIG-IP instance with three network interfaces (one for management and two for dataplane/application traffic - called external and internal). Application traffic from the Internet traverses an external network interface configured with both public and private IP addresses. Traffic to the application traverses an internal network interface configured with a private IP address.
 

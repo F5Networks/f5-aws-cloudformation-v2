@@ -93,7 +93,7 @@
   },
   {
     "ParameterKey": "numSecondaryPrivateIpAddress",
-    "ParameterValue": 1
+    "ParameterValue": "1"
   },
   {
     "ParameterKey": "owner",

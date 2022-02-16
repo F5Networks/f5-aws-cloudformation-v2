@@ -64,11 +64,11 @@
     "ParameterValue": "10.0.3.11"
   },
   {
-    "ParameterKey": "bigIpExternalSecondarySelfIp01",
+    "ParameterKey": "bigIpExternalVip01",
     "ParameterValue": "10.0.0.101"
   },
   {
-    "ParameterKey": "bigIpExternalSecondarySelfIp02",
+    "ParameterKey": "bigIpExternalVip02",
     "ParameterValue": "10.0.3.101"
   },
   {
@@ -125,7 +125,7 @@
   },
   {
     "ParameterKey": "provisionPublicIpMgmt",
-    "ParameterValue": "true"
+    "ParameterValue": "false"
   },
   {
     "ParameterKey": "restrictedSrcAddressMgmt",
