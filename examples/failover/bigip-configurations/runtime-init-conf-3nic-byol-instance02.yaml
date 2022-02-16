@@ -107,7 +107,7 @@ extension_services:
             class: DeviceTrust
             localUsername: admin
             localPassword: '{{{BIGIP_PASSWORD}}}'
-            remoteHost: 10.0.1.11
+            remoteHost: '{{{REMOTE_HOST}}}'
             remoteUsername: admin
             remotePassword: '{{{BIGIP_PASSWORD}}}'
     - extensionType: cf
@@ -162,3 +162,8 @@ runtime_parameters:
       type: network
       field: subnet-ipv4-cidr-block
       index: 1
+  - name: REMOTE_HOST
+    type: tag
+    tagProvider:
+      environment: aws
+      key: bigIpPeerAddr
