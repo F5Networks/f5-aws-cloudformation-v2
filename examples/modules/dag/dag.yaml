@@ -713,18 +713,6 @@ Resources:
           Value: !Ref environment
         - Key: group
           Value: !Ref group
-        - 'Fn::If':
-            - Failover
-            -
-              Key: f5_cloud_failover_label
-              Value: !Ref cfeTag
-            - !Ref 'AWS::NoValue'
-        - 'Fn::If':
-            - Failover
-            -
-              Key:  f5_cloud_failover_vips
-              Value: !Ref cfeVipTag
-            - !Ref 'AWS::NoValue'
         - Key: Name
           Value: !Join
             - ''
@@ -761,6 +749,18 @@ Resources:
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
+        - 'Fn::If':
+            - Failover
+            -
+              Key: f5_cloud_failover_label
+              Value: !Ref cfeTag
+            - !Ref 'AWS::NoValue'
+        - 'Fn::If':
+            - Failover
+            -
+              Key:  f5_cloud_failover_vips
+              Value: !Ref cfeVipTag
+            - !Ref 'AWS::NoValue'
         - Key: group
           Value: !Ref group
         - Key: Name
@@ -780,6 +780,18 @@ Resources:
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
+        - 'Fn::If':
+            - Failover
+            -
+              Key: f5_cloud_failover_label
+              Value: !Ref cfeTag
+            - !Ref 'AWS::NoValue'
+        - 'Fn::If':
+            - Failover
+            -
+              Key:  f5_cloud_failover_vips
+              Value: !Ref cfeVipTag
+            - !Ref 'AWS::NoValue'
         - Key: group
           Value: !Ref group
         - Key: Name
@@ -860,11 +872,19 @@ Resources:
     Properties:
       GroupDescription: 'Management interface rules'
       SecurityGroupIngress:
-        - CidrIp: !If [publicIp, !Ref restrictedSrcAddressMgmt, !Ref vpcCidr]
+        - CidrIp: !Ref restrictedSrcAddressMgmt
           FromPort: 22
           IpProtocol: tcp
           ToPort: 22
-        - CidrIp: !If [publicIp, !Ref restrictedSrcAddressMgmt, !Ref vpcCidr]
+        - CidrIp: !Ref restrictedSrcAddressMgmt
+          FromPort: !Ref restrictedSrcPort
+          IpProtocol: tcp
+          ToPort: !Ref restrictedSrcPort
+        - CidrIp: !Ref vpcCidr
+          FromPort: 22
+          IpProtocol: tcp
+          ToPort: 22
+        - CidrIp: !Ref vpcCidr
           FromPort: !Ref restrictedSrcPort
           IpProtocol: tcp
           ToPort: !Ref restrictedSrcPort
@@ -910,6 +930,15 @@ Resources:
       IpProtocol: tcp
       SourceSecurityGroupId: !Ref BigipExternalSecurityGroup
       ToPort: 4353
+    Type: 'AWS::EC2::SecurityGroupIngress'
+  bigipSecurityGroupIngressConfigSyncASM:
+    Condition: Failover
+    Properties:
+      FromPort: 6123
+      GroupId: !Ref BigipExternalSecurityGroup
+      IpProtocol: tcp
+      SourceSecurityGroupId: !Ref BigipExternalSecurityGroup
+      ToPort: 6128
     Type: 'AWS::EC2::SecurityGroupIngress'
   BigipSecurityGroupIngressHa:
     Condition: Failover

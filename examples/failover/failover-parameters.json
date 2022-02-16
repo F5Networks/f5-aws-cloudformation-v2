@@ -68,11 +68,11 @@
     "ParameterValue": "10.0.3.11"
   },
   {
-    "ParameterKey": "bigIpExternalSecondarySelfIp01",
+    "ParameterKey": "bigIpExternalVip01",
     "ParameterValue": "10.0.0.101"
   },
   {
-    "ParameterKey": "bigIpExternalSecondarySelfIp02",
+    "ParameterKey": "bigIpExternalVip02",
     "ParameterValue": "10.0.3.101"
   },
   {
@@ -97,11 +97,11 @@
   },
   {
     "ParameterKey": "numAzs",
-    "ParameterValue": 2
+    "ParameterValue": "2"
   },
   {
     "ParameterKey": "numSubnets",
-    "ParameterValue": 3
+    "ParameterValue": "3"
   },
   {
     "ParameterKey": "owner",
@@ -109,7 +109,7 @@
   },
   {
     "ParameterKey": "provisionExampleApp",
-    "ParameterValue": "false"
+    "ParameterValue": "true"
   },
   {
     "ParameterKey": "provisionPublicIpMgmt",
@@ -141,7 +141,7 @@
   },
   {
     "ParameterKey": "subnetMask",
-    "ParameterValue": 24
+    "ParameterValue": "24"
   },
   {
     "ParameterKey": "uniqueString",

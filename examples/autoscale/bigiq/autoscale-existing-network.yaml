@@ -624,6 +624,7 @@ Resources:
             - !Ref 'AWS::NoValue'
         secretArn: !If [useSecretArn, !Ref 'secretArn', !Ref 'AWS::NoValue']
         solutionType: !If [useLoggingS3Bucket, secretS3, secret]
+        uniqueString: !Ref 'uniqueString'
   AmiInfo:
     Type: 'Custom::AMIInfo'
     Properties:

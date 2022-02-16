@@ -9,11 +9,11 @@
   },
   {
     "ParameterKey": "appScalingMaxSize",
-    "ParameterValue": 50
+    "ParameterValue": "50"
   },
   {
     "ParameterKey": "appScalingMinSize",
-    "ParameterValue": 1
+    "ParameterValue": "1"
   },
   {
     "ParameterKey": "artifactLocation",
@@ -21,11 +21,11 @@
   },
   {
     "ParameterKey": "bastionScalingMaxSize",
-    "ParameterValue": 2
+    "ParameterValue": "2"
   },
   {
     "ParameterKey": "bastionScalingMinSize",
-    "ParameterValue": 1
+    "ParameterValue": "1"
   },
   {
     "ParameterKey": "bigIpCustomImageId",
@@ -41,15 +41,15 @@
   },
   {
     "ParameterKey": "bigIpMaxBatchSize",
-    "ParameterValue": 5
+    "ParameterValue": "5"
   },
   {
     "ParameterKey": "bigIpMinInstancesInService",
-    "ParameterValue": 1
+    "ParameterValue": "1"
   },
   {
     "ParameterKey": "bigIpPauseTime",
-    "ParameterValue": 480
+    "ParameterValue": "480"
   },
   {
     "ParameterKey": "bigIpRuntimeInitConfig",
@@ -61,27 +61,27 @@
   },
   {
     "ParameterKey": "bigIpScaleInCpuThreshold",
-    "ParameterValue": 20
+    "ParameterValue": "20"
   },
   {
     "ParameterKey": "bigIpScaleInThroughputThreshold",
-    "ParameterValue": 10000000
+    "ParameterValue": "10000000"
   },
   {
     "ParameterKey": "bigIpScaleOutCpuThreshold",
-    "ParameterValue": 80
+    "ParameterValue": "80"
   },
   {
     "ParameterKey": "bigIpScaleOutThroughputThreshold",
-    "ParameterValue": 20000000
+    "ParameterValue": "20000000"
   },
   {
     "ParameterKey": "bigIpScalingMaxSize",
-    "ParameterValue": 50
+    "ParameterValue": "50"
   },
   {
     "ParameterKey": "bigIpScalingMinSize",
-    "ParameterValue": 1
+    "ParameterValue": "1"
   },
   {
     "ParameterKey": "bigIqAddressType",
@@ -149,11 +149,11 @@
   },
   {
     "ParameterKey": "numAzs",
-    "ParameterValue": 2
+    "ParameterValue": "2"
   },
   {
     "ParameterKey": "numSubnets",
-    "ParameterValue": 3
+    "ParameterValue": "3"
   },
   {
     "ParameterKey": "owner",
@@ -201,7 +201,7 @@
   },
   {
     "ParameterKey": "subnetMask",
-    "ParameterValue": 24
+    "ParameterValue": "24"
   },
   {
     "ParameterKey": "uniqueString",
