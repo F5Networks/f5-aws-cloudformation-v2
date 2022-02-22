@@ -177,6 +177,17 @@ Resources:
     Condition: createCloudWatchLogGroup
     Properties: 
       LogGroupName: !Ref cloudWatchLogGroupName
+      Tags:
+        - Key: Name
+          Value: !Ref cloudWatchLogGroupName
+        - Key: cost
+          Value: !Ref cost
+        - Key: Environment
+          Value: !Ref environment
+        - Key: Group
+          Value: !Ref group
+        - Key: Owner
+          Value: !Ref owner
   LogStream: 
     Type: AWS::Logs::LogStream
     Condition: createCloudWatchLogStream

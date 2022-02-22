@@ -664,11 +664,18 @@ Resources:
       Parameters:
         application: !Ref 'application'
         bigIqSecretArn: !Ref 'bigIqSecretArn'
+        cloudWatchLogGroup: !If
+          - createLogDestination
+          - !GetAtt
+            - Telemetry
+            - Outputs.cloudWatchLogGroup
+          - !Ref 'AWS::NoValue'
         cost: !Ref 'cost'
         createAmiRole: 'true'
         createBigIqRoles: 'true'
         environment: !Ref 'environment'
         group: !Ref 'group'
+        metricNameSpace: !If [customNameSpace, !Ref 'metricNameSpace', 'f5-scaling-metrics']
         s3Bucket: !If
           - createLoggingS3Bucket
           - !GetAtt

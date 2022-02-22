@@ -29,6 +29,10 @@ Conditions:
     - !Equals
       - ''
       - !Ref bigIqSecretArn
+  useLogGroup: !Not
+    - !Equals
+      - ''
+      - !Ref cloudWatchLogGroup
   useSecretArn: !Not
     - !Equals
       - ''
@@ -45,6 +49,8 @@ Metadata:
           - createBigIqRoles
           - secretArn
           - bigIqSecretArn
+          - cloudWatchLogGroup
+          - metricNameSpace
     ParameterLabels:
       uniqueString:
         default: myBIGIP
@@ -68,6 +74,10 @@ Metadata:
         default: The ARN of the AWS secret containing the password used during BIG-IP licensing via BIG-IQ
       secretArn:
         default: ARN of Secrets Manager secret
+      cloudWatchLogGroup:
+        default: CloudWatch Log Group Name
+      metricNameSpace:
+        default: CloudWatch Metrics Namespace
   Version: 1.1.0.0
 Outputs:
   stackName:
@@ -116,6 +126,10 @@ Parameters:
     Default: ''
     Description: The ARN of the AWS secret containing the password used during BIG-IP licensing via BIG-IQ.
     Type: String
+  cloudWatchLogGroup:
+    Default: ''
+    Description: Provides CloudWatch Log Group name used for telemetry
+    Type: String
   cost:
     Default: f5cost
     Description: Cost Center Tag.
@@ -141,6 +155,10 @@ Parameters:
   group:
     Default: f5group
     Description: Group Tag.
+    Type: String
+  metricNameSpace:
+    Default: ''
+    Description: CloudWatch namespace used for custom metrics. This should match the namespace defined in your telemetry services declaration within bigipRuntimInitConfig.
     Type: String
   owner:
     Default: f5owner
@@ -381,13 +399,23 @@ Resources:
                 Resource:
                   - '*'
               - Action:
-                  - 'cloudwatch:PutMetricData'
                   - 'logs:DescribeLogGroups'
                   - 'logs:DescribeLogStreams'
                   - 'logs:PutLogEvents'
                 Effect: Allow
-                Resource:
+                Resource: 
                   - '*'
+                Condition:
+                  StringLike:
+                    aws:ResourceTag/Name: !Ref cloudWatchLogGroup
+              - Action:
+                  - 'cloudwatch:PutMetricData'
+                Effect: Allow
+                Resource: 
+                  - '*'
+                Condition:
+                  StringEquals:
+                    cloudwatch:namespace: !Ref metricNameSpace
               - Action:
                   - 'cloudformation:ListStackResources'
                   - 'cloudformation:SignalResource'
@@ -448,13 +476,23 @@ Resources:
                 Resource:
                   - '*'
               - Action:
-                  - 'cloudwatch:PutMetricData'
                   - 'logs:DescribeLogGroups'
                   - 'logs:DescribeLogStreams'
                   - 'logs:PutLogEvents'
                 Effect: Allow
-                Resource:
+                Resource: 
                   - '*'
+                Condition:
+                  StringLike:
+                    aws:ResourceTag/Name: !Ref cloudWatchLogGroup
+              - Action:
+                  - 'cloudwatch:PutMetricData'
+                Effect: Allow
+                Resource: 
+                  - '*'
+                Condition:
+                  StringEquals:
+                    cloudwatch:namespace: !Ref metricNameSpace
               - Action:
                   - 'cloudformation:ListStackResources'
                   - 'cloudformation:SignalResource'
@@ -532,13 +570,23 @@ Resources:
                 Resource:
                   - '*'
               - Action:
-                  - 'cloudwatch:PutMetricData'
                   - 'logs:DescribeLogGroups'
                   - 'logs:DescribeLogStreams'
                   - 'logs:PutLogEvents'
                 Effect: Allow
-                Resource:
+                Resource: 
                   - '*'
+                Condition:
+                  StringLike:
+                    aws:ResourceTag/Name: !Ref cloudWatchLogGroup
+              - Action:
+                  - 'cloudwatch:PutMetricData'
+                Effect: Allow
+                Resource: 
+                  - '*'
+                Condition:
+                  StringEquals:
+                    cloudwatch:namespace: !Ref metricNameSpace
               - Action:
                   - 'cloudformation:ListStackResources'
                   - 'cloudformation:SignalResource'
@@ -616,13 +664,23 @@ Resources:
                 Resource:
                   - '*'
               - Action:
-                  - 'cloudwatch:PutMetricData'
                   - 'logs:DescribeLogGroups'
                   - 'logs:DescribeLogStreams'
                   - 'logs:PutLogEvents'
                 Effect: Allow
-                Resource:
+                Resource: 
                   - '*'
+                Condition:
+                  StringLike:
+                    aws:ResourceTag/Name: !Ref cloudWatchLogGroup
+              - Action:
+                  - 'cloudwatch:PutMetricData'
+                Effect: Allow
+                Resource: 
+                  - '*'
+                Condition:
+                  StringEquals:
+                    cloudwatch:namespace: !Ref metricNameSpace
               - Action:
                   - 'cloudformation:ListStackResources'
                   - 'cloudformation:SignalResource'
@@ -724,13 +782,23 @@ Resources:
                 Resource:
                   - '*'
               - Action:
-                  - 'cloudwatch:PutMetricData'
                   - 'logs:DescribeLogGroups'
                   - 'logs:DescribeLogStreams'
                   - 'logs:PutLogEvents'
                 Effect: Allow
-                Resource:
+                Resource: 
                   - '*'
+                Condition:
+                  StringLike:
+                    aws:ResourceTag/Name: !Ref cloudWatchLogGroup
+              - Action:
+                  - 'cloudwatch:PutMetricData'
+                Effect: Allow
+                Resource: 
+                  - '*'
+                Condition:
+                  StringEquals:
+                    cloudwatch:namespace: !Ref metricNameSpace
               - Action:
                   - 'cloudformation:ListStackResources'
                   - 'cloudformation:SignalResource'

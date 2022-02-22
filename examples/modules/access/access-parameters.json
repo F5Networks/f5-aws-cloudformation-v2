@@ -8,6 +8,10 @@
     "ParameterValue": ""
   },
   {
+    "ParameterKey": "cloudWatchLogGroup",
+    "ParameterValue": ""
+  },
+  {
     "ParameterKey": "cost",
     "ParameterValue": "f5cost"
   },
@@ -26,6 +30,10 @@
   {
     "ParameterKey": "group",
     "ParameterValue": "f5group"
+  },
+  {
+    "ParameterKey": "metricNameSpace",
+    "ParameterValue": ""
   },
   {
     "ParameterKey": "owner",
