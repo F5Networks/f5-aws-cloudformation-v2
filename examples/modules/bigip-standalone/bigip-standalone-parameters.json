@@ -8,6 +8,10 @@
     "ParameterValue": ""
   },
   {
+    "ParameterKey": "bigIpPeerAddr",
+    "ParameterValue": "10.0.1.11"
+  },
+  {
     "ParameterKey": "bigIpRuntimeInitConfig",
     "ParameterValue": ""
   },
@@ -98,10 +102,6 @@
   {
     "ParameterKey": "owner",
     "ParameterValue": "f5owner"
-  },
-  {
-    "ParameterKey": "bigIpPeerAddr",
-    "ParameterValue": "10.0.1.11"
   },
   {
     "ParameterKey": "sshKey",

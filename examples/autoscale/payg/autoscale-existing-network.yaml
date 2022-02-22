@@ -545,11 +545,18 @@ Resources:
           S3Bucket: !Ref 's3BucketName'
       Parameters:
         application: !Ref 'application'
+        cloudWatchLogGroup: !If
+          - createLogDestination
+          - !GetAtt
+            - Telemetry
+            - Outputs.cloudWatchLogGroup
+          - !Ref 'AWS::NoValue'
         cost: !Ref 'cost'
         createAmiRole: 'true'
         createBigIqRoles: 'false'
         environment: !Ref 'environment'
         group: !Ref 'group'
+        metricNameSpace: !If [customNameSpace, !Ref 'metricNameSpace', 'f5-scaling-metrics']
         s3Bucket: !If
           - createLoggingS3Bucket
           - !GetAtt
