@@ -30,7 +30,7 @@ if [ <LICENSE TYPE> == "bigiq" ]; then
         ParameterKey=allowUsageAnalytics,ParameterValue=No \
         ParameterKey=Vpc,ParameterValue=$vpc \
         ParameterKey=instanceType,ParameterValue=m4.2xlarge \
-        ParameterKey=restrictedSrcAddress,ParameterValue="$source_cidr" \
+        ParameterKey=restrictedSrcAddressMgmt,ParameterValue="$source_cidr" \
         ParameterKey=restrictedSrcAddressApp,ParameterValue="$source_cidr" \
         ParameterKey=sshKey,ParameterValue=<SSH KEY> \
         ParameterKey=managementSubnetAz1,ParameterValue=$subnetAz1 \

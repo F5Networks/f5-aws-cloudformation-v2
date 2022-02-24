@@ -68,13 +68,15 @@ By default, this solution (failover.yaml) creates a VPN with 3 subnets, an examp
 
 ## Diagram
 
-![Configuration Example](../images/architecture_diagram.gif)
+![Configuration Example](diagram.png)
+
+For information about this type of deployment, see the F5 Cloud Failover Extension [documentation](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/userguide/aws.html).
 
 ## Prerequisites
 
   - An SSH Key pair in AWS for management access to BIG-IP VE. For more information about creating and/or importing the key pair in AWS, see AWS SSH key [documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html).
 
-  - An **AWS secret** stored in AWS https://aws.amazon.com/secrets-manager/[Secrets Manager] containing the password used to access and cluster the HA Pair. For example, to create a secret using the AWS CLI:
+  - An **AWS secret** stored in AWS [Secrets Manager](https://aws.amazon.com/secrets-manager/) containing the password used to access and cluster the HA Pair. For example, to create a secret using the AWS CLI:
     ```bash
     aws secretsmanager create-secret --region us-east-1 --name mySecretId --secret-string 'YOUR_BIGIP_PASSWORD'
     ```
@@ -147,7 +149,7 @@ By default, this solution (failover.yaml) creates a VPN with 3 subnets, an examp
 | numSubnets | No | Number of Subnets. Default = 3, 4 required when provisionExampleApp = false |
 | owner | No | Owner Tag. |
 | provisionExampleApp | No | Flag to deploy the demo web application.. |
-| provisionPublicIpMgmt | No | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host will be provisioned instead. See [diagram](diagram-w-bastion.png). |
+| provisionPublicIpMgmt | No | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host will be provisioned instead. |
 | restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to access web traffic (80/443) to the AWS instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. NOTE: The vpc cidr is automatically added for internal usage. |
 | restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The vpc cidr is automatically added for internal usage, ex. access via bastion host, clustering, etc. **IMPORTANT**: Please restrict to your client, for example 'X.X.X.X/32'. WARNING - For eval purposes only. Production should never have the BIG-IP Management interface exposed to Internet.|
 | s3BucketRegion | No | AWS Region which contains the S3 Bucket containing templates |
@@ -209,7 +211,7 @@ By default, this solution (failover.yaml) creates a VPN with 3 subnets, an examp
 | group | No | Group Tag. |
 | owner | No | Owner Tag. |
 | provisionPublicIpVip | No | Whether or not to provision public IP addresses for the BIGIP's external network interface. IP's are used for application traffic. |
-| provisionPublicIpMgmt | No | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host will be provisioned instead. See [diagram](diagram-w-bastion.png). |
+| provisionPublicIpMgmt | No | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host will be provisioned instead. |
 | restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to access web traffic (80/443) to the AWS instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. NOTE: The vpc cidr is automatically added for internal usage. |
 | restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The vpc cidr is automatically added for internal usage, ex. access via bastion host, clustering, etc. **IMPORTANT**: Please restrict to your client, for example 'X.X.X.X/32'. WARNING - For eval purposes only. Production should never have the BIG-IP Management interface exposed to Internet.|
 | s3BucketRegion | No | AWS Region which contains the S3 Bucket containing templates |

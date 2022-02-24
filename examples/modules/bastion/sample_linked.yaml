@@ -13,7 +13,7 @@ Resources:
         createAutoscaleGroup: 'false'
         customImageId: ''
         instanceType: t2.small
-        restrictedSrcAddress: 0.0.0.0/0
+        restrictedSrcAddressMgmt: 0.0.0.0/0
         scalingMaxSize: 2
         scalingMinSize: 1
         provisionPublicIp: 'false'
