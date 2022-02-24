@@ -76,7 +76,7 @@ Metadata:
           - createAutoscaleGroup
           - customImageId
           - instanceType
-          - restrictedSrcAddress
+          - restrictedSrcAddressMgmt
           - scalingMaxSize
           - scalingMinSize
           - sshKey
@@ -103,7 +103,7 @@ Metadata:
         default: The ARN of the AWS secret containing the password used during BIG-IP licensing via BIG-IQ
       instanceType:
         default: Must be a valid EC2 instance type for BIG-IP
-      restrictedSrcAddress:
+      restrictedSrcAddressMgmt:
         default: The IP address range used to SSH and access management GUI on the EC2 instances
       scalingMaxSize:
         default: Maximum number of BIG-IP instances (2-100) that can be created in the Auto Scale Group
@@ -185,7 +185,7 @@ Parameters:
     Default: f5owner
     MaxLength: 50
     Type: String
-  restrictedSrcAddress:
+  restrictedSrcAddressMgmt:
     AllowedPattern: (\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})
     ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
     Description: REQUIRED - The IP address range used to SSH and access management GUI on the EC2 instances.

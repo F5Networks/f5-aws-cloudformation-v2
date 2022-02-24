@@ -115,7 +115,7 @@
 						"regPoolKeys",
 						"managementGuiPort",
 						"sshKey",
-						"restrictedSrcAddress",
+						"restrictedSrcAddressMgmt",
 						"restrictedSrcAddressApp",
 						"ntpServer",
 						"timezone"
@@ -194,7 +194,7 @@
 				"owner": {
 					"default": "Owner"
 				},
-				"restrictedSrcAddress": {
+				"restrictedSrcAddressMgmt": {
 					"default": "Source Address(es) for Management Access"
 				},
 				"restrictedSrcAddressApp": {
@@ -392,7 +392,7 @@
 			"Description": "Name of the Owner Tag",
 			"Type": "String"
 		},
-		"restrictedSrcAddress": {
+		"restrictedSrcAddressMgmt": {
 			"AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
 			"ConstraintDescription": "Must be a valid IP CIDR range of the form x.x.x.x/x.",
 			"Description": " The IP address range used to SSH and access management GUI on the EC2 instances",
@@ -697,7 +697,7 @@
 				"GroupDescription": "management interface policy",
 				"SecurityGroupIngress": [{
 						"CidrIp": {
-							"Ref": "restrictedSrcAddress"
+							"Ref": "restrictedSrcAddressMgmt"
 						},
 						"FromPort": "22",
 						"IpProtocol": "tcp",
@@ -705,7 +705,7 @@
 					},
 					{
 						"CidrIp": {
-							"Ref": "restrictedSrcAddress"
+							"Ref": "restrictedSrcAddressMgmt"
 						},
 						"FromPort": "443",
 						"IpProtocol": "tcp",
