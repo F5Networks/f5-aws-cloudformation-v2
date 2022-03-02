@@ -5,11 +5,13 @@ Resources:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: >-
-        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.1.0.0/examples/modules/access/access.yaml
+        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v2.0.0.0/examples/modules/access/access.yaml
       Parameters:
         bigIqSecretArn: ''
+        cloudWatchLogGroup: ''
         createAmiRole: 'true'
         createBigIqRoles: 'false'
+        metricNameSpace: ''
         s3Bucket: example-s3-bucket-name
         secretArn: ''
         solutionType: failover

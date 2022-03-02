@@ -1,0 +1,126 @@
+[
+  {
+    "ParameterKey": "application",
+    "ParameterValue": "f5app-quickstart"
+  },
+  {
+    "ParameterKey": "artifactLocation",
+    "ParameterValue": "f5-aws-cloudformation-v2/v2.0.0.0/examples/"
+  },
+  {
+    "ParameterKey": "bigIpExternalSelfIp",
+    "ParameterValue": "10.0.0.11"
+  },
+  {
+    "ParameterKey": "bigIpExternalServiceIps",
+    "ParameterValue": "10.0.1.101,10.0.0.101"
+  },
+  {
+    "ParameterKey": "bigIpExternalSubnetId",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "bigIpInternalSelfIp",
+    "ParameterValue": "10.0.2.11"
+  },
+  {
+    "ParameterKey": "bigIpInternalSubnetId",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "bigIpMgmtSelfIp",
+    "ParameterValue": "10.0.1.11"
+  },
+  {
+    "ParameterKey": "bigIpMgmtSubnetId",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "bigIpRuntimeInitConfig",
+    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml"
+  },
+  {
+    "ParameterKey": "bigIpRuntimeInitPackageUrl",
+    "ParameterValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run"
+  },
+  {
+    "ParameterKey": "cost",
+    "ParameterValue": "f5costcenter-quickstart"
+  },
+  {
+    "ParameterKey": "bigIpCustomImageId",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "environment",
+    "ParameterValue": "f5env-quickstart"
+  },
+  {
+    "ParameterKey": "group",
+    "ParameterValue": "f5group-quickstart"
+  },
+  {
+    "ParameterKey": "bigIpImage",
+    "ParameterValue": "Best"
+  },
+  {
+    "ParameterKey": "bigIpInstanceType",
+    "ParameterValue": "m5.2xlarge"
+  },
+  {
+    "ParameterKey": "licenseType",
+    "ParameterValue": "payg"
+  },
+  {
+    "ParameterKey": "numNics",
+    "ParameterValue": "3"
+  },
+  {
+    "ParameterKey": "owner",
+    "ParameterValue": "f5owner-quickstart"
+  },
+  {
+    "ParameterKey": "provisionPublicIp",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "restrictedSrcAddressApp",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "restrictedSrcAddressMgmt",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "s3BucketName",
+    "ParameterValue": "f5-cft-v2"
+  },
+  {
+    "ParameterKey": "s3BucketRegion",
+    "ParameterValue": "us-east-1"
+  },
+  {
+    "ParameterKey": "sshKey",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "throughput",
+    "ParameterValue": "25Mbps"
+  },
+  {
+    "ParameterKey": "uniqueString",
+    "ParameterValue": "myUniqStr"
+  },
+  {
+    "ParameterKey": "version",
+    "ParameterValue": "16-1-0-0019"
+  },
+  {
+    "ParameterKey": "vpcCidr",
+    "ParameterValue": "10.0.0.0/16"
+  },
+  {
+    "ParameterKey": "vpcId",
+    "ParameterValue": ""
+  }
+]

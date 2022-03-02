@@ -8,16 +8,12 @@
     "ParameterValue": "f5app"
   },
   {
-    "ParameterKey": "bigIqAddress",
+    "ParameterKey": "bigIpRuntimeInitConfig",
     "ParameterValue": ""
   },
   {
     "ParameterKey": "bigIqAddressType",
     "ParameterValue": "private"
-  },
-  {
-    "ParameterKey": "bigIqLicensePool",
-    "ParameterValue": ""
   },
   {
     "ParameterKey": "bigIqSecretArn",
@@ -29,18 +25,6 @@
   },
   {
     "ParameterKey": "bigIqSubnetId",
-    "ParameterValue": ""
-  },
-  {
-    "ParameterKey": "bigIqTenant",
-    "ParameterValue": ""
-  },
-  {
-    "ParameterKey": "bigIqUsername",
-    "ParameterValue": ""
-  },
-  {
-    "ParameterKey": "bigIqUtilitySku",
     "ParameterValue": ""
   },
   {
@@ -82,5 +66,9 @@
   {
     "ParameterKey": "owner",
     "ParameterValue": "f5owner"
+  },
+  {
+    "ParameterKey": "uniqueString",
+    "ParameterValue": "myUniqStr"
   }
 ]

@@ -55,13 +55,8 @@ Metadata:
       - Label:
           default: BIG-IQ configuration
         Parameters:
-          - bigIqAddress
           - bigIqAddressType
-          - bigIqUsername
           - bigIqSecretArn
-          - bigIqLicensePool
-          - bigIqUtilitySku
-          - bigIqTenant
           - bigIqSubnetId
           - bigIqSecurityGroupId
       - Label:
@@ -146,18 +141,11 @@ Metadata:
       bigIpScalingMinSize:
         default: Minimum number of BIG-IP instances that can be created in the Autoscale
           Group
-      bigIqAddress:
-        default: The IP address (or hostname) for the BIG-IQ used when licensing the
-          BIG-IP.
       bigIqAddressType:
         default: 'The type (public or private) of IP address or hostname for the BIG-IQ
           to be used when licensing the BIG-IP. When using a private IP address or
           hostname, you must provide values for the bigIqSecurityGroupId and bigIqSubnetId
           parameters.'
-      bigIqLicensePool:
-        default: The BIG-IQ license pool to use during BIG-IP licensing via BIG-IQ.
-          This value should match the BIG-IQ license pool specified in the F5 Declarative
-          Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter.
       bigIqSecretArn:
         default: The ARN of the BIG-IQ secret to use during BIG-IP licensing via BIG-IQ.
       bigIqSecurityGroupId:
@@ -166,14 +154,6 @@ Metadata:
       bigIqSubnetId:
         default: The ID of the subnet where BIG-IQ is deployed. You must provide a
           value for this parameter when using a private BIG-IP address.
-      bigIqTenant:
-        default: The BIG-IQ tenant used during BIG-IP licensing via BIG-IQ. This value
-          should match the BIG-IQ tenant specified in the F5 Declarative Onboarding
-          declaration passed to the bigIpRuntimeInitConfig template parameter.
-      bigIqUtilitySku:
-        default: The BIG-IQ utility license SKU used during BIG-IP licensing via BIG-IQ.
-          This value should match the BIG-IQ utilty SKU specified in the F5 Declarative
-          Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter
       cloudWatchLogGroupName:
         default: CloudWatch Log Group Name
       cloudWatchLogStreamName:
@@ -233,7 +213,7 @@ Metadata:
         default: Unique string
       vpcCidr:
         default: VPC CIDR
-  Version: 1.1.0.0
+  Version: 2.0.0.0
 Outputs:
   wafExternalDnsName:
     Condition: externalLB
@@ -309,7 +289,7 @@ Parameters:
     AllowedPattern: ^.*[a-zA-Z]+/$
     ConstraintDescription: key prefix can include numbers, lowercase letters, uppercase
       letters, hyphens (-), and forward slash (/).
-    Default: f5-aws-cloudformation-v2/v1.1.0.0/examples/
+    Default: f5-aws-cloudformation-v2/v2.0.0.0/examples/
     Description: The path in the S3Bucket where the modules folder is located. Can
       include numbers, lowercase letters, uppercase letters, hyphens (-), and forward
       slash (/).
@@ -342,6 +322,7 @@ Parameters:
     Type: String
   bigIpInstanceType:
     AllowedValues:
+      - t3.large
       - m3.2xlarge
       - m4.xlarge
       - m4.2xlarge
@@ -387,13 +368,13 @@ Parameters:
     MinValue: 0
     Type: Number
   bigIpRuntimeInitConfig:
-    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg.yaml'
+    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
       file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
       configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.3.2/dist/f5-bigip-runtime-init-1.3.2-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   bigIpScaleInCpuThreshold:
@@ -436,15 +417,6 @@ Parameters:
     MaxValue: 99
     MinValue: 1
     Type: Number
-  bigIqAddress:
-    Default: ''
-    Description: 'The IP address (or hostname) for the BIG-IQ used when licensing
-      the BIG-IP.  Note: The AWS function created by this template will make a REST
-      call to the BIG-IQ (already existing) to revoke a license assignment when a
-      BIG-IP instance is deallocated. This value should match the BIG-IQ address specified
-      in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig
-      template parameter.'
-    Type: String
   bigIqAddressType:
     AllowedValues:
       - private
@@ -455,10 +427,6 @@ Parameters:
       to be used when licensing the BIG-IP.  Note: When using a private IP address
       or hostname, you must provide values for the bigIqSecurityGroupId and bigIqSubnetId
       parameters.'
-    Type: String
-  bigIqLicensePool:
-    Default: ''
-    Description: The BIG-IQ license pool to use during BIG-IP licensing via BIG-IQ.
     Type: String
   bigIqSecretArn:
     Description: The ARN of the AWS secret containing the password used during BIG-IP
@@ -473,24 +441,6 @@ Parameters:
     Default: ''
     Description: The ID of the subnet where BIG-IQ is deployed. You must provide a
       value for this parameter when using a private BIG-IP address.
-    Type: String
-  bigIqTenant:
-    Default: ''
-    Description: The BIG-IQ tenant used during BIG-IP licensing via BIG-IQ. This value
-      should match the BIG-IQ tenant specified in the F5 Declarative Onboarding declaration
-      passed to the bigIpRuntimeInitConfig template parameter.
-    Type: String
-  bigIqUsername:
-    Default: ''
-    Description: The BIG-IQ username used during BIG-IP licensing via BIG-IQ. This
-      value should match the BIG-IQ username specified in the F5 Declarative Onboarding
-      declaration passed to the bigIpRuntimeInitConfig template parameter.
-    Type: String
-  bigIqUtilitySku:
-    Default: ''
-    Description: The BIG-IQ utility license SKU used during BIG-IP licensing via BIG-IQ.
-      This value should match the BIG-IQ utility SKU specified in the F5 Declarative
-      Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter.
     Type: String
   cloudWatchLogGroupName:
     Default: ''
@@ -525,10 +475,12 @@ Parameters:
     Description: Group Tag.
     Type: String
   lambdaS3BucketName:
+    Default: f5-aws-bigiq-revoke
     Description: REQUIRED - The name of the S3 bucket where the lambdaBigiqRevoke
       lambda function is located.
     Type: String
   lambdaS3Key:
+    Default: main/
     Description: REQUIRED - The top-level key in the lambda S3 bucket where the lambda
       function is located.
     Type: String
@@ -712,11 +664,18 @@ Resources:
       Parameters:
         application: !Ref 'application'
         bigIqSecretArn: !Ref 'bigIqSecretArn'
+        cloudWatchLogGroup: !If
+          - createLogDestination
+          - !GetAtt
+            - Telemetry
+            - Outputs.cloudWatchLogGroup
+          - !Ref 'AWS::NoValue'
         cost: !Ref 'cost'
         createAmiRole: 'true'
         createBigIqRoles: 'true'
         environment: !Ref 'environment'
         group: !Ref 'group'
+        metricNameSpace: !If [customNameSpace, !Ref 'metricNameSpace', 'f5-scaling-metrics']
         s3Bucket: !If
           - createLoggingS3Bucket
           - !GetAtt
@@ -728,6 +687,7 @@ Resources:
             - !Ref 'AWS::NoValue'
         secretArn: !If [useSecretArn, !Ref 'secretArn', !Ref 'AWS::NoValue']
         solutionType: !If [useLoggingS3Bucket, secretS3, secret]
+        uniqueString: !Ref 'uniqueString'
   AmiInfo:
     Type: 'Custom::AMIInfo'
     Properties:
@@ -821,7 +781,7 @@ Resources:
                   - Outputs.subnetsB
         bastionSecurityGroupId: !GetAtt
           - Dag
-          - Outputs.bigIpExternalSecurityGroup
+          - Outputs.bastionSecurityGroupId
         cost: !Ref 'cost'
         createAutoscaleGroup: 'true'
         environment: !Ref 'environment'
@@ -845,7 +805,7 @@ Resources:
         application: !Ref 'application'
         bigIpExternalSecurityGroup: !GetAtt
           - Dag
-          - Outputs.bigIpExternalSecurityGroup
+          - Outputs.bigIpMgmtSecurityGroup
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig'
         bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         bigIpInstanceProfile: !GetAtt
@@ -934,6 +894,9 @@ Resources:
         application: !Ref 'application'
         cost: !Ref 'cost'
         createAppSecurityGroup: 'true'
+        createBastionSecurityGroup: !If [noPublicIp, 'true', 'false']
+        createExternalSecurityGroup: 'false'
+        createInternalSecurityGroup: 'false'
         environment: !Ref 'environment'
         externalSubnetAz1: !Select
           - '0'
@@ -986,13 +949,9 @@ Resources:
         amiLookupRole: !GetAtt
           - Access
           - Outputs.lambdaAmiExecutionRole
-        bigIqAddress: !Ref 'bigIqAddress'
+        bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig'
         bigIqAddressType: !Ref 'bigIqAddressType'
-        bigIqUsername: !Ref 'bigIqUsername'
         bigIqSecretArn: !Ref 'bigIqSecretArn'
-        bigIqLicensePool: !Ref 'bigIqLicensePool'
-        bigIqUtilitySku: !Ref 'bigIqUtilitySku'
-        bigIqTenant: !Ref 'bigIqTenant'
         bigIqSecurityGroupId: !Ref 'bigIqSecurityGroupId'
         bigIqSubnetId: !Ref 'bigIqSubnetId'
         copyZipsRole: !GetAtt
@@ -1008,6 +967,7 @@ Resources:
           - Outputs.lambdaAccessRole
         lambdaS3BucketName: !Ref 'lambdaS3BucketName'
         lambdaS3Key: !Ref 'lambdaS3Key'
+        uniqueString: !Ref 'uniqueString'
   Network:
     Type: 'AWS::CloudFormation::Stack'
     Properties:

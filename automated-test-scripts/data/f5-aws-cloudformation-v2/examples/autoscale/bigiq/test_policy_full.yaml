@@ -1,0 +1,9 @@
+---
+# Autoscale BIGIQ Example Test
+aws-autoscale-bigiq-example-test:
+    test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/bigiq/daily_test_full.yaml"
+    run: "all"
+    parameters-files:
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/full/prepub_parameters.yaml"
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/full/prepub_parameters1.yaml"
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/full/prepub_parameters2.yaml"

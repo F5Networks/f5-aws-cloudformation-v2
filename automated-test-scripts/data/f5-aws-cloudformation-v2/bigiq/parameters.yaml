@@ -1,0 +1,29 @@
+---
+AUTOFILL BIGIQ LICENSE KEY: null
+AUTOFILL CLPV2 LICENSE KEY: null
+BIGIQ LICENSE POOL: production
+BIGIQ LICENSE S3 ARN: 'arn:aws:s3:::bigiqtest/bigiq.txt'
+BIGIQ PASSWORD: b1gAdminPazz
+LICENSE TYPE: bigiq
+NTP SERVER: 0.us.pool.ntp.org
+PROVISION PUBLIC IP: 'true'
+REGION: us-east-1
+S3 BUCKET: ''
+SCHEDULED BIGIQ: true
+SSH KEY: dewpt
+STACK NAME: dewdrop-bigiq-<DEWPOINT JOB ID>
+STACK TYPE: existing-stack
+TEMPLATE NAME: bigiq-autoscale
+TEMPLATE URL: 'file://$PWD/examples/autoscale/bigiq/autoscale.yaml'
+TIMEZONE: US/Pacific
+UNIQUESTRING: q<DEWPOINT JOB ID>
+# Network Module Parameters
+CIDR: 10.0.0.0/16
+NETWORK STACK NAME: dewdrop-<NETWORK TEMPLATE NAME>-<DEWPOINT JOB ID>
+NETWORK TEMPLATE NAME: network
+NETWORK TEMPLATE URL: 'file://$PWD/examples/modules/network/network.yaml'
+NUMBER AZS: 2
+NUMBER SUBNETS: 3
+SUBNET1 PUBLIC: 'false'
+SUBNETMASK: 24
+TENANCY: default

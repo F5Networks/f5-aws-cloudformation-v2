@@ -1,0 +1,7 @@
+---
+# BIG-IQ shared setup
+aws-bigiq-example:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/bigiq/daily_test.yaml"
+  run: "all"
+  parameters-files:
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/bigiq/parameters.yaml"

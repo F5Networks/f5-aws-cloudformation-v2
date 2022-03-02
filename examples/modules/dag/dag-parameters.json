@@ -8,7 +8,27 @@
     "ParameterValue": "f5cost"
   },
   {
+    "ParameterKey": "cfeTag",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "cfeVipTag",
+    "ParameterValue": ""
+  },
+  {
     "ParameterKey": "createAppSecurityGroup",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "createBastionSecurityGroup",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "createExternalSecurityGroup",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "createInternalSecurityGroup",
     "ParameterValue": "false"
   },
   {
@@ -41,11 +61,11 @@
   },
   {
     "ParameterKey": "numberPublicExternalIpAddresses",
-    "ParameterValue": 0
+    "ParameterValue": "0"
   },
   {
     "ParameterKey": "numberPublicMgmtIpAddresses",
-    "ParameterValue": 0
+    "ParameterValue": "0"
   },
   {
     "ParameterKey": "owner",
@@ -69,7 +89,7 @@
   },
   {
     "ParameterKey": "restrictedSrcPort",
-    "ParameterValue": 8443
+    "ParameterValue": "8443"
   },
   {
     "ParameterKey": "uniqueString",

@@ -4,7 +4,23 @@
 #  replayTimeout = 5
 
 FLAG='FAIL'
-PASSWORD='<SECRET VALUE>'
+
+TMP_DIR='/tmp/<DEWPOINT JOB ID>'
+if [ "<LICENSE TYPE>" == "bigiq" ]; then
+    bigiq_stack_name=<STACK NAME>-bigiq
+    bigiq_password=''
+    if [ -f "${TMP_DIR}/bigiq_info.json" ]; then
+        echo "Found existing BIG-IQ StackId"
+        cat ${TMP_DIR}/bigiq_info.json
+        bigiq_stack_name=$(cat ${TMP_DIR}/bigiq_info.json | jq -r .bigiq_stack_name)
+        bigiq_password=$(cat ${TMP_DIR}/bigiq_info.json | jq -r .bigiq_password)
+    fi
+    PASSWORD=$bigiq_password
+else
+    PASSWORD='<SECRET VALUE>'
+fi
+echo "BigIp password=$PASSWORD"
+
 MGMT_PORT='8443'
 SSH_PORT='22'
 group_name=$(aws autoscaling describe-auto-scaling-groups --region <REGION> | jq -r '.AutoScalingGroups[] |select (.AutoScalingGroupARN |contains("<UNIQUESTRING>-bigip"))|.AutoScalingGroupName')
@@ -14,7 +30,11 @@ test_instance_id=$(aws autoscaling describe-auto-scaling-groups --region  <REGIO
 echo "BIGIP Instance Id: $test_instance_id"
 
 if [[ "<PROVISION PUBLIC IP>" == "false" ]]; then
-    bastion_autoscale_group_name=$(aws cloudformation describe-stacks --stack-name <STACK NAME> --region <REGION> | jq -r '.Stacks[].Outputs[] | select (.OutputKey=="bastionAutoscaleGroupName") | .OutputValue')
+    if [[ "<STACK TYPE>" == "existing-stack" ]]; then
+        bastion_autoscale_group_name=$(aws cloudformation describe-stacks --stack-name bastion-<STACK NAME> --region <REGION> | jq -r '.Stacks[].Outputs[] | select (.OutputKey=="bastionAutoscaleGroupName") | .OutputValue')
+    else
+        bastion_autoscale_group_name=$(aws cloudformation describe-stacks --stack-name <STACK NAME> --region <REGION> | jq -r '.Stacks[].Outputs[] | select (.OutputKey=="bastionAutoscaleGroupName") | .OutputValue')
+    fi
 
 	echo "Autoscale group name: $bastion_autoscale_group_name"
 
@@ -29,14 +49,14 @@ if [[ "<PROVISION PUBLIC IP>" == "false" ]]; then
     echo "BIGIP Private Ip: $bigip_private_ip"
 
     SSH_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i /etc/ssl/private/dewpt_private.pem -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i /etc/ssl/private/dewpt_private.pem -W %h:%p ubuntu@$bastion_ip" admin@"$bigip_private_ip" 'tmsh list auth user admin')
-    PASSWORD_RESPONSE=$(ssh -o "StrictHostKeyChecking=no" -o ConnectTimeout=7 -i /etc/ssl/private/dewpt_private.pem ubuntu@"$bastion_ip" "curl -skvvu admin:${PASSWORD} https://${bigip_private_ip}:${MGMT_PORT}/mgmt/tm/auth/user/admin")
+    PASSWORD_RESPONSE=$(ssh -o "StrictHostKeyChecking=no" -o ConnectTimeout=7 -i /etc/ssl/private/dewpt_private.pem ubuntu@"$bastion_ip" "curl -skvvu 'admin:${PASSWORD}' https://${bigip_private_ip}:${MGMT_PORT}/mgmt/tm/auth/user/admin")
 else
-    test_instance_public_ip=$(aws ec2 describe-instances --region  <REGION> --instance-ids $test_instance_id | jq .Reservations[0].Instances[0].PublicIpAddress | tr -d '"')
+    test_instance_public_ip=$(aws ec2 describe-instances --region <REGION> --instance-ids $test_instance_id | jq .Reservations[0].Instances[0].PublicIpAddress | tr -d '"')
 
     echo "BIGIP Public IP: $test_instance_public_ip"
 
     SSH_RESPONSE=$(sshpass -p ${PASSWORD} ssh -o StrictHostKeyChecking=no admin@${test_instance_public_ip} "tmsh list auth user admin")
-    PASSWORD_RESPONSE=$(curl -sku admin:${PASSWORD} https://${test_instance_public_ip}:${MGMT_PORT}/mgmt/tm/auth/user/admin | jq -r .description)
+    PASSWORD_RESPONSE=$(curl -sku "admin:${PASSWORD}" https://${test_instance_public_ip}:${MGMT_PORT}/mgmt/tm/auth/user/admin)
 fi
 
 echo "SSH_RESPONSE: ${SSH_RESPONSE}"

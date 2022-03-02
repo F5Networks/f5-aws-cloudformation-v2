@@ -4,6 +4,7 @@
 #  replayTimeout = 0
 
 
+TMP_DIR='/tmp/<DEWPOINT JOB ID>'
 bucket_name=`echo <STACK NAME>|cut -c -60|tr '[:upper:]' '[:lower:]'| sed 's:-*$::'`
 echo "bucket_name=$bucket_name"
 
@@ -14,7 +15,18 @@ echo "artifact_location=$artifact_location"
 runtimeConfig='"<RUNTIME INIT CONFIG>"'
 secret_arn=$(aws secretsmanager describe-secret --secret-id <DEWPOINT JOB ID>-secret-runtime --region <REGION> | jq -r .ARN)
 secret_name=$(aws secretsmanager describe-secret --secret-id <DEWPOINT JOB ID>-secret-runtime --region <REGION> | jq -r .Name)
-bigiq_address=$(aws cloudformation describe-stacks --region <REGION> --stack-name <STACK NAME>-bigiq | jq -r '.Stacks[].Outputs[]|select (.OutputKey=="device1ManagementEipAddress")|.OutputValue')
+
+bigiq_stack_name=<STACK NAME>-bigiq
+bigiq_stack_region=<REGION>
+bigiq_address=''
+if [ -f "${TMP_DIR}/bigiq_info.json" ]; then
+    echo "Found existing BIG-IQ"
+    cat ${TMP_DIR}/bigiq_info.json
+    bigiq_stack_name=$(cat ${TMP_DIR}/bigiq_info.json | jq -r .bigiq_stack_name)
+    bigiq_stack_region=$(cat ${TMP_DIR}/bigiq_info.json | jq -r .bigiq_stack_region)
+    bigiq_address=$(cat ${TMP_DIR}/bigiq_info.json | jq -r .bigiq_address)
+    bigiq_password=$(cat ${TMP_DIR}/bigiq_info.json | jq -r .bigiq_password)
+fi
 
 region=$(aws s3api get-bucket-location --bucket $bucket_name | jq -r .LocationConstraint)
 
@@ -40,7 +52,7 @@ if [[ "<RUNTIME INIT CONFIG>" == *{* ]]; then
     runtimeConfig="${runtimeConfig/<ARTIFACT LOCATION>/$artifact_location}"
 else
     # Modify Runtime-init, then upload to s3.
-    cp /$PWD/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml <DEWPOINT JOB ID>.yaml
+    cp /$PWD/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml <DEWPOINT JOB ID>.yaml
 
     # Create user for login tests
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.class = \"User\"" -i <DEWPOINT JOB ID>.yaml
@@ -54,15 +66,14 @@ else
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.bigIqHost = \"$bigiq_address\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.licensePool = \"production\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.overwrite = \"false\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.tenant = \"<DEWPOINT JOB ID>\"" -i <DEWPOINT JOB ID>.yaml
 
     # Disable AutoPhoneHome
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>.yaml
 
     # WAF policy settings
-    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTPS_Service.WAFPolicy.enforcementMode = \"transparent\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTP_Service.WAFPolicy.enforcementMode = \"transparent\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTPS_Service.WAFPolicy.url = \"https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTP_Service.WAFPolicy.url = \"https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.Shared.Custom_WAF_Policy.enforcementMode = \"transparent\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.Shared.Custom_WAF_Policy.url = \"https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>.yaml
 
     # Telemetry settings
     /usr/bin/yq e ".extension_services.service_operations.[2].value.My_Metrics_Namespace.My_Cloudwatch_Metrics.metricNamespace = \"<METRIC NAME SPACE>\"" -i <DEWPOINT JOB ID>.yaml
@@ -74,18 +85,17 @@ else
     /usr/bin/yq e ".extension_services.service_operations.[2].value.My_S3.bucket = \"{{{BUCKET_NAME}}}\"" -i <DEWPOINT JOB ID>.yaml
 
     # Runtime parameters
-    /usr/bin/yq e ".runtime_parameters.[2].secretProvider.secretId = \"$secret_name\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".runtime_parameters.[3].secretProvider.secretId = \"$secret_name\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".runtime_parameters += {\"name\":\"BUCKET_NAME\"}" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".runtime_parameters.[3].type = \"static\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".runtime_parameters.[3].value = \"$logging_bucket_name\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".runtime_parameters.[4].type = \"static\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".runtime_parameters.[4].value = \"$logging_bucket_name\"" -i <DEWPOINT JOB ID>.yaml
 
     # print out config file
     /usr/bin/yq e <DEWPOINT JOB ID>.yaml
 
     # update copy
     cp <DEWPOINT JOB ID>.yaml update_<DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTPS_Service.WAFPolicy.enforcementMode = \"blocking\"" -i update_<DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.HTTP_Service.WAFPolicy.enforcementMode = \"blocking\"" -i update_<DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.Shared.Custom_WAF_Policy.enforcementMode = \"blocking\"" -i update_<DEWPOINT JOB ID>.yaml
 
     # upload to s3
     aws s3 cp --region <REGION> /$PWD/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml s3://"$bucket_name"/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml --acl public-read
@@ -160,32 +170,12 @@ cat <<EOF > parameters.json
         "ParameterValue": "<SCALE UP BYTES THRESHOLD>"
     },
     {
-        "ParameterKey": "bigIqAddress",
-        "ParameterValue": "$bigiq_address"
-    },
-    {
         "ParameterKey": "bigIqAddressType",
         "ParameterValue": "public"
     },
     {
-        "ParameterKey": "bigIqLicensePool",
-        "ParameterValue": "production"
-    },
-    {
         "ParameterKey": "bigIqSecretArn",
         "ParameterValue": "$secret_arn"
-    },
-    {
-        "ParameterKey": "bigIqTenant",
-        "ParameterValue": "myTenant"
-    },
-    {
-        "ParameterKey": "bigIqUsername",
-        "ParameterValue": "admin"
-    },
-    {
-        "ParameterKey": "bigIqUtilitySku",
-        "ParameterValue": "F5-BIG-MSP-BT-1G"
     },
     {
         "ParameterKey": "lambdaS3BucketName",

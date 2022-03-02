@@ -16,6 +16,7 @@ subnetAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <N
 subnetAz2=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsB").OutputValue' | cut -d ',' -f 1)
 
 parameters="\
+ParameterKey=uniqueString,ParameterValue=<UNIQUESTRING> \
 ParameterKey=application,ParameterValue=f5-app-<DEWPOINT JOB ID> \
 ParameterKey=externalSubnetAz1,ParameterValue=$subnetAz1 \
 ParameterKey=externalSubnetAz2,ParameterValue=$subnetAz2 \
@@ -26,6 +27,9 @@ ParameterKey=numberPublicMgmtIpAddresses,ParameterValue=<NUM PUBLIC MGMT IP> \
 ParameterKey=provisionExternalBigipLoadBalancer,ParameterValue=<PROVISION EXTERNAL LB> \
 ParameterKey=provisionInternalBigipLoadBalancer,ParameterValue=<PROVISION INTERNAL LB> \
 ParameterKey=createAppSecurityGroup,ParameterValue=<CREATE APP SECURITY GROUP> \
+ParameterKey=createBastionSecurityGroup,ParameterValue=<CREATE BASTION SECURITY GROUP> \
+ParameterKey=createExternalSecurityGroup,ParameterValue=<CREATE EXTERNAL SECURITY GROUP> \
+ParameterKey=createInternalSecurityGroup,ParameterValue=<CREATE INTERNAL SECURITY GROUP> \
 ParameterKey=restrictedSrcAddressMgmt,ParameterValue=0.0.0.0/0 \
 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0 \
 ParameterKey=vpc,ParameterValue=$vpcId"

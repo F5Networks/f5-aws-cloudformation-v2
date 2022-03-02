@@ -10,7 +10,7 @@ RUNTIME INIT CONFIG: https://<STACK NAME>.s3.<REGION>.amazonaws.com/<DEWPOINT JO
 SOLUTION TYPE: standalone
 SSH KEY: dewpt
 STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
-TEMPLATE NAME: quickstart-3nic-byol
+TEMPLATE NAME: quickstart-<NIC COUNT>nic-byol
 TEMPLATE S3 URL: https://<STACK NAME>.s3.<REGION>.amazonaws.com/<DEWPOINT JOB ID>-template.yaml
 TEMPLATE URL: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/main/examples/quickstart/quickstart.yaml'
 UNIQUESTRING: dew<DEWPOINT JOB ID>

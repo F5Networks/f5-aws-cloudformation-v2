@@ -5,7 +5,7 @@ Resources:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: >-
-        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.1.0.0/examples/modules/bastion/bastion.yaml
+        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v2.0.0.0/examples/modules/bastion/bastion.yaml
       Parameters:
         bastionSecurityGroupId: mgmt-00002
         bastionlicationSubnet: ''
@@ -13,7 +13,7 @@ Resources:
         createAutoscaleGroup: 'false'
         customImageId: ''
         instanceType: t2.small
-        restrictedSrcAddress: 0.0.0.0/0
+        restrictedSrcAddress: ''
         scalingMaxSize: 2
         scalingMinSize: 1
         provisionPublicIp: 'false'
@@ -27,3 +27,5 @@ Outputs:
     Value: !GetAtt Bastion.Outputs.bastionAutoscaleGroupName
   bastionInstanceId:
     Value: !GetAtt Bastion.Outputs.bastionInstanceId
+  bastionPublicIp:
+    Value: !GetAtt Bastion.Outputs.PublicIp

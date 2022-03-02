@@ -13,7 +13,7 @@ internalTargetGroupHttps=$(aws cloudformation describe-stacks --region <REGION> 
 externalTargetGroupHttps=$(aws cloudformation describe-stacks --region <REGION> --stack-name <DAG STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="externalTargetGroupHttps").OutputValue' | cut -d ',' -f 1)
 externalTargetGroupHttp=$(aws cloudformation describe-stacks --region <REGION> --stack-name <DAG STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="externalTargetGroupHttp").OutputValue' | cut -d ',' -f 1)
 bigIpInstanceProfile=$(aws cloudformation describe-stacks --region <REGION> --stack-name <ACCESS STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="bigIpInstanceProfile").OutputValue' | cut -d ',' -f 1)
-bigIpExternalSecurityGroup=$(aws cloudformation describe-stacks --region <REGION> --stack-name <DAG STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="bigIpExternalSecurityGroup").OutputValue' | cut -d ',' -f 1)
+bigIpExternalSecurityGroup=$(aws cloudformation describe-stacks --region <REGION> --stack-name <DAG STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="bigIpMgmtSecurityGroup").OutputValue' | cut -d ',' -f 1)
 
 bigiqNotificationRole=""
 if [[ <LICENSE TYPE> == 'bigiq' ]]; then

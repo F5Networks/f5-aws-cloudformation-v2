@@ -13,6 +13,7 @@ onStart:
 - ../../../common/verify_create.sh
 - ./tests/verify_outputs.sh
 - ./tests/verify_bigip_instance.sh
+- ./tests/verify_runtimeinit_install_params.sh
 # test needs investigation
 # - ./tests/verify_eip_associations.sh
 - ../../../common/delete_stack.sh

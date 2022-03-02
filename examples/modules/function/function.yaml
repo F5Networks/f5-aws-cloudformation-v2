@@ -22,17 +22,15 @@ Metadata:
       - Label:
           default: BIG-IQ Information
         Parameters:
-          - bigIqAddress
+          - bigIpRuntimeInitConfig
           - bigIqAddressType
-          - bigIqUsername
           - bigIqSecretArn
-          - bigIqLicensePool
-          - bigIqUtilitySku
           - bigIqSecurityGroupId
           - bigIqSubnetId
       - Label:
           default: TAGS
         Parameters:
+          - uniqueString
           - application
           - environment
           - group
@@ -49,7 +47,9 @@ Metadata:
         default: Group
       owner:
         default: Owner
-  Version: 1.1.0.0
+      uniqueString:
+        default: Unique string
+  Version: 2.0.0.0
 Outputs:
   stackName:
     Description: function nested stack name
@@ -73,9 +73,11 @@ Parameters:
     Default: f5app
     Description: Application Tag.
     Type: String
-  bigIqAddress:
+  bigIpRuntimeInitConfig:
     Default: ''
-    Description: 'The IP address (or hostname) for the BIG-IQ used when licensing the BIG-IP.  Note: The AWS function created by this template will make a REST call to the BIG-IQ (already existing) to revoke a license assignment when a BIG-IP instance is deallocated. This value should match the BIG-IQ address specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter.'
+    Description: 'Supply a URL to the bigip-runtime-init configuration
+      file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
+      configuration.'
     Type: String
   bigIqAddressType:
     AllowedValues:
@@ -84,10 +86,6 @@ Parameters:
     ConstraintDescription: Must be either private or public
     Default: private
     Description: 'The type (public or private) of IP address or hostname for the BIG-IQ to be used when licensing the BIG-IP.  Note: When using a private IP address or hostname, you must provide values for the bigIqSecurityGroupId and bigIqSubnetId parameters.'
-    Type: String
-  bigIqLicensePool:
-    Default: ''
-    Description: The BIG-IQ license pool to use during BIG-IP licensing via BIG-IQ.
     Type: String
   bigIqSecretArn:
     Default: ''
@@ -100,18 +98,6 @@ Parameters:
   bigIqSubnetId:
     Default: ''
     Description: The ID of the subnet where BIG-IQ is deployed. You must provide a value for this parameter when using a private BIG-IP address.
-    Type: String
-  bigIqTenant:
-    Default: ''
-    Description: The BIG-IQ tenant used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ tenant specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter.
-    Type: String
-  bigIqUsername:
-    Default: ''
-    Description: The BIG-IQ username used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ username specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter.
-    Type: String
-  bigIqUtilitySku:
-    Default: ''
-    Description: The BIG-IQ utility license SKU used during BIG-IP licensing via BIG-IQ. This value should match the BIG-IQ utility SKU specified in the F5 Declarative Onboarding declaration passed to the bigIpRuntimeInitConfig template parameter.
     Type: String
   copyZipsRole:
     Default: ''
@@ -159,6 +145,13 @@ Parameters:
     Default: f5owner
     Description: Owner Tag.
     Type: String
+  uniqueString:
+    ConstraintDescription: 'Must Contain between 1 and 12 alphanumeric characters
+      with first character as a letter.'
+    AllowedPattern: ^[a-zA-Z][a-zA-Z0-9]{1,11}$
+    Description: Unique String used when creating object names or Tags.
+    Type: String
+    Default: myUniqStr
 Resources:
   AMIInfoFunction:
     Condition: createAmiLookup
@@ -254,7 +247,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Handler: index.handler
-      Runtime: python2.7
+      Runtime: python3.7
       Role: !Ref copyZipsRole
       Timeout: 240
       Code:
@@ -342,7 +335,8 @@ Resources:
       SourceBucket: !Ref 'lambdaS3BucketName'
       Prefix: !Ref 'lambdaS3Key'
       Objects:
-        - v1.1.0/lambda_bigiq_revoke.zip
+        - v1.2.0/lambda_bigiq_revoke.zip
+        - v1.2.0/layer.zip
       Tags:
         - Key: costcenter
           Value: !Ref cost
@@ -371,6 +365,21 @@ Resources:
             - Arn
           Protocol: lambda
     Type: 'AWS::SNS::Topic'
+  LambdaBiqIqRevokeLayer:
+    Condition: createRevoke
+    DependsOn: CopyZips
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      CompatibleRuntimes:
+        - python3.7
+      Content:
+        S3Bucket: !Ref 'LambdaZipsBucket'
+        S3Key: !Sub '${lambdaS3Key}v1.2.0/layer.zip'
+      Description: Lambda Revoke Layer
+      LayerName: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-lambda-revoke-layer'
   LambdaBigIqRevoke:
     Condition: createRevoke
     DependsOn: CopyZips
@@ -381,16 +390,14 @@ Resources:
       Role: !Ref lambdaAccessRole
       Code:
         S3Bucket: !Ref 'LambdaZipsBucket'
-        S3Key: !Sub '${lambdaS3Key}v1.1.0/lambda_bigiq_revoke.zip'
+        S3Key: !Sub '${lambdaS3Key}v1.2.0/lambda_bigiq_revoke.zip'
+      Layers: 
+        - !Ref 'LambdaBiqIqRevokeLayer'
       Runtime: python3.7
       Environment:
         Variables:
-          BIGIQ_ADDRESS: !Ref bigIqAddress
-          BIGIQ_LICENSE_POOL: !Ref bigIqLicensePool
-          BIGIQ_USERNAME: !Ref bigIqUsername
+          BIGIP_RUNTIME_INIT_CONFIG: !Ref bigIpRuntimeInitConfig
           BIGIQ_SECRET_ARN: !Ref bigIqSecretArn
-          TENANT: !Ref bigIqTenant
-          BIGIQ_UTILITY_SKU: !Ref bigIqUtilitySku
           F5_DISABLE_SSL_WARNINGS: False
       Timeout: 300
       TracingConfig:
@@ -498,7 +505,7 @@ Resources:
       Handler: index.handler
       MemorySize: 1536
       Role: !Ref copyZipsRole
-      Runtime: python2.7
+      Runtime: python3.7
       Timeout: 300
   CleanupLogGroup:
     Condition: createRevoke
