@@ -68,8 +68,8 @@ else
         /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.admin.userType = \"regular\"" -i <DEWPOINT JOB ID>-0$counter.yaml
 
         # Disable AutoPhoneHome
-        /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.mySystem.autoPhonehome = false" -i <DEWPOINT JOB ID>-0$counter.yaml
-        /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.mySystem.autoPhonehome = false" -i <DEWPOINT JOB ID>-0$counter.yaml
+        /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>-0$counter.yaml
+        /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>-0$counter.yaml
 
         # Runtime parameters
         /usr/bin/yq e ".runtime_parameters.[0].secretProvider.secretId = \"$secret_name\"" -i <DEWPOINT JOB ID>-0$counter.yaml
