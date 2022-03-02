@@ -31,6 +31,10 @@ else
     # Disable AutoPhoneHome
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>.yaml
 
+    if [[ "<LICENSE TYPE>" == "byol" ]]; then
+        /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.regKey = \"<AUTOFILL EVAL LICENSE KEY>\"" -i <DEWPOINT JOB ID>.yaml
+    fi
+
     # print out config file
     /usr/bin/yq e <DEWPOINT JOB ID>.yaml
     # upload to s3

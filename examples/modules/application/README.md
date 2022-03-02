@@ -52,7 +52,7 @@ This template deploys a simple example application. It launches a CentOS Linux V
 | instanceType | No | App EC2 instance type. For example, 't2.small'. |
 | owner | No | Application Tag. |
 | provisionPublicIp | No | To create a Public IP and connect it to the application. |
-| restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please restrict the IP address range to your client, for example 'X.X.X.X/32'. Production should never expose the BIG-IP Management interface to the Internet. |
+| restrictedSrcAddress | Yes | An IP address range (CIDR) used to restrict SSH and management access to the applicatoin host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please restrict the IP address range to your client, for example 'X.X.X.X/32'. Production should never expose the BIG-IP Management interface to the Internet. |
 | scalingMaxSize | No | The maximum number of BIG-IP instances (2-100) that can be created in the Autoscale Group. |
 | scalingMinSize | No | The minimum number of BIG-IP instances (1-99) you want available in the Autoscale Group. |
 | sshKey | Yes | Name of an existing EC2 KeyPair to enable SSH access to the instance. |

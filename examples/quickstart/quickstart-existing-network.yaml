@@ -544,7 +544,7 @@ Metadata:
         default: VPC CIDR
       vpcId:
         default: VPC ID
-  Version: 1.1.0.0
+  Version: 2.0.0.0
 Outputs:
   bigIpInstanceId:
     Description: bigip's instance-id
@@ -597,7 +597,7 @@ Parameters:
     AllowedPattern: ^.*[a-zA-Z]+/$
     ConstraintDescription: 'key prefix can include numbers, lowercase letters, uppercase
       letters, hyphens (-), and forward slash (/).'
-    Default: f5-aws-cloudformation-v2/v1.1.0.0/examples/
+    Default: f5-aws-cloudformation-v2/v2.0.0.0/examples/
     Description: 'The path in the S3Bucket where the modules folder is located. Can
       include numbers, lowercase letters, uppercase letters, hyphens (-), and forward
       slash (/).'
@@ -635,7 +635,7 @@ Parameters:
     Description: Subnet id used for BIGIP management interface
     Type: AWS::EC2::Subnet::Id
   bigIpRuntimeInitConfig:
-    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml'
+    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml'
     Description: 'Supply a URL to the bigip-runtime-init configuration file in YAML
       or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration.'
     Type: String

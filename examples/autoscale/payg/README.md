@@ -65,7 +65,6 @@ The modules below create the following cloud resources:
 - **Function**: This template creates AWS Lambda functions for revoking licenses from BIG-IP instances that were licensed using a BIG-IQ license pool or utility offer *(BIG-IQ only)*, looking up AMI by name, file cleanup, etc.
 - **Telemetry**: This template creates resources to support sending metrics and remote logging (for example, an S3 Bucket or AWS CloudWatch Log Group, Log Stream and Dashboard). 
 
-
 This solution leverages more traditional Autoscale configuration management practices where each instance is created with an identical configuration as defined in the Autoscale Group's "model" (in other words, "launch config"). Scale Max sizes are no longer restricted to the small limitations of the cluster. The BIG-IP's configuration, now defined in a single convenient YAML or JSON [F5 BIG-IP Runtime Init](https://github.com/F5Networks/f5-bigip-runtime-init) configuration file, leverages [F5 Automation Tool Chain](https://www.f5.com/pdf/products/automation-toolchain-overview.pdf) declarations which are easier to author, validate, and maintain as code. For instance, if you need to change the configuration on the BIG-IPs in the deployment, you update the instance model by passing a new config file (which references the updated Automation Toolchain declarations) via template's bigIpRuntimeInitConfig input parameter. New instances will be deployed with the updated configurations.
 
 
@@ -254,11 +253,11 @@ The easiest way to deploy this CloudFormation template is to use the Launch butt
 **Important**: By default, the link takes you to an AWS console set to the us-east-1 region. Select the AWS region (upper right) in which you want to deploy after clicking the Launch Stack button. 
 
 **Full Stack**
-<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Autoscale-WAF-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/payg/autoscale.yaml">
+<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Autoscale-WAF-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/payg/autoscale.yaml">
     <img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png"/></a>
 
 **Existing Stack**
-<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Autoscale-WAF-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/payg/autoscale-existing-network.yaml">
+<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Autoscale-WAF-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/payg/autoscale-existing-network.yaml">
     <img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png"/></a>
 
 *Step 1: Specify template* 
@@ -297,14 +296,14 @@ By default, the templates in this repository are also publicly hosted on S3 at [
 
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/payg/autoscale.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/payg/autoscale.yaml \
   --parameters "ParameterKey=<KEY>,ParameterValue=<VALUE> ParameterKey=<KEY>,ParameterValue=<VALUE>"
 ```
 
 or with a local parameters file (see `autoscale-parameters.json` example in this directory):
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/payg/autoscale.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/payg/autoscale.yaml \
   --parameters file://autoscale-parameters.json
 ```
 
@@ -313,13 +312,13 @@ Example:
 **Full Stack**
 ```bash
  aws cloudformation create-stack --region us-east-1 --stack-name mywaf \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/payg/autoscale.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/payg/autoscale.yaml \
   --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0 ParameterKey=uniqueString,ParameterValue=mywaf ParameterKey=notificationEmail,ParameterValue=myemail@example.com" 
 ```
 **Existing Stack**
 ```bash
  aws cloudformation create-stack --region us-east-1 --stack-name mywaf \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/payg/autoscale-existing-network.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/payg/autoscale-existing-network.yaml \
   --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0 ParameterKey=uniqueString,ParameterValue=mywaf ParameterKey=notificationEmail,ParameterValue=myemail@example.com ParameterKey=bigIpSubnetAz1,ParameterValue=<SUBNET ID> ParameterKey=bigIpSubnetAz2,ParameterValue=<SUBNET ID> ParameterKey=externalSubnetAz1,ParameterValue=<SUBNET ID> ParameterKey=externalSubnetAz2,ParameterValue=<SUBNET ID> ParameterKey=internalSubnetAz1,ParameterValue=<SUBNET ID> ParameterKey=internalSubnetAz2,ParameterValue=<SUBNET ID> ParameterKey=vpcId,ParameterValue=<VPC ID>" 
 ```
 
@@ -642,7 +641,7 @@ To update the BIG-IP configuration:
   4. Update the CloudFormation Stack with new **bigIpRuntimeInitConfig** parameter:
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
-        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/payg/autoscale.yaml \
+        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/payg/autoscale.yaml \
         --parameters "ParameterKey=bigIpRuntimeInitConfig,ParameterValue=https://<YOUR_NEW_LOCATION> ParameterKey=<KEY>,ParameterValue=<VALUE>"
       ```
 
@@ -652,7 +651,7 @@ To update the BIG-IP OS version:
   1. Update the CloudFormation Stack with new **bigIpImage** parameter:
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
-        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/payg/autoscale.yaml \
+        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/payg/autoscale.yaml \
         --parameters "ParameterKey=bigIpImage,ParameterValue=${bigIpImage} ParameterKey=<KEY>,ParameterValue=<VALUE>"
       ```
 
@@ -660,7 +659,7 @@ To update the BIG-IP instance size:
   1. Update the CloudFormation Stack with new **instanceType** parameter:
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
-        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/payg/autoscale.yaml \
+        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/payg/autoscale.yaml \
         --parameters "ParameterKey=instanceSize,ParameterValue=${instanceType} ParameterKey=<KEY>,ParameterValue=<VALUE>"
       ```
 

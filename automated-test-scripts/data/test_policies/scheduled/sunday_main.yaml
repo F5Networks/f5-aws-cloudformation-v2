@@ -53,7 +53,6 @@ aws-dag-module-test:
   random-num-of-tests: 1
   run: random
   test-url: 'file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/dag/daily_test.yaml'
-
 aws-function-module-test:
   parameters-files:
     - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/function/postpub_parameters.yaml
@@ -63,7 +62,6 @@ aws-function-module-test:
   random-num-of-tests: 1
   run: random
   test-url: 'file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/function/daily_test.yaml'
-
 aws-network-module-test:
   parameters-files:
     - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/postpub_parameters.yaml
@@ -81,6 +79,6 @@ aws-network-module-test:
 
 aws-quickstart-byol-example-test:
   parameters-files:
-    - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/postpub_parameters2.yaml
+    - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/prepub_parameters1.yaml
   run: all
   test-url: 'file://automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/daily_test.yaml'

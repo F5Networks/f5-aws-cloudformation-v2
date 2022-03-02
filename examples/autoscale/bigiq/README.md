@@ -269,11 +269,11 @@ An easy first way to deploy this solution is to use the deploy button below. How
 **NOTE**: By default, the link takes you to an AWS console set to the us-east-1 region. Select the AWS region (upper right) in which you want to deploy after clicking the Launch Stack button. 
 
 **Full Stack**
-<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Autoscale-WAF-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigiq/autoscale.yaml">
+<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Autoscale-WAF-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/bigiq/autoscale.yaml">
     <img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png"/></a>
 
 **Existing Stack**
-<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Autoscale-WAF-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigiq/autoscale-existing-network.yaml">
+<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Autoscale-WAF-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/bigiq/autoscale-existing-network.yaml">
     <img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png"/></a>
 
 
@@ -316,14 +316,14 @@ By default, the templates in this repository are also publicly hosted on S3 at [
 
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigiq/autoscale.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/bigiq/autoscale.yaml \
   --parameters "ParameterKey=<KEY>,ParameterValue=<VALUE> ParameterKey=<KEY>,ParameterValue=<VALUE>"
 ```
 
 or with a local parameters file (see `autoscale-parameters.json` example in this directory):
 ```bash
  aws cloudformation create-stack --region us-east-1 --stack-name mywaf \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigiq/autoscale.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/bigiq/autoscale.yaml \
   --parameters file://autoscale-parameters.json
 ```
 
@@ -332,13 +332,13 @@ Example:
 **Full Stack**
 ```bash
  aws cloudformation create-stack --region us-east-1 --stack-name mywaf \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigiq/autoscale.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/bigiq/autoscale.yaml \
   --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0 ParameterKey=uniqueString,ParameterValue=mywaf ParameterKey=bigIqAddressType,ParameterValue=public ParameterKey=bigIqSecretArn ParameterValue=arn:aws:secretsmanager:us-east-1:111111111111:secret:myBigIqSecret-xdg0kdf ParameterKey=bigIpRuntimeInitConfig,ParameterValue=https://raw.githubusercontent.com/myAccount/myRepo/0.0.1/runtime-init.conf" 
 ```
 **Existing Stack**
 ```bash
  aws cloudformation create-stack --region us-east-1 --stack-name mywaf \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigiq/autoscale-existing-network.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/bigiq/autoscale-existing-network.yaml \
   --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0 ParameterKey=uniqueString,ParameterValue=mywaf ParameterKey=bigIqAddressType,ParameterValue=public ParameterKey=bigIqSecretArn ParameterValue=arn:aws:secretsmanager:us-east-1:111111111111:secret:myBigIqSecret-xdg0kdf ParameterKey=bigIpRuntimeInitConfig,ParameterValue=https://raw.githubusercontent.com/myAccount/myRepo/0.0.1/runtime-init.conf ParameterKey=bigIpSubnetAz1,ParameterValue=<SUBNET ID> ParameterKey=bigIpSubnetAz2,ParameterValue=<SUBNET ID> ParameterKey=externalSubnetAz1,ParameterValue=<SUBNET ID> ParameterKey=externalSubnetAz2,ParameterValue=<SUBNET ID> ParameterKey=internalSubnetAz1,ParameterValue=<SUBNET ID> ParameterKey=internalSubnetAz2,ParameterValue=<SUBNET ID> ParameterKey=vpcId,ParameterValue=<VPC ID>" 
 ```
 
@@ -691,7 +691,7 @@ To update the BIG-IP configuration:
   4. Update the CloudFormation Stack with the new **bigIpRuntimeInitConfig** parameter:
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
-        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigiq/autoscale.yaml \
+        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/bigiq/autoscale.yaml \
         --parameters "ParameterKey=bigIpRuntimeInitConfig,ParameterValue=https://<YOUR_NEW_LOCATION> ParameterKey=<KEY>,ParameterValue=<VALUE>"
       ```
 
@@ -701,7 +701,7 @@ To update the BIG-IP OS version:
   1. Update the CloudFormation Stack with new **imageName** parameter:
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
-        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigiq/autoscale.yaml \
+        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/bigiq/autoscale.yaml \
         --parameters "ParameterKey=imageName,ParameterValue=${imageName} ParameterKey=<KEY>,ParameterValue=<VALUE>"
       ```
 
@@ -710,7 +710,7 @@ To update the BIG-IP instance size:
   2. Update the CloudFormation Stack with new **instanceType** parameter:
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
-        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/autoscale/bigiq/autoscale.yaml \
+        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/bigiq/autoscale.yaml \
         --parameters "ParameterKey=instanceSize,ParameterValue=${instanceType} ParameterKey=<KEY>,ParameterValue=<VALUE>"
       ```
 

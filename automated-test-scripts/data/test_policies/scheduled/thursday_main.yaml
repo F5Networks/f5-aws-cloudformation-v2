@@ -9,7 +9,6 @@ aws-access-module-test:
   random-num-of-tests: 1
   run: random
   test-url: 'file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/access/daily_test.yaml'
-
 aws-application-module-test:
   parameters-files:
     - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/application/postpub_parameters.yaml
@@ -17,7 +16,6 @@ aws-application-module-test:
   random-num-of-tests: 1
   run: random
   test-url: 'file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/application/daily_test.yaml'
-
 aws-bigip-autoscale-module-test:
   parameters-files:
     - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/postpub_parameters.yaml
@@ -63,7 +61,6 @@ aws-function-module-test:
   random-num-of-tests: 1
   run: random
   test-url: 'file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/function/daily_test.yaml'
-
 aws-network-module-test:
   parameters-files:
     - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/network/postpub_parameters.yaml
@@ -81,6 +78,6 @@ aws-network-module-test:
 
 aws-quickstart-byol-example-test:
   parameters-files:
-    - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/postpub_parameters3.yaml
+    - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/prepub_parameters3.yaml
   run: all
   test-url: 'file://automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/daily_test.yaml'
