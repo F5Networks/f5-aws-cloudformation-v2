@@ -3,13 +3,26 @@
 #  replayEnabled = false
 #  replayTimeout = 0
 
+
+TMP_DIR='/tmp/<DEWPOINT JOB ID>'
 bucket_name=`echo <STACK NAME>|cut -c -60|tr '[:upper:]' '[:lower:]'| sed 's:-*$::'`
 echo "bucket_name=$bucket_name"
 
 runtimeConfig='"<UPDATE CONFIG>"'
 secret_arn=$(aws secretsmanager describe-secret --secret-id <DEWPOINT JOB ID>-secret-runtime --region <REGION> | jq -r .ARN)
 secret_name=$(aws secretsmanager describe-secret --secret-id <DEWPOINT JOB ID>-secret-runtime --region <REGION> | jq -r .Name)
-bigiq_address=$(aws cloudformation describe-stacks --region <REGION> --stack-name <STACK NAME>-bigiq | jq -r '.Stacks[].Outputs[]|select (.OutputKey=="device1ManagementEipAddress")|.OutputValue')
+
+bigiq_stack_name=<STACK NAME>-bigiq
+bigiq_stack_region=<REGION>
+if [ -f "${TMP_DIR}/bigiq_info.json" ]; then
+    echo "Found existing BIG-IQ"
+    cat ${TMP_DIR}/bigiq_info.json
+    bigiq_stack_name=$(cat ${TMP_DIR}/bigiq_info.json | jq -r .bigiq_stack_name)
+    bigiq_stack_region=$(cat ${TMP_DIR}/bigiq_info.json | jq -r .bigiq_stack_region)
+    bigiq_password=$(cat ${TMP_DIR}/bigiq_info.json | jq -r .bigiq_password)
+fi
+
+bigiq_address=$(aws cloudformation describe-stacks --region $bigiq_stack_region --stack-name $bigiq_stack_name | jq -r '.Stacks[].Outputs[]|select (.OutputKey=="device1ManagementEipAddress")|.OutputValue')
 
 if [[ "<UPDATE CONFIG>" == *{* ]]; then
     config_with_added_address="${runtimeConfig//<BIGIQ ADDRESS>/$bigiq_address}"
@@ -96,31 +109,12 @@ cat <<EOF > parameters.json
         "ParameterValue": "<SCALE UP BYTES THRESHOLD>"
     },
     {
-        "ParameterKey": "bigIqAddress",
-        "ParameterValue": "$bigiq_address"
-    },
-    {
         "ParameterKey": "bigIqAddressType",
         "ParameterValue": "public"
     },
     {
-        "ParameterKey": "bigIqLicensePool",
-        "ParameterValue": "production"
-    },
-    {
         "ParameterKey": "bigIqSecretArn",
         "ParameterValue": "$secret_arn"
-    },
-    {   "ParameterKey": "bigIqTenant",
-        "ParameterValue": "myTenant"
-    },
-    {
-        "ParameterKey": "bigIqUsername",
-        "ParameterValue": "admin"
-    },
-    {
-        "ParameterKey": "bigIqUtilitySku",
-        "ParameterValue": "F5-BIG-MSP-BT-1G"
     },
     {
         "ParameterKey": "lambdaS3BucketName",

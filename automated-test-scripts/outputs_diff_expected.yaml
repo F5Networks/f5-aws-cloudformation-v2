@@ -1,7 +1,19 @@
+../../examples/autoscale/bigiq/autoscale-existing-network.yaml:
+- No Key Diff
+- No Value Diff
 ../../examples/autoscale/bigiq/autoscale.yaml:
 - No Key Diff
 - No Value Diff
+../../examples/autoscale/payg/autoscale-existing-network.yaml:
+- No Key Diff
+- No Value Diff
 ../../examples/autoscale/payg/autoscale.yaml:
+- No Key Diff
+- No Value Diff
+../../examples/failover/failover-existing-network.yaml:
+- No Key Diff
+- No Value Diff
+../../examples/failover/failover.yaml:
 - No Key Diff
 - No Value Diff
 ../../examples/modules/access/access.yaml:
@@ -56,6 +68,9 @@
 - No Key Diff
 - No Value Diff
 ../../examples/modules/telemetry/telemetry.yaml:
+- No Key Diff
+- No Value Diff
+../../examples/quickstart/quickstart-existing-network.yaml:
 - No Key Diff
 - No Value Diff
 ../../examples/quickstart/quickstart.yaml:

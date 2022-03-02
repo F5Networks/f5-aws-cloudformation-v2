@@ -13,6 +13,8 @@
   - [Important Configuration Notes](#important-configuration-notes)
     - [Template Input Parameters](#template-input-parameters)
     - [Template Outputs](#template-outputs)
+    - [Existing Network Template Input Parameters](#existing-network-template-input-parameters)
+    - [Existing Network Template Outputs](#existing-network-template-outputs)
   - [Deploying this Solution](#deploying-this-solution)
     - [Deploying via the AWS Launch Stack button](#deploying-via-the-aws-launch-stack-button)
     - [Deploying via the AWS CLI](#deploying-via-the-aws-cli)
@@ -41,14 +43,22 @@
 
 With this solution, you can quickly deploy a BIG-IP and begin exploring the BIG-IP platform in a working full-stack deployment that can pass traffic.
 
-This solution uses a parent template to launch several linked child templates (modules) to create a full example stack for the BIG-IP. The linked templates are in the [examples/modules](https://github.com/F5Networks/f5-aws-cloudformation-v2/tree/main/examples/modules) directory in this repository. *F5 recommends you clone this repository and modify these templates to fit your use case.*
+This solution uses a parent template to launch several linked child templates (modules) to create an example BIG-IP solution. The linked templates are in the [examples/modules](https://github.com/F5Networks/f5-aws-cloudformation-v2/tree/main/examples/modules) directory in this repository. *F5 recommends you clone this repository and modify these templates to fit your use case.*
+
+***Full Stack (quickstart.yaml)***<br>
+Use the *quickstart.yaml* parent template to deploy an example full stack BIG-IP solution, complete with network, bastion *(optional)*, dag/ingress, bigip and application.  
+
+***Existing Network Stack (quickstart-existing-network.yaml)***<br>
+Use *quickstart-existing-network.yaml* parent template to deploy an example BIG-IP solution into an existing infrastructure. This template expects vpc and subnets have already been deployed. A demo application is also not part of this parent template as it intended use is for an existing environment.
 
 The modules below create the following resources:
 
-- **Network**: A virtual network (also known as VPC), subnets, internet/NAT gateways, DHCP options, network ACLs, and other network-related resources. 
-- **Application**: A generic application for use when demonstrating live traffic through the BIG-IP.
+- **Network**: A virtual network (also known as VPC), subnets, internet/NAT gateways, DHCP options, network ACLs, and other network-related resources. *(Full stack only)*
+- **Bastion**: This template creates a bastion host for accessing the BIG-IP instances when no public IP address is used for the management interfaces. *(Full stack only)*
+- **Application**: A generic application for use when demonstrating live traffic through the BIG-IP. *(Full stack only)*
 - **Disaggregation** *(DAG/Ingress)*: Resources required to get traffic to the BIG-IP, including AWS Security Groups and Public IP Addresses.
 - **BIG-IP**: a BIG-IP instance provisioned with Local Traffic Manager (LTM) and Application Security Manager (ASM). 
+
 
 By default, this solution creates a single Availability Zone VPC with four subnets, an example Web Application instance and a PAYG BIG-IP instance with three network interfaces (one for management and two for dataplane/application traffic - called external and internal). Application traffic from the Internet traverses an external network interface configured with both public and private IP addresses. Traffic to the application traverses an internal network interface configured with a private IP address.
 
@@ -115,8 +125,8 @@ By default, this solution creates a single Availability Zone VPC with four subne
 | numNics | No | Number of interfaces to create on BIG-IP instance. Maximum of 3 allowed. Minimum of 1 allowed. |
 | owner | No | Owner Tag. |
 | provisionPublicIp | No | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host will be provisioned instead. See [diagram](diagram-w-bastion.png). |
-| restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The vpc cidr is automatically added for internal usage, ex. access via bastion host, clustering, etc. **IMPORTANT**: Please restrict to your client, for example 'X.X.X.X/32'. WARNING - For eval purposes only. Production should never have the BIG-IP Management interface exposed to Internet.|
-| restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to access web traffic (80/443) to the EC2 instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. NOTE: The vpc cidr is automatically added for internal usage. |
+| restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please restrict the IP address range to your client, for example 'X.X.X.X/32'. Production should never expose the BIG-IP Management interface to the Internet. |
+| restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
 | s3BucketRegion | No | AWS Region which contains the S3 Bucket containing templates |
 | s3BucketName | No | S3 bucket name for the modules. S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-). |
 | artifactLocation | No | S3 key prefix for the Quickstart assets. Quickstart key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/). |
@@ -127,6 +137,49 @@ By default, this solution creates a single Availability Zone VPC with four subne
 | vpcCidr | No | CIDR block for the VPC. |
 
 ### Template Outputs
+
+| Name | Description | Required Resource | Type |
+| --- | --- | --- | --- |
+| bastionInstanceId | Instance ID of standalone Bastion instance. | Bastion Module | string |
+| bastionPublicIp | Public IP address of standalone Bastion instance. | Bastion Module | string |
+| bigIpInstanceId | Instance ID of BIG-IP VE instance | BigipStandalone Module | string |
+| bigIpManagementPrivateIp | Private management address | BigipStandalone Module | string |
+| bigIpManagementPublicIp | Public management address | Dag Module | string |
+| bigIpManagementSsh | SSH Command to Public Management IP | Dag Module | string |
+| bigIpManagementUrl443 | Url to public management address | Dag Module | string |
+| bigIpManagementUrl8443 | Url to public management address | Dag Module | string |
+| vipPublicUrl | Url to public application address | Dag Module | string | 
+
+### Existing Network Template Input Parameters
+
+| Parameter | Required | Description |
+| --- | --- | --- |
+| application | No | Application Tag. |
+| artifactLocation | No | S3 key prefix for the Quickstart assets. Quickstart key prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slash (/). |
+| bigIpExternalSubnetId | Yes | Subnet id used for BIGIP instance external interface. |
+| bigIpInternalSubnetId | Yes | Subnet id used for BIGIP instance internal interface. |
+| bigIpMgmtSubnetId | Yes | Subnet id used for BIGIP instance management interface. |
+| bigIpRuntimeInitConfig | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
+| bigIpRuntimeInitPackageUrl | No | Supply a URL to the bigip-runtime-init package. |
+| bigIpCustomImageId | No | Provide BIG-IP AMI ID you wish to deploy. |
+| bigIpImage | No | F5 BIG-IP Performance Type. |
+| bigIpInstanceType | No | Enter a valid instance type. |
+| cost | No | Cost Center Tag. |
+| environment | No | Environment Tag. |
+| group | No | Group Tag. |
+| owner | No | Owner Tag. |
+| provisionPublicIp | No | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host will be provisioned instead. See [diagram](diagram-w-bastion.png). |
+| restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please restrict the IP address range to your client, for example 'X.X.X.X/32'. Production should never expose the BIG-IP Management interface to the Internet. |
+| restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
+| s3BucketRegion | No | AWS Region which contains the S3 Bucket containing templates |
+| sshKey | Yes | Supply the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. Example: ``myAWSkey`` |
+| uniqueString | Yes | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+| vpcId | Yes | Id for VPC to use with deployment. |
+
+<br>
+
+### Existing Network Template Outputs
+
 
 | Name | Description | Required Resource | Type |
 | --- | --- | --- | --- |
@@ -149,9 +202,13 @@ Two options for deploying this solution:
 The easiest way to deploy this CloudFormation template is to use the Launch button.<br>
 **Important**: By default, the link takes you to an AWS console set to the us-east-1 region. Select the AWS region (upper right) in which you want to deploy after clicking the Launch Stack button. 
 
-<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Quickstart-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/quickstart/quickstart.yaml">
+**Quickstart**<br>
+<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Quickstart-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/quickstart/quickstart.yaml">
     <img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png"/></a>
 
+**Quickstart Existing Network**<br>
+<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Quickstart-Existing-Network-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/quickstart/quickstart-existing-network.yaml">
+    <img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png"/></a>
 
 *Step 1: Specify template* 
   - Click "Next".
@@ -179,14 +236,14 @@ By default, the templates in this repository are also publicly hosted on S3 at [
 
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/quickstart/quickstart.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/quickstart/quickstart.yaml \
   --parameters "ParameterKey=<KEY>,ParameterValue=<VALUE> ParameterKey=<KEY>,ParameterValue=<VALUE>"
 ```
 
 or with a local parameters file (see `autoscale-parameters.json` example in this directory):
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/quickstart/quickstart.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/quickstart/quickstart.yaml \
   --parameters file://quickstart-parameters.json
 ```
 
@@ -194,7 +251,7 @@ Example:
 
 ```bash
  aws cloudformation create-stack --region us-east-1 --stack-name myQuickstart \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.1.0.0/examples/quickstart/quickstart.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/quickstart/quickstart.yaml \
   --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0"
 ```
 
@@ -306,7 +363,9 @@ From Parent Template Outputs:
     - Or if you are going through a bastion host (when **provisionPublicIP** = **false**):
 
         Obtain the Public IP address of the bastion host:
-            - **Console**: **EC2 > Instances > *INSTANCE_ID* > Instance Summary > Public IPv4 address** 
+            ```bash 
+            aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bastionPublicIp'].OutputValue" --output text
+            ```
 #### SSH
   
   - **SSH key authentication**: 
@@ -530,13 +589,14 @@ List of endpoints BIG-IP may contact during onboarding:
 
 ## BIG-IP Versions
 
-These templates have been tested and validated with the following versions of BIG-IP. 
+These templates have only been explicitly tested and validated with the following versions of BIG-IP.
 
 | BIG-IP Version | Build Number |
 | --- | --- |
 | 16.1.0 | 0.0.19 |
 | 14.1.4.4 | 0.0.4 |
 
+These templates leverage Runtime-Init, which requires BIG-IP Versions 14.1.2.6 and up, and are assumed compatible to work. 
 
 ## Documentation
 

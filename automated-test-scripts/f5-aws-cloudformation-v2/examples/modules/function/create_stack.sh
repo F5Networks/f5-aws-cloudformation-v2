@@ -17,17 +17,15 @@ if [[ <CREATE REVOKE FUNCTION> == 'true' ]]; then
     bigiq_secret_arn=$(aws secretsmanager describe-secret --secret-id <DEWPOINT JOB ID>-secret-runtime --region <REGION> | jq -r .ARN)
 
     if [[ <BIGIQ ADDRESS TYPE> == 'private' ]]; then
-        security_group_id=$(aws cloudformation describe-stacks --region <REGION> --stack-name <DAG STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="bigIpExternalSecurityGroup").OutputValue' | cut -d ',' -f 1)
+        security_group_id=$(aws cloudformation describe-stacks --region <REGION> --stack-name <DAG STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="bigIpMgmtSecurityGroup").OutputValue' | cut -d ',' -f 1)
         subnet_id=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 1)
     fi
     revoke_parameters="\
-    ParameterKey=bigIqAddress,ParameterValue=<BIGIQ ADDRESS> \
+    ParameterKey=bigIpRuntimeInitConfig,ParameterValue=<RUNTIME INIT CONFIG> \
+    ParameterKey=uniqueString,ParameterValue=<UNIQUESTRING> \
     ParameterKey=bigIqAddressType,ParameterValue=<BIGIQ ADDRESS TYPE> \
-    ParameterKey=bigIqLicensePool,ParameterValue=<BIGIQ LICENSE POOL> \
     ParameterKey=bigIqSecretArn,ParameterValue=$bigiq_secret_arn \
     ParameterKey=bigIqSubnetId,ParameterValue=$subnet_id \
-    ParameterKey=bigIqTenant,ParameterValue=<TENANT> \
-    ParameterKey=bigIqUsername,ParameterValue=admin \
     ParameterKey=bigIqSecurityGroupId,ParameterValue=$security_group_id \
     ParameterKey=copyZipsRole,ParameterValue=$copy_zips_role \
     ParameterKey=createRevokeFunction,ParameterValue=<CREATE REVOKE FUNCTION> \

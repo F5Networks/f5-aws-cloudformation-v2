@@ -82,7 +82,7 @@ Metadata:
           - customImageId
           - instanceType
           - provisionPublicIp
-          - restrictedSrcAddress
+          - restrictedSrcAddressMgmt
           - scalingMaxSize
           - scalingMinSize
           - sshKey
@@ -111,7 +111,7 @@ Metadata:
         default: The ARN of the AWS secret containing the password used during BIG-IP licensing via BIG-IQ
       instanceType:
         default: Must be a valid EC2 instance type for BIG-IP
-      restrictedSrcAddress:
+      restrictedSrcAddressMgmt:
         default: The IP address range used to SSH and access management GUI on the EC2 instances
       scalingMaxSize:
         default: Maximum number of BIG-IP instances (2-100) that can be created in the Auto Scale Group
@@ -127,7 +127,7 @@ Metadata:
         default: Unique string
       vpc:
         default: VPC ID
-  Version: 1.1.0.0
+  Version: 2.0.0.0
 Outputs:
   stackName:
     Description: application nested stack name

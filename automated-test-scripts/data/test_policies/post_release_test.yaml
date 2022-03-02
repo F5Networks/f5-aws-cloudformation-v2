@@ -1,46 +1,97 @@
-# Pre release test plan - Templates 2.0 only
+# Post release test plan - Templates 2.0 only
 # AWS autoscale example tests
+aws-autoscale-example-payg-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/payg/daily_test_full.yaml"
+  run: "random"
+  random-num-of-tests: 1
+  parameters-files:
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/full/postpub_parameters.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/full/postpub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/full/postpub_parameters2.yaml"
+
+aws-autoscale-existing-payg-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/payg/daily_test_existing.yaml"
+  run: "random"
+  random-num-of-tests: 1
+  parameters-files:
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/existing/postpub_parameters.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/existing/postpub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/existing/postpub_parameters2.yaml"
+
 aws-autoscale-bigiq-example-test:
-  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/bigiq/daily_test.yaml"
-  run: "all"
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/bigiq/daily_test_full.yaml"
+  run: "random"
+  random-num-of-tests: 1
   parameters-files:
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/postpub_parameters.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/postpub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/full/postpub_parameters.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/full/postpub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/full/postpub_parameters2.yaml"
 
-aws-autoscale-payg-example-test:
-  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/payg/daily_test.yaml"
-  run: "all"
+aws-autoscale-bigiq-existing-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/bigiq/daily_test_existing.yaml"
+  run: "random"
+  random-num-of-tests: 1
   parameters-files:
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/postpub_parameters.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/existing/postpub_parameters.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/existing/postpub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/existing/postpub_parameters2.yaml"
 
-# Autoscale PAYG Defaults Example Test
-aws-autoscale-defaults-example-test:
-    test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/payg/defaults_test.yaml"
-    run: "all"
-    parameters-files:
-       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/parameters.yaml"
-
-# AWS quickstart example tests
-aws-quickstart-example-test:
+# quickstart
+aws-quickstart-payg-example-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/daily_test.yaml"
-  run: "all"
+  run: "random"
+  random-num-of-tests: 1
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/postpub_parameters.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/postpub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/postpub_parameters2.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/postpub_parameters3.yaml"
 
-# Quickstart PAYG Defaults Tests
-aws-quickstart-defaults-example-test:
-  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/defaults_test.yaml"
-  run: "all"
+aws-quickstart-payg-existing-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/daily_test_existing.yaml"
+  run: "random"
+  random-num-of-tests: 1
   parameters-files:
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/parameters.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/parameters.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/existing/payg/postpub_parameters.yaml"
 
-# AWS autoscale bigip example tests
-aws-autoscale-bigip-example-test:
-  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/daily_test.yaml"
-  run: "all"
+aws-quickstart-byol-example-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/daily_test.yaml"
+  run: "random"
+  random-num-of-tests: 1
   parameters-files:
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/postpub_parameters.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/postpub_parameters.yaml"
+
+aws-quickstart-byol-existing-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/daily_test_existing.yaml"
+  run: "random"
+  random-num-of-tests: 1
+  parameters-files:
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/existing/byol/postpub_parameters.yaml"
+
+# failover
+aws-failover-example-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/failover/payg_byol/daily_test.yaml"
+  run: "random"
+  random-num-of-tests: 1
+  parameters-files:
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/full/postpub_parameters.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/full/postpub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/full/postpub_parameters2.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/full/postpub_parameters3.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/full/postpub_parameters4.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/full/postpub_parameters5.yaml"
+
+aws-failover-existing-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/failover/payg_byol/daily_test_existing.yaml"
+  run: "random"
+  random-num-of-tests: 1
+  parameters-files:
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/existing/postpub_parameters_existing.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/existing/postpub_parameters1_existing.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/existing/postpub_parameters2_existing.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/existing/postpub_parameters3_existing.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/existing/postpub_parameters4_existing.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/existing/postpub_parameters5_existing.yaml"
 
 # AWS standalone bigip example tests
 aws-standalone-bigip-example-test:

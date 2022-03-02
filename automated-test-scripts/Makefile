@@ -16,6 +16,12 @@ help:
 env:
 	env
 # AWS V2
+aws_failover_byol:
+	docker run -it -v ${current_dir}:/automated-test-scripts -v ${current_dir}/../examples:/examples -e SSH_KEY="${DEWPT_PRIVATE_KEY}" -e AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" -e AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" -e STACK_TYPE="${STACK_TYPE}" -e TEMPLATE_URL="${AWS_TEMPLATE_TEST_URL_FAILOVER_BYOL}" -e TEMPLATE_PARAMETERS="${AWS_TEMPLATE_TEST_PARAMS_FAILOVER_BYOL}" artifactory.f5net.com/ecosystems-cloudsolutions-docker-dev/dewdrop:stable
+aws_failover_payg:
+	docker run -it -v ${current_dir}:/automated-test-scripts -v ${current_dir}/../examples:/examples -e SSH_KEY="${DEWPT_PRIVATE_KEY}" -e AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" -e AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" -e STACK_TYPE="${STACK_TYPE}" -e TEMPLATE_URL="${AWS_TEMPLATE_TEST_URL_FAILOVER_PAYG}" -e TEMPLATE_PARAMETERS="${AWS_TEMPLATE_TEST_PARAMS_FAILOVER_PAYG}" artifactory.f5net.com/ecosystems-cloudsolutions-docker-dev/dewdrop:stable
+aws_failover_existing_payg:
+	docker run -it -v ${current_dir}:/automated-test-scripts -v ${current_dir}/../examples:/examples -e SSH_KEY="${DEWPT_PRIVATE_KEY}" -e AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" -e AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" -e STACK_TYPE="${STACK_TYPE}" -e TEMPLATE_URL="${AWS_TEMPLATE_TEST_URL_FAILOVER_EXISTING_PAYG}" -e TEMPLATE_PARAMETERS="${AWS_TEMPLATE_TEST_PARAMS_FAILOVER_EXISTING_PAYG}" artifactory.f5net.com/ecosystems-cloudsolutions-docker-dev/dewdrop:stable
 aws_autoscale2_bigiq:
 	docker run -it -v ${current_dir}:/automated-test-scripts -v ${current_dir}/../examples:/examples -e SSH_KEY="${DEWPT_PRIVATE_KEY}" -e AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" -e AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" -e STACK_TYPE="${STACK_TYPE}" -e TEMPLATE_URL="${AWS_TEMPLATE_TEST_URL_AUTOSCALE_V2_BIGIQ}" -e TEMPLATE_PARAMETERS="${AWS_TEMPLATE_TEST_PARAMS_AUTOSCALE_V2_BIGIQ}" artifactory.f5net.com/ecosystems-cloudsolutions-docker-dev/dewdrop:stable
 aws_autoscale2_payg:
@@ -42,3 +48,7 @@ aws_access_mod:
 	docker run -it -v ${current_dir}:/automated-test-scripts -v ${current_dir}/../examples:/examples -e SSH_KEY="${DEWPT_PRIVATE_KEY}" -e AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" -e AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" -e STACK_TYPE="${STACK_TYPE}" -e TEMPLATE_URL="${AWS_TEMPLATE_TEST_URL_ACCESS}" -e TEMPLATE_PARAMETERS="${AWS_TEMPLATE_TEST_PARAMS_ACCESS}" artifactory.f5net.com/ecosystems-cloudsolutions-docker-dev/dewdrop:stable
 aws_bastion_mod:
 	docker run -it -v ${current_dir}:/automated-test-scripts -v ${current_dir}/../examples:/examples -e SSH_KEY="${DEWPT_PRIVATE_KEY}" -e AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" -e AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" -e STACK_TYPE="${STACK_TYPE}" -e TEMPLATE_URL="${AWS_TEMPLATE_TEST_URL_BASTION_MOD}" -e TEMPLATE_PARAMETERS="${AWS_TEMPLATE_TEST_PARAMS_BASTION_MOD}" artifactory.f5net.com/ecosystems-cloudsolutions-docker-dev/dewdrop:stable
+aws_quickstart_existing_payg:
+	docker run -it -v ${current_dir}:/automated-test-scripts -v ${current_dir}/../examples:/examples -e SSH_KEY="${DEWPT_PRIVATE_KEY}" -e AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" -e AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" -e STACK_TYPE="${STACK_TYPE}" -e TEMPLATE_URL="${AWS_TEMPLATE_TEST_URL_QUICKSTART_EXISTING_PAYG}" -e TEMPLATE_PARAMETERS="${AWS_TEMPLATE_TEST_PARAMS_QUICKSTART_EXISTING_PAYG}" artifactory.f5net.com/ecosystems-cloudsolutions-docker-dev/dewdrop:stable
+aws_quickstart_existing_byol:
+	docker run -it -v ${current_dir}:/automated-test-scripts -v ${current_dir}/../examples:/examples -e SSH_KEY="${DEWPT_PRIVATE_KEY}" -e AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID}" -e AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY}" -e STACK_TYPE="${STACK_TYPE}" -e TEMPLATE_URL="${AWS_TEMPLATE_TEST_URL_QUICKSTART_EXISTING_BYOL}" -e TEMPLATE_PARAMETERS="${AWS_TEMPLATE_TEST_PARAMS_QUICKSTART_EXISTING_BYOL}" artifactory.f5net.com/ecosystems-cloudsolutions-docker-dev/dewdrop:stable

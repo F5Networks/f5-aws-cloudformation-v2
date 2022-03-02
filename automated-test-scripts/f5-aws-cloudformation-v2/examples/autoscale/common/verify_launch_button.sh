@@ -6,7 +6,7 @@
 
 # verify that the template we are launching matches the template we are testing
 test_link=<TEMPLATE URL>
-launch_link=$(cat examples/autoscale/payg/README.md | grep -Eo 'href="[^\"]+"' |  grep -Eo '(https)://f5-cft-v2[^"]+')
+launch_link=$(cat examples/autoscale/<LICENSE TYPE>/README.md | grep -Eo 'href="[^\"]+"' |  grep -Eo '(https)://f5-cft-v2[^"]+')
 
 echo "Test link: $test_link"
 echo "Launch link: $launch_link"

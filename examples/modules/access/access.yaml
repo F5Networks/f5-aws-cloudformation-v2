@@ -29,6 +29,10 @@ Conditions:
     - !Equals
       - ''
       - !Ref bigIqSecretArn
+  useLogGroup: !Not
+    - !Equals
+      - ''
+      - !Ref cloudWatchLogGroup
   useSecretArn: !Not
     - !Equals
       - ''
@@ -45,6 +49,8 @@ Metadata:
           - createBigIqRoles
           - secretArn
           - bigIqSecretArn
+          - cloudWatchLogGroup
+          - metricNameSpace
     ParameterLabels:
       uniqueString:
         default: myBIGIP
@@ -68,7 +74,11 @@ Metadata:
         default: The ARN of the AWS secret containing the password used during BIG-IP licensing via BIG-IQ
       secretArn:
         default: ARN of Secrets Manager secret
-  Version: 1.1.0.0
+      cloudWatchLogGroup:
+        default: CloudWatch Log Group Name
+      metricNameSpace:
+        default: CloudWatch Metrics Namespace
+  Version: 2.0.0.0
 Outputs:
   stackName:
     Description: Access nested stack name
@@ -78,18 +88,18 @@ Outputs:
     Value: !If
       - standard
       - !Ref BigIpStandardInstanceProfile
-      - !If 
+      - !If
         - secret
-        - !Ref BigIpSecretInstanceProfile 
-        - !If 
+        - !Ref BigIpSecretInstanceProfile
+        - !If
           - s3
           - !Ref BigIpS3InstanceProfile
-          - !If 
+          - !If
             - secretS3
             - !Ref BigIpSecretS3InstanceProfile
-            - !If 
+            - !If
               - failover
-              - !Ref BigIpHighAvailabilityInstanceProfile 
+              - !Ref BigIpHighAvailabilityInstanceProfile
               - !Ref AWS::NoValue
   lambdaAccessRole:
     Condition: createBigIqRoles
@@ -116,6 +126,10 @@ Parameters:
     Default: ''
     Description: The ARN of the AWS secret containing the password used during BIG-IP licensing via BIG-IQ.
     Type: String
+  cloudWatchLogGroup:
+    Default: ''
+    Description: Provides CloudWatch Log Group name used for telemetry
+    Type: String
   cost:
     Default: f5cost
     Description: Cost Center Tag.
@@ -141,6 +155,10 @@ Parameters:
   group:
     Default: f5group
     Description: Group Tag.
+    Type: String
+  metricNameSpace:
+    Default: ''
+    Description: CloudWatch namespace used for custom metrics. This should match the namespace defined in your telemetry services declaration within bigipRuntimInitConfig.
     Type: String
   owner:
     Default: f5owner
@@ -381,13 +399,23 @@ Resources:
                 Resource:
                   - '*'
               - Action:
-                  - 'cloudwatch:PutMetricData'
                   - 'logs:DescribeLogGroups'
                   - 'logs:DescribeLogStreams'
                   - 'logs:PutLogEvents'
                 Effect: Allow
-                Resource:
+                Resource: 
                   - '*'
+                Condition:
+                  StringLike:
+                    aws:ResourceTag/Name: !Ref cloudWatchLogGroup
+              - Action:
+                  - 'cloudwatch:PutMetricData'
+                Effect: Allow
+                Resource: 
+                  - '*'
+                Condition:
+                  StringEquals:
+                    cloudwatch:namespace: !Ref metricNameSpace
               - Action:
                   - 'cloudformation:ListStackResources'
                   - 'cloudformation:SignalResource'
@@ -398,7 +426,7 @@ Resources:
           PolicyName: !Join
             - ''
             - - !Ref uniqueString
-              - '-BigipStandardAcccessPolicy' 
+              - '-BigipStandardAcccessPolicy'
       Tags:
         - Key: Name
           Value: !Join
@@ -448,13 +476,23 @@ Resources:
                 Resource:
                   - '*'
               - Action:
-                  - 'cloudwatch:PutMetricData'
                   - 'logs:DescribeLogGroups'
                   - 'logs:DescribeLogStreams'
                   - 'logs:PutLogEvents'
                 Effect: Allow
-                Resource:
+                Resource: 
                   - '*'
+                Condition:
+                  StringLike:
+                    aws:ResourceTag/Name: !Ref cloudWatchLogGroup
+              - Action:
+                  - 'cloudwatch:PutMetricData'
+                Effect: Allow
+                Resource: 
+                  - '*'
+                Condition:
+                  StringEquals:
+                    cloudwatch:namespace: !Ref metricNameSpace
               - Action:
                   - 'cloudformation:ListStackResources'
                   - 'cloudformation:SignalResource'
@@ -467,12 +505,12 @@ Resources:
                   - 'secretsmanager:GetSecretValue'
                   - 'secretsmanager:ListSecretVersionIds'
                 Effect: Allow
-                Resource: 
-                  - !If 
+                Resource:
+                  - !If
                     - useSecretArn
                     - !Ref secretArn
                     - !Ref AWS::NoValue
-                  - !If 
+                  - !If
                     - useBigIqSecretArn
                     - !Ref bigIqSecretArn
                     - !Ref AWS::NoValue
@@ -480,7 +518,7 @@ Resources:
           PolicyName: !Join
             - ''
             - - !Ref uniqueString
-              - '-BigipSecretAcccessPolicy' 
+              - '-BigipSecretAcccessPolicy'
       Tags:
         - Key: Name
           Value: !Join
@@ -532,13 +570,23 @@ Resources:
                 Resource:
                   - '*'
               - Action:
-                  - 'cloudwatch:PutMetricData'
                   - 'logs:DescribeLogGroups'
                   - 'logs:DescribeLogStreams'
                   - 'logs:PutLogEvents'
                 Effect: Allow
-                Resource:
+                Resource: 
                   - '*'
+                Condition:
+                  StringLike:
+                    aws:ResourceTag/Name: !Ref cloudWatchLogGroup
+              - Action:
+                  - 'cloudwatch:PutMetricData'
+                Effect: Allow
+                Resource: 
+                  - '*'
+                Condition:
+                  StringEquals:
+                    cloudwatch:namespace: !Ref metricNameSpace
               - Action:
                   - 'cloudformation:ListStackResources'
                   - 'cloudformation:SignalResource'
@@ -548,7 +596,7 @@ Resources:
               - Action:
                   - 's3:ListBucket'
                 Effect: Allow
-                Resource: !Join 
+                Resource: !Join
                   - ''
                   - - 'arn:*:s3:::'
                     - !Ref s3Bucket
@@ -557,7 +605,7 @@ Resources:
                   - 's3:GetObject'
                   - 's3:DeleteObject'
                 Effect: Allow
-                Resource: !Join 
+                Resource: !Join
                   - ''
                   - - 'arn:*:s3:::'
                     - !Ref s3Bucket
@@ -616,13 +664,23 @@ Resources:
                 Resource:
                   - '*'
               - Action:
-                  - 'cloudwatch:PutMetricData'
                   - 'logs:DescribeLogGroups'
                   - 'logs:DescribeLogStreams'
                   - 'logs:PutLogEvents'
                 Effect: Allow
-                Resource:
+                Resource: 
                   - '*'
+                Condition:
+                  StringLike:
+                    aws:ResourceTag/Name: !Ref cloudWatchLogGroup
+              - Action:
+                  - 'cloudwatch:PutMetricData'
+                Effect: Allow
+                Resource: 
+                  - '*'
+                Condition:
+                  StringEquals:
+                    cloudwatch:namespace: !Ref metricNameSpace
               - Action:
                   - 'cloudformation:ListStackResources'
                   - 'cloudformation:SignalResource'
@@ -636,18 +694,18 @@ Resources:
                   - 'secretsmanager:ListSecretVersionIds'
                 Effect: Allow
                 Resource:
-                  - !If 
+                  - !If
                     - useSecretArn
                     - !Ref secretArn
                     - !Ref AWS::NoValue
-                  - !If 
+                  - !If
                     - useBigIqSecretArn
                     - !Ref bigIqSecretArn
                     - !Ref AWS::NoValue
               - Action:
                   - 's3:ListBucket'
                 Effect: Allow
-                Resource: !Join 
+                Resource: !Join
                   - ''
                   - - 'arn:*:s3:::'
                     - !Ref s3Bucket
@@ -656,7 +714,7 @@ Resources:
                   - 's3:GetObject'
                   - 's3:DeleteObject'
                 Effect: Allow
-                Resource: !Join 
+                Resource: !Join
                   - ''
                   - - 'arn:*:s3:::'
                     - !Ref s3Bucket
@@ -698,23 +756,23 @@ Resources:
         - PolicyDocument:
             Statement:
               - Action:
-                  - 'autoscaling:DescribeAutoScalingGroups'
-                  - 'autoscaling:DescribeAutoScalingInstances'
                   - 'ec2:DescribeAddresses'
                   - 'ec2:DescribeInstances'
                   - 'ec2:DescribeInstanceStatus'
                   - 'ec2:DescribeNetworkInterfaces'
                   - 'ec2:DescribeNetworkInterfaceAttribute'
                   - 'ec2:DescribeTags'
-                Effect: Allow
-                Resource:
-                  - '*'
-              - Action:
+                  - 'ec2:DescribeSubnets'
                   - 'ec2:AssociateAddress'
-                  - 'ec2:assignprivateipaddresses'
                   - 'ec2:DescribeRouteTables'
                   - 'ec2:DisassociateAddress'
                   - 'ec2:ReplaceRoute'
+                  - 'ec2:AssignPrivateIpAddresses'
+                  - 'ec2:UnassignPrivateIpAddresses'
+                  - 'ec2:AssignIpv6Addresses'
+                  - 'ec2:UnassignIpv6Addresses'
+                  - 's3:ListAllMyBuckets'
+                  - 's3:GetBucketLocation'
                 Effect: Allow
                 Resource:
                   - '*'
@@ -724,13 +782,23 @@ Resources:
                 Resource:
                   - '*'
               - Action:
-                  - 'cloudwatch:PutMetricData'
                   - 'logs:DescribeLogGroups'
                   - 'logs:DescribeLogStreams'
                   - 'logs:PutLogEvents'
                 Effect: Allow
-                Resource:
+                Resource: 
                   - '*'
+                Condition:
+                  StringLike:
+                    aws:ResourceTag/Name: !Ref cloudWatchLogGroup
+              - Action:
+                  - 'cloudwatch:PutMetricData'
+                Effect: Allow
+                Resource: 
+                  - '*'
+                Condition:
+                  StringEquals:
+                    cloudwatch:namespace: !Ref metricNameSpace
               - Action:
                   - 'cloudformation:ListStackResources'
                   - 'cloudformation:SignalResource'
@@ -743,22 +811,32 @@ Resources:
                   - 'secretsmanager:GetSecretValue'
                   - 'secretsmanager:ListSecretVersionIds'
                 Effect: Allow
-                Resource: !Ref secretArn
+                Resource:
+                  - !If
+                    - useSecretArn
+                    - !Ref secretArn
+                    - !Ref AWS::NoValue
+                  - !If
+                    - useBigIqSecretArn
+                    - !Ref bigIqSecretArn
+                    - !Ref AWS::NoValue
               - Action:
-                  - 's3:ListBucket'
+                  - s3:ListBucket
+                  - s3:GetBucketLocation
+                  - s3:GetBucketTagging
                 Effect: Allow
                 Resource: !Join
                   - ''
-                  - - 'arn:*:s3:::'
+                  - - "arn:*:s3:::"
                     - !Ref s3Bucket
               - Action:
-                  - 's3:PutObject'
-                  - 's3:GetObject'
-                  - 's3:DeleteObject'
+                  - s3:PutObject
+                  - s3:GetObject
+                  - s3:DeleteObject
                 Effect: Allow
                 Resource: !Join
                   - ''
-                  - - 'arn:*:s3:::'
+                  - - "arn:*:s3:::"
                     - !Ref s3Bucket
                     - /*
             Version: 2012-10-17

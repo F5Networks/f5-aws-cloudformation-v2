@@ -1,0 +1,725 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >-
+  This template creates BIG-IP PAYG Autoscale WAF solution. The template uses nested
+  templates for provisioning access, compute resources for hosting BIG-IP Autoscale
+  solution.
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Templates Location
+        Parameters:
+          - s3BucketName
+          - s3BucketRegion
+          - artifactLocation
+      - Label:
+          default: Network Configuration
+        Parameters:
+          - vpcCidr
+          - vpcId
+          - bigIpSubnetAz1
+          - bigIpSubnetAz2
+          - externalSubnetAz1
+          - externalSubnetAz2
+          - internalSubnetAz1
+          - internalSubnetAz2
+      - Label:
+          default: Amazon EC2 Configuration
+        Parameters:
+          - sshKey
+      - Label:
+          default: DAG / Ingress
+        Parameters:
+          - provisionExternalBigipLoadBalancer
+          - provisionInternalBigipLoadBalancer
+          - provisionPublicIp
+          - restrictedSrcAddressMgmt
+          - restrictedSrcAddressApp
+      - Label:
+          default: BIG-IP and Auto Scaling Configuration
+        Parameters:
+          - bigIpRuntimeInitPackageUrl
+          - bigIpRuntimeInitConfig
+          - bigIpScalingMinSize
+          - bigIpScalingMaxSize
+          - bigIpScaleInCpuThreshold
+          - bigIpScaleInThroughputThreshold
+          - bigIpScaleOutCpuThreshold
+          - bigIpScaleOutThroughputThreshold
+          - bigIpMaxBatchSize
+          - bigIpMinInstancesInService
+          - bigIpPauseTime
+          - bigIpImage
+          - bigIpCustomImageId
+          - bigIpInstanceType
+          - metricNameSpace
+          - notificationEmail
+          - secretArn
+          - snsEvents
+      - Label:
+          default: Telemetry Configuration
+        Parameters:
+          - createLogDestination
+          - cloudWatchLogGroupName
+          - cloudWatchLogStreamName
+          - cloudWatchDashboardName
+          - loggingS3BucketName
+      - Label:
+          default: Resources Tags
+        Parameters:
+          - uniqueString
+          - application
+          - cost
+          - environment
+          - group
+          - owner
+    ParameterLabels:
+      application:
+        default: Application
+      artifactLocation:
+        default: Path to directory where the modules folder is located. ex. "examples/"
+      bigIpSubnetAz1:
+        default: Subnet id for BIGIP Availability Zone 1 interface
+      bigIpSubnetAz2:
+        default: Subnet id for BIGIP Availability Zone 2 interface
+      externalSubnetAz1:
+        default: Subnet id for external Availability Zone 1 interface
+      externalSubnetAz2:
+        default: Subnet id for external Availability Zone 2 interface
+      internalSubnetAz1:
+        default: Subnet id for internal Availability Zone 1 interface
+      internalSubnetAz2:
+        default: Subnet id for internal Availability Zone 2 interface
+      bigIpCustomImageId:
+        default: Custom Image Id
+      bigIpImage:
+        default: F5 BIG-IP Image
+      bigIpInstanceType:
+        default: Enter valid instance type.
+      bigIpMaxBatchSize:
+        default: Maximum number of instances CloudFormation updates
+      bigIpMinInstancesInService:
+        default: Minimum number of instances that must be in service to update
+      bigIpPauseTime:
+        default: Amount of time CloudFormation waits between updating batches
+      bigIpRuntimeInitConfig:
+        default: BIG-IP Runtime Init config
+      bigIpRuntimeInitPackageUrl:
+        default: Runtime Init Package
+      bigIpScaleInCpuThreshold:
+        default: Low CPU Percentage threshold to begin scaling in BIG-IP VE instances.
+      bigIpScaleInThroughputThreshold:
+        default: Incoming throughput threshold to begin scaling in BIG-IP VE instances.
+      bigIpScaleOutCpuThreshold:
+        default: High CPU Percentage threshold to begin scaling out BIG-IP VE instances.
+      bigIpScaleOutThroughputThreshold:
+        default: Incoming throughput threshold to begin scaling out BIG-IP VE instances.
+      bigIpScalingMaxSize:
+        default: Maximum number of BIG-IP instances that can be created in the Autoscale
+          Group
+      bigIpScalingMinSize:
+        default: Minimum number of BIG-IP instances that can be created in the Autoscale
+          Group
+      cloudWatchLogGroupName:
+        default: CloudWatch Log Group Name
+      cloudWatchLogStreamName:
+        default: CloudWatch Log Stream Name
+      cloudWatchDashboardName:
+        default: CloudWatch Dashboard Name
+      cost:
+        default: Cost Center
+      createLogDestination:
+        default: Create Log Destination
+      environment:
+        default: Environment
+      group:
+        default: Group
+      loggingS3BucketName:
+        default: S3 Bucket for BIG-IP logging.
+      metricNameSpace:
+        default: CloudWatch custom metric name space
+      notificationEmail:
+        default: Notification Email
+      owner:
+        default: Owner
+      provisionExternalBigipLoadBalancer:
+        default: Provision External Elastic Load Balancer
+      provisionInternalBigipLoadBalancer:
+        default: Provision Internal Elastic Load Balancer
+      provisionPublicIp:
+        default: Provision Public IP addresses for the BIG-IP interfaces
+      restrictedSrcAddressApp:
+        default: Restricted Source Address to Application
+      restrictedSrcAddressMgmt:
+        default: Restricted Source Address to BIG-IP
+      s3BucketName:
+        default: S3 Bucket where Templates are Located
+      s3BucketRegion:
+        default: S3 Bucket Region where Templates are Located
+      secretArn:
+        default: ARN of Secrets Manager secret
+      snsEvents:
+        default: Provides list of SNS Events used for sending Notifications on Autoscale
+          group
+      sshKey:
+        default: Supply the public key that will be used for SSH authentication to
+          the BIG-IP and application virtual machines
+      uniqueString:
+        default: Unique string
+      vpcCidr:
+        default: VPC CIDR
+      vpcId:
+        default: VPC ID
+  Version: 2.0.0.0
+Outputs:
+  wafExternalDnsName:
+    Condition: externalLB
+    Value: !GetAtt
+      - Dag
+      - Outputs.externalElasticLoadBalancerDnsName
+  wafInternalDnsName:
+    Condition: internalLB
+    Value: !GetAtt
+      - Dag
+      - Outputs.internalElasticLoadBalancerDnsName
+  wafInternalHttpsUrl:
+    Condition: internalLB
+    Value: !Join
+      - ''
+      - - 'https://'
+        - !GetAtt
+          - Dag
+          - Outputs.internalElasticLoadBalancerDnsName
+  wafExternalHttpsUrl:
+    Condition: externalLB
+    Value: !Join
+      - ''
+      - - 'https://'
+        - !GetAtt
+          - Dag
+          - Outputs.externalElasticLoadBalancerDnsName
+  amiId:
+    Condition: noCustomImageId
+    Description: Ami lookup returned ami id.
+    Value: !GetAtt
+      - AmiInfo
+      - Id
+  bigIpAutoscaleGroupName:
+    Value: !GetAtt
+      - BigipAutoscale
+      - Outputs.bigIpAutoscaleGroup
+Parameters:
+  application:
+    Default: f5app
+    Description: Application Tag.
+    Type: String
+  artifactLocation:
+    AllowedPattern: ^.*[a-zA-Z]+/$
+    ConstraintDescription: key prefix can include numbers, lowercase letters, uppercase
+      letters, hyphens (-), and forward slash (/).
+    Default: f5-aws-cloudformation-v2/v2.0.0.0/examples/
+    Description: The path in the S3Bucket where the modules folder is located. Can
+      include numbers, lowercase letters, uppercase letters, hyphens (-), and forward
+      slash (/).
+    Type: String
+  bigIpSubnetAz1:
+    ConstraintDescription: Must be a valid subnet id
+    Description: Availability Zone 1 BIG-IP Subnet ID.
+    Type: AWS::EC2::Subnet::Id
+  bigIpSubnetAz2:
+    ConstraintDescription: Must be a valid subnet id
+    Description: Availability Zone 2 BIG-IP Subnet ID.
+    Type: AWS::EC2::Subnet::Id
+  externalSubnetAz1:
+    ConstraintDescription: Must be a valid subnet id
+    Description: Availability Zone 1 External Subnet ID.
+    Type: AWS::EC2::Subnet::Id
+  externalSubnetAz2:
+    ConstraintDescription: Must be a valid subnet id
+    Description: Availability Zone 2 External Subnet ID.
+    Type: AWS::EC2::Subnet::Id
+  internalSubnetAz1:
+    ConstraintDescription: Must be a valid subnet id
+    Description: Availability Zone 1 Internal Subnet ID.
+    Type: AWS::EC2::Subnet::Id
+  internalSubnetAz2:
+    ConstraintDescription: Must be a valid subnet id
+    Description: Availability Zone 2 Internal Subnet ID.
+    Type: AWS::EC2::Subnet::Id
+  bigIpCustomImageId:
+    Default: ''
+    Description: Provide BIG-IP AMI ID you wish to deploy.
+    MaxLength: 255
+    Type: String
+  bigIpImage:
+    ConstraintDescription: Must be a valid F5 BIG-IP market place image
+    Default: '*16.1.0-0.0.19**PAYG-Adv WAF Plus 25Mbps*'
+    Description: F5 BIG-IP market place image
+    Type: String
+  bigIpInstanceType:
+    AllowedValues:
+      - t3.large
+      - m3.2xlarge
+      - m4.xlarge
+      - m4.2xlarge
+      - m4.4xlarge
+      - m4.10xlarge
+      - m5.large
+      - m5.xlarge
+      - m5.2xlarge
+      - m5.4xlarge
+      - c3.4xlarge
+      - c3.8xlarge
+      - c4.4xlarge
+      - c4.8xlarge
+      - c5.large
+      - c5.xlarge
+      - c5.2xlarge
+      - c5.4xlarge
+      - cc2.8xlarge
+      - c5n.2xlarge
+      - c5n.4xlarge
+    ConstraintDescription: Must be a valid EC2 instance type for BIG-IP
+    Default: m5.xlarge
+    Description: Enter valid instance type.
+    Type: String
+  bigIpMaxBatchSize:
+    Default: 5
+    Description: Specifies the maximum number of instances that CloudFormation updates.
+    Type: Number
+  bigIpMinInstancesInService:
+    ConstraintDescription: This value must be less than the scalingMaxSize of the
+      Auto Scaling group.
+    Default: 1
+    Description: Specifies the minimum number of instances that must be in service
+      within the Auto Scaling group while CloudFormation updates old instances.
+    Type: Number
+  bigIpPauseTime:
+    ConstraintDescription: Select a value between 0 to 3600
+    Default: 480
+    Description: The amount of time in seconds that CloudFormation pauses after making
+      a change to a batch of instances to give those instances time to start software
+      applications.
+    MaxValue: 3600
+    MinValue: 0
+    Type: Number
+  bigIpRuntimeInitConfig:
+    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg.yaml'
+    Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
+      file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
+      configuration.'
+    Type: String
+  bigIpRuntimeInitPackageUrl:
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run'
+    Description: URL for BIG-IP Runtime Init package.
+    Type: String
+  bigIpScaleInCpuThreshold:
+    ConstraintDescription: Select a value between 0 to 100
+    Default: 20
+    Description: Low CPU Percentage threshold to begin scaling in BIG-IP VE instances.
+    MaxValue: 100
+    MinValue: 0
+    Type: Number
+  bigIpScaleInThroughputThreshold:
+    Default: 10000000
+    Description: 'The amount of throughput (**bytes**) that should trigger a scale
+      in event. Note: The default value is equal to 10 MB.'
+    Type: Number
+  bigIpScaleOutCpuThreshold:
+    ConstraintDescription: Select a value between 0 to 100
+    Default: 80
+    Description: High CPU Percentage threshold to begin scaling out BIG-IP VE instances.
+    MaxValue: 100
+    MinValue: 0
+    Type: Number
+  bigIpScaleOutThroughputThreshold:
+    Default: 20000000
+    Description: 'The amount of throughput (**bytes**) that should trigger a scale
+      out event. Note: The default value is equal to 20 MB.'
+    Type: Number
+  bigIpScalingMaxSize:
+    ConstraintDescription: Must be a number between 2-100
+    Default: 50
+    Description: Maximum number of BIG-IP instances (2-100) that can be created in
+      the Auto Scale Group.
+    MaxValue: 100
+    MinValue: 2
+    Type: Number
+  bigIpScalingMinSize:
+    ConstraintDescription: Must be a number between 1-99
+    Default: 1
+    Description: Minimum number of BIG-IP instances (1-99) you want available in the
+      Auto Scale Group.
+    MaxValue: 99
+    MinValue: 1
+    Type: Number
+  cloudWatchLogGroupName:
+    Default: ''
+    Description: The name of the CloudWatch Log Group
+    Type: String
+  cloudWatchLogStreamName:
+    Default: ''
+    Description: The name of the CloudWatch Log Stream
+    Type: String
+  cloudWatchDashboardName:
+    Default: ''
+    AllowedPattern: '[0-9A-Za-z_-]*'
+    Description: The name of the CloudWatch Dashboard
+    Type: String
+  cost:
+    Default: f5cost
+    Description: Cost Center Tag.
+    Type: String
+  createLogDestination:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'true'
+    Description: Select true to create a new CloudWatch logging destination.
+    Type: String
+  environment:
+    Default: f5env
+    Description: Environment Tag.
+    Type: String
+  group:
+    Default: f5group
+    Description: Group Tag.
+    Type: String
+  loggingS3BucketName:
+    Default: ''
+    Description: The name of the S3 bucket where BIG-IP logs will be sent. If creating
+      a new log destination, the bucket will be created.
+    Type: String
+  metricNameSpace:
+    Default: f5-scaling-metrics
+    Description: CloudWatch namespace used for custom metrics. This should match the
+      namespace defined in your telemetry services declaration within bigipRuntimInitConfig.
+    Type: String
+  notificationEmail:
+    AllowedPattern: .+@.+
+    ConstraintDescription: Must be a valid email address.
+    Description: REQUIRED - Valid email address to send Auto Scaling event notifications.
+    Type: String
+  owner:
+    Default: f5owner
+    Description: Owner Tag.
+    Type: String
+  provisionExternalBigipLoadBalancer:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'true'
+    Description: Select true if you would like to provision an external elastic load
+      balancer.
+    Type: String
+  provisionInternalBigipLoadBalancer:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+    Description: Select true if you would like to provision an internal elastic load
+      balancer.
+    Type: String
+  provisionPublicIp:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'true'
+    Description: Whether or not to provision Public IP Addresses for the BIG-IP Network
+      Interfaces.
+    Type: String
+  restrictedSrcAddressMgmt:
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
+    Description: REQUIRED - The IP address range used to SSH and access management
+      GUI on the EC2 instances.
+    MaxLength: '18'
+    MinLength: '9'
+    Type: String
+  restrictedSrcAddressApp:
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
+    Description: REQUIRED - The IP address range that can be used to access web traffic
+      (80/443) to the EC2 instances.
+    MaxLength: '18'
+    MinLength: '9'
+    Type: String
+  s3BucketName:
+    AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
+    ConstraintDescription: >-
+      S3 bucket name can include numbers, lowercase letters, uppercase letters, and
+      hyphens (-). It cannot start or end with a hyphen (-).
+    Default: f5-cft-v2
+    Description: >-
+      REQUIRED - S3 bucket name for the modules. S3 bucket name can include numbers,
+      lowercase letters, uppercase letters, and hyphens (-). It cannot start or end
+      with a hyphen (-).
+    Type: String
+  s3BucketRegion:
+    Default: us-east-1
+    Description: The AWS Region where the Quick Start S3 bucket (s3BucketName) is
+      hosted. When using your own bucket, you must specify this value.
+    Type: String
+  secretArn:
+    Default: ''
+    Description: ARN of Secrets Manager secret
+    Type: String
+  snsEvents:
+    Description: Provides list of SNS Topics used on Autoscale Group.
+    Type: List<String>
+    Default: autoscaling:EC2_INSTANCE_LAUNCH,autoscaling:EC2_INSTANCE_LAUNCH_ERROR
+  sshKey:
+    Description: REQUIRED - Supply the public key that will be used for SSH authentication
+      to the BIG-IP and application virtual machines.
+    Type: 'AWS::EC2::KeyPair::KeyName'
+  uniqueString:
+    ConstraintDescription: 'Must Contain between 1 and 12 alphanumeric characters
+      with first character as a letter.'
+    AllowedPattern: ^[a-zA-Z][a-zA-Z0-9]{1,11}$
+    Description: Unique String used when creating object names or Tags.
+    Type: String
+    Default: myUniqStr
+  vpcCidr:
+    AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$'
+    ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28
+    Default: 10.0.0.0/16
+    Description: CIDR block for the VPC.
+    Type: String
+  vpcId:
+    Description: Id for VPC to use with deployment
+    ConstraintDescription: Must be valid VPC ID
+    Type: AWS::EC2::VPC::Id
+Conditions:
+  createLogDestination: !Equals
+    - 'true'
+    - !Ref 'createLogDestination'
+  createLoggingS3Bucket: !And
+    - !Condition 'createLogDestination'
+    - !Condition 'useLoggingS3Bucket'
+  customDashboard: !Not
+    - !Equals
+      - ''
+      - !Ref 'cloudWatchDashboardName'
+  customLogGroup: !Not
+    - !Equals
+      - ''
+      - !Ref 'cloudWatchLogGroupName'
+  customLogStream: !Not
+    - !Equals
+      - ''
+      - !Ref 'cloudWatchLogStreamName'
+  customNameSpace: !Not
+    - !Equals
+      - ''
+      - !Ref 'metricNameSpace'
+  externalLB: !Equals
+    - 'true'
+    - !Ref 'provisionExternalBigipLoadBalancer'
+  internalLB: !Equals
+    - 'true'
+    - !Ref 'provisionInternalBigipLoadBalancer'
+  noCustomImageId: !Equals
+    - ''
+    - !Ref 'bigIpCustomImageId'
+  noPublicIp: !Equals
+    - 'false'
+    - !Ref 'provisionPublicIp'
+  useLoggingS3Bucket: !Not
+    - !Equals
+      - ''
+      - !Ref 'loggingS3BucketName'
+  useSecretArn: !Not
+    - !Equals
+      - ''
+      - !Ref 'secretArn'
+  useSecretLoggingS3Bucket: !And
+    - !Condition 'useLoggingS3Bucket'
+    - !Condition 'useSecretArn'
+Resources:
+  Access:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/access/access.yaml'
+        - S3Region: !Ref 's3BucketRegion'
+          S3Bucket: !Ref 's3BucketName'
+      Parameters:
+        application: !Ref 'application'
+        cloudWatchLogGroup: !If
+          - createLogDestination
+          - !GetAtt
+            - Telemetry
+            - Outputs.cloudWatchLogGroup
+          - !Ref 'AWS::NoValue'
+        cost: !Ref 'cost'
+        createAmiRole: 'true'
+        createBigIqRoles: 'false'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        metricNameSpace: !If [customNameSpace, !Ref 'metricNameSpace', 'f5-scaling-metrics']
+        s3Bucket: !If
+          - createLoggingS3Bucket
+          - !GetAtt
+            - Telemetry
+            - Outputs.s3Bucket
+          - !If
+            - useLoggingS3Bucket
+            - !Ref 'loggingS3BucketName'
+            - !Ref 'AWS::NoValue'
+        secretArn: !If [useSecretArn, !Ref 'secretArn', !Ref 'AWS::NoValue']
+        solutionType: !If
+          - useSecretLoggingS3Bucket
+          - secretS3
+          - !If
+            - useSecretArn
+            - secret
+            - !If
+              - useLoggingS3Bucket
+              - s3
+              - standard
+        uniqueString: !Ref 'uniqueString'
+  AmiInfo:
+    Type: 'Custom::AMIInfo'
+    Condition: noCustomImageId
+    Properties:
+      OSName: !Ref 'bigIpImage'
+      OwnerId: 'aws-marketplace'
+      Region: !Ref 'AWS::Region'
+      ServiceToken: !GetAtt [Function, Outputs.lambdaARN]
+  BigipAutoscale:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/bigip-autoscale/bigip-autoscale.yaml'
+        - S3Region: !Ref 's3BucketRegion'
+          S3Bucket: !Ref 's3BucketName'
+      Parameters:
+        application: !Ref 'application'
+        bigIpExternalSecurityGroup: !GetAtt
+          - Dag
+          - Outputs.bigIpMgmtSecurityGroup
+        bigIpInstanceProfile: !GetAtt
+          - Access
+          - Outputs.bigIpInstanceProfile
+        bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig'
+        bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        externalTargetGroupHttp: !If
+          - externalLB
+          - !GetAtt
+            - Dag
+            - Outputs.externalTargetGroupHttp
+          - !Ref 'AWS::NoValue'
+        externalTargetGroupHttps: !If
+          - externalLB
+          - !GetAtt
+            - Dag
+            - Outputs.externalTargetGroupHttps
+          - !Ref 'AWS::NoValue'
+        group: !Ref 'group'
+        imageId: !If
+          - noCustomImageId
+          - !GetAtt
+            - AmiInfo
+            - Id
+          - !Ref 'bigIpCustomImageId'
+        instanceType: !Ref 'bigIpInstanceType'
+        internalTargetGroupHttp: !If
+          - internalLB
+          - !GetAtt
+            - Dag
+            - Outputs.internalTargetGroupHttp
+          - !Ref 'AWS::NoValue'
+        internalTargetGroupHttps: !If
+          - internalLB
+          - !GetAtt
+            - Dag
+            - Outputs.internalTargetGroupHttps
+          - !Ref 'AWS::NoValue'
+        maxBatchSize: !Ref 'bigIpMaxBatchSize'
+        metricNameSpace: !Ref 'metricNameSpace'
+        minInstancesInService: !Ref 'bigIpMinInstancesInService'
+        notificationEmail: !Ref 'notificationEmail'
+        pauseTime: !Ref 'bigIpPauseTime'
+        provisionPublicIp: !Ref 'provisionPublicIp'
+        scaleInCpuThreshold: !Ref 'bigIpScaleInCpuThreshold'
+        scaleInThroughputThreshold: !Ref 'bigIpScaleInThroughputThreshold'
+        scaleOutCpuThreshold: !Ref 'bigIpScaleOutCpuThreshold'
+        scaleOutThroughputThreshold: !Ref 'bigIpScaleOutThroughputThreshold'
+        scalingMinSize: !Ref 'bigIpScalingMinSize'
+        scalingMaxSize: !Ref 'bigIpScalingMaxSize'
+        snsEvents: !Join [',', !Ref 'snsEvents']
+        sshKey: !Ref 'sshKey'
+        subnets: !Join
+          - ','
+          - - !Ref 'bigIpSubnetAz1'
+            - !Ref 'bigIpSubnetAz2'
+        uniqueString: !Ref 'uniqueString'
+  Dag:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/dag/dag.yaml'
+        - S3Region: !Ref 's3BucketRegion'
+          S3Bucket: !Ref 's3BucketName'
+      Parameters:
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        createAppSecurityGroup: 'true'
+        createBastionSecurityGroup: !If [noPublicIp, 'true', 'false']
+        createExternalSecurityGroup: 'false'
+        createInternalSecurityGroup: 'false'
+        environment: !Ref 'environment'
+        externalSubnetAz1: !Ref 'externalSubnetAz1'
+        externalSubnetAz2: !Ref 'externalSubnetAz2'
+        group: !Ref 'group'
+        internalSubnetAz1: !Ref 'internalSubnetAz1'
+        internalSubnetAz2: !Ref 'internalSubnetAz2'
+        numberPublicMgmtIpAddresses: 0
+        numberPublicExternalIpAddresses: 0
+        provisionExternalBigipLoadBalancer: !Ref 'provisionExternalBigipLoadBalancer'
+        provisionInternalBigipLoadBalancer: !Ref 'provisionInternalBigipLoadBalancer'
+        restrictedSrcAddressApp: !Ref 'restrictedSrcAddressApp'
+        restrictedSrcAddressMgmt: !Ref 'restrictedSrcAddressMgmt'
+        uniqueString: !Ref 'uniqueString'
+        vpc: !Ref 'vpcId'
+        vpcCidr: !Ref 'vpcCidr'
+  Function:
+    Type: 'AWS::CloudFormation::Stack'
+    Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/function/function.yaml'
+        - S3Region: !Ref 's3BucketRegion'
+          S3Bucket: !Ref 's3BucketName'
+      Parameters:
+        amiLookupRole: !GetAtt
+          - Access
+          - Outputs.lambdaAmiExecutionRole
+        createAmiLookupFunction: 'true'
+  Telemetry:
+    Type: 'AWS::CloudFormation::Stack'
+    Condition: createLogDestination
+    Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/telemetry/telemetry.yaml'
+        - S3Region: !Ref 's3BucketRegion'
+          S3Bucket: !Ref 's3BucketName'
+      Parameters:
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
+        cloudWatchLogGroupName: !If [customLogGroup, !Ref 'cloudWatchLogGroupName',
+          'f5telemetry']
+        cloudWatchLogStreamName: !If [customLogStream, !Ref 'cloudWatchLogStreamName',
+          'f5-waf-logs']
+        cloudWatchDashboardName: !If [customDashboard, !Ref 'cloudWatchDashboardName',
+          'F5-BIGIP-WAF-View']
+        createCloudWatchDashboard: 'true'
+        createCloudWatchLogGroup: 'true'
+        createCloudWatchLogStream: 'true'
+        createS3Bucket: !If [createLoggingS3Bucket, 'true', 'false']
+        metricNameSpace: !If [customNameSpace, !Ref 'metricNameSpace', 'f5-scaling-metrics']
+        s3BucketName: !If [createLoggingS3Bucket, !Ref 'loggingS3BucketName', !Ref 'AWS::NoValue']

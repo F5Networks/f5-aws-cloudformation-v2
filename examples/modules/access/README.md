@@ -68,11 +68,13 @@ This solution creates IAM roles based on the following **solutionTypes**:
 | --- | --- | --- |
 | application | No | Application Tag. |
 | bigIqSecretArn | No | The ARN of the AWS secret containing the password used during BIG-IP licensing via BIG-IQ. |
+| cloudWatchLogGroup | No | Provide the CloudWatch Log Group name used for telemetry. |
 | cost | No | Cost Center Tag. |
 | createAmiRole | No | Value of 'true' creates IAM roles required for AMI lookup function. |
 | createBigIqRoles | No | Value of 'true' creates IAM roles required to revoke license assignments from BIG-IQ. |
 | environment | No | Environment Tag. |
 | group | No | Group Tag. |
+| metricNameSpace | No | CloudWatch namespace used for custom metrics. This should match the namespace defined in your telemetry services declaration within bigipRuntimInitConfig. |
 | owner | No | Application Tag. |
 | s3Bucket | No | Provide the S3 Bucket name used for for remote logging, failover solution, etc. |
 | secretArn | No | The ARN of an AWS secrets manager secret. |

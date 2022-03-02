@@ -44,6 +44,10 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | --- | --- | --- |
 | application | No | Application Tag. |
 | cost | No | Cost Center Tag. |
+| createAppSecurityGroup | No | Select true if you would like to create a Security Group for your Application. Required if you are deploying an application. |
+| createBastionSecurityGroup | No | Select true if you would like to create a Security Group for your Bastion. Required if you are deploying BIG-IP without a public management IP address. |
+| createExternalSecurityGroup | No | Select true if you would like to create a Security Group for the external BIG-IP interface. Required if you are deploying a BIG-IP with 2 or more interfaces. |
+| createInternalSecurityGroup | No | Select true if you would like to create a Security Group for the internal BIG-IP interface. Required if you are deploying a BIG-IP with 3 or more interfaces. |
 | createFailoverIngress | No | Creates Security Group rules to allow Config Sync and HA between peer BIG-IP instances. |
 | environment | No | Environment Tag. |
 | externalSubnetAz1 | No | Availability Zone 1 External Subnet ID. |
@@ -57,8 +61,8 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | provisionExternalBigipLoadBalancer | No | Flag to provision external Load Balancer |
 | provisionInternalBigipLoadBalancer | No | Flag to provision internal Load Balancer |
 | provisionPublicIp | No | Flag to provision Management and External Public IPs |
-| restrictedSrcAddress | Yes |The IP address range used to SSH and access the management GUI on the EC2 instances. |
-| restrictedSrcAddressApp | Yes | The IP address range that can be used to access web traffic (80/443) to the EC2. |
+| restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please restrict the IP address range to your client, for example 'X.X.X.X/32'. Production should never expose the BIG-IP Management interface to the Internet. |
+| restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
 | restrictedSrcPort | Yes | The management port used for BIG-IP management GUI. |
 | uniqueString | Yes | Unique String used when creating object names or Tags. |
 | vpc | No | Provide VPC ID. |
@@ -94,8 +98,11 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | bigIpExternalEipAllocationId03 | Allocation ID for Elastic IP for BIG-IP External Interface. | None | String | 
 | bigIpExternalEipAddress04 | BIG-IP External Public IP.  | None | String |
 | bigIpExternalEipAllocationId04 | Allocation ID for Elastic IP for BIG-IP External Interface. | None | String | 
-| bigIpExternalSecurityGroup | BIG-IP Security Group ID. | None | String |
-| appSecurityGroupId | Application Security Group ID. | None | String |  
+| bigIpExternalSecurityGroup | BIG-IP External Security Group ID. | None | String |
+| bigIpInternalSecurityGroup | BIG-IP Internal Security Group ID. | None | String |
+| bigIpMgmtSecurityGroup | BIG-IP Management Security Group ID. | None | String |
+| appSecurityGroupId | Application Security Group ID. | None | String | 
+| bastionSecurityGroupId | Bastion Security Group ID. | None | String |  
 
 ## Resource Creation Flow Chart
 

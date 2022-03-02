@@ -3,6 +3,7 @@
 CUR_DIR := $(cwd)
 PROJECT_DIR := .
 LINK_CHECK_DIR := cloud-tools/link_checker
+POLICY_CHECK_DIR := cloud-tools/test-policy-parser
 PARSER_DIR := cloud-tools/parameter-parser
 SYNC_AT_DIR := cloud-tools/sync-at-components-metadata
 DIFF_VAR :=`diff automated-test-scripts/parameters_diff_expected.yaml ${PARSER_DIR}/parameters_diff.yaml`
@@ -22,9 +23,14 @@ link_check_release:
 	cd ${LINK_CHECK_DIR} && npm install && cd ${CUR_DIR};
 	${LINK_CHECK_DIR}/link_checker.sh ${PROJECT_DIR} "cloud-tools node_modules archived automated-test-scripts" link_checker_config_release.json
 
+test_policy_check:
+	echo "Running parameter checker against all test policy files";
+	cd ${POLICY_CHECK_DIR} && pip install -r requirements.txt && cd ${CUR_DIR};
+	python ${POLICY_CHECK_DIR}/test_policy_parser.py
+
 run_sync_at_metadata:
 	echo "Syncing AT component metadata"
-	cd ${SYNC_AT_DIR} && ./sync_at_components_metadata.sh --config-directories ../../examples/autoscale/bigip-configurations,../../examples/quickstart/bigip-configurations --template-directory ../../examples --runtime-init-package-url https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.3.2/dist/f5-bigip-runtime-init-1.3.2-1.gz.run --cloud aws
+	cd ${SYNC_AT_DIR} && ./sync_at_components_metadata.sh --config-directories ../../examples/autoscale/bigip-configurations,../../examples/quickstart/bigip-configurations,../../examples/failover/bigip-configurations --template-directory ../../examples --runtime-init-package-url https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run --cloud aws
 
 run_parameter_generator:
 	echo "Generating v2 input parameters files"
@@ -49,7 +55,6 @@ run_outputs_parser:
 run_compare_outputs: run_outputs_parser
 	echo "Comparing given outputs config file against golden outputs config file"
 	cd ${PARSER_DIR} && python compare_parameters.py -g golden_outputs.yaml --output-file outputs_diff.yaml --input-parameters-file outputs_config.yaml -l 2 &&	echo '*********' && echo 'The following files have outputs that do not match what is in golden_outputs.yaml' && cat outputs_diff.yaml
-	
 run_expected_outputs_diff:
 	# Need to run run_compare_parser before running expected diff or DIFF_VAR variable will not be correct
 	if [ -n ${DIFF_VAR_OUTPUTS} ]; then echo "Diff files for outputs match!"; else echo "========================================"; echo "Diff files do not match: ${DIFF_VAR_OUTPUTS}"; exit 1; fi

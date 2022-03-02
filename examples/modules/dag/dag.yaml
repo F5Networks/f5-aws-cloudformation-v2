@@ -51,12 +51,35 @@ Conditions:
   createAppSecurityGroup: !Equals
     - 'true'
     - !Ref createAppSecurityGroup
+  createBastionSecurityGroup: !Equals
+    - 'true'
+    - !Ref createBastionSecurityGroup
+  createExternalSecurityGroup: !Equals
+    - 'true'
+    - !Ref createExternalSecurityGroup
+  createInternalSecurityGroup: !Equals
+    - 'true'
+    - !Ref createInternalSecurityGroup
+  publicIp: !Equals
+    - 'false'
+    - !Ref createBastionSecurityGroup
+  1nic: !And
+    - !Equals
+      - 'false'
+      - !Ref createExternalSecurityGroup
+    - !Equals
+      - 'false'
+      - !Ref createInternalSecurityGroup
 Metadata:
   'AWS::CloudFormation::Interface':
     ParameterGroups:
       - Label:
           default: Security Group
         Parameters:
+          - createAppSecurityGroup
+          - createBastionSecurityGroup
+          - createExternalSecurityGroup
+          - createInternalSecurityGroup
           - restrictedSrcAddressMgmt
           - restrictedSrcAddressApp
           - restrictedSrcPort
@@ -80,10 +103,6 @@ Metadata:
         Parameters:
           - numberPublicMgmtIpAddresses
           - numberPublicExternalIpAddresses
-      - Label:
-          default: App Security Group
-        Parameters:
-          - createAppSecurityGroup
       - Label:
           default: Resources Tags
         Parameters:
@@ -120,6 +139,12 @@ Metadata:
         default: Provision External Elastic Load Balancer
       createAppSecurityGroup:
         default: Provision App Security Group
+      createBastionSecurityGroup:
+        default: Provision Bastion Security Group
+      createExternalSecurityGroup:
+        default: Provision external Security Group
+      createInternalSecurityGroup:
+        default: Provision internal Security Group
       provisionInternalBigipLoadBalancer:
         default: Provision Internal Elastic Load Balancer
       restrictedSrcPort:
@@ -132,7 +157,7 @@ Metadata:
         default: Unique string
       vpc:
         default: VPC Id
-  Version: 1.1.0.0
+  Version: 2.0.0.0
 Outputs:
   stackName:
     Description: dag nested stack name
@@ -254,12 +279,24 @@ Outputs:
       - BigipExternalEipAddress04
       - AllocationId
   bigIpExternalSecurityGroup:
-    Description: BIG-IP Security Group (External or Public)
+    Condition: createExternalSecurityGroup
+    Description: BIG-IP Security Group ID (External or Public)
     Value: !Ref BigipExternalSecurityGroup
+  bigIpInternalSecurityGroup:
+    Condition: createInternalSecurityGroup
+    Description: BIG-IP Security Group ID (Internal)
+    Value: !Ref BigipInternalSecurityGroup
+  bigIpMgmtSecurityGroup:
+    Description: BIG-IP Security Group ID (Management)
+    Value: !Ref BigipMgmtSecurityGroup
   appSecurityGroupId:
     Condition: createAppSecurityGroup
     Description: App Security Group ID
     Value: !Ref appSecurityGroup
+  bastionSecurityGroupId:
+    Condition: createBastionSecurityGroup
+    Description: Bastion Security Group ID
+    Value: !Ref bastionSecurityGroup
 Parameters:
   application:
     Default: f5app
@@ -269,12 +306,41 @@ Parameters:
     Default: f5cost
     Description: Cost Center Tag.
     Type: String
+  cfeTag:
+    Description: Cloud Failover deployment tag value.
+    Type: String
+    Default: ''
+  cfeVipTag:
+    Description: Cloud Failover VIP tag value; provides private ip addresses to be assigned to VIP public ip.
+    Type: String
+    Default: ''
   createAppSecurityGroup:
     AllowedValues:
       - 'true'
       - 'false'
     Default: 'false'
     Description: Select true if you would like to create a Security Group for your Application.
+    Type: String
+  createBastionSecurityGroup:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+    Description: Select true if you would like to create a Security Group for your Bastion.
+    Type: String
+  createExternalSecurityGroup:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+    Description: Select true if you would like to create a Security Group for the external BIG-IP interface.
+    Type: String
+  createInternalSecurityGroup:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+    Description: Select true if you would like to create a Security Group for the internal BIG-IP interface.
     Type: String
   createFailoverIngress:
     AllowedValues:
@@ -683,6 +749,18 @@ Resources:
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
+        - 'Fn::If':
+            - Failover
+            -
+              Key: f5_cloud_failover_label
+              Value: !Ref cfeTag
+            - !Ref 'AWS::NoValue'
+        - 'Fn::If':
+            - Failover
+            -
+              Key:  f5_cloud_failover_vips
+              Value: !Ref cfeVipTag
+            - !Ref 'AWS::NoValue'
         - Key: group
           Value: !Ref group
         - Key: Name
@@ -702,6 +780,18 @@ Resources:
           Value: !Ref cost
         - Key: environment
           Value: !Ref environment
+        - 'Fn::If':
+            - Failover
+            -
+              Key: f5_cloud_failover_label
+              Value: !Ref cfeTag
+            - !Ref 'AWS::NoValue'
+        - 'Fn::If':
+            - Failover
+            -
+              Key:  f5_cloud_failover_vips
+              Value: !Ref cfeVipTag
+            - !Ref 'AWS::NoValue'
         - Key: group
           Value: !Ref group
         - Key: Name
@@ -713,21 +803,10 @@ Resources:
           Value: !Ref owner
     Type: 'AWS::EC2::EIP'
   BigipExternalSecurityGroup:
+    Condition: createExternalSecurityGroup
     Properties:
-      GroupDescription: 'Public or External interface rules, including BIG-IP management'
+      GroupDescription: 'Public or external interface rules'
       SecurityGroupIngress:
-        - CidrIp: !Ref vpcCidr
-          FromPort: 22
-          IpProtocol: tcp
-          ToPort: 22
-        - CidrIp: !Ref restrictedSrcAddressMgmt
-          FromPort: 22
-          IpProtocol: tcp
-          ToPort: 22
-        - CidrIp: !Ref restrictedSrcAddressMgmt
-          FromPort: !Ref restrictedSrcPort
-          IpProtocol: tcp
-          ToPort: !Ref restrictedSrcPort
         - CidrIp: !Ref restrictedSrcAddressApp
           FromPort: 80
           IpProtocol: tcp
@@ -760,7 +839,90 @@ Resources:
           Value: !Ref owner
       VpcId: !Ref vpc
     Type: 'AWS::EC2::SecurityGroup'
-  bigipSecurityGroupIngressConfigSync:
+  BigipInternalSecurityGroup:
+    Condition: createInternalSecurityGroup
+    Properties:
+      GroupDescription: 'Internal interface rules'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: !Ref vpcCidr
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: !Ref vpcCidr
+      Tags:
+        - Key: costcenter
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-bigip-internal-sg'
+        - Key: owner
+          Value: !Ref owner
+      VpcId: !Ref vpc
+    Type: 'AWS::EC2::SecurityGroup'
+  BigipMgmtSecurityGroup:
+    Properties:
+      GroupDescription: 'Management interface rules'
+      SecurityGroupIngress:
+        - CidrIp: !Ref restrictedSrcAddressMgmt
+          FromPort: 22
+          IpProtocol: tcp
+          ToPort: 22
+        - CidrIp: !Ref restrictedSrcAddressMgmt
+          FromPort: !Ref restrictedSrcPort
+          IpProtocol: tcp
+          ToPort: !Ref restrictedSrcPort
+        - CidrIp: !Ref vpcCidr
+          FromPort: 22
+          IpProtocol: tcp
+          ToPort: 22
+        - CidrIp: !Ref vpcCidr
+          FromPort: !Ref restrictedSrcPort
+          IpProtocol: tcp
+          ToPort: !Ref restrictedSrcPort
+      Tags:
+        - Key: costcenter
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-bigip-mgmt-sg'
+        - Key: owner
+          Value: !Ref owner
+      VpcId: !Ref vpc
+    Type: 'AWS::EC2::SecurityGroup'
+  BigipMgmtSecurityGroupIngressVip80:
+    Condition: 1nic
+    Properties:
+      CidrIp: !Ref restrictedSrcAddressApp
+      FromPort: 80
+      GroupId: !Ref BigipMgmtSecurityGroup
+      IpProtocol: tcp
+      ToPort: 80
+    Type: 'AWS::EC2::SecurityGroupIngress'
+  BigipMgmtSecurityGroupIngressVip443:
+    Condition: 1nic
+    Properties:
+      CidrIp: !Ref restrictedSrcAddressApp
+      FromPort: 443
+      GroupId: !Ref BigipMgmtSecurityGroup
+      IpProtocol: tcp
+      ToPort: 443
+    Type: 'AWS::EC2::SecurityGroupIngress'
+  BigipSecurityGroupIngressConfigSync:
     Condition: Failover
     Properties:
       FromPort: 4353
@@ -769,7 +931,16 @@ Resources:
       SourceSecurityGroupId: !Ref BigipExternalSecurityGroup
       ToPort: 4353
     Type: 'AWS::EC2::SecurityGroupIngress'
-  bigipSecurityGroupIngressHa:
+  bigipSecurityGroupIngressConfigSyncASM:
+    Condition: Failover
+    Properties:
+      FromPort: 6123
+      GroupId: !Ref BigipExternalSecurityGroup
+      IpProtocol: tcp
+      SourceSecurityGroupId: !Ref BigipExternalSecurityGroup
+      ToPort: 6128
+    Type: 'AWS::EC2::SecurityGroupIngress'
+  BigipSecurityGroupIngressHa:
     Condition: Failover
     Properties:
       FromPort: 1026
@@ -781,9 +952,9 @@ Resources:
   BigipSecurityGroupIngressManagementGuiPort:
     Properties:
       FromPort: !Ref restrictedSrcPort
-      GroupId: !Ref BigipExternalSecurityGroup
+      GroupId: !Ref BigipMgmtSecurityGroup
       IpProtocol: tcp
-      SourceSecurityGroupId: !Ref BigipExternalSecurityGroup
+      SourceSecurityGroupId: !Ref BigipMgmtSecurityGroup
       ToPort: !Ref restrictedSrcPort
     Type: 'AWS::EC2::SecurityGroupIngress'
   appSecurityGroup:
@@ -825,5 +996,30 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-application-sg'
+        - Key: owner
+          Value: !Ref owner
+  bastionSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Condition: createBastionSecurityGroup
+    Properties:
+      VpcId: !Ref vpc
+      GroupDescription: Enable SSH access via port 22 for the bastion
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref restrictedSrcAddressMgmt
+      Tags:
+        - Key: costcenter
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-bastion-sg'
         - Key: owner
           Value: !Ref owner

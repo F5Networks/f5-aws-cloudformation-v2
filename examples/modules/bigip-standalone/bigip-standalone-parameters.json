@@ -8,12 +8,20 @@
     "ParameterValue": ""
   },
   {
+    "ParameterKey": "bigIpPeerAddr",
+    "ParameterValue": "10.0.1.11"
+  },
+  {
     "ParameterKey": "bigIpRuntimeInitConfig",
     "ParameterValue": ""
   },
   {
     "ParameterKey": "bigIpRuntimeInitPackageUrl",
-    "ParameterValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.3.2/dist/f5-bigip-runtime-init-1.3.2-1.gz.run"
+    "ParameterValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run"
+  },
+  {
+    "ParameterKey": "cfeS3Bucket",
+    "ParameterValue": ""
   },
   {
     "ParameterKey": "cost",
@@ -89,7 +97,7 @@
   },
   {
     "ParameterKey": "numSecondaryPrivateIpAddress",
-    "ParameterValue": 1
+    "ParameterValue": "1"
   },
   {
     "ParameterKey": "owner",

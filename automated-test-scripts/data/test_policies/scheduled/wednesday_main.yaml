@@ -23,18 +23,20 @@ aws-bigip-autoscale-module-test:
   random-num-of-tests: 1
   run: random
   test-url: 'file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/daily_test.yaml'
+
 aws-bigip-standalone-module-test:
   parameters-files:
-    - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/postpub_parameters.yaml
-    - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/postpub_parameters1.yaml
-    - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/postpub_parameters2.yaml
-    - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/postpub_parameters3.yaml
-    - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/postpub_parameters4.yaml
-    - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/postpub_parameters5.yaml
-    - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/postpub_parameters6.yaml
+    - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/postpub_parameters.yaml
+    - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/postpub_parameters1.yaml
+    - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/postpub_parameters2.yaml
+    - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/postpub_parameters3.yaml
+    - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/postpub_parameters4.yaml
+    - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/postpub_parameters5.yaml
+    - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/postpub_parameters6.yaml
   random-num-of-tests: 1
   run: random
-  test-url: 'file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/daily_test.yaml'
+  test-url: 'file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/daily_test.yaml'
+
 aws-dag-module-test:
   parameters-files:
     - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/dag/postpub_parameters.yaml
@@ -43,6 +45,13 @@ aws-dag-module-test:
   random-num-of-tests: 1
   run: random
   test-url: 'file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/dag/daily_test.yaml'
+
+aws-failover-payg-example-test:
+  parameters-files:
+    - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/full/postpub_parameters.yaml
+  run: all
+  test-url: 'file://automated-test-scripts/f5-aws-cloudformation-v2/examples/failover/payg_byol/daily_test.yaml'
+
 aws-function-module-test:
   parameters-files:
     - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/function/postpub_parameters.yaml
