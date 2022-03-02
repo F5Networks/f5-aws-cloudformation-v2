@@ -30,12 +30,16 @@ if [[ "<LICENSE TYPE>" == "byol" ]]; then
     regKey02='<AUTOFILL EVAL LICENSE KEY 2>'
 fi
 
+do_index=2
+if [[ "<PROVISION EXAMPLE APP>" == "true" ]]; then
+    do_index=3
+fi
+
 if [[ "<RUNTIME INIT CONFIG 01>" == *{* ]]; then
     config_with_added_secret_id="${runtimeConfig01/<SECRET_ID>/$secret_name}"
     config_with_added_ids="${config_with_added_secret_id/<BUCKET_ID>/$bucket_name}"
     runtimeConfig01=$config_with_added_ids
     runtimeConfig01="${runtimeConfig01/<ARTIFACT LOCATION>/$artifact_location}"
-
 
     config_with_added_secret_id="${runtimeConfig02/<SECRET_ID>/$secret_name}"
     config_with_added_ids="${config_with_added_secret_id/<BUCKET_ID>/$bucket_name}"
@@ -58,8 +62,14 @@ else
         /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.shell = \"bash\"" -i <DEWPOINT JOB ID>-0$counter.yaml
         /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.userType = \"regular\"" -i <DEWPOINT JOB ID>-0$counter.yaml
 
+        /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.admin.class = \"User\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+        /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.admin.password = \"{{{BIGIP_PASSWORD}}}\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+        /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.admin.shell = \"bash\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+        /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.admin.userType = \"regular\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+
         # Disable AutoPhoneHome
-        /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.mySystem.autoPhonehome = false" -i <DEWPOINT JOB ID>-0$counter.yaml
+        /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>-0$counter.yaml
+        /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>-0$counter.yaml
 
         # Runtime parameters
         /usr/bin/yq e ".runtime_parameters.[0].secretProvider.secretId = \"$secret_name\"" -i <DEWPOINT JOB ID>-0$counter.yaml
@@ -71,6 +81,10 @@ else
             else
                 /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.regKey = \"$regKey02\"" -i <DEWPOINT JOB ID>-0$counter.yaml
             fi
+        fi
+
+        if [[ "<PROVISION EXAMPLE APP>" == "true" ]]; then
+            /usr/bin/yq e ".extension_services.service_operations.[2].value.Tenant_1.Shared.Custom_WAF_Policy.url = \"https://cdn.f5.com/product/cloudsolutions/solution-scripts/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>-0$counter.yaml
         fi
 
         # print out config file

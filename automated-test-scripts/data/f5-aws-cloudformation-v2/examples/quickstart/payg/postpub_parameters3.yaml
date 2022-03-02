@@ -10,7 +10,7 @@ NIC COUNT: 3
 PUBLIC MGMT: 'true'
 PROVISION PUBLIC IP: 'true'
 REGION: us-east-1
-TEMPLATE NAME: quickstart-<NIC COUNT>nic-payg
+TEMPLATE NAME: quickstart-3nic-payg
 RUNTIME INIT CONFIG: https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/quickstart/bigip-configurations/<DEWPOINT JOB ID>.yaml
 SOLUTION TYPE: standalone
 SSH KEY: dewpt

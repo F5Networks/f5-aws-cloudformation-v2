@@ -59,7 +59,7 @@ aws-function-module-test:
 
 aws-failover-payg-existing-test:
   parameters-files:
-    - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/existing/postpub_parameters.yaml
+    - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/existing/prepub_parameters1_existing.yaml
   run: all
   test-url: 'file://automated-test-scripts/f5-aws-cloudformation-v2/examples/failover/payg_byol/daily_test_existing.yaml'
 
@@ -77,7 +77,6 @@ aws-network-module-test:
   random-num-of-tests: 1
   run: random
   test-url: 'file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/network/daily_test.yaml'
-
 aws-quickstart-payg-example-test:
   parameters-files:
     - automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/postpub_parameters1.yaml

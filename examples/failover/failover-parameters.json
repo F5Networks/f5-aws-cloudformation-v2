@@ -9,7 +9,7 @@
   },
   {
     "ParameterKey": "artifactLocation",
-    "ParameterValue": "f5-aws-cloudformation-v2/v1.1.0.0/examples/"
+    "ParameterValue": "f5-aws-cloudformation-v2/v2.0.0.0/examples/"
   },
   {
     "ParameterKey": "bigIpCustomImageId",

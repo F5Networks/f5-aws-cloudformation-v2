@@ -22,7 +22,7 @@ SSH KEY: dewpt
 STACK NAME: dewdrop-quickstart-<NIC COUNT>nic-payg-<DEWPOINT JOB ID>
 SUBNETMASK: 24
 # have to be explicit here because dewdrop only runs one substitution
-TEMPLATE NAME: quickstart-<NIC COUNT>nic-payg
+TEMPLATE NAME: quickstart-1nic-payg
 TEMPLATE URL: 'file://$PWD/examples/quickstart/quickstart-existing-network.yaml'
 TENANCY: default
 THROUGHPUT: 1000Mbps

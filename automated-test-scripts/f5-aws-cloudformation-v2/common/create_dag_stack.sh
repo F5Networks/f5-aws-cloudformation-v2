@@ -16,6 +16,7 @@ subnetAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <N
 subnetAz2=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsB").OutputValue' | cut -d ',' -f 1)
 
 parameters="\
+ParameterKey=uniqueString,ParameterValue=<UNIQUESTRING> \
 ParameterKey=application,ParameterValue=f5-app-<DEWPOINT JOB ID> \
 ParameterKey=externalSubnetAz1,ParameterValue=$subnetAz1 \
 ParameterKey=externalSubnetAz2,ParameterValue=$subnetAz2 \
