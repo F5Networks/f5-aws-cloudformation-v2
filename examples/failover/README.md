@@ -127,12 +127,12 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpExternalVip01 | Yes | External Secondary Private IP Address for BIGIP instance A. |
 | bigIpExternalSelfIp01 | No | External Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
 | bigIpInternalSelfIp01 | No | Internal Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
-| bigIpMgmtSelfIp01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtAddress01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
 | bigIpRuntimeInitConfig01 | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
 | bigIpExternalVip02 | Yes | External Secondary Private IP Address for BIGIP instance B. |
 | bigIpExternalSelfIp02 | No | External Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
 | bigIpInternalSelfIp02 | No | Internal Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
-| bigIpMgmtSelfIp02 | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtAddress02 | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
 | bigIpRuntimeInitConfig02 | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
 | bigIpCustomImageId | No | Provide BIG-IP AMI ID you wish to deploy. |
 | bigIpImage | No | F5 BIG-IP Performance Type. |
@@ -188,7 +188,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpExternalSubnetId01 | Yes | Subnet id used for BIGIP instance A external interface. |
 | bigIpInternalSelfIp01 | No | Internal Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
 | bigIpInternalSubnetId01 | Yes | Subnet id used for BIGIP instance A internal interface. |
-| bigIpMgmtSelfIp01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtAddress01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
 | bigIpMgmtSubnetId01 | Yes | Subnet id used for BIGIP instance A management interface. |
 | bigIpRuntimeInitConfig01 | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
 | bigIpExternalVip02 | Yes | External Secondary Private IP Address for BIGIP instance B. |
@@ -196,7 +196,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpExternalSubnetId02 | Yes | Subnet id used for BIGIP instance B external interface. |
 | bigIpInternalSelfIp02 | No | Internal Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
 | bigIpInternalSubnetId02 | Yes | Subnet id used for BIGIP instance B internal interface. |
-| bigIpMgmtSelfIp02 | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtAddress02 | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
 | bigIpMgmtSubnetId02 | Yes | Subnet id used for BIGIP instance B management interface. |
 | bigIpRuntimeInitConfig02 | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
 | bigIpCustomImageId | No | Provide BIG-IP AMI ID you wish to deploy. |

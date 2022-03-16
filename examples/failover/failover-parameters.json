@@ -88,11 +88,11 @@
     "ParameterValue": "10.0.5.11"
   },
   {
-    "ParameterKey": "bigIpMgmtSelfIp01",
+    "ParameterKey": "bigIpMgmtAddress01",
     "ParameterValue": "10.0.1.11"
   },
   {
-    "ParameterKey": "bigIpMgmtSelfIp02",
+    "ParameterKey": "bigIpMgmtAddress02",
     "ParameterValue": "10.0.4.11"
   },
   {

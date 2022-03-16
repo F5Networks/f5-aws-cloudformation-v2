@@ -220,7 +220,7 @@ cat <<EOF >> parameters.json
         "ParameterValue": "10.0.6.11"
     },
     {
-        "ParameterKey": "bigIpMgmtSelfIp02",
+        "ParameterKey": "bigIpMgmtAddress02",
         "ParameterValue": "10.0.5.11"
     }
 ]
