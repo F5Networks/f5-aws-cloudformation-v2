@@ -38,7 +38,7 @@ This AWS template creates a virtual network and subnets required to support F5 s
 | environment | No | Environment Tag. |
 | group | No | Group Tag. |
 | numAzs | No | Number of Availability Zones to use in the VPC. Region must support number of availability  zones entered. The minimum is 1 and maximum is 4.  |
-| numSubnets | No | Indicate the number of subnets to create. |
+| numSubnets | No | Indicate the number of subnets to create. A minimum of 4 subnets required when provisionExampleApp = false |
 | owner | No | Application Tag. |
 | setSubnet1Public | No | The value 'true' sets subnet1 in each AZ as a public subnet. The value 'false' sets subnet1 as a private network. |
 | subnetMask | No | Mask for subnets. Valid values include 16-28. Note: supernetting of VPC occurs based on mask provided; therefore, the number of networks must be >= to the number of subnets created. |

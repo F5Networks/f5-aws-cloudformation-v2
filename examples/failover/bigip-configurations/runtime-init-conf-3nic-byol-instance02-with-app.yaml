@@ -146,7 +146,7 @@ extension_services:
               trafficGroup: none
             Service_Address_01_B:
               class: Service_Address
-              virtualAddress: 10.0.3.101
+              virtualAddress: 10.0.4.101
               trafficGroup: none
           HTTP_Service_01_A:
             class: Application
