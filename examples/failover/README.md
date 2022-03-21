@@ -30,7 +30,9 @@
     - [Testing the WAF Service](#testing-the-waf-service)
     - [Testing Failover](#testing-failover)
   - [Deleting this Solution](#deleting-this-solution)
-    - [Deleting the deployment via AWS Portal](#deleting-this-solution-using-the-aws-console)
+    - [Deleting the S3 bucket via AWS Console](#deleting-the-s3-bucket-using-the-aws-console)
+    - [Deleting the S3 bucket using the AWS CLI](#deleting-the-s3-bucket-using-the-aws-cli)
+    - [Deleting the deployment via AWS Console](#deleting-this-solution-using-the-aws-console)
     - [Deleting the deployment using the AWS CLI](#deleting-this-solution-using-the-aws-cli)
   - [Troubleshooting Steps](#troubleshooting-steps)
   - [Security](#security)
@@ -61,20 +63,25 @@ The modules below create the following cloud resources:
 - **Access**: This template creates AWS InstanceProfiles and IAM Roles.
 - **BIG-IP**: This template creates F5 BIG-IP Virtual Edition instances provisioned with Local Traffic Manager (LTM) and (optionally) Application Security Manager (ASM). 
 
-By default, this solution (failover.yaml) creates a VPN with 3 subnets, an example Web Application instance two PAYG BIG-IP instances with three network interfaces (one for management and two for dataplane/application traffic - called external and internal). Application traffic from the Internet traverses an external network interface configured with both public and private IP addresses. Traffic to the application traverses an internal network interface configured with a private IP address.
+By default, this solution (failover.yaml) creates a VPN with 4 subnets, an example Web Application instance, two PAYG BIG-IP instances with three network interfaces (one for management and two for dataplane/application traffic - called external and internal). Depending on settings, the amount of Public IPs provisioned will vary.
+* Two EIPs will automatically be provisioned for the external Self IPs (for egress system routing).
+* Two EIPs will automatically be provisioned for NAT gateways.
+* If **provisionPublicIpMgmt** is set to **true**, two EIPs will be provisioned the Management Interfaces. If set to **false**, one EIP will be created for a bastion host. 
+* If **provisionExampleApp** is set to **true**, an additional EIP is provisioned for the virtual service.
 
-***DISCLAIMER/WARNING***: To reduce prerequisites and complexity to a bare minimum for evaluation purposes only, this example template provides immediate access to the management interface via a Public IP. At the very *minimum*, configure the **restrictedSrcAddressMgmt** parameter to limit access to your client IP or trusted network. In production deployments, management access should never be directly exposed to the Internet and instead should be accessed via typical management best practices like jump boxes/bastion hosts, VPNs, etc.
+Application traffic from the Internet traverses an external network interface configured with both public and private IP addresses. Traffic to the application traverses an internal network interface configured with a private IP address.
 
+***DISCLAIMER/WARNING***: To reduce prerequisites and complexity to a bare minimum for evaluation purposes only, this example template provides immediate access to the management interface via a Public IP. At the very *minimum*, configure the **restrictedSrcAddressMgmt** parameter to limit access to your client IP or trusted network. Note that in production deployments, management access should never be directly exposed to the Internet and instead should be accessed via typical management best practices like jump boxes/bastion hosts, VPNs, etc. See the  **provisionPublicIpMgmt** parameter for more details.
 
 ## Diagram
 
-![Configuration Example](diagram.png)
+![Configuration Example](diagram.gif)
 
 For information about this type of deployment, see the F5 Cloud Failover Extension [documentation](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/userguide/aws.html).
 
 ## Prerequisites
 
-  - An SSH Key pair in AWS for management access to BIG-IP VE. For more information about creating and/or importing the key pair in AWS, see AWS SSH key [documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html).
+  - An **SSH Key pair** in AWS for management access to BIG-IP VE. For more information about creating and/or importing the key pair in AWS, see AWS SSH key [documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html).
 
   - An **AWS secret** stored in AWS [Secrets Manager](https://aws.amazon.com/secrets-manager/) containing the password used to access and cluster the HA Pair. For example, to create a secret using the AWS CLI:
     ```bash
@@ -97,7 +104,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 - By default, this solution modifies the username **admin** with a password set to value of the AWS Secret Manager secret which is provided in the input **secretArn** of the parent template.
 
 - This solution requires Internet access for: 
-  1. Downloading additional F5 software components used for onboarding and configuring the BIG-IP (via github.com and/or cdn.f5.com). Internet access is required via the management interface and then via a dataplane interface (for example, external Self-IP) once a default route is configured. See [Overview of Mgmt Routing](https://support.f5.com/csp/article/K13284) for more details. By default, as a convenience, this solution provisions Public IPs to enable this but in a production environment, outbound access should be provided by a `routed` SNAT service (for example: NAT Gateway, custom firewall, etc.). *NOTE: access via web proxy is not currently supported. Other options include 1) hosting the file locally and modifying the runtime-init package url and configuration files to point to local URLs instead or 2) baking them into a custom image, using the [F5 Image Generation Tool](https://clouddocs.f5.com/cloud/public/v1/ve-image-gen_index.html).*
+  1. Downloading additional F5 software components used for onboarding and configuring the BIG-IP (via github.com and/or cdn.f5.com). Internet access is required via the management interface and then via a dataplane interface (for example, external Self IP) once a default route is configured. See [Overview of Mgmt Routing](https://support.f5.com/csp/article/K13284) for more details. By default, as a convenience, this solution provisions Public IPs to enable this but in a production environment, outbound access should be provided by a `routed` SNAT service (for example: NAT Gateway, custom firewall, etc.). *NOTE: access via web proxy is not currently supported. Other options include 1) hosting the file locally and modifying the runtime-init package url and configuration files to point to local URLs instead or 2) baking them into a custom image, using the [F5 Image Generation Tool](https://clouddocs.f5.com/cloud/public/v1/ve-image-gen_index.html).*
   2. Contacting native cloud services for various cloud integrations: 
     - *Onboarding*:
         - [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) - to fetch secrets from native vault services
@@ -107,7 +114,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
     - Additional cloud services like [Private endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints.html) can be used to address calls to native services traversing the Internet.
   - See [Security](#security) section for more details. 
 
-- This solution template provides an **initial** deployment only for an "infrastructure" use case (meaning that it does not support managing the entire deployment exclusively via the template's "Redeploy" function). This solution leverages wa-agent to send the instance **customData**, which is only used to provide an initial BIG-IP configuration and not as the primary configuration API for a long-running platform. Although "Redeploy" can be used to update some cloud resources, as the BIG-IP configuration needs to align with the cloud resources, like IPs to NICs, updating one without the other can result in inconsistent states, while updating other resources, like the **image** or **instanceType**, can trigger an entire instance re-deloyment. For instance, to upgrade software versions, traditional in-place upgrades should be leveraged. See [AskF5 Knowledge Base](https://support.f5.com/csp/article/K84554955) and [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more information.
+- This solution template provides an **initial** deployment only for an "infrastructure" use case (meaning that it does not support managing the entire deployment exclusively via the template's "Redeploy" function). This solution leverages cloud-init to send the instance **user_data**, which is only used to provide an initial BIG-IP configuration and not as the primary configuration API for a long-running platform. Although "Redeploy" can be used to update some cloud resources, as the BIG-IP configuration needs to align with the cloud resources, like IPs to NICs, updating one without the other can result in inconsistent states, while updating other resources, like the **image** or **instanceType**, can trigger an entire instance re-deloyment. For instance, to upgrade software versions, traditional in-place upgrades should be leveraged. See [AskF5 Knowledge Base](https://support.f5.com/csp/article/K84554955) and [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more information.
 
 - If you have cloned this repository to modify the templates or BIG-IP config files and published to your own location, you can use the **templateBaseUrl** and **artifactLocation** input parameters to specify the new location of the customized templates and the **bigIpRuntimeInitConfig01** and **bigIpRuntimeInitConfig02** input parameters to specify the new location of the BIG-IP Runtime-Init configs. See main [/examples/README.md](../README.md#cloud-configuration) for more template customization details. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details.
 
@@ -156,7 +163,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | secretArn | Yes | REQUIRED: The URL of the AWS secret manager secret, including secret ARN, where the BIG-IP password is stored. |
 | sshKey | Yes | Supply the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. Example: ``myAWSkey`` |
 | subnetMask | No | Mask for subnets. Valid values include 16-28. Note supernetting of VPC occurs based on mask provided; therefore, number of networks must be >= to the number of subnets created. Mask for subnets. Valid values include 16-28. |
-| templateBaseUrl | No | The publicly accessible URL where the linked ARM templates are located. |
+| templateBaseUrl | No | The publicly accessible URL where the linked cloudformation templates are located. |
 | uniqueString | Yes | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
 | vpcCidr | No | CIDR block for the VPC. |
 
@@ -210,14 +217,14 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | environment | No | Environment Tag. |
 | group | No | Group Tag. |
 | owner | No | Owner Tag. |
-| provisionPublicIpVip | No | Whether or not to provision public IP addresses for the BIGIP's external network interface. IP's are used for application traffic. |
 | provisionPublicIpMgmt | No | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host will be provisioned instead. |
+| provisionPublicIpVip | No | Whether or not to provision a public IP address for the example VIP on the BIGIP's external network interface. *Note: Public IPs will be automatically provisioned for the external unique Self IPs as needed for egress system routing.* |
 | restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to access web traffic (80/443) to the AWS instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. NOTE: The vpc cidr is automatically added for internal usage. |
 | restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The vpc cidr is automatically added for internal usage, ex. access via bastion host, clustering, etc. **IMPORTANT**: Please restrict to your client, for example 'X.X.X.X/32'. WARNING - For eval purposes only. Production should never have the BIG-IP Management interface exposed to Internet.|
 | s3BucketRegion | No | AWS Region which contains the S3 Bucket containing templates |
 | secretArn | Yes | REQUIRED: The URL of the AWS secret manager secret, including secret ARN, where the BIG-IP password is stored. |
 | sshKey | Yes | Supply the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. Example: ``myAWSkey`` |
-| templateBaseUrl | No | The publicly accessible URL where the linked ARM templates are located. |
+| templateBaseUrl | No | The publicly accessible URL where the linked cloudformation templates are located. |
 | uniqueString | Yes | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
 | vpcCidr | No | CIDR block for the VPC. |
 | vpcId | Yes | Id for VPC to use with deployment. |
@@ -278,7 +285,7 @@ For next steps, see [Validating the Deployment](#validating-the-deployment).
 
 ### Deploying via the AWS CLI
 
-As an alternative to deploying through the AWS Portal (GUI), each solution provides an example AWS CLI 2.0 command to deploy the ARM template. The following example deploys a HA pair of 3-NIC BIG-IP VE instances.
+As an alternative to deploying through the AWS Consule (GUI), each solution provides an example AWS CLI 2.0 command to deploy the Cloudformation template. The following example deploys a HA pair of 3-NIC BIG-IP VE instances.
 
 ### Deploying via the AWS CLI
 
@@ -463,11 +470,11 @@ From Parent Template Outputs:
 1. Obtain the URL address of the BIG-IP Management Port.
     - **Console**: Navigate to **CloudFormation > *STACK_NAME* > Outputs > *bigIpManagement01Url443 or bigIpManagement02Url443***.
     - **AWS CLI**: 
-          ```bash
-          aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpManagement01Url443'].OutputValue" --output text
+        ```bash
+        aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpManagement01Url443'].OutputValue" --output text
 
-          aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpManagement02Url443'].OutputValue" --output text
-          ```
+        aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='bigIpManagement02Url443'].OutputValue" --output text
+        ```
 
     - OR when you are going through a bastion host (when **provisionPublicIpMgmt** = **false**):
 
@@ -565,16 +572,34 @@ If you have deployed the example application(**provisionExampleApp** = **true**)
       tmsh run sys failover standby
       ```
 
-Verify the EIP associated w/ the Virtual Service (**vipPublicUrl**) is remapped to the peer BIG-IP (ex. for this deployment, from 10.0.0.101 in AZ1 to 10.0.3.101 in AZ2).
+Verify the EIP associated w/ the Virtual Service (**vipPublicUrl**) is remapped to the peer BIG-IP (ex. for this deployment, from 10.0.0.101 in AZ1 to 10.0.4.101 in AZ2).
 
 For information on the Cloud Failover solution, see [F5 Cloud Failover Extension](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/userguide/aws.html).
 
 
 ## Deleting this Solution
 
-As Cloudformation does not delete S3 buckets that contain data, in order to delete this deployment, you will first need to manually empty and/or delete the S3 bucket created for the Cloud Failover Extension (provided via *cfeS3Bucket* parameter). Go to *AWS Management Console -> S3* and search for *cfeS3Bucket* bucket name, click the radio button associated with it and then click the "Empty" button. 
 
-You can now delete the deployment.
+As Cloudformation does not delete S3 buckets that contain data, in order to delete this deployment, you will first need to empty / delete the S3 bucket created for the Cloud Failover Extension (provided via **cfeS3Bucket** parameter). 
+
+After the S3 Bucket is deleted, you can now delete the solution by deleting the Cloudformation stack.
+### Deleting the S3 bucket using the AWS Console
+
+1. Navigate to **S3**.
+
+2. Select the radio button to select the bucket name provided with the **cfeS3Bucket** parameter.
+
+3. Click **Empty**.
+
+4. Reselect the bucket and click **Delete**.
+
+### Deleting the S3 bucket using the AWS CLI
+
+```bash
+aws s3 rb s3://${cfeS3Bucket} --force
+```
+
+For more information, see AWS's CLI [s3 rm](https://docs.aws.amazon.com/cli/latest/reference/s3/rb.html).
 
 ### Deleting this Solution using the AWS Console
 
