@@ -308,7 +308,7 @@ Parameters:
     Description: Cloud Failover VIP tag value; provides private ip addresses to be
       assigned to VIP public ip.
     Type: String
-    Default: '10.0.0.101,10.0.3.101'
+    Default: '10.0.0.101,10.0.4.101'
   cost:
     Default: f5cost
     Description: Cost Center Tag.
@@ -327,7 +327,7 @@ Parameters:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: External Private IP Address for BIGIP instance B.
-    Default: 10.0.3.11
+    Default: 10.0.4.11
     Type: String
   bigIpExternalVip01:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
@@ -339,7 +339,7 @@ Parameters:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: External Secondary Private IP Address for BIGIP instance B.
-    Default: 10.0.3.101
+    Default: 10.0.4.101
     Type: String
   bigIpExternalSubnetId01:
     ConstraintDescription: Must be a valid subnet id
@@ -363,7 +363,7 @@ Parameters:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: Internal Private IP Address for BIGIP instance B.
-    Default: 10.0.5.11
+    Default: 10.0.6.11
     Type: String
   bigIpInternalSubnetId01:
     ConstraintDescription: Must be a valid subnet id
@@ -383,7 +383,7 @@ Parameters:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: Management Private IP Address for BIGIP instance B.
-    Default: 10.0.4.11
+    Default: 10.0.5.11
     Type: String
   bigIpMgmtSubnetId01:
     ConstraintDescription: Must be a valid subnet id
