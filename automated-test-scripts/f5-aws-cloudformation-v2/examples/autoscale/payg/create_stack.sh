@@ -64,14 +64,14 @@ else
 
     # Runtime parameters
     /usr/bin/yq e ".runtime_parameters += {\"name\":\"BIGIP_PASSWORD\"}" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".runtime_parameters.[3].type = \"secret\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".runtime_parameters.[3].secretProvider.environment = \"aws\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".runtime_parameters.[3].secretProvider.secretId = \"$secret_name\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".runtime_parameters.[3].secretProvider.type = \"SecretsManager\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".runtime_parameters.[3].secretProvider.version = \"AWSCURRENT\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".runtime_parameters.[-1].type = \"secret\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".runtime_parameters.[-1].secretProvider.environment = \"aws\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".runtime_parameters.[-1].secretProvider.secretId = \"$secret_name\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".runtime_parameters.[-1].secretProvider.type = \"SecretsManager\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".runtime_parameters.[-1].secretProvider.version = \"AWSCURRENT\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".runtime_parameters += {\"name\":\"BUCKET_NAME\"}" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".runtime_parameters.[4].type = \"static\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".runtime_parameters.[4].value = \"$logging_bucket_name\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".runtime_parameters.[-1].type = \"static\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".runtime_parameters.[-1].value = \"$logging_bucket_name\"" -i <DEWPOINT JOB ID>.yaml
 
     # print out config file
     /usr/bin/yq e <DEWPOINT JOB ID>.yaml

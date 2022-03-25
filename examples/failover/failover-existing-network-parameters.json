@@ -45,7 +45,7 @@
   },
   {
     "ParameterKey": "cfeVipTag",
-    "ParameterValue": "10.0.0.101,10.0.3.101"
+    "ParameterValue": "10.0.0.101,10.0.4.101"
   },
   {
     "ParameterKey": "cost",
@@ -61,7 +61,7 @@
   },
   {
     "ParameterKey": "bigIpExternalSelfIp02",
-    "ParameterValue": "10.0.3.11"
+    "ParameterValue": "10.0.4.11"
   },
   {
     "ParameterKey": "bigIpExternalVip01",
@@ -69,7 +69,7 @@
   },
   {
     "ParameterKey": "bigIpExternalVip02",
-    "ParameterValue": "10.0.3.101"
+    "ParameterValue": "10.0.4.101"
   },
   {
     "ParameterKey": "bigIpExternalSubnetId01",
@@ -89,7 +89,7 @@
   },
   {
     "ParameterKey": "bigIpInternalSelfIp02",
-    "ParameterValue": "10.0.5.11"
+    "ParameterValue": "10.0.6.11"
   },
   {
     "ParameterKey": "bigIpInternalSubnetId01",
@@ -105,7 +105,7 @@
   },
   {
     "ParameterKey": "bigIpMgmtAddress02",
-    "ParameterValue": "10.0.4.11"
+    "ParameterValue": "10.0.5.11"
   },
   {
     "ParameterKey": "bigIpMgmtSubnetId01",

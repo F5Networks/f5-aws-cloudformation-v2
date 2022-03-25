@@ -337,26 +337,10 @@ runtime_parameters:
       type: network
       field: subnet-ipv4-cidr-block
       index: 1
-  - name: AWS_SESSION_TOKEN
-    type: url
-    value: http://169.254.169.254/latest/api/token
-    headers:
-      - name: Content-Type
-        value: json
-      - name: User-Agent
-        value: f5-bigip-runtime-init
-      - name: method
-        value: PUT
-      - name: X-aws-ec2-metadata-token-ttl-seconds
-        value: 21600
   - name: REGION
-    type: url
-    query: region
-    value: 'http://169.254.169.254/latest/dynamic/instance-identity/document'
-    headers:
-      - name: Content-Type
-        value: json
-      - name: User-Agent
-        value: f5-bigip-runtime-init
-      - name: X-aws-ec2-metadata-token
-        value: "{{{AWS_SESSION_TOKEN}}}"
+    type: metadata
+    metadataProvider:
+      environment: aws
+      type: uri
+      value: /latest/dynamic/instance-identity/document
+      query: region
