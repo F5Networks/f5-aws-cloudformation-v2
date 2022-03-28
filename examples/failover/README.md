@@ -375,7 +375,7 @@ Example:
         ```json
           {
             "ParameterKey": "bigIpImage",
-            "ParameterValue": "*16.1.0-0.0.19**BYOL-All Modules 2Boot*"
+            "ParameterValue": "*16.1.2.1-0.0.10**BYOL-All Modules 2Boot*"
           },
         ```
 
