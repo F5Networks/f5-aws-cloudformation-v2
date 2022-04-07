@@ -11,6 +11,8 @@ Resources:
         bigIpInstanceProfile: ''
         bigIpRuntimeInitConfig: 'https://some-delivery-locatoion.com/config.yaml'
         bigIpRuntimeInitPackageUrl: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run'
+        cfeS3Bucket: ''
+        cfeTag: ''
         customImageId: ami-id
         externalPrimaryPublicId: eip-000003
         externalPublicIpIds: 'eip-00003,eip-00004,eip-00005'

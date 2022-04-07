@@ -49,6 +49,7 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | bigIpRuntimeInitConfig | Yes | Delivery URL for config file (YAML/JSON) or JSON string. |
 | bigIpRuntimeInitPackageUrl | No | URL for BIG-IP Runtime Init package. |
 | bigIpPeerAddr | No | Type the static self IP address of the remote host here. Set to empty string if not configuring peering with a remote host on this device. |
+| cfeTag | No | Cloud Failover deployment tag value. |
 | cost | No | Cost Center Tag. |
 | environment | No | Environment Tag. |
 | externalPrimaryPublicId | No | The resource ID of the public IP address to apply to the primary IP configuration on the external network interface. The default is an empty string which does not provision public IP. |

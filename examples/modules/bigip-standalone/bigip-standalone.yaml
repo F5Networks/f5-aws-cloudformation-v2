@@ -151,6 +151,10 @@ Conditions:
     - !Condition 'useExternalPublicIP'
     - !Not
       - !Condition 'is1Nic'
+  createCfeTag: !Not
+    - !Equals
+      - !Ref 'cfeTag'
+      - ''
   useStaticExternalIpAddr: !And
     - !Not
       - !Equals
@@ -201,6 +205,7 @@ Metadata:
         Parameters:
           - bigIpRuntimeInitConfig
           - bigIpRuntimeInitPackageUrl
+          - cfeTag
       - Label:
           default: EC2 Instances
         Parameters:
@@ -253,6 +258,8 @@ Metadata:
         default: Cost Center
       cfeS3Bucket:
         default: S3 bucket used as BIGIP storage for Failover solution
+      cfeTag:
+        default: CFE Deployment tag value
       imageId:
         default: Image Id
       environment:
@@ -384,6 +391,10 @@ Parameters:
     Description: S3 bucket name used by Cloud Failover Extension.
     Type: String
     Default: ''
+  cfeTag:
+    Description: Cloud Failover deployment tag value.
+    Type: String
+    Default: ''
   cost:
     Default: f5cost
     Description: Cost Center Tag.
@@ -512,8 +523,16 @@ Resources:
       BucketName: !Ref 'cfeS3Bucket'
       AccessControl: BucketOwnerFullControl
       Tags:
+        - Key: costcenter
+          Value: !Ref 'cost'
+        - Key: environment
+          Value: !Ref 'environment'
         - Key: f5_cloud_failover_label
-          Value: bigip_high_availability_solution
+          Value: !Ref 'cfeTag'
+        - Key: group
+          Value: !Ref 'group'
+        - Key: owner
+          Value: !Ref 'owner'
   BigipInternalInterface:
     Condition: useDynamicInternalIpAddr
     Properties:
@@ -524,6 +543,25 @@ Resources:
           - !Ref 'internalSecurityGroupId'
           - !Ref 'AWS::NoValue'
       SubnetId: !Ref 'internalSubnetId'
+      Tags:
+        - Key: costcenter
+          Value: !Ref 'cost'
+        - Key: environment
+          Value: !Ref 'environment'
+        - Fn::If:
+            - createCfeTag
+            - Key: f5_cloud_failover_label
+              Value: !Ref 'cfeTag'
+            - !Ref 'AWS::NoValue'
+        - Fn::If:
+            - createCfeTag
+            - Key: f5_cloud_failover_nic_map
+              Value: internal
+            - !Ref 'AWS::NoValue'
+        - Key: group
+          Value: !Ref 'group'
+        - Key: owner
+          Value: !Ref 'owner'
     Type: 'AWS::EC2::NetworkInterface'
   BigipManagementInterface:
     Condition: useDynamicManagementIpAddr
@@ -545,6 +583,25 @@ Resources:
       GroupSet:
         - !Ref 'externalSecurityGroupId'
       SubnetId: !Ref 'externalSubnetId'
+      Tags:
+        - Key: costcenter
+          Value: !Ref 'cost'
+        - Key: environment
+          Value: !Ref 'environment'
+        - Fn::If:
+            - createCfeTag
+            - Key: f5_cloud_failover_label
+              Value: !Ref 'cfeTag'
+            - !Ref 'AWS::NoValue'
+        - Fn::If:
+            - createCfeTag
+            - Key: f5_cloud_failover_nic_map
+              Value: external
+            - !Ref 'AWS::NoValue'
+        - Key: group
+          Value: !Ref 'group'
+        - Key: owner
+          Value: !Ref 'owner'
     Type: 'AWS::EC2::NetworkInterface'
   BigipStaticInternalInterface:
     Condition: useStaticInternalIpAddr
@@ -557,6 +614,25 @@ Resources:
           - !Ref 'AWS::NoValue'
       PrivateIpAddress: !Ref 'internalSelfIp'
       SubnetId: !Ref 'internalSubnetId'
+      Tags:
+        - Key: costcenter
+          Value: !Ref 'cost'
+        - Key: environment
+          Value: !Ref 'environment'
+        - Fn::If:
+            - createCfeTag
+            - Key: f5_cloud_failover_label
+              Value: !Ref 'cfeTag'
+            - !Ref 'AWS::NoValue'
+        - Fn::If:
+            - createCfeTag
+            - Key: f5_cloud_failover_nic_map
+              Value: internal
+            - !Ref 'AWS::NoValue'
+        - Key: group
+          Value: !Ref 'group'
+        - Key: owner
+          Value: !Ref 'owner'
     Type: 'AWS::EC2::NetworkInterface'
   BigipStaticManagementInterface:
     Condition: useStaticManagementIpAddr
@@ -612,6 +688,25 @@ Resources:
               - !Ref 'externalServiceIps'
         - !Ref 'AWS::NoValue'
       SubnetId: !Ref 'externalSubnetId'
+      Tags:
+        - Key: costcenter
+          Value: !Ref 'cost'
+        - Key: environment
+          Value: !Ref 'environment'
+        - Fn::If:
+            - createCfeTag
+            - Key: f5_cloud_failover_label
+              Value: !Ref 'cfeTag'
+            - !Ref 'AWS::NoValue'
+        - Fn::If:
+            - createCfeTag
+            - Key: f5_cloud_failover_nic_map
+              Value: external
+            - !Ref 'AWS::NoValue'
+        - Key: group
+          Value: !Ref 'group'
+        - Key: owner
+          Value: !Ref 'owner'
     Type: 'AWS::EC2::NetworkInterface'
   BigipVipEipAssociation:
     Condition: bigipVipEipAssociation

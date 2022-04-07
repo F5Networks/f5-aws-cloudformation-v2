@@ -8,6 +8,10 @@
     "ParameterValue": ""
   },
   {
+    "ParameterKey": "cfeTag",
+    "ParameterValue": ""
+  },
+  {
     "ParameterKey": "cloudWatchLogGroup",
     "ParameterValue": ""
   },

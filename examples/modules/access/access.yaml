@@ -51,6 +51,7 @@ Metadata:
           - bigIqSecretArn
           - cloudWatchLogGroup
           - metricNameSpace
+          - cfeTag
     ParameterLabels:
       uniqueString:
         default: myBIGIP
@@ -58,6 +59,8 @@ Metadata:
         default: Application
       cost:
         default: Cost Center
+      cfeTag:
+        default: CFE Deployment tag value
       environment:
         default: Environment
       group:
@@ -126,6 +129,10 @@ Parameters:
     Default: ''
     Description: The ARN of the AWS secret containing the password used during BIG-IP licensing via BIG-IQ.
     Type: String
+  cfeTag:
+    Description: Cloud Failover deployment tag value.
+    Type: String
+    Default: ''
   cloudWatchLogGroup:
     Default: ''
     Description: Provides CloudWatch Log Group name used for telemetry
@@ -393,11 +400,10 @@ Resources:
                 Effect: Allow
                 Resource:
                   - '*'
-              - Action:
-                  - 'sts:AssumeRole'
-                Effect: Allow
-                Resource:
-                  - '*'
+                Condition:
+                  StringEquals:
+                    aws:RequestedRegion: !Ref AWS::Region
+                    aws:PrincipalAccount: !Ref AWS::AccountId
               - Action:
                   - 'logs:DescribeLogGroups'
                   - 'logs:DescribeLogStreams'
@@ -470,11 +476,10 @@ Resources:
                 Effect: Allow
                 Resource:
                   - '*'
-              - Action:
-                  - 'sts:AssumeRole'
-                Effect: Allow
-                Resource:
-                  - '*'
+                Condition:
+                  StringEquals:
+                    aws:RequestedRegion: !Ref AWS::Region
+                    aws:PrincipalAccount: !Ref AWS::AccountId
               - Action:
                   - 'logs:DescribeLogGroups'
                   - 'logs:DescribeLogStreams'
@@ -658,11 +663,10 @@ Resources:
                 Effect: Allow
                 Resource:
                   - '*'
-              - Action:
-                  - 'sts:AssumeRole'
-                Effect: Allow
-                Resource:
-                  - '*'
+                Condition:
+                  StringEquals:
+                    aws:RequestedRegion: !Ref AWS::Region
+                    aws:PrincipalAccount: !Ref AWS::AccountId
               - Action:
                   - 'logs:DescribeLogGroups'
                   - 'logs:DescribeLogStreams'
@@ -756,31 +760,86 @@ Resources:
         - PolicyDocument:
             Statement:
               - Action:
-                  - 'ec2:DescribeAddresses'
-                  - 'ec2:DescribeInstances'
-                  - 'ec2:DescribeInstanceStatus'
-                  - 'ec2:DescribeNetworkInterfaces'
-                  - 'ec2:DescribeNetworkInterfaceAttribute'
-                  - 'ec2:DescribeTags'
-                  - 'ec2:DescribeSubnets'
-                  - 'ec2:AssociateAddress'
-                  - 'ec2:DescribeRouteTables'
-                  - 'ec2:DisassociateAddress'
-                  - 'ec2:ReplaceRoute'
-                  - 'ec2:AssignPrivateIpAddresses'
-                  - 'ec2:UnassignPrivateIpAddresses'
-                  - 'ec2:AssignIpv6Addresses'
-                  - 'ec2:UnassignIpv6Addresses'
-                  - 's3:ListAllMyBuckets'
-                  - 's3:GetBucketLocation'
+                  - ec2:DescribeAddresses
+                  - ec2:DescribeInstances
+                  - ec2:DescribeInstanceStatus
+                  - ec2:DescribeNetworkInterfaces
+                  - ec2:DescribeNetworkInterfaceAttribute
+                  - ec2:DescribeTags
                 Effect: Allow
                 Resource:
                   - '*'
+                Condition:
+                  StringEquals:
+                    aws:RequestedRegion: !Ref AWS::Region
+                    aws:PrincipalAccount: !Ref AWS::AccountId
               - Action:
-                  - 'sts:AssumeRole'
+                  - ec2:DescribeSubnets
+                  - ec2:DescribeRouteTables
                 Effect: Allow
                 Resource:
                   - '*'
+                Condition:
+                  StringEquals:
+                    aws:RequestedRegion: !Ref AWS::Region
+                    aws:PrincipalAccount: !Ref AWS::AccountId
+              - Action:
+                  - ec2:AssociateAddress
+                  - ec2:DisassociateAddress
+                  - ec2:AssignPrivateIpAddresses
+                  - ec2:UnassignPrivateIpAddresses
+                  - ec2:AssignIpv6Addresses
+                  - ec2:UnassignIpv6Addresses
+                  - ec2:CreateRoute
+                  - ec2:ReplaceRoute
+                Effect: Allow
+                Resource:
+                  - '*'
+                Condition:
+                  StringLike:
+                    aws:ResourceTag/f5_cloud_failover_label: !Ref cfeTag
+              - Action:
+                  - s3:ListAllMyBuckets
+                Effect: Allow
+                Resource:
+                  - '*'
+                Condition:
+                  StringEquals:
+                    aws:PrincipalAccount: !Ref AWS::AccountId
+              - Action:
+                  - s3:ListBucket
+                  - s3:GetBucketLocation
+                  - s3:GetBucketTagging
+                Effect: Allow
+                Resource: !Join
+                  - ''
+                  - - "arn:*:s3:::"
+                    - !Ref s3Bucket
+              - Action:
+                  - s3:PutObject
+                  - s3:GetObject
+                  - s3:DeleteObject
+                Effect: Allow
+                Resource: !Join
+                  - ''
+                  - - "arn:*:s3:::"
+                    - !Ref s3Bucket
+                    - /*
+              - Action:
+                  - 'secretsmanager:DescribeSecret'
+                  - 'secretsmanager:GetResourcePolicy'
+                  - 'secretsmanager:GetSecretValue'
+                  - 'secretsmanager:ListSecretVersionIds'
+                Effect: Allow
+                Resource:
+                  - !If
+                    - useSecretArn
+                    - !Ref secretArn
+                    - !Ref AWS::NoValue
+                  - !If
+                    - useBigIqSecretArn
+                    - !Ref bigIqSecretArn
+                    - !Ref AWS::NoValue
               - Action:
                   - 'logs:DescribeLogGroups'
                   - 'logs:DescribeLogStreams'
@@ -805,40 +864,6 @@ Resources:
                 Effect: Allow
                 Resource:
                   - '*'
-              - Action:
-                  - 'secretsmanager:DescribeSecret'
-                  - 'secretsmanager:GetResourcePolicy'
-                  - 'secretsmanager:GetSecretValue'
-                  - 'secretsmanager:ListSecretVersionIds'
-                Effect: Allow
-                Resource:
-                  - !If
-                    - useSecretArn
-                    - !Ref secretArn
-                    - !Ref AWS::NoValue
-                  - !If
-                    - useBigIqSecretArn
-                    - !Ref bigIqSecretArn
-                    - !Ref AWS::NoValue
-              - Action:
-                  - s3:ListBucket
-                  - s3:GetBucketLocation
-                  - s3:GetBucketTagging
-                Effect: Allow
-                Resource: !Join
-                  - ''
-                  - - "arn:*:s3:::"
-                    - !Ref s3Bucket
-              - Action:
-                  - s3:PutObject
-                  - s3:GetObject
-                  - s3:DeleteObject
-                Effect: Allow
-                Resource: !Join
-                  - ''
-                  - - "arn:*:s3:::"
-                    - !Ref s3Bucket
-                    - /*
             Version: 2012-10-17
           PolicyName: !Join
             - ''
