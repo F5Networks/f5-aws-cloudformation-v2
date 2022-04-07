@@ -16,9 +16,16 @@ fi
 echo "bigiq_secret_arn=$bigiq_secret_arn"
 echo "create_bigiq_roles=$create_bigiq_roles"
 
+cfe_tag=''
+if [[ <SOLUTION TYPE> == 'failover' ]]; then
+    cfe_tag='<DEWPOINT JOB ID>'
+fi
+echo "cfe_tag=$cfe_tag"
+
 parameters="\
 ParameterKey=uniqueString,ParameterValue=<UNIQUESTRING> \
 ParameterKey=bigIqSecretArn,ParameterValue=$bigiq_secret_arn \
+ParameterKey=cfeTag,ParameterValue=$cfe_tag \
 ParameterKey=secretArn,ParameterValue=$secret_arn \
 ParameterKey=createBigIqRoles,ParameterValue=$create_bigiq_roles \
 ParameterKey=createAmiRole,ParameterValue=<CREATE AMI ROLE> \

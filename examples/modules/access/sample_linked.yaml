@@ -8,6 +8,7 @@ Resources:
         https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v2.0.0.0/examples/modules/access/access.yaml
       Parameters:
         bigIqSecretArn: ''
+        cfeTag: ''
         cloudWatchLogGroup: ''
         createAmiRole: 'true'
         createBigIqRoles: 'false'

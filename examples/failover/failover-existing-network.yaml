@@ -497,6 +497,7 @@ Resources:
           S3Bucket: !Ref 's3BucketName'
       Parameters:
         application: !Ref 'application'
+        cfeTag: !Ref 'cfeTag'
         cost: !Ref 'cost'
         environment: !Ref 'environment'
         group: !Ref 'group'
@@ -526,6 +527,7 @@ Resources:
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig01'
         bigIpPeerAddr: !Ref 'bigIpPeerAddr'
         cfeS3Bucket: !Ref 'cfeS3Bucket'
+        cfeTag: !Ref 'cfeTag'
         imageId: !If
           - noCustomImageId
           - !GetAtt
@@ -563,6 +565,7 @@ Resources:
         bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig02'
         bigIpPeerAddr: !Ref 'bigIpPeerAddr'
+        cfeTag: !Ref 'cfeTag'
         imageId: !If
           - noCustomImageId
           - !GetAtt
