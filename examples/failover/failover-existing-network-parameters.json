@@ -25,11 +25,11 @@
   },
   {
     "ParameterKey": "bigIpRuntimeInitConfig01",
-    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/failover/bigip-configurations/runtime-init-conf-payg-01.yaml"
+    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml"
   },
   {
     "ParameterKey": "bigIpRuntimeInitConfig02",
-    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/failover/bigip-configurations/runtime-init-conf-payg-02.yaml"
+    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02.yaml"
   },
   {
     "ParameterKey": "bigIpRuntimeInitPackageUrl",

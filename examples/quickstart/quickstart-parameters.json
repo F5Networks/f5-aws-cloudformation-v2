@@ -13,7 +13,7 @@
   },
   {
     "ParameterKey": "bigIpRuntimeInitConfig",
-    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg_with_app.yaml"
+    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg-with-app.yaml"
   },
   {
     "ParameterKey": "bigIpRuntimeInitPackageUrl",
