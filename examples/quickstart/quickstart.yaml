@@ -595,7 +595,7 @@ Parameters:
     Description: Application Tag.
     Type: String
   artifactLocation:
-    AllowedPattern: ^.*[a-zA-Z]+/$
+    AllowedPattern: ^.*[0-9a-zA-Z]+/$
     ConstraintDescription: 'key prefix can include numbers, lowercase letters, uppercase
       letters, hyphens (-), and forward slash (/).'
     Default: f5-aws-cloudformation-v2/v2.0.0.0/examples/
@@ -604,7 +604,7 @@ Parameters:
       slash (/).'
     Type: String
   bigIpRuntimeInitConfig:
-    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg_with_app.yaml'
+    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg-with-app.yaml'
     Description: 'Supply a URL to the bigip-runtime-init configuration file in YAML
       or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration.'
     Type: String
