@@ -228,7 +228,7 @@ Parameters:
     Description: Application Tag.
     Type: String
   artifactLocation:
-    AllowedPattern: ^.*[a-zA-Z]+/$
+    AllowedPattern: ^.*[0-9a-zA-Z]+/$
     ConstraintDescription: key prefix can include numbers, lowercase letters, uppercase
       letters, hyphens (-), and forward slash (/).
     Default: f5-aws-cloudformation-v2/v2.0.0.0/examples/
