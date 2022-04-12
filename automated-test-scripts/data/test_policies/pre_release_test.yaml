@@ -1,24 +1,6 @@
 # Pre release test plan
 # Parent tests
 # autoscale
-aws-autoscale-example-payg-test:
-  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/payg/daily_test_full.yaml"
-  run: "random"
-  random-num-of-tests: 1
-  parameters-files:
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/full/prepub_parameters.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/full/prepub_parameters1.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/full/prepub_parameters2.yaml"
-
-aws-autoscale-existing-payg-test:
-  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/payg/daily_test_existing.yaml"
-  run: "random"
-  random-num-of-tests: 1
-  parameters-files:
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/existing/prepub_parameters.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/existing/prepub_parameters1.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/existing/prepub_parameters2.yaml"
-
 aws-autoscale-bigiq-example-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/bigiq/daily_test_full.yaml"
   run: "random"
@@ -37,67 +19,97 @@ aws-autoscale-bigiq-existing-test:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/existing/prepub_parameters1.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/existing/prepub_parameters2.yaml"
 
+aws-autoscale-example-payg-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/payg/daily_test_full.yaml"
+  run: "random"
+  random-num-of-tests: 1
+  parameters-files:
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/full/prepub_parameters.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/full/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/full/prepub_parameters2.yaml"
+
+aws-autoscale-existing-payg-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/payg/daily_test_existing.yaml"
+  run: "random"
+  random-num-of-tests: 1
+  parameters-files:
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/existing/prepub_parameters.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/existing/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/existing/prepub_parameters2.yaml"
+
+# failover
+aws-failover-example-byol-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/failover/payg_byol/daily_test_full.yaml"
+  run: "random"
+  random-num-of-tests: 1
+  parameters-files:
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/byol/full/prepub_parameters.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/byol/full/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/byol/full/prepub_parameters2.yaml"
+
+aws-failover-existing-byol-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/failover/payg_byol/daily_test_existing.yaml"
+  run: "random"
+  random-num-of-tests: 1
+  parameters-files:
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/byol/existing/prepub_parameters.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/byol/existing/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/byol/existing/prepub_parameters2.yaml"
+
+aws-failover-example-payg-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/failover/payg_byol/daily_test_full.yaml"
+  run: "random"
+  random-num-of-tests: 1
+  parameters-files:
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/full/prepub_parameters.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/full/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/full/prepub_parameters2.yaml"
+
+aws-failover-existing-payg-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/failover/payg_byol/daily_test_existing.yaml"
+  run: "random"
+  random-num-of-tests: 1
+  parameters-files:
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/existing/prepub_parameters.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/existing/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/existing/prepub_parameters2.yaml"
+
 # quickstart
-aws-quickstart-payg-example-test:
-  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/daily_test.yaml"
-  run: "random"
-  random-num-of-tests: 1
-  parameters-files:
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/prepub_parameters1.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/prepub_parameters2.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/prepub_parameters3.yaml"
-
-aws-quickstart-payg-existing-test:
-  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/daily_test_existing.yaml"
-  run: "random"
-  random-num-of-tests: 1
-  parameters-files:
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/existing/payg/prepub_parameters1.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/existing/payg/prepub_parameters2.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/existing/payg/prepub_parameters3.yaml"
-
 aws-quickstart-byol-example-test:
-  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/daily_test.yaml"
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/daily_test_full.yaml"
   run: "random"
   random-num-of-tests: 1
   parameters-files:
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/prepub_parameters1.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/prepub_parameters2.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/prepub_parameters3.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/full/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/full/prepub_parameters2.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/full/prepub_parameters3.yaml"
 
 aws-quickstart-byol-existing-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/daily_test_existing.yaml"
   run: "random"
   random-num-of-tests: 1
   parameters-files:
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/existing/byol/prepub_parameters1.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/existing/byol/prepub_parameters2.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/existing/byol/prepub_parameters3.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/existing/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/existing/prepub_parameters2.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/existing/prepub_parameters3.yaml"
 
-# failover
-aws-failover-example-test:
-  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/failover/payg_byol/daily_test.yaml"
+aws-quickstart-payg-example-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/daily_test_full.yaml"
   run: "random"
   random-num-of-tests: 1
   parameters-files:
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/full/prepub_parameters.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/full/prepub_parameters1.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/full/prepub_parameters2.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/full/prepub_parameters3.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/full/prepub_parameters4.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/full/prepub_parameters5.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/full/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/full/prepub_parameters2.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/full/prepub_parameters3.yaml"
 
-aws-failover-existing-test:
-  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/failover/payg_byol/daily_test_existing.yaml"
+aws-quickstart-payg-existing-test:
+  test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/daily_test_existing.yaml"
   run: "random"
   random-num-of-tests: 1
   parameters-files:
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/existing/prepub_parameters_existing.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/existing/prepub_parameters1_existing.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/existing/prepub_parameters2_existing.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/existing/prepub_parameters3_existing.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/existing/prepub_parameters4_existing.yaml"
-    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/existing/prepub_parameters5_existing.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/existing/prepub_parameters1.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/existing/prepub_parameters2.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/existing/prepub_parameters3.yaml"
 
 # Module tests
 # AWS access module tests

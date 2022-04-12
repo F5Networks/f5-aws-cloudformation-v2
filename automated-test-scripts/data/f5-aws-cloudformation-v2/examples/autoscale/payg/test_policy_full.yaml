@@ -2,7 +2,8 @@
 # Autoscale PAYG Example Test
 aws-autoscale-payg-example-test:
     test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/payg/daily_test_full.yaml"
-    run: "all"
+    run: "random"
+    random-num-of-tests: 1
     parameters-files:
        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/full/prepub_parameters.yaml"
        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/full/prepub_parameters1.yaml"
