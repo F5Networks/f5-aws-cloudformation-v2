@@ -18,7 +18,7 @@ variables:
 # release prep - updates runtime-init location used for testing
 # placeholder for aws v2
 
-# validate Cloudformation templates with cfn-lint
+# validate CloudFormation templates with cfn-lint
 run_cfn_lint:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
   stage: smoke-tests

@@ -23,7 +23,7 @@
   - [Validation](#validation)
     - [Validating the Deployment](#validating-the-deployment)
     - [Testing the WAF Service](#testing-the-waf-service)
-    - [Viewing the CloudWatch Dasbboard](#viewing-the-cloudwatch-dasbboard)
+    - [Viewing the CloudWatch Dashboard](#viewing-the-cloudwatch-dashboard)
     - [Accessing the BIG-IP](#accessing-the-big-ip)
       - [SSH](#ssh)
       - [WebUI](#webui)
@@ -82,14 +82,18 @@ This solution leverages more traditional Autoscale configuration management prac
 
 ## Important Configuration Notes
 
-- By default, this solution does not create a password-authenticated BIG-IP user because it follows the immutable model (in other words, individual instances are not meant to be actively managed post-deploy and configuration is instead defined through the model). However, `sshKey` is required here to provide minimal admin access. 
-   - **Disclaimer:** ***Accessing or logging into the instances themselves is for demonstration and debugging purposes only. All configuration changes should be applied by updating the model using the template. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more details.***
+- If you have customized the Runtime Configurations, use the **bigIpRuntimeInitConfig** input parameter to specify the new location of the BIG-IP Runtime-Init config. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details. 
 
-- In the Autoscale model, instances are ephemeral so remote logging is required. By default, this example logs to Cloudwatch and creates a Log Group, Log Stream and Dashboard. However, there are many possible destinations. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more details.
+- If you have cloned this repository to modify the templates or BIG-IP config files and published to your own location (NOTE: CloudFormation can only reference S3 bucket locations for templates and not generic URLs like from GitHub), you can use the **s3BucketName**, **s3BucketRegion** and **artifactLocation** input parameters to specify the new location of the customized templates. You may also need to ensure that the user has READ IAM permissions to that bucket. See main [/examples/README.md](../README.md#cloud-configuration) for more template customization details. 
+
+- By default, the example runtime-init configs do not create a password authenticated BIG-IP user as it follows the immutable model (in other words, individual instances are not meant to be actively managed post-deployment, and configuration is instead defined through the model). However, sshKey is required here to provide minimal admin access. 
+   -  **Disclaimer:** ***Accessing or logging into the instances themselves is for demonstration and debugging purposes only. All configuration changes should be applied by updating the model via the template instead. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more details.***
+
+- In the autoscale model, instances are ephemeral so remote logging is required. By default, this example logs to CloudWatch and creates a Log Group, Log Stream and Dashboard. However, there are many possible destinations. See AWS [documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/Working-with-log-groups-and-streams.html) and [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more details.
 
 - This solution requires Internet Access for: 
-  1. Downloading additional F5 software components used for onboarding and configuring the BIG-IP (via GitHub.com). By default, this solution provisions Public IPs to enable this but in a production environment, outbound access should be provided by a `routed` SNAT service (for example: NAT Gateway, custom firewall, etc.). *NOTE: access via web proxy is not currently supported. Other options include 1) hosting the file locally and modifying the runtime-init package URL and configuration files to point to local URLs instead or 2) baking them into a custom image, using the [F5 Image Generation Tool](https://clouddocs.f5.com/cloud/public/v1/ve-image-gen_index.html) (BYOL only).*
-  2. Contacting native cloud services (for example, s3.amazonaws.com, ec2.amazonaws.com, etc.) for various cloud integrations: 
+    - Downloading additional F5 software components used for onboarding and configuring the BIG-IP (via GitHub.com). By default, this solution provisions Public IPs to enable this but in a production environment, outbound access should be provided by a `routed` SNAT service (for example: NAT Gateway, custom firewall, etc.). *NOTE: access via web proxy is not currently supported. Other options include 1) hosting the file locally and modifying the runtime-init package URL and configuration files to point to local URLs instead or 2) baking them into a custom image, using the [F5 Image Generation Tool](https://clouddocs.f5.com/cloud/public/v1/ve-image-gen_index.html) (BYOL only).*
+    - Contacting native cloud services (for example, s3.amazonaws.com, ec2.amazonaws.com, etc.) for various cloud integrations: 
     - *Onboarding*:
         - [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) - to fetch secrets from native vault services.
     - *Operation*:
@@ -97,8 +101,6 @@ This solution leverages more traditional Autoscale configuration management prac
         - [F5 Telemetry Streaming](https://clouddocs.f5.com/products/extensions/f5-telemetry-streaming/latest/) - for logging and reporting.
       - Additional cloud services like [VPC endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints.html) can be used to address calls to native services traversing the Internet.
   - See the [Security](#security) section for more details. 
-
-- If you have cloned this repository to modify the templates or BIG-IP config files and published to your own location (NOTE: CloudFormation can only reference S3 locations for templates and not generic URLs like from GitHub), you can use the **s3BucketName**, **s3BucketRegion** and **artifactLocation** input parameters to specify the new location of the customized templates and the **bigIpRuntimeInitConfig** input parameter to specify the new location of the BIG-IP Runtime-Init config. See the main [/examples/README.md](../../README.md#cloud-configuration) for more template customization details. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details.
 
 - In this solution, the BIG-IP VE has the [LTM](https://f5.com/products/big-ip/local-traffic-manager-ltm) and [ASM](https://f5.com/products/big-ip/application-security-manager-asm) modules enabled to provide Advanced Traffic Management and Web Application Security functionality. 
 
@@ -111,132 +113,142 @@ This solution leverages more traditional Autoscale configuration management prac
 
 ### Template Input Parameters
 
-| Parameter | Required | Description |
-| --- | --- | --- |
-| appContainerName | No | The name of the public container used when configuring the application server. If this value is left blank, the application module template is not deployed. |
-| application | No | Application Tag. |
-| appScalingMaxSize | No | Maximum number of Application instances (2-50) that can be created in the Autoscale Group. |
-| appScalingMinSize | No | Minimum number of Application instances (1-49) you want available in the Autoscale Group. |
-| artifactLocation | No | The path in the S3Bucket where the modules folder is located. |
-| bastionScalingMaxSize | No | Maximum number of Bastion instances (2-10) that can be created in the Autoscale Group. |
-| bastionScalingMinSize | No | Minimum number of Bastion instances (1-9) you want available in the Autoscale Group. |
-| bigIpCustomImageId | No | Provide BIG-IP AMI ID you wish to deploy. bigIpCustomImageId is required when bigIpImage is not specified. |
-| bigIpImage | No | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. bigIpImage is required when bigIpCustomImageId is not specified. | 
-| bigIpInstanceType | No | Enter valid instance type. |
-| bigIpMaxBatchSize | No | Specifies the maximum number of instances that CloudFormation updates. |
-| bigIpMinInstancesInService | No | Specifies the minimum number of instances that must be in service within the Auto Scaling group while CloudFormation updates old instances. |
-| bigIpPauseTime | No | The amount of time in seconds that CloudFormation pauses after making a change to a batch of instances to give those instances time to start software applications. |
-| bigIpRuntimeInitConfig | No | Enter a URL to the bigip-runtime-init configuration file in YAML or JSON format. |
-| bigIpRuntimeInitPackageUrl | No | Enter a URL to the bigip-runtime-init package. |
-| bigIpScaleInCpuThreshold | No | Low CPU Percentage threshold to begin scaling in BIG-IP VE instances. | 
-| bigIpScaleInThroughputThreshold | No | Incoming bytes threshold to begin scaling in BIG-IP VE instances. | 
-| bigIpScaleOutCpuThreshold | No | High CPU Percentage threshold to begin scaling out BIG-IP VE instances. | 
-| bigIpScaleOutThroughputThreshold | No | Incoming bytes threshold to begin scaling out BIG-IP VE instances. |
-| bigIpScalingMaxSize | No | Maximum number of BIG-IP instances (2-100) that can be created in the Autoscale Group. |
-| bigIpScalingMinSize | No | Minimum number of BIG-IP instances (1-99) you want available in the Autoscale Group. |
-| cloudWatchLogGroupName | No | The name of the CloudWatch Log Group. |
-| cloudWatchLogStreamName | No | The name of the CloudWatch Log Stream. |
-| cloudWatchDashboardName | No | The name of the CloudWatch Log Dashboard. |
-| cost | No | Cost Center Tag. |
-| createLogDestination | No | Select true to create a new CloudWatch logging destination. |
-| environment | No | Environment Tag. |
-| group | No | Group Tag. |
-| loggingS3BucketName | No | The name of the existing S3 bucket where BIG-IP logs will be sent. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details. |
-| metricNameSpace | Yes | CloudWatch namespace used for custom metrics. This should match the namespace defined in your Telemetry Streaming declaration within bigipRuntimInitConfig. |
-| notificationEmail | Yes | Valid email address to send Auto Scaling event notifications. |
-| numAzs | No | Number of Availability Zones to use in the VPC. Region must support number of availability zones entered. The minimum is 1 and the maximum is 4. |
-| numSubnets | No | Number of subnets per Availability Zone to create. Subnets are labeled `subnetx` where x is the subnet number. The minimum is 2 and the maximum is 8. In a case when BIGIP has no public ip, |numSubnets needs to be set to 3 |
-| owner | No | Application Tag. |
-| provisionExternalBigipLoadBalancer | No | Flag to provision external Load Balancer. |
-| provisionInternalBigipLoadBalancer | No | Flag to provision internal Load Balancer. |
-| provisionPublicIp | No | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host tier will be provisioned instead. See [diagram](diagram-w-bastion.png). |
-| restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please restrict the IP address range to your client, for example 'X.X.X.X/32'. Production should never expose the BIG-IP Management interface to the Internet. |
-| restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
-| s3BucketName | No | S3 bucket name for the modules. S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen. |
-| s3BucketRegion | No | The AWS Region where the Quick Start S3 bucket (s3BucketName) is hosted. When using your own bucket, you must specify this value. |
-| secretArn | No | The ARN of a Secrets Manager secret. |
-| snsEvents | No | Provides list of SNS Topics used on Autoscale Group. | 
-| sshKey | Yes | Enter the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. For example, `myAWSkey`. |
-| subnetMask | No | Mask for subnets. Valid values include 16-28. Note: supernetting of VPC occurs based on mask provided; therefore the number of networks must be greater than or equal to the number of subnets created. |
-| uniqueString | Yes | Unique String used when creating object names or Tags. |
-| vpcCidr | No | CIDR block for the VPC. |
+* **Required** means user input is required because there is no default value or an empty string is not allowed. If no value is provided, the template will fail to launch. Note: In some cases, the default value may only work on the first deployment due to creating a resource in a global namespace and customization is recommended. See the Description for more details. 
+
+
+| Parameter | Required | Default | Type | Description |
+| --- | --- | --- |  --- | --- |
+| appContainerName | No | f5devcentral/f5-demo-app:latest  | string | The name of the public container used when configuring the application server. If this value is left blank, the application module template is not deployed. |
+| application | No | f5app | string | Application Tag. |
+| appScalingMaxSize | No | 50 | string | Maximum number of Application instances (2-50) that can be created in the Autoscale Group. |
+| appScalingMinSize | No | 1 | string | Minimum number of Application instances (1-49) you want available in the Autoscale Group. |
+| artifactLocation | No | f5-aws-cloudformation-v2/v2.0.0.0/examples/  | string | The path in the S3Bucket where the modules folder is located. |
+| bastionScalingMaxSize | No | 2 | string | Maximum number of Bastion instances (2-10) that can be created in the Autoscale Group. |
+| bastionScalingMinSize | No | 1 | string | Minimum number of Bastion instances (1-9) you want available in the Autoscale Group. |
+| bigIpCustomImageId | No |  | string | Provide BIG-IP AMI ID you wish to deploy. bigIpCustomImageId is required when bigIpImage is not specified. Otherwise, can leave empty. |
+| bigIpImage | No | \*16.1.2.1-0.0.10**PAYG-Adv WAF Plus 25Mbps\*  | string | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. bigIpImage is required when bigIpCustomImageId is not specified. | 
+| bigIpInstanceType | No | m5.xlarge  | string | Enter valid instance type. |
+| bigIpMaxBatchSize | No | 5  | string | Specifies the maximum number of instances that CloudFormation updates. |
+| bigIpMinInstancesInService | No | 1 | string | Specifies the minimum number of instances that must be in service within the Auto Scaling group while CloudFormation updates old instances. |
+| bigIpPauseTime | No | 480  | string | The amount of time in seconds that CloudFormation pauses after making a change to a batch of instances to give those instances time to start software applications. |
+| bigIpRuntimeInitConfig | No | https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg-with-app.yaml | string | Enter a URL to the bigip-runtime-init configuration file in YAML or JSON format. |
+| bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run  | string | Enter a URL to the bigip-runtime-init package. |
+| bigIpScaleInCpuThreshold | No | 20  | string | Low CPU Percentage threshold to begin scaling in BIG-IP VE instances. | 
+| bigIpScaleInThroughputThreshold | No | 10000000 | string | Incoming bytes threshold to begin scaling in BIG-IP VE instances. | 
+| bigIpScaleOutCpuThreshold | No | 80  | string | High CPU Percentage threshold to begin scaling out BIG-IP VE instances. | 
+| bigIpScaleOutThroughputThreshold | No | 20000000 | string | Incoming bytes threshold to begin scaling out BIG-IP VE instances. |
+| bigIpScalingMaxSize | No | 50 | string | Maximum number of BIG-IP instances (2-100) that can be created in the Autoscale Group. |
+| bigIpScalingMinSize | No | 1 | string | Minimum number of BIG-IP instances (1-99) you want available in the Autoscale Group. |
+| cloudWatchLogGroupName | No | f5telemetry | string | The name of the CloudWatch Log Group. Note: The name is global for a region. |
+| cloudWatchLogStreamName | No | f5-waf-logs  | string | The name of the CloudWatch Log Stream. |
+| cloudWatchDashboardName | No | F5-BIGIP-WAF-View  | string | The name of the CloudWatch Log Dashboard. The name is global for a region. |
+| cost | No | f5cost  | string | Cost Center Tag. |
+| createLogDestination | No | true | string | Select true to create a new CloudWatch logging destination. |
+| environment | No | f5env | string | Environment Tag. |
+| group | No | f5group  | string | Group Tag. |
+| loggingS3BucketName | No |   | string | The name of the S3 bucket where BIG-IP logs will be sent. |
+| metricNameSpace | Yes |   | string | CloudWatch namespace used for custom metrics. This should match the namespace defined in your Telemetry Streaming declaration within bigipRuntimInitConfig. |
+| notificationEmail | Yes |   | string | Valid email address to send Autoscaling event notifications. |
+| numAzs | No | 2  | string | Number of Availability Zones to use in the VPC. The region must support the number of availability zones entered. The minimum is 1 and the maximum is 4. |
+| numSubnets | No | 3  | string | Number of subnets per Availability Zone to create. Subnets are labeled `subnetx` where x is the subnet number. The minimum is 2 and the maximum is 8. In a case when BIG-IP has no public IP, |numSubnets needs to be set to 3 |
+| owner | No | f5owne  | string | Application Tag. |
+| provisionExternalBigipLoadBalancer | No | true | string | Flag to provision external Load Balancer. |
+| provisionInternalBigipLoadBalancer | No | false  | string | Flag to provision internal Load Balancer. |
+| provisionPublicIp | No | true  | string | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host tier will be provisioned instead. See [diagram](diagram-w-bastion.png). |
+| restrictedSrcAddressMgmt | Yes |   | string | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please restrict the IP address range to your client, for example 'X.X.X.X/32'. Production should never expose the BIG-IP Management interface to the Internet.|
+| restrictedSrcAddressApp | Yes |   | string | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
+| s3BucketRegion | No | us-east-1 | string | The AWS Region for the S3 bucket containing the templates. |
+| s3BucketName | No |  f5-cft-v2 | string | The S3 bucket containing the templates. The S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-). |
+| secretArn | No |   | string | The ARN of a Secrets Manager secret to create READ permissions for. For example, if customizing your runtime-init config with an admin password, logging credential, etc. |
+| snsEvents | No | autoscaling:EC2_INSTANCE_LAUNCH,autoscaling:EC2_INSTANCE_LAUNCH_ERROR  | string | Provides list of SNS Topics used on Autoscale Group. | 
+| sshKey | Yes |   | string | Enter the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. For example, `myAWSkey`. |
+| subnetMask | No | 24 | string | Mask for subnets. Valid values include 16-28. Note: supernetting of VPC occurs based on the mask provided; therefore, number of networks must be greater than or equal to the number of subnets created. |
+| uniqueString | No | myUniqStr  | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+| vpcCidr | No | 10.0.0.0/16 | string | CIDR block for the VPC. |
 
 ### Template Outputs
 
-| Name | Description | Type |
+| Name | Type |  Description |
 | --- | --- | --- |
-| appAutoScaleGroupName | Application Autoscale Group Name| String |
-| bastionAutoscaleGroupName | Application Autoscale Group Name| String |
-| bigIpAutoScaleGroupName | BIG-IP Autoscale Group Name | String |
-| wafExternalDnsName | WAF External DNS Name | String |
-| wafExternalHttpsUrl | WAF External HTTPS URL | String |
-| wafInternalDnsName | WAF Internal DNS Name | String |
-| wafInternalHttpsUrl | WAF Internal HTTPS URL | String |
-| amiId | AMI Id | String |
+| appAutoScaleGroupName | string | Application Autoscale Group Name |
+| bastionAutoscaleGroupName | string | Application Autoscale Group Name |
+| bigIpAutoScaleGroupName | string | BIG-IP Autoscale Group Name |
+| wafExternalDnsName | string | WAF External DNS Name |
+| wafExternalHttpsUrl | string | WAF External HTTPS URL |
+| wafInternalDnsName | string | WAF Internal DNS Name | 
+| wafInternalHttpsUrl | string | WAF Internal HTTPS URL |
+| amiId | string | AMI Id |
 
 
 ### Existing Network Template Input Parameters
 
-| Parameter | Required | Description |
-| --- | --- | --- |
-| application | No | Application Tag. |
-| artifactLocation | No | The path in the S3Bucket where the modules folder is located. |
-| bigIpCustomImageId | No | Provide BIG-IP AMI ID you wish to deploy. bigIpCustomImageId is required when bigIpImage is not specified. |
-| bigIpImage | No | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. bigIpImage is required when bigIpCustomImageId is not specified. | 
-| bigIpInstanceType | No | Enter valid instance type. |
-| bigIpMaxBatchSize | No | Specifies the maximum number of instances that CloudFormation updates. |
-| bigIpMinInstancesInService | No | Specifies the minimum number of instances that must be in service within the Auto Scaling group while CloudFormation updates old instances. |
-| bigIpPauseTime | No | The amount of time in seconds that CloudFormation pauses after making a change to a batch of instances to give those instances time to start software applications. |
-| bigIpRuntimeInitConfig | No | Enter a URL to the bigip-runtime-init configuration file in YAML or JSON format. |
-| bigIpRuntimeInitPackageUrl | No | Enter a URL to the bigip-runtime-init package. |
-| bigIpScaleInCpuThreshold | No | Low CPU Percentage threshold to begin scaling in BIG-IP VE instances. | 
-| bigIpScaleInThroughputThreshold | No | Incoming bytes threshold to begin scaling in BIG-IP VE instances. | 
-| bigIpScaleOutCpuThreshold | No | High CPU Percentage threshold to begin scaling out BIG-IP VE instances. | 
-| bigIpScaleOutThroughputThreshold | No | Incoming bytes threshold to begin scaling out BIG-IP VE instances. |
-| bigIpScalingMaxSize | No | Maximum number of BIG-IP instances (2-100) that can be created in the Autoscale Group. |
-| bigIpScalingMinSize | No | Minimum number of BIG-IP instances (1-99) you want available in the Autoscale Group. |
-| bigIpSubnetAz1 | Yes | Availability Zone 1 BIG-IP Subnet ID. |
-| bigIpSubnetAz2 | Yes | Availability Zone 2 BIG-IP Subnet ID. |
-| cloudWatchLogGroupName | No | The name of the CloudWatch Log Group. |
-| cloudWatchLogStreamName | No | The name of the CloudWatch Log Stream. |
-| cloudWatchDashboardName | No | The name of the CloudWatch Log Dashboard. |
-| cost | No | Cost Center Tag. |
-| createLogDestination | No | Select true to create a new CloudWatch logging destination. |
-| environment | No | Environment Tag. |
-| externalSubnetAz1 | Yes | Availability Zone 1 External Subnet ID. |
-| externalSubnetAz2 | Yes | Availability Zone 2 External Subnet ID. |
-| internalSubnetAz2 | Yes | Availability Zone 1 Internal Subnet ID. |
-| internalSubnetAz2 | Yes | Availability Zone 2 Internal Subnet ID. |
-| name | Yes | . |
-| group | No | Group Tag. |
-| loggingS3BucketName | No | The name of the existing S3 bucket where BIG-IP logs will be sent. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details. |
-| metricNameSpace | Yes | CloudWatch namespace used for custom metrics. This should match the namespace defined in your Telemetry Streaming declaration within bigipRuntimInitConfig. |
-| notificationEmail | Yes | Valid email address to send Auto Scaling event notifications. |
-| owner | No | Application Tag. |
-| provisionExternalBigipLoadBalancer | No | Flag to provision external Load Balancer. |
-| provisionInternalBigipLoadBalancer | No | Flag to provision internal Load Balancer. |
-| provisionPublicIp | No | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host tier will be provisioned instead. See [diagram](diagram-w-bastion.png). |
-| restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please restrict the IP address range to your client, for example 'X.X.X.X/32'. Production should never expose the BIG-IP Management interface to the Internet. |
-| restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
-| s3BucketName | No | S3 bucket name for the modules. S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen. |
-| s3BucketRegion | No | The AWS Region where the Quick Start S3 bucket (s3BucketName) is hosted. When using your own bucket, you must specify this value. |
-| secretArn | No | The ARN of a Secrets Manager secret. |
-| snsEvents | No | Provides list of SNS Topics used on Autoscale Group. | 
-| sshKey | Yes | Enter the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. For example, `myAWSkey`. |
-| uniqueString | Yes | Unique String used when creating object names or Tags. |
-| vpcCidr | No | CIDR block for the existing VPC. |
-| vpcId | No | ID for the existing VPC. |
+| Parameter | Required | Default | Type | Description |
+| --- | --- | --- |  --- | --- |
+| appContainerName | No | f5devcentral/f5-demo-app:latest  | string | The name of the public container used when configuring the application server. If this value is left blank, the application module template is not deployed. |
+| application | No | f5app | string | Application Tag. |
+| appScalingMaxSize | No | 50 | string | Maximum number of Application instances (2-50) that can be created in the Autoscale Group. |
+| appScalingMinSize | No | 1 | string | Minimum number of Application instances (1-49) you want available in the Autoscale Group. |
+| artifactLocation | No | f5-aws-cloudformation-v2/v2.0.0.0/examples/  | string | The path in the S3Bucket where the modules folder is located. |
+| bastionScalingMaxSize | No | 2 | string | Maximum number of Bastion instances (2-10) that can be created in the Autoscale Group. |
+| bastionScalingMinSize | No | 1 | string | Minimum number of Bastion instances (1-9) you want available in the Autoscale Group. |
+| bigIpCustomImageId | No |  | string | Provide BIG-IP AMI ID you wish to deploy. bigIpCustomImageId is required when bigIpImage is not specified. Otherwise, can leave empty. |
+| bigIpImage | No | \*16.1.2.1-0.0.10**PAYG-Adv WAF Plus 25Mbps\*  | string | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. bigIpImage is required when bigIpCustomImageId is not specified. | 
+| bigIpInstanceType | No | m5.xlarge  | string | Enter valid instance type. |
+| bigIpMaxBatchSize | No | 5  | string | Specifies the maximum number of instances that CloudFormation updates. |
+| bigIpMinInstancesInService | No | 1 | string | Specifies the minimum number of instances that must be in service within the Auto Scaling group while CloudFormation updates old instances. |
+| bigIpPauseTime | No | 480  | string | The amount of time in seconds that CloudFormation pauses after making a change to a batch of instances to give those instances time to start software applications. |
+| bigIpRuntimeInitConfig | No | https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg.yaml  | string | Enter a URL to the bigip-runtime-init configuration file in YAML or JSON format. |
+| bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run  | string |Enter a URL to the bigip-runtime-init package. |
+| bigIpScaleInCpuThreshold | No | 20  | string | Low CPU Percentage threshold to begin scaling in BIG-IP VE instances. | 
+| bigIpScaleInThroughputThreshold | No | 10000000 | string | Incoming bytes threshold to begin scaling in BIG-IP VE instances. | 
+| bigIpScaleOutCpuThreshold | No | 80  | string | High CPU Percentage threshold to begin scaling out BIG-IP VE instances. | 
+| bigIpScaleOutThroughputThreshold | No | 20000000 | string | Incoming bytes threshold to begin scaling out BIG-IP VE instances. |
+| bigIpScalingMaxSize | No | 50 | string | Maximum number of BIG-IP instances (2-100) that can be created in the Autoscale Group. |
+| bigIpScalingMinSize | No | 1 | string | Minimum number of BIG-IP instances (1-99) you want available in the Autoscale Group. |
+| bigIpSubnetAz1 | Yes |   | string | Availability Zone 1 BIG-IP Subnet ID. |
+| bigIpSubnetAz2 | Yes |   | string | Availability Zone 2 BIG-IP | 
+| cloudWatchLogGroupName | No | f5telemetry | string | The name of the CloudWatch Log Group. Note: The name is global for a region. Will be added to IAM role. |
+| cloudWatchLogStreamName | No | f5-waf-logs  | string | The name of the CloudWatch Log Stream. |
+| cloudWatchDashboardName | No | F5-BIGIP-WAF-View  | string | The name of the CloudWatch Log Dashboard. The name is global for a region. |
+| cost | No | f5cost  | string | Cost Center Tag. |
+| createLogDestination | No | true | string | Select true to create a new CloudWatch logging destination. |
+| environment | No | f5env | string | Environment Tag. |
+| externalSubnetAz1 | Yes |   | string | Availability Zone 1 External Subnet ID. |
+| externalSubnetAz2 | Yes |   | string | Availability Zone 2 External Subnet ID. |
+| internalSubnetAz2 | Yes |   | string | Availability Zone 1 Internal Subnet ID. |
+| internalSubnetAz2 | Yes |   | string | Availability Zone 2 Internal Subnet ID. |
+| group | No | f5group  | string | Group Tag. |
+| loggingS3BucketName | No |   | string | The name of the S3 bucket where BIG-IP logs will be sent. |
+| metricNameSpace | Yes |   | string | CloudWatch namespace used for custom metrics. This should match the namespace defined in your Telemetry Streaming declaration within bigipRuntimInitConfig. |
+| notificationEmail | Yes |   | string | Valid email address to send Autoscaling event notifications. |
+| numAzs | No | 2  | string | Number of Availability Zones to use in the VPC. The region must support the number of availability zones entered. The minimum is 1 and the maximum is 4. |
+| numSubnets | No | 3  | string | Number of subnets per Availability Zone to create. Subnets are labeled `subnetx` where x is the subnet number. The minimum is 2 and the maximum is 8. In a case when BIG-IP has no public IP, |numSubnets needs to be set to 3 |
+| owner | No | f5owner  | string | Application Tag. |
+| provisionExternalBigipLoadBalancer | No | true | string | Flag to provision external Load Balancer. |
+| provisionInternalBigipLoadBalancer | No | false  | string | Flag to provision internal Load Balancer. |
+| provisionPublicIp | No | true  | string | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host tier will be provisioned instead. See [diagram](diagram-w-bastion.png). |
+| restrictedSrcAddressMgmt | Yes |   | string | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please restrict the IP address range to your client, for example 'X.X.X.X/32'. Production should never expose the BIG-IP Management interface to the Internet.|
+| restrictedSrcAddressApp | Yes |   | string | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
+| s3BucketRegion | No | us-east-1 | string | The AWS Region for the S3 bucket containing the templates. |
+| s3BucketName | No |  f5-cft-v2 | string | The S3 bucket containing the templates. The S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-). |
+| secretArn | No |   | string | The ARN of a Secrets Manager secret to create READ permissions for. For example, if customizing your runtime-init config with an admin password, logging credential, etc. |
+| snsEvents | No | autoscaling:EC2_INSTANCE_LAUNCH,autoscaling:EC2_INSTANCE_LAUNCH_ERROR  | string | Provides list of SNS Topics used on Autoscale Group. | 
+| sshKey | Yes |   | string | Enter the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. For example, `myAWSkey`. |
+| subnetMask | No | 24 | string | Mask for subnets. Valid values include 16-28. Note: supernetting of VPC occurs based on the mask provided; therefore, number of networks must be greater than or equal to the number of subnets created. |
+| uniqueString | No | myUniqStr  | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+| vpcCidr | No | 10.0.0.0/16 | string | CIDR block for the VPC. |
+| vpcId | Yes |   | string | ID for the existing VPC. |
 
 ### Existing Network Template Outputs
 
-| Name | Description | Type |
+| Name | Type | Description |
 | --- | --- | --- |
-| bigIpAutoScaleGroupName | BIG-IP Autoscale Group Name | String |
-| wafExternalDnsName | WAF External DNS Name | String |
-| wafExternalHttpsUrl | WAF External HTTPS URL | String |
-| wafInternalDnsName | WAF Internal DNS Name | String |
-| wafInternalHttpsUrl | WAF Internal HTTPS URL | String |
-| amiId | AMI Id | String |
+| bigIpAutoScaleGroupName | string | BIG-IP Autoscale Group Name |
+| wafExternalDnsName | string | WAF External DNS Name |
+| wafExternalHttpsUrl | string | WAF External HTTPS URL |
+| wafInternalDnsName | string | WAF Internal DNS Name |
+| wafInternalHttpsUrl | string | WAF Internal HTTPS URL |
+| amiId | string | AMI Id |
 
 
 ## Deploying this Solution
@@ -336,13 +348,13 @@ F5 has provided the following example configuration files in the `examples/autos
 
 - `runtime-init-conf-bigiq.yaml` - This configuration file installs packages for a BIG-IQ licensed deployment based on the Automation Toolchain declaration URLs listed above.
 - `runtime-init-conf-payg.yaml` - This inline configuration file installs packages for a PAYG licensed deployment.
-- `runtime-init-conf-bigiq_with_app.yaml` - This configuration file installs packages and creates WAF-protected services for a BIG-IQ licensed deployment based on the Automation Toolchain declaration URLs listed above.
-- `runtime-init-conf-payg_with_app.yaml` - This inline configuration file installs packages and creates WAF-protected services for a PAYG licensed deployment.
+- `runtime-init-conf-bigiq-with-app.yaml` - This configuration file installs packages and creates WAF-protected services for a BIG-IQ licensed deployment based on the Automation Toolchain declaration URLs listed above.
+- `runtime-init-conf-payg-with-app.yaml` - This inline configuration file installs packages and creates WAF-protected services for a PAYG licensed deployment.
 - `Rapid_Deployment_Policy_13_1.xml` - This ASM security policy is supported for BIG-IP 13.1 and later.
 
 See [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) for more examples.
 
-By default, the full stack solution deploys the example `runtime-init-conf-payg_with_app.yaml` runtime-init config file. The existing stack solution deploys the example `runtime-init-conf-payg.yaml`.
+By default, the full stack solution deploys the example `runtime-init-conf-payg-with-app.yaml` runtime-init config file. The existing stack solution deploys the example `runtime-init-conf-payg.yaml`.
 
 By default, this solution sends metrics and logs to the following CloudWatch destinations: 
   - metricsNamespace: f5-scaling-metrics 
@@ -355,7 +367,7 @@ Most changes require republishing/rehosting the BIG-IP configuration to match re
 
 To change the CloudWatch destination values:
 
-  1. Edit/modify the Telemetry Streaming (TS) declaration in a corresponding runtime-init config file [runtime-init-conf-payg_with_app.yaml](../bigip-configurations/runtime-init-conf-payg-with-app.yaml) with the new `metricNamespace`, `logGroup`, and `logStream` values. 
+  1. Edit/modify the Telemetry Streaming (TS) declaration in a corresponding runtime-init config file [runtime-init-conf-payg-with-app.yaml](../bigip-configurations/runtime-init-conf-payg-with-app.yaml) with the new `metricNamespace`, `logGroup`, and `logStream` values. 
 
 Example:
 ```yaml
@@ -492,10 +504,10 @@ To test the WAF service, perform the following steps:
     <html><head><title>Request Rejected</title></head><body>The requested URL was rejected. Please consult with your administrator.<br><br>Your support ID is: 2394594827598561347<br><br><a href='javascript:history.back();'>[Go Back]</a></body></html>
     ```
 
-### Viewing the CloudWatch Dasbboard
+### Viewing the CloudWatch Dashboard
 
  - If left at the defaults, a CloudWatch Dashboard named "F5-BIGIP-WAF-View" is created. 
-    - **Console**: Navigate to **Cloudwatch > *DASHBOARD_NAME***.
+    - **Console**: Navigate to **CloudWatch > *DASHBOARD_NAME***.
       - Review any violations.
 
 
@@ -535,7 +547,7 @@ From Template Outputs:
          - Obtain an Instance ID of one of the Bastion Host instances
          - Obtain the Public IP of the Bastion Host instance
 
-       - Obtain the Private IP address of the bigip host instead: 
+       - Obtain the Private IP address of the BIG-IP host instead: 
          -  **Console**: Navigate to **EC2 > Instances > *INSTANCE_ID* > Instance Summary > Public IPv4 address**.
          -  **AWS CLI**: 
          - Private IPs: 
@@ -565,7 +577,7 @@ From Template Outputs:
 #### WebUI 
 
 - Login in via WebUI:
-  - As mentioned above, no password is configured by default. If you would like or need to login to the GUI for debugging or inspection, you can create a custom username/password by logging in to admin account via SSH (per above) and use tmsh to create one:
+  - As mentioned above, no password is configured by default. If you would like or need to login to the GUI for debugging or inspection, you can create a custom username/password by logging in to admin account via SSH (per above) and use TMSH to create one:
     At the TMSH prompt ```admin@(bigip1)(cfg-sync Standalone)(Active)(/Common)(tmos)#```:
       ```shell
       create auth user <YOUR_WEBUI_USERNAME> password <YOUR_STRONG_PASSWORD> partition-access add { all-partitions { role admin } }
@@ -606,7 +618,7 @@ From Template Outputs:
 
 #### WebUI
  - Navigate to **Virtual Services**.
-    - From the drop down menu **Partition** (upper right), select Partition = `Tenant_1`.
+    - From the drop-down menu **Partition** (upper right), select Partition = `Tenant_1`.
     - Navigate to **Local Traffic > Virtual Servers**. You should see two Virtual Services (one for HTTP and one for HTTPS). The should show up as Green. Click on them to look at the configuration *(declared in the AS3 declaration)*
 
 #### SSH
@@ -699,7 +711,7 @@ that are not [deleted](https://github.com/aws/serverless-application-model/issue
 
 1. Navigate to **CloudWatch > Log groups**.
 
-2. Use the Filter bar to filter for Log Groups with your stack name,:
+2. Use the Filter bar to filter for Log Groups with your stack name:
     ```bash
     /aws/lambda/${STACK_NAME}-Function
     ``` 
@@ -734,7 +746,7 @@ There are generally two classes of issues:
 1. Stack creation itself failed
 2. Resource(s) within the stack failed to deploy
 
-In the even that a template in the stack failed, click on the name of a failed stack and then click `Events`. Check the `Status Reason` column for the failed event for details about the cause. 
+If a template in the stack failed, click on the name of a failed stack and then click `Events`. Check the `Status Reason` column for the failed event for details about the cause. 
 
 **When creating a GitHub issue for a template, please include as much information as possible from the failed CloudFormation stack events.**
 

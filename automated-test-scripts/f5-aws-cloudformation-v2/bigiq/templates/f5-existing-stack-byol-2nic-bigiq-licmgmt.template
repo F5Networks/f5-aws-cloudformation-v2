@@ -682,7 +682,7 @@
 		},
 		"device1subnet1Az1Interface": {
 			"Properties": {
-				"Description": "Private Interface for the the instance",
+				"Description": "Private Interface for the instance",
 				"GroupSet": [{
 					"Ref": "deviceInternalSecurityGroup"
 				}],

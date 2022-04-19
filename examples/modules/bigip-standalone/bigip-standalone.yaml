@@ -287,7 +287,7 @@ Metadata:
       internalSubnetId:
         default: Internal Subnet Id
       licenseType:
-        default: Licence type used for BIG-IP VE
+        default: License type used for BIG-IP VE
       mgmtPublicIpId:
         default: Management Public Ip Id
       mgmtSecurityGroupId:

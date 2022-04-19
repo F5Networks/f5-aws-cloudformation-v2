@@ -517,7 +517,7 @@ Metadata:
       group:
         default: Group
       licenseType:
-        default: Licence Type
+        default: License Type
       numNics:
         default: Interfaces
       owner:
@@ -698,7 +698,7 @@ Parameters:
       - payg
       - byol
     Default: payg
-    Description: Specifies licence type used for BIG-IP VE.
+    Description: Specifies license type used for BIG-IP VE.
     Type: String
   numNics:
     AllowedValues:

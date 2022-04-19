@@ -506,7 +506,7 @@ Metadata:
       group:
         default: Group
       licenseType:
-        default: Licence Type
+        default: License Type
       numAzs:
         default: Availability Zones
       numNics:
@@ -667,7 +667,7 @@ Parameters:
       - payg
       - byol
     Default: payg
-    Description: Specifies licence type used for BIG-IP VE.
+    Description: Specifies license type used for BIG-IP VE.
     Type: String
   numAzs:
     AllowedValues:
