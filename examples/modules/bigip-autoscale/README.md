@@ -41,7 +41,7 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
   * [Autoscale Group](https://docs.aws.amazon.com/autoscaling/ec2/userguide/AutoScalingGroup.html)
   * [AutoScaling Launch Configuration](https://docs.aws.amazon.com/autoscaling/ec2/userguide/LaunchConfiguration.html)
   * [AutoScaling Scaling Policy](https://docs.aws.amazon.com/autoscaling/ec2/userguide/as-scale-based-on-demand.html)
-  * [Cloudwatch Alarm](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html)
+  * [CloudWatch Alarm](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html)
   * [SNS Topic](https://docs.aws.amazon.com/sns/latest/dg/sns-create-topic.html)
 
     

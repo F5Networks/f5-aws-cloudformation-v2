@@ -26,21 +26,21 @@ This solution creates IAM roles based on the following **solutionTypes**:
 
   - standard
     - Service Discovery *(used by AS3)*
-    - Cloudwatch Metrics and Logging *(used by Telemetry Streaming)*
+    - CloudWatch Metrics and Logging *(used by Telemetry Streaming)*
     - CloudFormation Status Update *(Used by templates)*
   - secret
-    - permissions from standard +
-    - access a secret from secret-manager *(used by Runtime-Init)*
+    - Permissions from standard +
+    - Access a secret from secret-manager *(used by Runtime-Init)*
   - s3
-    - permissions from standard + 
+    - Permissions from standard + 
     - S3 bucket *(used by Telemetry Streaming for remote S3 Logging or Cloud Failover Extension for State File Storage)*
   - secretS3
-    - permissions from standard + 
-    - access a secret from secret-manager *(used by Runtime-Init)*
+    - Permissions from standard + 
+    - Access a secret from secret-manager *(used by Runtime-Init)*
     - S3 bucket *(used by Telemetry Streaming for remote S3 Logging or Cloud Failover Extension for State File Storage)*
   - failover
-    - permissions from standard + 
-    - access a secret from secret-manager *(used by Runtime-Init)*
+    - Permissions from standard + 
+    - Access a secret from secret-manager *(used by Runtime-Init)*
     - S3 bucket *(used by Telemetry Streaming for remote S3 Logging or Cloud Failover Extension for State File Storage)*
     - Update permissions for IP addresses/routes *(used by Cloud Failover Extension)*
 

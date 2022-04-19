@@ -16,7 +16,7 @@
 
 ## Introduction
 
-This Cloudformation template creates Telemetry module intended to setup infrastructure (i.e. CloudWatch) to enable Remote Logging
+This CloudFormation template creates a Telemetry module intended to setup infrastructure (i.e. CloudWatch) to enable Remote Logging.
 
 ## Prerequisites
 

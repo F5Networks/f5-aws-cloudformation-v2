@@ -52,7 +52,7 @@ This solution uses a parent template to launch several linked child templates (m
 Use the *failover.yaml* parent template to deploy an example full stack HA solution, complete with network, bastion *(optional)*, dag/ingress, access, bigip(s) and application.  
 
 ***Existing Network Stack (failover-existing-network.yaml)***<br>
-Use the *failover-existing-network.yaml* parent template to deploy HA solution into an existing network infrastructure. This template expects vpc, subnets, and bastion host(s) have already been deployed. A demo application is also not part of this parent template as it intended use is for a production deployment.
+Use the *failover-existing-network.yaml* parent template to deploy HA solution into an existing network infrastructure. This template expects VPC, subnets, and bastion host(s) have already been deployed. A demo application is also not part of this parent template as it intended use is for a production deployment.
 
 The modules below create the following cloud resources:
 
@@ -63,7 +63,7 @@ The modules below create the following cloud resources:
 - **Access**: This template creates AWS InstanceProfiles and IAM Roles.
 - **BIG-IP**: This template creates F5 BIG-IP Virtual Edition instances provisioned with Local Traffic Manager (LTM) and (optionally) Application Security Manager (ASM). 
 
-By default, this solution (failover.yaml) creates a VPN with 4 subnets, an example Web Application instance, two PAYG BIG-IP instances with three network interfaces (one for management and two for dataplane/application traffic - called external and internal). Depending on settings, the amount of Public IPs provisioned will vary.
+By default, this solution (failover.yaml) creates a VPN with 4 subnets, an example Web Application instance, two PAYG BIG-IP instances with three network interfaces (one for management and two for dataplane/application traffic - called external and internal). Depending on settings, the number of Public IPs provisioned will vary.
 * Two EIPs will automatically be provisioned for the external Self IPs (for egress system routing).
 * Two EIPs will automatically be provisioned for NAT gateways.
 * If **provisionPublicIpMgmt** is set to **true**, two EIPs will be provisioned the Management Interfaces. If set to **false**, one EIP will be created for a bastion host. 
@@ -104,19 +104,19 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 - By default, this solution modifies the username **admin** with a password set to value of the AWS Secret Manager secret which is provided in the input **secretArn** of the parent template.
 
 - This solution requires Internet access for: 
-  1. Downloading additional F5 software components used for onboarding and configuring the BIG-IP (via github.com and/or cdn.f5.com). Internet access is required via the management interface and then via a dataplane interface (for example, external Self IP) once a default route is configured. See [Overview of Mgmt Routing](https://support.f5.com/csp/article/K13284) for more details. By default, as a convenience, this solution provisions Public IPs to enable this but in a production environment, outbound access should be provided by a `routed` SNAT service (for example: NAT Gateway, custom firewall, etc.). *NOTE: access via web proxy is not currently supported. Other options include 1) hosting the file locally and modifying the runtime-init package url and configuration files to point to local URLs instead or 2) baking them into a custom image, using the [F5 Image Generation Tool](https://clouddocs.f5.com/cloud/public/v1/ve-image-gen_index.html).*
-  2. Contacting native cloud services for various cloud integrations: 
+    - Downloading additional F5 software components used for onboarding and configuring the BIG-IP (via github.com and/or cdn.f5.com). Internet access is required via the management interface and then via a dataplane interface (for example, external Self IP) once a default route is configured. See [Overview of Mgmt Routing](https://support.f5.com/csp/article/K13284) for more details. By default, as a convenience, this solution provisions Public IPs to enable this but in a production environment, outbound access should be provided by a `routed` SNAT service (for example: NAT Gateway, custom firewall, etc.). *NOTE: access via web proxy is not currently supported. Other options include 1) hosting the file locally and modifying the runtime-init package url and configuration files to point to local URLs instead or 2) baking them into a custom image, using the [F5 Image Generation Tool](https://clouddocs.f5.com/cloud/public/v1/ve-image-gen_index.html).*
+    - Contacting native cloud services for various cloud integrations: 
     - *Onboarding*:
         - [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) - to fetch secrets from native vault services
     - *Operation*:
         - [F5 Application Services 3](https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/latest/) - for features like Service Discovery
-        - [Cloud Failover Extension (CFE)](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/) - for updating ip and routes mappings
+        - [Cloud Failover Extension (CFE)](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/) - for updating IP and routes mappings
     - Additional cloud services like [Private endpoints](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints.html) can be used to address calls to native services traversing the Internet.
   - See [Security](#security) section for more details. 
 
-- This solution template provides an **initial** deployment only for an "infrastructure" use case (meaning that it does not support managing the entire deployment exclusively via the template's "Redeploy" function). This solution leverages cloud-init to send the instance **user_data**, which is only used to provide an initial BIG-IP configuration and not as the primary configuration API for a long-running platform. Although "Redeploy" can be used to update some cloud resources, as the BIG-IP configuration needs to align with the cloud resources, like IPs to NICs, updating one without the other can result in inconsistent states, while updating other resources, like the **image** or **instanceType**, can trigger an entire instance re-deloyment. For instance, to upgrade software versions, traditional in-place upgrades should be leveraged. See [AskF5 Knowledge Base](https://support.f5.com/csp/article/K84554955) and [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more information.
+- This solution template provides an **initial** deployment only for an "infrastructure" use case (meaning that it does not support managing the entire deployment exclusively via the template's "Redeploy" function). This solution leverages cloud-init to send the instance **user_data**, which is only used to provide an initial BIG-IP configuration and not as the primary configuration API for a long-running platform. Although "Redeploy" can be used to update some cloud resources, as the BIG-IP configuration needs to align with the cloud resources, like IPs to NICs, updating one without the other can result in inconsistent states, while updating other resources, like the **image** or **instanceType**, can trigger an entire instance redeployment. For instance, to upgrade software versions, traditional in-place upgrades should be leveraged. See [AskF5 Knowledge Base](https://support.f5.com/csp/article/K84554955) and [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more information.
 
-- If you have cloned this repository to modify the templates or BIG-IP config files and published to your own location, you can use the **templateBaseUrl** and **artifactLocation** input parameters to specify the new location of the customized templates and the **bigIpRuntimeInitConfig01** and **bigIpRuntimeInitConfig02** input parameters to specify the new location of the BIG-IP Runtime-Init configs. See main [/examples/README.md](../README.md#cloud-configuration) for more template customization details. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details.
+- If you have cloned this repository to modify the templates or BIG-IP config files and published to your own location (NOTE: CloudFormation can only reference S3 bucket locations for templates and not generic URLs like from GitHub), you can use the **s3BucketName**, **s3BucketRegion** and **artifactLocation** input parameters to specify the new location of the customized templates. You may also need to ensure that the user has READ IAM permissions to that bucket. See main [/examples/README.md](../README.md#cloud-configuration) for more template customization details. If you have customized the Runtime Configurations, use the **bigIpRuntimeInitConfig** input parameter to specify the new location of the BIG-IP Runtime-Init config. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details. 
 
 - In this solution, the BIG-IP VE has the [LTM](https://f5.com/products/big-ip/local-traffic-manager-ltm) and [ASM](https://f5.com/products/big-ip/application-security-manager-asm) (when **provisionExampleApp** is set to **true**) modules enabled to provide advanced traffic management and web application security functionality. 
 
@@ -125,123 +125,130 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 - See [trouble shooting steps](#troubleshooting-steps) for more details.
 
 ### Template Input Parameters
+ 
+* **Required** means user input is required because there is no default value or an empty string is not allowed. If no value is provided, the template will fail to launch. Note: In some cases, the default value may only work on the first deployment due to creating a resource in a global namespace and customization is recommended. See the Description for more details. 
 
-| Parameter | Required | Description |
-| --- | --- | --- |
-| appDockerImageName | No | The name of a container to download and install which is used for the example application server(s). If this value is left blank, the application module template is not deployed. |
-| application | No | Application Tag. |
-| artifactLocation | No | The directory, relative to the templateBaseUrl, where the modules folder is located. |
-| bigIpExternalVip01 | Yes | External Secondary Private IP Address for BIGIP instance A. |
-| bigIpExternalSelfIp01 | No | External Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
-| bigIpInternalSelfIp01 | No | Internal Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
-| bigIpMgmtAddress01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
-| bigIpRuntimeInitConfig01 | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
-| bigIpExternalVip02 | Yes | External Secondary Private IP Address for BIGIP instance B. |
-| bigIpExternalSelfIp02 | No | External Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
-| bigIpInternalSelfIp02 | No | Internal Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
-| bigIpMgmtAddress02 | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
-| bigIpRuntimeInitConfig02 | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
-| bigIpCustomImageId | No | Provide BIG-IP AMI ID you wish to deploy. |
-| bigIpImage | No | F5 BIG-IP Performance Type. |
-| bigIpInstanceType | No | Enter a valid instance type. |
-| bigIpRuntimeInitPackageUrl | No | Supply a URL to the bigip-runtime-init package. |
-| bigIpPeerAddr | No | Type the static self IP address of the remote host here. Set to empty string if not configuring peering with a remote host on this device. |
-| cfeS3Bucket | No | S3 bucket name used by Cloud Failover Extension. |
-| cfeTag | No | Cloud Failover deployment tag value. |
-| cfeVipTag | No | Cloud Failover VIP tag value; provides private ip addresses to be assigned to VIP public ip. |
-| cost | No | Cost Center Tag. |
-| environment | No | Environment Tag. |
-| group | No | Group Tag. |
-| numAzs | No | Number of Availability Zones. Default = 2 |
-| numSubnets | No | Number of Subnets. Default = 3, 4 required when provisionExampleApp = false |
-| owner | No | Owner Tag. |
-| provisionExampleApp | No | Flag to deploy the demo web application.. |
-| provisionPublicIpMgmt | No | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host will be provisioned instead. |
-| restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to access web traffic (80/443) to the AWS instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. NOTE: The vpc cidr is automatically added for internal usage. |
-| restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The vpc cidr is automatically added for internal usage, ex. access via bastion host, clustering, etc. **IMPORTANT**: Please restrict to your client, for example 'X.X.X.X/32'. WARNING - For eval purposes only. Production should never have the BIG-IP Management interface exposed to Internet.|
-| s3BucketRegion | No | AWS Region which contains the S3 Bucket containing templates |
-| secretArn | Yes | REQUIRED: The URL of the AWS secret manager secret, including secret ARN, where the BIG-IP password is stored. |
-| sshKey | Yes | Supply the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. Example: ``myAWSkey`` |
-| subnetMask | No | Mask for subnets. Valid values include 16-28. Note supernetting of VPC occurs based on mask provided; therefore, number of networks must be >= to the number of subnets created. Mask for subnets. Valid values include 16-28. |
-| templateBaseUrl | No | The publicly accessible URL where the linked cloudformation templates are located. |
-| uniqueString | Yes | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
-| vpcCidr | No | CIDR block for the VPC. |
+
+| Parameter | Required* | Default | Type | Description |
+| --- | --- | --- | --- | --- |
+| appDockerImageName | No | f5devcentral/f5-demo-app:latest  | string | The name of a container to download and install which is used for the example application server(s). If this value is left blank, the application module template is not deployed. |
+| application | No | f5app  | string | Application Tag. |
+| artifactLocation | No | f5-aws-cloudformation-v2/v2.0.0.0/examples/  | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
+| bigIpInstanceType | No | m5.xlarge | string | Enter a valid instance type. |
+| bigIpImage | No | \*16.1.2.1-0.0.10**PAYG-Adv WAF Plus 25Mbps\* | string | F5 BIG-IP Performance Type. |
+| bigIpCustomImageId | No |   | string | Provide a custom BIG-IP AMI ID you wish to deploy. Otherwise, can leave empty. |
+| bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run  | string | Supply a URL to the bigip-runtime-init package. |
+| bigIpExternalSelfIp01 | No | 10.0.0.11 | string | External Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtAddress01 | No | 10.0.1.11 | string | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpInternalSelfIp01 | No | 10.0.2.11  | string | Internal Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
+| bigIpRuntimeInitConfig01 | No | https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.2.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
+| bigIpExternalSelfIp02 | No | 10.0.4.11 | string | External Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtAddress02 | No | 10.0.5.11  | string | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpInternalSelfIp02 | No | 10.0.6.11  | string | Internal Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
+| bigIpRuntimeInitConfig02 | No | https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.2.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml  | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
+| bigIpPeerAddr | No | 10.0.1.11  | string | Type the static self IP address of the remote host here. Set to empty string if not configuring peering with a remote host on this device. |
+| bigIpExternalVip01 | No | 10.0.0.101 | string | External Secondary Private IP Address for BIGIP instance A. |
+| bigIpExternalVip02 | No | 10.0.4.101 | string |External Secondary Private IP Address for BIGIP instance B. |
+| cfeVipTag | No |  10.0.0.101,10.0.4.101 | string | Cloud Failover VIP tag value; provides private IP addresses to be assigned to VIP public IP. |
+| cfeTag | No | bigip_high_availability_solution  | string | Cloud Failover deployment tag value. |
+| cfeS3Bucket | No | bigip-high-availability-solution  | string | S3 bucket name used by Cloud Failover Extension. |
+| cost | No | f5cost  | string | Cost Center Tag. |
+| environment | No | f5env  | string | Environment Tag. |
+| group | No | f5group  | string | Group Tag. |
+| numAzs | No | 2  | string | Number of Availability Zones. Default = 2 |
+| numSubnets | No | 4 | string | Number of Subnets. Default = 3, 4 required when provisionExampleApp = false |
+| owner | No | f5own | string | Owner Tag. |
+| provisionExampleApp | No | true  | string | Flag to deploy the demo web application.. |
+| provisionPublicIpMgmt | No | true  | string | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host will be provisioned instead. |
+| restrictedSrcAddressApp | Yes |   | string | An IP address range (CIDR) that can be used to access web traffic (80/443) to the AWS instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. NOTE: The VPC CIDR is automatically added for internal usage. |
+| restrictedSrcAddressMgmt | Yes |   | string | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The VPC CIDR is automatically added for internal usage, ex. access via bastion host, clustering, etc. **IMPORTANT**: Please restrict to your client, for example 'X.X.X.X/32'. WARNING - For eval purposes only. Production should never have the BIG-IP Management interface exposed to Internet.|
+| s3BucketRegion | No | us-east-1 | string | The AWS Region that contains the S3 bucket containing templates. |
+| s3BucketName | No | f5-cft-v2 | string | The S3 bucket name for the modules. The S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-). |
+| secretArn | Yes |   | string | The URL of the AWS secret manager secret, including secret ARN, where the BIG-IP password used for clustering is stored. |
+| sshKey | Yes |   | string | Supply the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. Example: ``myAWSkey`` |
+| subnetMask | No | 24  | string | Mask for subnets. Valid values include 16-28. Note supernetting of VPC occurs based on mask provided; therefore, number of networks must be >= to the number of subnets created. Mask for subnets. Valid values include 16-28. |
+| uniqueString | No | myUniqStr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+| vpcCidr | No | 10.0.0.0/16 | string | CIDR block for the VPC. |
 
 <br>
 
 ### Template Outputs
 
 
-| Name | Description | Required Resource | Type |
+| Name | Required Resource | Type | Description |
 | --- | --- | --- | --- |
-| amiId | ami-id used for deployment | Function Module | string |
-| bastionInstanceId | Instance ID of standalone Bastion instance. | Bastion Module | string |
-| bigIpInstance01 | Instance ID of BIG-IP VE instance | BigipStandalone Module | string |
-| bigIpInstanceMgmtPrivateIp01 | Private management address | BigipStandalone Module | string |
-| bigIpInstance02 | Instance ID of BIG-IP VE instance | BigipStandalone Module | string |
-| bigIpInstanceMgmtPrivateIp02 | Private management address | BigipStandalone Module | string |
-| cfeS3Bucket | s3 bucket used for cloud failover extension | BigipStandalone Module | string |
+| amiId | Function Module | string | ami-id used for deployment |
+| bastionInstanceId | Bastion Module | string | Instance ID of standalone Bastion instance. | 
+| bigIpInstance01 | BigipStandalone Module | string | Instance ID of BIG-IP VE instance |
+| bigIpInstanceMgmtPrivateIp01 | BigipStandalone Module | string | Private management address |
+| bigIpInstance02 | BigipStandalone Module | string | Instance ID of BIG-IP VE instance |
+| bigIpInstanceMgmtPrivateIp02 | BigipStandalone Module | string | Private management address |
+| cfeS3Bucket | BigipStandalone Module | string | s3 bucket used for cloud failover extension |
 
 
 ### Existing Network Template Input Parameters
 
-
-| Parameter | Required | Description |
-| --- | --- | --- |
-| application | No | Application Tag. |
-| artifactLocation | No | The directory, relative to the templateBaseUrl, where the modules folder is located. |
-| bigIpExternalVip01 | Yes | External Secondary Private IP Address for BIGIP instance A. |
-| bigIpExternalSelfIp01 | No | External Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
-| bigIpExternalSubnetId01 | Yes | Subnet id used for BIGIP instance A external interface. |
-| bigIpInternalSelfIp01 | No | Internal Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
-| bigIpInternalSubnetId01 | Yes | Subnet id used for BIGIP instance A internal interface. |
-| bigIpMgmtAddress01 | No | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
-| bigIpMgmtSubnetId01 | Yes | Subnet id used for BIGIP instance A management interface. |
-| bigIpRuntimeInitConfig01 | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
-| bigIpExternalVip02 | Yes | External Secondary Private IP Address for BIGIP instance B. |
-| bigIpExternalSelfIp02 | No | External Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
-| bigIpExternalSubnetId02 | Yes | Subnet id used for BIGIP instance B external interface. |
-| bigIpInternalSelfIp02 | No | Internal Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
-| bigIpInternalSubnetId02 | Yes | Subnet id used for BIGIP instance B internal interface. |
-| bigIpMgmtAddress02 | No | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
-| bigIpMgmtSubnetId02 | Yes | Subnet id used for BIGIP instance B management interface. |
-| bigIpRuntimeInitConfig02 | No | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
-| bigIpCustomImageId | No | Provide BIG-IP AMI ID you wish to deploy. |
-| bigIpImage | No | F5 BIG-IP Performance Type. |
-| bigIpInstanceType | No | Enter a valid instance type. |
-| bigIpRuntimeInitPackageUrl | No | Supply a URL to the bigip-runtime-init package. |
-| cfeS3Bucket | No | S3 bucket name used by Cloud Failover Extension. |
-| cfeTag | No | Cloud Failover deployment tag value. |
-| cfeVipTag | No | Cloud Failover VIP tag value; provides private ip addresses to be assigned to VIP public ip. |
-| cost | No | Cost Center Tag. |
-| environment | No | Environment Tag. |
-| group | No | Group Tag. |
-| owner | No | Owner Tag. |
-| provisionPublicIpMgmt | No | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host will be provisioned instead. |
-| provisionPublicIpVip | No | Whether or not to provision a public IP address for the example VIP on the BIGIP's external network interface. *Note: Public IPs will be automatically provisioned for the external unique Self IPs as needed for egress system routing.* |
-| restrictedSrcAddressApp | Yes | An IP address range (CIDR) that can be used to access web traffic (80/443) to the AWS instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. NOTE: The vpc cidr is automatically added for internal usage. |
-| restrictedSrcAddressMgmt | Yes | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The vpc cidr is automatically added for internal usage, ex. access via bastion host, clustering, etc. **IMPORTANT**: Please restrict to your client, for example 'X.X.X.X/32'. WARNING - For eval purposes only. Production should never have the BIG-IP Management interface exposed to Internet.|
-| s3BucketRegion | No | AWS Region which contains the S3 Bucket containing templates |
-| secretArn | Yes | REQUIRED: The URL of the AWS secret manager secret, including secret ARN, where the BIG-IP password is stored. |
-| sshKey | Yes | Supply the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. Example: ``myAWSkey`` |
-| templateBaseUrl | No | The publicly accessible URL where the linked cloudformation templates are located. |
-| uniqueString | Yes | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
-| vpcCidr | No | CIDR block for the VPC. |
-| vpcId | Yes | Id for VPC to use with deployment. |
+| Parameter | Required* | Default | Type | Description |
+| --- | --- | --- |  --- | --- | 
+| appDockerImageName | No | f5devcentral/f5-demo-app:latest  | string | The name of a container to download and install which is used for the example application server(s). If this value is left blank, the application module template is not deployed. |
+| application | No | f5app  | string | Application Tag. |
+| artifactLocation | No | f5-aws-cloudformation-v2/v2.0.0.0/examples/  | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
+| bigIpInstanceType | No | m5.xlarge | string | Enter a valid instance type. |
+| bigIpImage | No | \*16.1.2.1-0.0.10**PAYG-Adv WAF Plus 25Mbps\* | string | F5 BIG-IP Performance Type. |
+| bigIpCustomImageId | No |   | string | Provide a custom BIG-IP AMI ID you wish to deploy. Otherwise, can leave empty. |
+| bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run  | string | Supply a URL to the bigip-runtime-init package. |
+| bigIpExternalSubnetId01 | Yes |   | string | Subnet id used for BIGIP instance A external interface. |
+| bigIpExternalSelfIp01 | No | 10.0.0.11 | string | External Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtSubnetId01 | Yes |   | string | Subnet id used for BIGIP instance A management interface. |
+| bigIpMgmtAddress01 | No | 10.0.1.11 | string | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
+| bigIpInternalSubnetId01 | Yes |   | string | Subnet id used for BIGIP instance A internal interface. |
+| bigIpInternalSelfIp01 | No | 10.0.2.11  | string | Internal Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
+| bigIpRuntimeInitConfig01 | No | https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.2.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml  | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
+| bigIpExternalSubnetId02 | Yes |   | string | Subnet id used for BIGIP instance B external interface. |
+| bigIpExternalSelfIp02 | No | 10.0.4.11 | string | External Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
+| bigIpMgmtSubnetId02 | Yes |   | string | Subnet id used for BIGIP instance B management interface. |
+| bigIpMgmtAddress02 | No | 10.0.5.11  | string | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
+| bigIpInternalSubnetId02 | Yes |   | string | Subnet id used for BIGIP instance B internal interface. |
+| bigIpInternalSelfIp02 | No | 10.0.6.11  | string | Internal Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
+| bigIpRuntimeInitConfig02 | No | https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.2.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml  | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
+| bigIpPeerAddr | No | 10.0.1.11  | string | Type the static self IP address of the remote host here. Set to empty string if not configuring peering with a remote host on this device. |
+| bigIpExternalVip01 | No | 10.0.0.101 | string | External Secondary Private IP Address for BIGIP instance A. |
+| bigIpExternalVip02 | No | 10.0.4.101 | string | External Secondary Private IP Address for BIGIP instance B. |
+| cfeVipTag | No |  10.0.0.101,10.0.4.101 | string | Cloud Failover VIP tag value; provides private IP addresses to be assigned to VIP public IP. |
+| cfeTag | No | bigip_high_availability_solution  | string | Cloud Failover deployment tag value. |
+| cfeS3Bucket | No | bigip-high-availability-solution  | string | S3 bucket name used by Cloud Failover Extension. |
+| cost | No | f5cost  | string | Cost Center Tag. |
+| environment | No | f5env  | string | Environment Tag. |
+| group | No | f5group  | string | Group Tag. |
+| numAzs | No | 2  | string | Number of Availability Zones. Default = 2 |
+| numSubnets | No | 4 | string | Number of Subnets. Default = 3, 4 required when provisionExampleApp = false |
+| owner | No | f5own | string |Owner Tag. |
+| provisionExampleApp | No | true  | string | Flag to deploy the demo web application. |
+| provisionPublicIpMgmt | No | true  | string | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host will be provisioned instead. |
+| restrictedSrcAddressApp | Yes |   | string | An IP address range (CIDR) that can be used to access web traffic (80/443) to the AWS instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. NOTE: The VPC CIDR is automatically added for internal usage. |
+| restrictedSrcAddressMgmt | Yes |   | string | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The VPC CIDR is automatically added for internal usage, ex. access via bastion host, clustering, etc. **IMPORTANT**: Please restrict to your client, for example 'X.X.X.X/32'. WARNING - For eval purposes only. Production should never have the BIG-IP Management interface exposed to Internet.|
+| s3BucketRegion | No | us-east-1 | string | The AWS Region that contains the S3 bucket containing templates. |
+| s3BucketName | No | f5-cft-v2 | string | The S3 bucket name for the modules. The S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-). |
+| secretArn | Yes |   | string | The URL of the AWS secret manager secret, including secret ARN, where the BIG-IP password used for clustering is stored. |
+| sshKey | Yes |   | string | Supply the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. Example: ``myAWSkey`` |
+| subnetMask | No | 24  | string | Mask for subnets. Valid values include 16-28. Note supernetting of VPC occurs based on mask provided; therefore, number of networks must be >= to the number of subnets created. Mask for subnets. Valid values include 16-28. |
+| uniqueString | No | myUniqStr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+| vpcCidr | No | 10.0.0.0/16 | string | CIDR block for the VPC. |
+| vpcId | Yes |   | string | Id for VPC to use with deployment. |
 
 <br>
 
 ### Existing Network Template Outputs
 
 
-| Name | Description | Required Resource | Type |
+| Name | Required Resource | Type | Description |
 | --- | --- | --- | --- |
-| amiId | ami-id used for deployment | Function Module | string |
-| bigIpInstance01 | Instance ID of BIG-IP VE instance | BigipStandalone Module | string |
-| bigIpInstanceMgmtPrivateIp01 | Private management address | BigipStandalone Module | string |
-| bigIpInstance02 | Instance ID of BIG-IP VE instance | BigipStandalone Module | string |
-| bigIpInstanceMgmtPrivateIp02 | Private management address | BigipStandalone Module | string |
-| cfeS3Bucket | s3 bucket used for cloud failover extension | BigipStandalone Module | string |
+| amiId | Function Module | string | ami-id used for deployment |
+| bigIpInstance01 | BigipStandalone Module | string | Instance ID of BIG-IP VE instance |
+| bigIpInstanceMgmtPrivateIp01 | BigipStandalone Module | string | Private management address |
+| bigIpInstance02 | BigipStandalone Module | string | Instance ID of BIG-IP VE instance | 
+| bigIpInstanceMgmtPrivateIp02 | BigipStandalone Module | string | Private management address |
+| cfeS3Bucket | BigipStandalone Module | string | s3 bucket used for cloud failover extension |
 
 ## Deploying this Solution
 
@@ -285,7 +292,7 @@ For next steps, see [Validating the Deployment](#validating-the-deployment).
 
 ### Deploying via the AWS CLI
 
-As an alternative to deploying through the AWS Consule (GUI), each solution provides an example AWS CLI 2.0 command to deploy the Cloudformation template. The following example deploys a HA pair of 3-NIC BIG-IP VE instances.
+As an alternative to deploying through the AWS Console (GUI), each solution provides an example AWS CLI 2.0 command to deploy the CloudFormation template. The following example deploys a HA pair of 3-NIC BIG-IP VE instances.
 
 ### Deploying via the AWS CLI
 
@@ -389,7 +396,7 @@ For illustration purposes, this solution pre-provisions IP addresses needed for 
   2. *BIG-IP* - Creating Virtual Services that match those additional Secondary IPs.
       - Updating the [AS3](https://clouddocs.f5.com/products/extensions/f5-appsvcs-extension/latest/userguide/composing-a-declaration.html) declaration with additional Virtual Services (see **virtualAddresses:**).
 
-*NOTE: For cloud resources, templates can be customized to pre-provision and update addtional resources (for example, various combinations of NICs, IPs, Public IPs, etc). Please see [Getting Help](#getting-help) for more information. For BIG-IP configurations, you can leverage any REST or Automation Tool Chain clients like [Ansible](https://ansible.github.io/workshops/exercises/ansible_f5/3.0-as3-intro/),[Terraform](https://registry.terraform.io/providers/F5Networks/bigip/latest/docs/resources/bigip_as3), etc.*
+*NOTE: For cloud resources, templates can be customized to pre-provision and update additional resources (for example, various combinations of NICs, IPs, Public IPs, etc). Please see [Getting Help](#getting-help) for more information. For BIG-IP configurations, you can leverage any REST or Automation Tool Chain clients like [Ansible](https://ansible.github.io/workshops/exercises/ansible_f5/3.0-as3-intro/),[Terraform](https://registry.terraform.io/providers/F5Networks/bigip/latest/docs/resources/bigip_as3), etc.*
 
 
 ## Validation
@@ -398,7 +405,7 @@ This section describes how to validate the template deployment, test the WAF ser
 
 ### Validating the Deployment
 
-To view the status of the example and module stack deployments in the AWS Console, navigate to **CloudFormation > Stacks > *Your stack name***. You should see a series of stacks, including one for the Parent Failover template as well as the Network, Application, DAG, Bastion, Function,  BIG-IP nested templates. The creation status for each stack deployment should be "CREATE_COMPLETE".
+To view the status of the example and module stack deployments in the AWS Console, navigate to **CloudFormation > Stacks > *Your stack name***. You should see a series of stacks, including one for the Parent Failover template as well as the Network, Application, DAG, Bastion, Function, BIG-IP nested templates. The creation status for each stack deployment should be "CREATE_COMPLETE".
 
 Expected Deploy time for entire stack =~ 13-15 minutes.
 
@@ -506,12 +513,12 @@ From Parent Template Outputs:
 If you deployed the example application (**provisionExampleApp** = **true**)
 
  - Navigate to **Virtual Services**. 
-    - From the drop down menu **Partition** (upper right), select Partition = `Tenant_1`.
+    - From the drop-down menu **Partition** (upper right), select Partition = `Tenant_1`.
     - Navigate to **Local Traffic > Virtual Servers**. You should see two Virtual Services (one for HTTP and one for HTTPS). This should show up as Green. Click on them to look at the configuration *(declared in the AS3 declaration)*.
 
 #### SSH
 
-  - From tmsh shell, type 'bash' to enter the bash shell:
+  - From TMSH shell, type 'bash' to enter the bash shell:
     - Examine the Runtime-Init Config downloaded: 
     ```bash 
     cat /config/cloud/runtime-init.conf
@@ -520,7 +527,7 @@ If you deployed the example application (**provisionExampleApp** = **true**)
     ```bash
     curl -u admin: http://localhost:8100/mgmt/shared/declarative-onboarding | jq .
     ```
-    - Exampine the BIG-IP [Cloud Failover Extension (CFE)](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/) declaration:
+    - Examine the BIG-IP [Cloud Failover Extension (CFE)](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/) declaration:
     ```bash
     curl -su admin: http://localhost:8100/mgmt/shared/cloud-failover/declare | jq . 
     ```
@@ -564,7 +571,7 @@ If you deployed the example application (**provisionExampleApp** = **true**), to
 
 If you have deployed the example application(**provisionExampleApp** = **true**), to test failover, perform the following steps:
 
-1. Log on the BIG-IPs per instructions above:
+1. Log on to the BIG-IPs per instructions above:
 
   - **WebUI**: Go to Device Management of Active Instance -> Traffic-Groups -> Select box next to *traffic-group-1* -> Click the "Force to Standby" button *.
   - **BIG-IP CLI**: 
@@ -580,9 +587,9 @@ For information on the Cloud Failover solution, see [F5 Cloud Failover Extension
 ## Deleting this Solution
 
 
-As Cloudformation does not delete S3 buckets that contain data, in order to delete this deployment, you will first need to empty / delete the S3 bucket created for the Cloud Failover Extension (provided via **cfeS3Bucket** parameter). 
+As CloudFormation does not delete S3 buckets that contain data, in order to delete this deployment, you will first need to empty / delete the S3 bucket created for the Cloud Failover Extension (provided via **cfeS3Bucket** parameter). 
 
-After the S3 Bucket is deleted, you can now delete the solution by deleting the Cloudformation stack.
+After the S3 Bucket is deleted, you can now delete the solution by deleting the CloudFormation stack.
 ### Deleting the S3 bucket using the AWS Console
 
 1. Navigate to **S3**.
@@ -631,9 +638,9 @@ In the even that a template in the stack failed, click on the name of a failed s
 **When creating a GitHub issue for a template, please include as much information as possible from the failed CloudFormation stack events.**
 
 Common deployment failure causes include:
-- Required fields were left empty or contained incorrect values (input type mismatch, prohibited characters, etc) causing template validation failure
-- Insufficient permissions to create the deployment or resources created by a deployment (IAM roles, etc)
-- Resource limitations (exceeded limit of IP addresses or compute resources, etc)
+- Required fields were left empty or contained incorrect values (input type mismatch, prohibited characters, etc.) causing template validation failure
+- Insufficient permissions to create the deployment or resources created by a deployment (IAM roles, etc.)
+- Resource limitations (exceeded limit of IP addresses or compute resources, etc.)
 - AWS service issues (service health can be checked from the AWS [Service Health Dashboard](https://status.aws.amazon.com/)
 
 If all stacks were created "successfully" but maybe the BIG-IP or Service is not reachable, then log in to the BIG-IP instance via SSH to confirm BIG-IP deployment was successful (for example, if startup scripts completed as expected on the BIG-IP). To verify BIG-IP deployment, perform the following steps:

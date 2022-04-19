@@ -24,7 +24,7 @@ This template creates the AWS Lambda function, IAM roles, SNS topic, S3 bucket, 
 
 - You must have permission to create the required IAM roles.
 - When creating BIG-IQ revoke function, you must supply the ARN of the AWS Secrets Manager secret containing the password of the BIG-IQ device used to license the BIG-IPs. The secret must be stored as a string. Below is an example AWS CLI command to create this secret: ```aws secretsmanager create-secret --name mySecretName --secret-string '<BIGIQ PASSWORD>' --region us-east-1```
-- When creating BIG-IQ revoke function, if the BIG-IQ device where BIG-IPs are licenses uses a private IP address, you must provide a subnet ID and security group ID from the VPC where BIG-IQ is deployed. You must also configure the VPC with an internet gateway and NAT gateway to provide internet access for AWS SDK requests.  See the Lambda [documentation](https://aws.amazon.com/premiumsupport/knowledge-center/internet-access-lambda-function/) for more information.
+- When creating BIG-IQ revoke function, if the BIG-IQ device where BIG-IPs are licensed uses a private IP address, you must provide a subnet ID and security group ID from the VPC where BIG-IQ is deployed. You must also configure the VPC with an internet gateway and NAT gateway to provide internet access for AWS SDK requests. See the [Lambda documentation](https://aws.amazon.com/premiumsupport/knowledge-center/internet-access-lambda-function/) for more information.
 
 ## Important Configuration Notes
 
