@@ -642,7 +642,6 @@ From Template Outputs:
   - Open a browser to the Management IP
     - ```https://${IP_ADDRESS_FROM_OUTPUT}:8443```
 
-        
 
     - OR when you are going through a bastion host (when **provisionPublicIP** = **false**):
 
