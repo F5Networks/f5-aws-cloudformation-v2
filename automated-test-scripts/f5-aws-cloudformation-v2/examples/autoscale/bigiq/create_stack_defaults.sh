@@ -5,6 +5,7 @@
 
 
 TMP_DIR='/tmp/<DEWPOINT JOB ID>'
+src_ip=$(curl ifconfig.me)/32
 
 bigiq_stack_name=<STACK NAME>-bigiq
 bigiq_stack_region=<REGION>
@@ -71,8 +72,8 @@ aws cloudformation create-stack --disable-rollback --region <REGION> --stack-nam
 --capabilities CAPABILITY_IAM \
 --parameters ParameterKey=notificationEmail,ParameterValue=<NOTIFICATION EMAIL> \
 ParameterKey=bigIpRuntimeInitConfig,ParameterValue=$runtimeConfig \
-ParameterKey=restrictedSrcAddressMgmt,ParameterValue=<RESTRICTED SRC> \
-ParameterKey=restrictedSrcAddressApp,ParameterValue=<RESTRICTED SRC> \
+ParameterKey=restrictedSrcAddressMgmt,ParameterValue=$src_ip \
+ParameterKey=restrictedSrcAddressApp,ParameterValue=$src_ip \
 ParameterKey=uniqueString,ParameterValue=<UNIQUESTRING> \
 ParameterKey=sshKey,ParameterValue=<SSH KEY> \
 ParameterKey=bigIqAddressType,ParameterValue=public \

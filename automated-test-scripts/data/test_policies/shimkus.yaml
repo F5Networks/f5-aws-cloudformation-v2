@@ -116,7 +116,7 @@ aws-quickstart-payg-existing-test:
 aws-access-module-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/access/daily_test.yaml"
   run: "random"
-  random-num-of-tests: 1
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/access/prepub_parameters.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/access/prepub_parameters1.yaml"
@@ -129,7 +129,7 @@ aws-access-module-test:
 aws-application-module-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/application/daily_test.yaml"
   run: "random"
-  random-num-of-tests: 1
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/application/prepub_parameters.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/application/prepub_parameters1.yaml"
