@@ -4,6 +4,7 @@
 #  replayTimeout = 0
 
 if [[ "<PROVISION PUBLIC IP>" == "false" ]]; then
+  src_ip=$(curl ifconfig.me)/32
   bucket_name=`echo <STACK NAME>|cut -c -60|tr '[:upper:]' '[:lower:]'| sed 's:-*$::'`
   echo "bucket_name=$bucket_name"
   # update this path once we move to a separate repo
@@ -34,7 +35,7 @@ if [[ "<PROVISION PUBLIC IP>" == "false" ]]; then
   },
   { 
     "ParameterKey": "restrictedSrcAddress",
-    "ParameterValue": "0.0.0.0/0"
+    "ParameterValue": "$src_ip"
   },
   { 
     "ParameterKey": "sshKey",

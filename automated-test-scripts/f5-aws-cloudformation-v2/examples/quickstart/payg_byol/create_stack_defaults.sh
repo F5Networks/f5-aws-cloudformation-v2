@@ -4,6 +4,7 @@
 #  replayTimeout = 0
 
 
+src_ip=$(curl ifconfig.me)/32
 bucket_name=`echo <STACK NAME>|cut -c -60|tr '[:upper:]' '[:lower:]'| sed 's:-*$::'`
 echo "bucket_name=$bucket_name"
 
@@ -39,7 +40,7 @@ aws cloudformation create-stack --disable-rollback --region <REGION> --stack-nam
 --template-url <TEMPLATE S3 URL> \
 --capabilities CAPABILITY_IAM \
 --parameters ParameterKey=bigIpRuntimeInitConfig,ParameterValue=$runtimeConfig \
-ParameterKey=restrictedSrcAddressMgmt,ParameterValue=<RESTRICTED SRC> \
-ParameterKey=restrictedSrcAddressApp,ParameterValue=<RESTRICTED SRC> \
+ParameterKey=restrictedSrcAddressMgmt,ParameterValue=$src_ip \
+ParameterKey=restrictedSrcAddressApp,ParameterValue=$src_ip \
 ParameterKey=uniqueString,ParameterValue=<UNIQUESTRING> \
 ParameterKey=sshKey,ParameterValue=<SSH KEY>

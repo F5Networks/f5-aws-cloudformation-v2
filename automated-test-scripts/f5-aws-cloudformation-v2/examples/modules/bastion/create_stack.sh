@@ -4,6 +4,7 @@
 #  replayTimeout = 0
 
 
+src_ip=$(curl ifconfig.me)/32
 bucket_name=`echo <STACK NAME>|cut -c -60|tr '[:upper:]' '[:lower:]'| sed 's:-*$::'`
 echo "bucket_name=$bucket_name"
 
@@ -35,7 +36,7 @@ fi
 parameters+="ParameterKey=bastionSecurityGroupId,ParameterValue=$bastionSecurityGroupId \
 ParameterKey=createAutoscaleGroup,ParameterValue=<CREATE AUTOSCALE GROUP> \
 ParameterKey=customImageId,ParameterValue=<CUSTOM APP IMAGE> \
-ParameterKey=restrictedSrcAddress,ParameterValue=0.0.0.0/0 \
+ParameterKey=restrictedSrcAddress,ParameterValue=$src_ip \
 ParameterKey=sshKey,ParameterValue=dewpt \
 ParameterKey=uniqueString,ParameterValue=<UNIQUESTRING> \
 ParameterKey=vpc,ParameterValue=$vpcId"
