@@ -42,13 +42,14 @@ runtime_parameters:
       environment: aws
       field: local-ipv4s
       index: 2
-  - name: DEFAULT_ROUTE
+  - name: DEFAULT_GW
     type: metadata
     metadataProvider:
-      type: network
       environment: aws
-      field: subnet-ipv4-cidr-block
+      type: network
+      field: local-ipv4s
       index: 1
+      ipcalc: first
 bigip_ready_enabled: []
 extension_packages:
   install_operations:
@@ -115,13 +116,9 @@ extension_services:
             userType: regular
           default:
             class: Route
-            gw: '{{{DEFAULT_ROUTE}}}'
+            gw: '{{{DEFAULT_GW}}}'
             mtu: 1500
             network: default
-          app-route:
-            class: Route
-            gw: 10.0.2.1
-            network: 10.0.3.0/24
           external:
             class: VLAN
             interfaces:

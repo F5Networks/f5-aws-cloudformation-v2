@@ -57,7 +57,7 @@ This template deploys a simple example application. It launches a CentOS Linux V
 | scalingMinSize | No | The minimum number of BIG-IP instances (1-99) you want available in the Autoscale Group. |
 | sshKey | Yes | Name of an existing EC2 KeyPair to enable SSH access to the instance. |
 | staticIp | No | The private IP address to apply as the primary private address. |
-| uniqueString | Yes | Unique String used when creating object names or Tags. |
+| uniqueString | Yes | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
 | vpc | Yes | Common VPC for the whole deployment. |
 
 ### Template Outputs
