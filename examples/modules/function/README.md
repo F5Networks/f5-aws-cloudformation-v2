@@ -62,7 +62,7 @@ This template creates the AWS Lambda function, IAM roles, SNS topic, S3 bucket, 
 | lambdaS3BucketName | No | The name of the S3 bucket where the lambdaBigiqRevoke Lambda function is located. This defaults to the F5 S3 bucket f5-aws-bigiq-revoke. Required when createRevokeFunction set to 'yes'. |
 | lambdaS3Key | No | The top-level key in the Lambda S3 bucket where the Lambda function is located. Required when createRevokeFunction set to 'yes'. |
 | owner | No | Application Tag. |
-| uniqueString | No | Unique String used when creating object names or Tags. Required when createRevokeFunction set to 'yes'. |
+| uniqueString | No | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. Required when createRevokeFunction set to 'yes'. |
 
 ### Template Outputs
 

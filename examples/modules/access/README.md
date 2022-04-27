@@ -126,7 +126,7 @@ These are the IAM permissions produced by each type of solution supported by thi
 | s3Bucket | No | Provide the S3 Bucket name used for for remote logging, failover solution, etc. |
 | secretArn | No | The ARN of an AWS secrets manager secret. |
 | solutionType| No | Defines solution type to select provision correct IAM role. Allowed Values = 'standard', 'secret', 's3', 'secretS3' and 'failover'. |
-| uniqueString | Yes | Unique String used when creating object names and/or Tags. |
+| uniqueString | Yes | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
 
 ## Template Outputs
 

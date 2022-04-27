@@ -24,7 +24,7 @@ extension_services:
           PAYG license
         Common:
           class: Tenant
-          My_DbVars:
+          My_DbVariables:
             class: DbVariables
             config.allow.rfc3927: enable
             tm.tcpudptxchecksum: Software-only
@@ -77,7 +77,7 @@ extension_services:
             vlan: internal
           default:
             class: Route
-            gw: '{{{DEFAULT_ROUTE}}}'
+            gw: '{{{DEFAULT_GW}}}'
             network: default
             mtu: 1500
             localOnly: true
@@ -108,7 +108,7 @@ extension_services:
           PAYG license
         Common:
           class: Tenant
-          My_DbVars:
+          My_DbVariables:
             class: DbVariables
             config.allow.rfc3927: enable
             tm.tcpudptxchecksum: Software-only
@@ -161,7 +161,7 @@ extension_services:
             vlan: internal
           default:
             class: Route
-            gw: '{{{DEFAULT_ROUTE}}}'
+            gw: '{{{DEFAULT_GW}}}'
             network: default
             mtu: 1500
             localOnly: true
@@ -218,13 +218,14 @@ runtime_parameters:
       environment: aws
       field: local-ipv4s
       index: 2
-  - name: DEFAULT_ROUTE
+  - name: DEFAULT_GW
     type: metadata
     metadataProvider:
       environment: aws
       type: network
-      field: subnet-ipv4-cidr-block
+      field: local-ipv4s
       index: 1
+      ipcalc: first
   - name: REMOTE_HOST
     type: tag
     tagProvider:

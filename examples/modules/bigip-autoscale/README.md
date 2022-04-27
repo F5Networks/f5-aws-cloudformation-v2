@@ -84,7 +84,7 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | sshKey | Yes | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. | 
 | subnets | Yes | Public or external subnets for the availability zones. | 
 | throughput | No | Maximum amount of throughput for BIG-IP VE. |
-| uniqueString | No | Unique String used when creating object names or Tags |
+| uniqueString | No | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
 
 ### Template Outputs
 

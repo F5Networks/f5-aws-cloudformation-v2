@@ -69,7 +69,7 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | mgmtSubnetId | Yes | The resource ID of the management subnet. ***Note:*** SubnetId parameters used for identifying number of network interfaces. Example: *1NIC* - only Mgmt subnet ID provided; *2NIC* - Mgmt and External subnets ID provided; *3NIC* - Mgmt, External and Internal subnets ID provided.|
 | owner | No | Application Tag. |
 | sshKey | Yes | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. | 
-| uniqueString | Yes | Unique String used when creating object names or Tags. |
+| uniqueString | Yes | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
 
 ### Template Outputs
 
