@@ -95,11 +95,8 @@ extension_services:
             class: System
             autoPhonehome: true
             hostname: '{{{HOST_NAME}}}'
-          quickstart:
+          admin:
             class: User
-            partitionAccess:
-              all-partitions:
-                role: admin
             password: '{{{BIGIP_PASSWORD}}}'
             shell: bash
             userType: regular

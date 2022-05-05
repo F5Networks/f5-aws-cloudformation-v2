@@ -1,5 +1,5 @@
 ---
-BIGIP USER: quickstart
+BIGIP USER: admin
 BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run'
 LICENSE TYPE: payg
 NIC COUNT: 3
