@@ -5,7 +5,7 @@
   },
   {
     "ParameterKey": "application",
-    "ParameterValue": "f5app-quickstart"
+    "ParameterValue": "f5app"
   },
   {
     "ParameterKey": "artifactLocation",
@@ -21,7 +21,7 @@
   },
   {
     "ParameterKey": "cost",
-    "ParameterValue": "f5costcenter-quickstart"
+    "ParameterValue": "f5costcenter"
   },
   {
     "ParameterKey": "bigIpCustomImageId",
@@ -29,11 +29,11 @@
   },
   {
     "ParameterKey": "environment",
-    "ParameterValue": "f5env-quickstart"
+    "ParameterValue": "f5env"
   },
   {
     "ParameterKey": "group",
-    "ParameterValue": "f5group-quickstart"
+    "ParameterValue": "f5group"
   },
   {
     "ParameterKey": "bigIpImage",
@@ -61,7 +61,7 @@
   },
   {
     "ParameterKey": "owner",
-    "ParameterValue": "f5owner-quickstart"
+    "ParameterValue": "f5owner"
   },
   {
     "ParameterKey": "provisionPublicIp",

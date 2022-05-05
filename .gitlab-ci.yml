@@ -132,6 +132,7 @@ verify_outputs_match_style_guide:
 aws_network_module_test_job:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -165,6 +166,7 @@ aws_network_module_test_job:
 aws_function_module_test_job:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -198,6 +200,7 @@ aws_function_module_test_job:
 aws_access_module_test_job:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -231,6 +234,7 @@ aws_access_module_test_job:
 aws_dag_module_test_job:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -264,6 +268,7 @@ aws_dag_module_test_job:
 aws_application_module_test_job:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -297,6 +302,7 @@ aws_application_module_test_job:
 aws_bastion_module_test_job:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -330,6 +336,7 @@ aws_bastion_module_test_job:
 aws_telemetry_module_test_job:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -363,6 +370,7 @@ aws_telemetry_module_test_job:
 aws_bigip_autoscale_module_test_job:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -396,6 +404,7 @@ aws_bigip_autoscale_module_test_job:
 aws_bigip_standalone_module_test_job:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -429,6 +438,7 @@ aws_bigip_standalone_module_test_job:
 aws_autoscale_bigiq_example_test_job:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -470,6 +480,7 @@ aws_autoscale_bigiq_example_test_job:
 aws_autoscale_bigiq_existing_test_job:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -503,6 +514,7 @@ aws_autoscale_bigiq_existing_test_job:
 aws_autoscale_payg_example_test_job:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -544,6 +556,7 @@ aws_autoscale_payg_example_test_job:
 aws_autoscale_payg_existing_test_job:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -577,6 +590,7 @@ aws_autoscale_payg_existing_test_job:
 aws_failover_example_test_job:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -617,6 +631,7 @@ aws_failover_example_test_job:
 aws_failover_existing_test_job:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -650,6 +665,7 @@ aws_failover_existing_test_job:
 aws_quickstart_example_test_job:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
@@ -674,7 +690,7 @@ aws_quickstart_example_test_job:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
       - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
-    TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/test_policy_full.yaml
+    TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
   script:
     - pip install -r cloud-tools/master-job/requirements.txt
@@ -689,6 +705,7 @@ aws_quickstart_example_test_job:
 aws_quickstart_existing_test_job:
   image: ${ARTIFACTORY_SERVER}/dockerhub-remote/python:3.7-alpine
   stage: sprinkle-tests
+  when: manual
   tags:
     - docker-executor
   only:
