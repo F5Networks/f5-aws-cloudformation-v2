@@ -31,42 +31,44 @@ This AWS template creates a virtual network and subnets required to support F5 s
 
 ### Template Input Parameters
 
-| Parameter | Required | Description |
-| --- | --- | --- |
-| application | No | Application Tag. |
-| cost | No | Cost Center Tag. |
-| environment | No | Environment Tag. |
-| group | No | Group Tag. |
-| numAzs | No | Number of Availability Zones to use in the VPC. Region must support number of availability  zones entered. The minimum is 1 and maximum is 4.  |
-| numSubnets | No | Indicate the number of subnets to create. A minimum of 4 subnets required when provisionExampleApp = false |
-| owner | No | Application Tag. |
-| setSubnet1Public | No | The value 'true' sets subnet1 in each AZ as a public subnet. The value 'false' sets subnet1 as a private network. |
-| subnetMask | No | Mask for subnets. Valid values include 16-28. Note: supernetting of VPC occurs based on mask provided; therefore, the number of networks must be >= to the number of subnets created. |
-| uniqueString | Yes | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
-| vpcCidr | No | CIDR block for the VPC. |
-| vpcTenancy | No | The allowed tenancy of instances launched into the VPC. Valid values include 'default' or 'dedicated' |
+**Required** means user input is required because there is no default value or an empty string is not allowed. If no value is provided, the template will fail to launch. In some cases, the default value may only work on the first deployment due to creating a resource in a global namespace and customization is recommended. See the Description for more details. 
+
+| Parameter | Required | Default | Type | Description |
+| --- | --- | --- | --- | --- |
+| application | No | f5app | string | Application Tag. |
+| cost | No | f5cost | string | Cost Center Tag. |
+| environment | No | f5env | string | Environment Tag. |
+| group | No | f5group | string | Group Tag. |
+| numAzs | No | 2 | integer | Number of Availability Zones to use in the VPC. Region must support number of availability  zones entered. The minimum is 1 and maximum is 4.  |
+| numSubnets | No | 3 | integer | Indicate the number of subnets to create. A minimum of 4 subnets required when provisionExampleApp = false |
+| owner | No | f5owner | string | Application Tag. |
+| setSubnet1Public | No | false | boolean | The value 'true' sets subnet1 in each AZ as a public subnet. The value 'false' sets subnet1 as a private network. |
+| subnetMask | No | 24 | integer | Mask for subnets. Valid values include 16-28. Note: supernetting of VPC occurs based on mask provided; therefore, the number of networks must be >= to the number of subnets created. |
+| uniqueString | Yes | myUniqStr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+| vpcCidr | No | 10.0.0.0/16 | string | CIDR block for the VPC. |
+| vpcTenancy | No | default | string | The allowed tenancy of instances launched into the VPC. Valid values include 'default' or 'dedicated' |
 
 ### Template Outputs
 
-| Name | Description | Required Parameter Value | Type |
+| Name | Required Parameter Value | Type | Description |
 | --- | --- | --- | --- |
-| stackName | Network nested stack name. | Network template deployment | String |
-| natEipA | IP address used for NAT gateway assigned to subnets in availability zone A. | numAzs > 0 | string |
-| natEipB | IP address used for NAT gateway assigned to subnets in availability zone B. | numAzs > 1 | string |
-| natEipC | IP address used for NAT gateway assigned to subnets in availability zone C. | numAzs > 2 | string |
-| natEipD | IP address used for NAT gateway assigned to subnets in availability zone D. | numAzs > 3 | string |
-| privateRouteTableIdA | Route table id assigned to private subnets in availability zone A. | setSubnet1Public = true or numSubnets > 2 | string |
-| privateRouteTableIdB | Route table id assigned to private subnets in availability zone B. | setSubnet1Public or numSubnets > 2 and numAzs > 1 | string |
-| privateRouteTableIdC | Route table id assigned to private subnets in availability zone C. | setSubnet1Public or numSubnets > 2 and numAzs > 2 | string |
-| privateRouteTableIdD | Route table id assigned to private subnets in availability zone D. | setSubnet1Public or numSubnets > 2 and numAzs > 3 | string |
-| publicSubnetRouteTableId | Route table id assigned to public subnets. | N/A | string |
-| subnetsA | Comma separated list of subnet ids created for availability zone A. Ids listed in order of subnet numerical value. ie: subnet0 1st value, subnet1 2nd value, etc. |  numAzs > 0 | array |
-| subnetsB | Comma separated list of subnet ids created for availability zone B. Ids listed in order of subnet numerical value. ie: subnet0 1st value, subnet1 2nd value, etc. |  numAzs > 1 | array |
-| subnetsC | Comma separated list of subnet ids created for availability zone C. Ids listed in order of subnet numerical value. ie: subnet0 1st value, subnet1 2nd value, etc. |  numAzs > 2 | array |
-| subnetsD | Comma separated list of subnet ids created for availability zone D. Ids listed in order of subnet numerical value. ie: subnet0 1st value, subnet1 2nd value, etc. |  numAzs > 3 | array |
-| vpcCidr | IPv4 CIDR associated to VPC. | 10.X.X.0/16-24 | string |
-| vpcId | VPC ID. | N/A | string
-| vpcIpv6Cidr | IPv6 CIDR associated to VPC. | N/A | string |
+| stackName | Network template deployment | string | Network nested stack name. |
+| natEipA | numAzs > 0 | string | IP address used for NAT gateway assigned to subnets in availability zone A. |
+| natEipB | numAzs > 1 | string | IP address used for NAT gateway assigned to subnets in availability zone B. |
+| natEipC | numAzs > 2 | string | IP address used for NAT gateway assigned to subnets in availability zone C. |
+| natEipD | numAzs > 3 | string | IP address used for NAT gateway assigned to subnets in availability zone D. |
+| privateRouteTableIdA | setSubnet1Public = true or numSubnets > 2 | string | Route table ID assigned to private subnets in availability zone A. |
+| privateRouteTableIdB | setSubnet1Public or numSubnets > 2 and numAzs > 1 | string | Route table ID assigned to private subnets in availability zone B. |
+| privateRouteTableIdC | setSubnet1Public or numSubnets > 2 and numAzs > 2 | string |  Route table ID assigned to private subnets in availability zone C. |
+| privateRouteTableIdD | setSubnet1Public or numSubnets > 2 and numAzs > 3 | string | Route table ID assigned to private subnets in availability zone D. |
+| publicSubnetRouteTableId | N/A | string | Route table ID assigned to public subnets. |
+| subnetsA |  numAzs > 0 | array | Comma separated list of subnet IDs created for availability zone A. IDs listed in order of subnet numerical value. For example: subnet0 1st value, subnet1 2nd value, etc. |
+| subnetsB | numAzs > 1 | array | Comma separated list of subnet IDs created for availability zone B. IDs listed in order of subnet numerical value. For example: subnet0 1st value, subnet1 2nd value, etc. |
+| subnetsC |  numAzs > 2 | array | Comma-separated list of subnet IDs created for availability zone C. IDs listed in order of subnet numerical value. For example: subnet0 1st value, subnet1 2nd value, etc. |
+| subnetsD |  numAzs > 3 | array | Comma-separated list of subnet IDs created for availability zone D. IDs listed in order of subnet numerical value. For example: subnet0 1st value, subnet1 2nd value, etc. |
+| vpcCidr | 10.X.X.0/16-24 | string |  IPv4 CIDR associated to VPC. |
+| vpcId | N/A | string | VPC ID. |
+| vpcIpv6Cidr | N/A | string | IPv6 CIDR associated to VPC. |
 
 ## Understanding Subnet CIDR Assignments
 

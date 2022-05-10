@@ -110,34 +110,36 @@ These are the IAM permissions produced by each type of solution supported by thi
 
 ## Template Input Parameters
 
-| Parameter | Required | Description |
-| --- | --- | --- |
-| application | No | Application Tag. |
-| bigIqSecretArn | No | The ARN of the AWS secret containing the password used during BIG-IP licensing via BIG-IQ. |
-| cfeTag | No | Cloud Failover deployment tag value. |
-| cloudWatchLogGroup | No | Provide the CloudWatch Log Group name used for telemetry. |
-| cost | No | Cost Center Tag. |
-| createAmiRole | No | Value of 'true' creates IAM roles required for AMI lookup function. |
-| createBigIqRoles | No | Value of 'true' creates IAM roles required to revoke license assignments from BIG-IQ. |
-| environment | No | Environment Tag. |
-| group | No | Group Tag. |
-| metricNameSpace | No | CloudWatch namespace used for custom metrics. This should match the namespace defined in your telemetry services declaration within bigipRuntimInitConfig. |
-| owner | No | Application Tag. |
-| s3Bucket | No | Provide the S3 Bucket name used for for remote logging, failover solution, etc. |
-| secretArn | No | The ARN of an AWS secrets manager secret. |
-| solutionType| No | Defines solution type to select provision correct IAM role. Allowed Values = 'standard', 'secret', 's3', 'secretS3' and 'failover'. |
-| uniqueString | Yes | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+**Required** means user input is required because there is no default value or an empty string is not allowed. If no value is provided, the template will fail to launch. In some cases, the default value may only work on the first deployment due to creating a resource in a global namespace and customization is recommended. See the Description for more details. 
+
+| Parameter | Required | Default | Type | Description |
+| --- | --- | --- | --- | --- |
+| application | No | f5app | string | Application Tag. |
+| bigIqSecretArn | No |  | string | The ARN of the AWS secret containing the password used during BIG-IP licensing via BIG-IQ. |
+| cfeTag | No |  | string | Cloud Failover deployment tag value. |
+| cloudWatchLogGroup | No |  | string | Provide the CloudWatch Log Group name used for telemetry. |
+| cost | No | f5cost | string | Cost Center Tag. |
+| createAmiRole | No | false | boolean | Value of 'true' creates IAM roles required for AMI lookup function. |
+| createBigIqRoles | No | false | boolean | Value of 'true' creates IAM roles required to revoke license assignments from BIG-IQ. |
+| environment | No | f5env | string | Environment Tag. |
+| group | No | f5group | string | Group Tag. |
+| metricNameSpace | No |  | string | CloudWatch namespace used for custom metrics. This should match the namespace defined in your telemetry services declaration within bigipRuntimInitConfig. |
+| owner | No | f5owner | string | Application Tag. |
+| s3Bucket | No |  | string | Provide the S3 Bucket name used for for remote logging, failover solution, etc. |
+| secretArn | No |  | string | The ARN of an AWS secrets manager secret. |
+| solutionType| No | standard | string | Defines solution type to select provision correct IAM role. Allowed Values = 'standard', 'secret', 's3', 'secretS3' and 'failover'. |
+| uniqueString | Yes | myUniqStr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
 
 ## Template Outputs
 
-| Name | Description | Required Resource | Type |
+| Name | Required Resource | Type | Description |
 | --- | --- | --- | --- |
-| stackName | Access nested stack name | Access template deployment | String |
-| bigIpInstanceProfile | BIG-IP instance profile with applied IAM policy.  | IAM Instance Profile and IAM Instance Role | String |
-| bigIqNotificationRole | IAM policy for BIG-IQ Lifecycle Hook notifications | BIG-IQ notification IAM role | String |
-| copyZipsRole | IAM policy for CopyZips lambda function | CopyZips IAM role | String |
-| lambdaAccessRole | IAM policy for BIG-IQ lambda function  | Lambda IAM role | String |
-| lambdaAmiExecutionRole| IAM policy for ami lookup function  | Lambda ami IAM role | String |
+| stackName |  Access template deployment | string | Access nested stack name. |
+| bigIpInstanceProfile | IAM Instance Profile and IAM Instance Role | string | BIG-IP instance profile with applied IAM policy.  |
+| bigIqNotificationRole | BIG-IQ notification IAM role | string | IAM policy for BIG-IQ Lifecycle Hook notifications. |
+| copyZipsRole | CopyZips IAM role | string | IAM policy for CopyZips lambda function. |
+| lambdaAccessRole | Lambda IAM role | string | IAM policy for BIG-IQ lambda function. |
+| lambdaAmiExecutionRole| Lambda ami IAM role | string | IAM policy for ami lookup function. |
 
 ## Resource Creation Flow Chart
 

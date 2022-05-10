@@ -43,34 +43,36 @@ This template creates the AWS Lambda function, IAM roles, SNS topic, S3 bucket, 
 
 ### Template Input Parameters
 
-| Parameter | Required | Description |
-| --- | --- | --- |
-| amiLookupRole | No | The ARN of the IAM role to assign to the AMI lookup function. Required when createAmiLookupFunction set to 'yes'. |
-| application | No | Application Tag. |
-| bigIpRuntimeInitConfig | No | Enter a URL to the bigip-runtime-init configuration file in YAML or JSON format. |
-| bigIqAddressType | No | Specify the address type of the BIG-IQ device. Required when createRevokeFunction is set to 'yes'. Options are 'public' or 'private'. |
-| bigIqSecretArn | No | The ARN of the AWS Secrets Manager secret containing the BIG-IQ credentials to use during BIG-IP license revocation via BIG-IQ. Required when createRevokeFunction set to 'yes'. |
-| bigIqSecurityGroupId | No | The ID of the security group where BIG-IQ is deployed. ***Important***: You must provide a value for this parameter when using a private BIG-IP address. Required when createRevokeFunction set to 'yes'. |
-| bigIqSubnetId | No | The ID of the subnet where BIG-IQ is deployed. ***Important***: You must provide a value for this parameter when using a private BIG-IP address. Required when createRevokeFunction set to 'yes'. |
-| copyZipsRole | No | The ARN of the IAM role to assign to the BIG-IQ CopyZips function. Required when createRevokeFunction set to 'yes'. |
-| cost | No | Cost Center Tag. |
-| createAmiLookupFunction | No | Choose 'true' to create AMI lookup serverless function. |
-| createRevokeFunction | No | Choose true to create BIG-IQ revoke license serverless function. |
-| environment | No | Environment Tag. |
-| group | No | Group Tag. |
-| lambdaAccessRole | No | The ARN of the IAM role to assign to the BIG-IQ LambdaBigIqRevoke function. Required when createRevokeFunction set to 'yes'. |
-| lambdaS3BucketName | No | The name of the S3 bucket where the lambdaBigiqRevoke Lambda function is located. This defaults to the F5 S3 bucket f5-aws-bigiq-revoke. Required when createRevokeFunction set to 'yes'. |
-| lambdaS3Key | No | The top-level key in the Lambda S3 bucket where the Lambda function is located. Required when createRevokeFunction set to 'yes'. |
-| owner | No | Application Tag. |
-| uniqueString | No | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. Required when createRevokeFunction set to 'yes'. |
+**Required** means user input is required because there is no default value or an empty string is not allowed. If no value is provided, the template will fail to launch. In some cases, the default value may only work on the first deployment due to creating a resource in a global namespace and customization is recommended. See the Description for more details. 
+
+| Parameter | Required | Default | Type | Description |
+| --- | --- | --- | --- | --- |
+| amiLookupRole | No |  | string | The ARN of the IAM role to assign to the AMI lookup function. Required when createAmiLookupFunction set to 'yes'. |
+| application | No | f5app | string | Application Tag. |
+| bigIpRuntimeInitConfig | No |  | string | Enter a URL to the bigip-runtime-init configuration file in YAML or JSON format. |
+| bigIqAddressType | No | private | string | Specify the address type of the BIG-IQ device. Required when createRevokeFunction is set to 'yes'. Options are 'public' or 'private'. |
+| bigIqSecretArn | No |  | string | The ARN of the AWS Secrets Manager secret containing the BIG-IQ credentials to use during BIG-IP license revocation via BIG-IQ. Required when createRevokeFunction set to 'yes'. |
+| bigIqSecurityGroupId | No |  | string | The ID of the security group where BIG-IQ is deployed. ***Important***: You must provide a value for this parameter when using a private BIG-IP address. Required when createRevokeFunction set to 'yes'. |
+| bigIqSubnetId | No |  | string | The ID of the subnet where BIG-IQ is deployed. ***Important***: You must provide a value for this parameter when using a private BIG-IP address. Required when createRevokeFunction set to 'yes'. |
+| copyZipsRole | No |  | string | The ARN of the IAM role to assign to the BIG-IQ CopyZips function. Required when createRevokeFunction set to 'yes'. |
+| cost | No | f5cost | string | Cost Center Tag. |
+| createAmiLookupFunction | No | false | boolean | Choose 'true' to create AMI lookup serverless function. |
+| createRevokeFunction | No | false | boolean | Choose true to create BIG-IQ revoke license serverless function. |
+| environment | No | f5env | string | Environment Tag. |
+| group | No | f5group | string | Group Tag. |
+| lambdaAccessRole | No |  | string | The ARN of the IAM role to assign to the BIG-IQ LambdaBigIqRevoke function. Required when createRevokeFunction set to 'yes'. |
+| lambdaS3BucketName | No | f5-aws-bigiq-revoke | string | The name of the S3 bucket where the lambdaBigiqRevoke Lambda function is located. This defaults to the F5 S3 bucket f5-aws-bigiq-revoke. Required when createRevokeFunction set to 'yes'. |
+| lambdaS3Key | No | main/ | string | The top-level key in the Lambda S3 bucket where the Lambda function is located. Required when createRevokeFunction set to 'yes'. |
+| owner | No | f5owner | string | Application Tag. |
+| uniqueString | No | myUniqStr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. Required when createRevokeFunction set to 'yes'. |
 
 ### Template Outputs
 
 | Name | Description | Required Resource | Type | 
 | --- | --- | --- | --- |
-| stackName | Function nested stack name | Function template deployment | String |
-| lambdaARN | Lambda ARN | Lambda function | String |
-| snsTopic | SNS Topic ARN | SNS Topic | String |
+| stackName | Function template deployment | string | Function nested stack name |
+| lambdaARN | Lambda function | string | Lambda ARN. |
+| snsTopic | SNS Topic | string | SNS Topic ARN. |
 
 ## Understanding AMI Lookup Function
 You can request AMI ID for a specified BIG-IP once AMI lookup function has been deployed. The function requires a service token for the function created by the function template, the region in which a specified BIG-IP is to be deployed, the string to use for filter, and the owner ID. In the following template snip-it, the service token value is found using outputs section of the deployed function template, region value is resolved using intrinsic template function, OSName value is set by parameter named 'imageName', and OwnerId is statically set using AWS Marketplace alias ID.
