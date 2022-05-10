@@ -42,45 +42,48 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
     
 ### Template Input Parameters
 
-| Parameter | Required | Description |
-| --- | --- | --- |
-| application | No | Application Tag. |
-| bigIpInstanceProfile | No | BIG-IP instance profile with applied IAM policy. |
-| bigIpRuntimeInitConfig | Yes | Delivery URL for config file (YAML/JSON) or JSON string. |
-| bigIpRuntimeInitPackageUrl | No | URL for BIG-IP Runtime Init package. |
-| bigIpPeerAddr | No | Type the static self IP address of the remote host here. Set to empty string if not configuring peering with a remote host on this device. |
-| cfeTag | No | Cloud Failover deployment tag value. |
-| cost | No | Cost Center Tag. |
-| environment | No | Environment Tag. |
-| externalPrimaryPublicId | No | The resource ID of the public IP address to apply to the primary IP configuration on the external network interface. The default is an empty string which does not provision public IP. |
-| externalSecurityGroupId | No | The optional resource ID of a security group to apply to the external network interface. |
-| externalSelfIp | No | The private IP address to apply to external network interfaces as primary private address. The address must reside in the subnet provided in the externalSubnetId parameter. ***Note:*** When set to an empty string, DHCP will be used for allocating the IP address. The default value is empty string. |
-| externalServiceIps | No | An array of one or more private IP addresses to apply to the secondary external IP configurations. |
-| externalSubnetId | No | The resource ID of the external subnet. ***Note:*** SubnetId parameters used for identifying number of network interfaces. Example: *1NIC* - only Mgmt subnet ID provided; *2NIC* - Mgmt and External subnets ID provided; *3NIC* - Mgmt, External, and Internal subnets ID provided. |
-| group | No | Group Tag. |
-| imageId | Yes | Provide BIG-IP AMI ID you wish to deploy. |
-| instanceType | No | Enter valid instance type. |
-| internalSecurityGroupId | No | The optional resource ID of a security group to apply to the internal network interface. |
-| internalSelfIp | No | The private IP address to apply to the primary IP configuration on the internal network interface. The address must reside in the subnet provided in the internalSubnetId parameter.|
-| internalSubnetId | No | The resource ID of the internal subnet. SubnetId parameters used for identifying number of network interfaces. Example: *1NIC* - only Mgmt subnet ID provided; *2NIC* - Mgmt and External subnets ID provided; *3NIC* - Mgmt, External, and Internal subnets ID provided. |
-| mgmtPublicIpId | No | The resource ID of the public IP address to apply to the management network interface. Leave this parameter blank to create a management network interface without a public IP address. Default is empty string which does not provision public IP. |
-| mgmtSecurityGroupId | Yes | The resource ID of a security group to apply to the management network interface. |
-| mgmtSelfIp | No | The private IP address to apply to the primary IP configuration on the management network interface. The address must reside in the subnet provided in the mgmtSubnetId parameter. ***Note:*** When set to empty string, DHCP will be used for allocating ip address. |
-| mgmtSubnetId | Yes | The resource ID of the management subnet. ***Note:*** SubnetId parameters used for identifying number of network interfaces. Example: *1NIC* - only Mgmt subnet ID provided; *2NIC* - Mgmt and External subnets ID provided; *3NIC* - Mgmt, External and Internal subnets ID provided.|
-| owner | No | Application Tag. |
-| sshKey | Yes | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. | 
-| uniqueString | Yes | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+**Required** means user input is required because there is no default value or an empty string is not allowed. If no value is provided, the template will fail to launch. In some cases, the default value may only work on the first deployment due to creating a resource in a global namespace and customization is recommended. See the Description for more details. 
+
+| Parameter | Required | Default | Type | Description |
+| --- | --- | --- | --- | --- |
+| application | No | f5app | string | Application Tag. |
+| bigIpInstanceProfile | No |  | string | BIG-IP instance profile with applied IAM policy. |
+| bigIpRuntimeInitConfig | Yes |  | string | Delivery URL for config file (YAML/JSON) or JSON string. |
+| bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run | string | URL for BIG-IP Runtime Init package. |
+| bigIpPeerAddr | No | 10.0.1.11 | string | Type the static self IP address of the remote host here. Set to empty string if not configuring peering with a remote host on this device. |
+| cfeS3Bucket | No |  | string | Cloud Failover S3 Bucket. |
+| cfeTag | No |  | string | Cloud Failover deployment tag value. |
+| cost | No | f5cost | string | Cost Center Tag. |
+| environment | No | f5env | string | Environment Tag. |
+| externalPrimaryPublicId | No |  | string | The resource ID of the public IP address to apply to the primary IP configuration on the external network interface. The default is an empty string which does not provision public IP. |
+| externalSecurityGroupId | No |  | string | The optional resource ID of a security group to apply to the external network interface. |
+| externalSelfIp | No |  | string | The private IP address to apply to external network interfaces as primary private address. The address must reside in the subnet provided in the externalSubnetId parameter. ***Note:*** When set to an empty string, DHCP will be used for allocating the IP address. The default value is empty string. |
+| externalServiceIps | No |  | string | An array of one or more private IP addresses to apply to the secondary external IP configurations. |
+| externalSubnetId | No |  | string | The resource ID of the external subnet. ***Note:*** SubnetId parameters used for identifying number of network interfaces. Example: *1NIC* - only Mgmt subnet ID provided; *2NIC* - Mgmt and External subnets ID provided; *3NIC* - Mgmt, External, and Internal subnets ID provided. |
+| group | No | f5group | string | Group Tag. |
+| imageId | Yes |  | string | Provide BIG-IP AMI ID you wish to deploy. |
+| instanceType | No | m5.2xlarge | string | Enter valid instance type. |
+| internalSecurityGroupId | No |  | string | The optional resource ID of a security group to apply to the internal network interface. |
+| internalSelfIp | No |  | string | The private IP address to apply to the primary IP configuration on the internal network interface. The address must reside in the subnet provided in the internalSubnetId parameter.|
+| internalSubnetId | No |  | string | The resource ID of the internal subnet. SubnetId parameters used for identifying number of network interfaces. Example: *1NIC* - only Mgmt subnet ID provided; *2NIC* - Mgmt and External subnets ID provided; *3NIC* - Mgmt, External, and Internal subnets ID provided. |
+| mgmtPublicIpId | No |  | string | The resource ID of the public IP address to apply to the management network interface. Leave this parameter blank to create a management network interface without a public IP address. Default is empty string which does not provision public IP. |
+| mgmtSecurityGroupId | Yes |  | string | The resource ID of a security group to apply to the management network interface. |
+| mgmtSelfIp | No |  | string | The private IP address to apply to the primary IP configuration on the management network interface. The address must reside in the subnet provided in the mgmtSubnetId parameter. ***Note:*** When set to empty string, DHCP will be used for allocating ip address. |
+| mgmtSubnetId | Yes |  | string | The resource ID of the management subnet. ***Note:*** SubnetId parameters used for identifying number of network interfaces. Example: *1NIC* - only Mgmt subnet ID provided; *2NIC* - Mgmt and External subnets ID provided; *3NIC* - Mgmt, External and Internal subnets ID provided.|
+| owner | No | f5owner | string | Application Tag. |
+| sshKey | Yes |  | string | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. | 
+| uniqueString | Yes | myUniqStr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
 
 ### Template Outputs
 
-| Name | Description | Required Resource | Type |
+| Name | Required Resource | Type | Description | 
 | --- | --- | --- | --- |
-| stackName | The bigip-standalone nested stack name. | bigip-standalone template deployment | String |
-| bigIpInstanceId | BIG-IP instance ID. | None | String |
-| bigIpManagementInterfacePrivateIp | Internally routable IP of BIG-IP instance NIC eth0.| None | String |
-| bigIp2nicExternalInterfacePrivateIp | Internally routable IP of BIG-IP instance NIC eth1. | None | String |
-| bigIp3NicExternalInterfacePrivateIp | Internally routable IP of BIG-IP instance NIC eth1. | None | String |
-| bigIp3NicInternalInterfacePrivateIp | Internally routable IP of BIG-IP instance NIC eth2. | None | String |
+| stackName | bigip-standalone template deployment | string | The bigip-standalone nested stack name. |
+| bigIpInstanceId | None | string | BIG-IP instance ID. |
+| bigIpManagementInterfacePrivateIp | None | string | Internally routable IP of BIG-IP instance NIC eth0. |
+| bigIp2nicExternalInterfacePrivateIp | None | string | Internally routable IP of BIG-IP instance NIC eth1. |
+| bigIp3NicExternalInterfacePrivateIp | None | string | Internally routable IP of BIG-IP instance NIC eth1. |
+| bigIp3NicInternalInterfacePrivateIp | None | string | Internally routable IP of BIG-IP instance NIC eth2. |
 
 
 ## Resource Creation Flow Chart

@@ -126,7 +126,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 
 ### Template Input Parameters
  
-* **Required** means user input is required because there is no default value or an empty string is not allowed. If no value is provided, the template will fail to launch. Note: In some cases, the default value may only work on the first deployment due to creating a resource in a global namespace and customization is recommended. See the Description for more details. 
+**Required** means user input is required because there is no default value or an empty string is not allowed. If no value is provided, the template will fail to launch. In some cases, the default value may only work on the first deployment due to creating a resource in a global namespace and customization is recommended. See the Description for more details. 
 
 
 | Parameter | Required* | Default | Type | Description |
@@ -161,7 +161,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | provisionExampleApp | No | true  | string | Flag to deploy the demo web application.. |
 | provisionPublicIpMgmt | No | true  | string | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host will be provisioned instead. |
 | restrictedSrcAddressApp | Yes |   | string | An IP address range (CIDR) that can be used to access web traffic (80/443) to the AWS instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. NOTE: The VPC CIDR is automatically added for internal usage. |
-| restrictedSrcAddressMgmt | Yes |   | string | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The VPC CIDR is automatically added for internal usage, ex. access via bastion host, clustering, etc. **IMPORTANT**: Please restrict to your client, for example 'X.X.X.X/32'. WARNING - For eval purposes only. Production should never have the BIG-IP Management interface exposed to Internet.|
+| restrictedSrcAddressMgmt | Yes |   | string | An IP address or address range (in CIDR notation) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please do NOT use "0.0.0.0/0". Instead, restrict the IP address range to your client or trusted network, for example "55.55.55.55/32". Production should never expose the BIG-IP Management interface to the Internet. |
 | s3BucketRegion | No | us-east-1 | string | The AWS Region that contains the S3 bucket containing templates. |
 | s3BucketName | No | f5-cft-v2 | string | The S3 bucket name for the modules. The S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-). |
 | secretArn | Yes |   | string | The URL of the AWS secret manager secret, including secret ARN, where the BIG-IP password used for clustering is stored. |
@@ -177,18 +177,18 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 
 | Name | Required Resource | Type | Description |
 | --- | --- | --- | --- |
-| amiId | Function Module | string | ami-id used for deployment |
+| amiId | Function Module | string | The ami-id used for deployment. |
 | bastionInstanceId | Bastion Module | string | Instance ID of standalone Bastion instance. | 
-| bigIpInstance01 | BigipStandalone Module | string | Instance ID of BIG-IP VE instance |
-| bigIpInstanceMgmtPrivateIp01 | BigipStandalone Module | string | Private management address |
-| bigIpInstance02 | BigipStandalone Module | string | Instance ID of BIG-IP VE instance |
-| bigIpInstanceMgmtPrivateIp02 | BigipStandalone Module | string | Private management address |
-| cfeS3Bucket | BigipStandalone Module | string | s3 bucket used for cloud failover extension |
+| bigIpInstance01 | BigipStandalone Module | string | Instance ID of BIG-IP VE instance. |
+| bigIpInstanceMgmtPrivateIp01 | BigipStandalone Module | string | Private management address. |
+| bigIpInstance02 | BigipStandalone Module | string | Instance ID of BIG-IP VE instance. |
+| bigIpInstanceMgmtPrivateIp02 | BigipStandalone Module | string | Private management address. |
+| cfeS3Bucket | BigipStandalone Module | string | The s3 bucket used for cloud failover extension. |
 
 
 ### Existing Network Template Input Parameters
 
-| Parameter | Required* | Default | Type | Description |
+| Parameter | Required | Default | Type | Description |
 | --- | --- | --- |  --- | --- | 
 | appDockerImageName | No | f5devcentral/f5-demo-app:latest  | string | The name of a container to download and install which is used for the example application server(s). If this value is left blank, the application module template is not deployed. |
 | application | No | f5app  | string | Application Tag. |
@@ -197,18 +197,18 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpImage | No | \*16.1.2.1-0.0.10**PAYG-Adv WAF Plus 25Mbps\* | string | F5 BIG-IP Performance Type. |
 | bigIpCustomImageId | No |   | string | Provide a custom BIG-IP AMI ID you wish to deploy. Otherwise, can leave empty. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run  | string | Supply a URL to the bigip-runtime-init package. |
-| bigIpExternalSubnetId01 | Yes |   | string | Subnet id used for BIGIP instance A external interface. |
+| bigIpExternalSubnetId01 | Yes |   | string | Subnet ID used for BIGIP instance A external interface. |
 | bigIpExternalSelfIp01 | No | 10.0.0.11 | string | External Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
-| bigIpMgmtSubnetId01 | Yes |   | string | Subnet id used for BIGIP instance A management interface. |
+| bigIpMgmtSubnetId01 | Yes |   | string | Subnet ID used for BIGIP instance A management interface. |
 | bigIpMgmtAddress01 | No | 10.0.1.11 | string | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
-| bigIpInternalSubnetId01 | Yes |   | string | Subnet id used for BIGIP instance A internal interface. |
+| bigIpInternalSubnetId01 | Yes |   | string | Subnet ID used for BIGIP instance A internal interface. |
 | bigIpInternalSelfIp01 | No | 10.0.2.11  | string | Internal Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
 | bigIpRuntimeInitConfig01 | No | https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.2.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml  | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
-| bigIpExternalSubnetId02 | Yes |   | string | Subnet id used for BIGIP instance B external interface. |
+| bigIpExternalSubnetId02 | Yes |   | string | Subnet ID used for BIGIP instance B external interface. |
 | bigIpExternalSelfIp02 | No | 10.0.4.11 | string | External Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
-| bigIpMgmtSubnetId02 | Yes |   | string | Subnet id used for BIGIP instance B management interface. |
+| bigIpMgmtSubnetId02 | Yes |   | string | Subnet ID used for BIGIP instance B management interface. |
 | bigIpMgmtAddress02 | No | 10.0.5.11  | string | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
-| bigIpInternalSubnetId02 | Yes |   | string | Subnet id used for BIGIP instance B internal interface. |
+| bigIpInternalSubnetId02 | Yes |   | string | Subnet ID used for BIGIP instance B internal interface. |
 | bigIpInternalSelfIp02 | No | 10.0.6.11  | string | Internal Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
 | bigIpRuntimeInitConfig02 | No | https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.2.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml  | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
 | bigIpPeerAddr | No | 10.0.1.11  | string | Type the static self IP address of the remote host here. Set to empty string if not configuring peering with a remote host on this device. |
@@ -226,7 +226,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | provisionExampleApp | No | true  | string | Flag to deploy the demo web application. |
 | provisionPublicIpMgmt | No | true  | string | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host will be provisioned instead. |
 | restrictedSrcAddressApp | Yes |   | string | An IP address range (CIDR) that can be used to access web traffic (80/443) to the AWS instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. NOTE: The VPC CIDR is automatically added for internal usage. |
-| restrictedSrcAddressMgmt | Yes |   | string | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or Bastion Host instances. NOTE: The VPC CIDR is automatically added for internal usage, ex. access via bastion host, clustering, etc. **IMPORTANT**: Please restrict to your client, for example 'X.X.X.X/32'. WARNING - For eval purposes only. Production should never have the BIG-IP Management interface exposed to Internet.|
+| restrictedSrcAddressMgmt | Yes |   | string | An IP address or address range (in CIDR notation) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please do NOT use "0.0.0.0/0". Instead, restrict the IP address range to your client or trusted network, for example "55.55.55.55/32". Production should never expose the BIG-IP Management interface to the Internet. |
 | s3BucketRegion | No | us-east-1 | string | The AWS Region that contains the S3 bucket containing templates. |
 | s3BucketName | No | f5-cft-v2 | string | The S3 bucket name for the modules. The S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-). |
 | secretArn | Yes |   | string | The URL of the AWS secret manager secret, including secret ARN, where the BIG-IP password used for clustering is stored. |
@@ -234,7 +234,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | subnetMask | No | 24  | string | Mask for subnets. Valid values include 16-28. Note supernetting of VPC occurs based on mask provided; therefore, number of networks must be >= to the number of subnets created. Mask for subnets. Valid values include 16-28. |
 | uniqueString | No | myUniqStr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
 | vpcCidr | No | 10.0.0.0/16 | string | CIDR block for the VPC. |
-| vpcId | Yes |   | string | Id for VPC to use with deployment. |
+| vpcId | Yes |   | string | ID for VPC to use with deployment. |
 
 <br>
 
@@ -420,7 +420,7 @@ From Parent Template Outputs:
       aws --region ${REGION} cloudformation describe-stacks --stack-name ${STACK_NAME}  --query  "Stacks[0].Outputs" 
       ```
 
-  - Obtain the Instance Id:
+  - Obtain the Instance ID:
     - **Console**: Navigate to **CloudFormation > *STACK_NAME* > Outputs > *bigIpInstanceId***.
     - **AWS CLI**: 
         ```bash

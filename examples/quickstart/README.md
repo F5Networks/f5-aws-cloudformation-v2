@@ -62,7 +62,7 @@ The modules below create the following resources:
 
 By default, this solution creates a single Availability Zone VPC with four subnets, an example Web Application instance and a PAYG BIG-IP instance with three network interfaces (one for management and two for dataplane/application traffic - called external and internal). Application traffic from the Internet traverses an external network interface configured with both public and private IP addresses. Traffic to the application traverses an internal network interface configured with a private IP address.
 
-***DISCLAIMER/WARNING***: To reduce prerequisites and complexity to a bare minimum for evaluation purposes only, this quickstart provides immediate access to the management interface via a Public IP (AWS EIP). At the very *minimum*, configure the **restrictedSrcAddressMgmt** parameter to limit access to your client IP or trusted network. In production deployments, management access should never be directly exposed to the Internet and instead should be accessed via typical management best practices like jumpboxes/bastion hosts, vpns, etc. 
+***DISCLAIMER/WARNING***: To reduce prerequisites and complexity to a bare minimum for evaluation purposes only, this quickstart provides immediate access to the management interface via a Public IP (AWS EIP). At the very *minimum*, configure the **restrictedSrcAddressMgmt** parameter to limit access to your client IP or trusted network. In production deployments, management access should never be directly exposed to the Internet and instead should be accessed via typical management best practices like jumpboxes/bastion hosts, VPNs, etc. 
 
 ## Diagram
 
@@ -107,7 +107,7 @@ By default, this solution creates a single Availability Zone VPC with four subne
 
 ### Template Input Parameters
 
-* **Required** means user input is required because there is no default value or an empty string is not allowed. If no value is provided, the template will fail to launch. Note: In some cases, the default value may only work on the first deployment due to creating a resource in a global namespace and customization is recommended. See the Description for more details. 
+**Required** means user input is required because there is no default value or an empty string is not allowed. If no value is provided, the template will fail to launch. In some cases, the default value may only work on the first deployment due to creating a resource in a global namespace and customization is recommended. See the Description for more details. 
 
 
 | Parameter | Required* | Default | Type | Description |
@@ -124,12 +124,12 @@ By default, this solution creates a single Availability Zone VPC with four subne
 | environment | No | f5env  | string | Environment Tag. |
 | group | No | f5group |  string | Group Tag |
 | licenseType | No | payg | string | Specifies license type used for BIG-IP VE. Default is payg. If selecting byol, see additional configuration notes. |
-| numAzs | No | 1 | string | Number of Availability Zones. Default = 1 |
-| numSubnets | No | 4 | string | Number of Subnets. NOTE: Quickstart requires leaving at Default = 4 as Application Subnet is hardcoded to be in 4th subnet |
-| numNics | No | 3 | string | Number of interfaces to create on BIG-IP instance. Maximum of 3 allowed. Minimum of 1 allowed. |
+| numAzs | No | 1 | integer | Number of Availability Zones. Default = 1 |
+| numSubnets | No | 4 | integer | Number of Subnets. NOTE: Quickstart requires leaving at Default = 4 as Application Subnet is hardcoded to be in 4th subnet |
+| numNics | No | 3 | integer | Number of interfaces to create on BIG-IP instance. Maximum of 3 allowed. Minimum of 1 allowed. |
 | owner | No | f5owner | string | Owner Tag. |
 | provisionPublicIp | No | true | string | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host will be provisioned instead. See [diagram](diagram-w-bastion.png). |
-| restrictedSrcAddressMgmt | Yes |   | string | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please restrict the IP address range to your client, for example 'X.X.X.X/32'. Production should never expose the BIG-IP Management interface to the Internet. |
+| restrictedSrcAddressMgmt | Yes |   | string | An IP address or address range (in CIDR notation) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please do NOT use "0.0.0.0/0". Instead, restrict the IP address range to your client or trusted network, for example "55.55.55.55/32". Production should never expose the BIG-IP Management interface to the Internet. |
 | restrictedSrcAddressApp | Yes |   | string | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
 | s3BucketRegion | No | us-east-1 | string | The AWS Region for the S3 bucket containing the templates. |
 | s3BucketName | No | f5-cft-v2 | string | The S3 bucket containing the templates. The S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-). |
@@ -158,35 +158,35 @@ By default, this solution creates a single Availability Zone VPC with four subne
 
 | Parameter | Required* | Default | Type | Description |
 | --- | --- | --- | --- | --- |
-| appDockerImageName | No | f5devcentral/f5-demo-app:latest  | String | The name of a container to download and install which is used for the example application server(s). If this value is left blank, the application module template is not deployed. |
-| application | No | f5app  | String | Application Tag. |
-| artifactLocation | No | f5-aws-cloudformation-v2/v2.0.0.0/examples/ | String | The directory, relative to the templateBaseUrl, where the modules folder is located. |
-| bigIpCustomImageId | No |   | String | Provide BIG-IP AMI ID you wish to deploy. |
-| bigIpExternalSubnetId | Yes |   | String | Subnet id used for BIG-IP instance external interface. |
-| bigIpImage | No | Best | String | F5 BIG-IP Performance Type. |
-| bigIpInstanceType | No | m5.xlarge | String | Enter a valid instance type. |
-| bigIpInternalSubnetId | Yes |   | String | Subnet id used for BIG-IP instance internal interface. |
-| bigIpMgmtSubnetId | Yes |   | String | Subnet id used for BIG-IP instance management interface. |
-| bigIpRuntimeInitConfig | No | https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg-with-app.yaml | String | URL or JSON string for BIG-IP Runtime Init config. |
-| bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run  | String | Supply a URL to the bigip-runtime-init package |
-| cost | No | f5costcenter  | String | Cost Center Tag. |
-| environment | No | f5env  | String | Environment Tag. |
-| group | No | f5group | String | Group Tag. |
-| licenseType | No | payg | String | Specifies license type used for BIG-IP VE. Default is payg. If selecting byol, see additional configuration notes. |
-| numAzs | No | 1 | String | Number of Availability Zones. Default = 1 |
-| numSubnets | No | 4 | String | Number of Subnets. NOTE: Quickstart requires leaving at Default = 4 as Application Subnet is hardcoded to be in 4th subnet |
-| numNics | No | 3 | String | Number of interfaces to create on BIG-IP instance. Maximum of 3 allowed. Minimum of 1 allowed. |
-| owner | No | f5owner | String | Owner Tag. |
-| provisionPublicIp | No | true | String | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host will be provisioned instead. See [diagram](diagram-w-bastion.png). |
-| restrictedSrcAddressMgmt | Yes |   | String | An IP address range (CIDR) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please restrict the IP address range to your client, for example 'X.X.X.X/32'. Production should never expose the BIG-IP Management interface to the Internet. |
-| restrictedSrcAddressApp | Yes |   | String | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
-| s3BucketRegion | No | us-east-1 | String | The AWS Region for the S3 bucket containing the templates. |
-| s3BucketName | No | f5-cft-v2 | String | The S3 bucket containing the templates. The S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-). |
-| sshKey | Yes |   | String | Supply the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. Example: ``myAWSkey`` |
-| throughput | No | 25Mbps | String | Maximum amount of throughput for BIG-IP VE. |
-| uniqueString | No | myUniqStr | String | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
-| version | No |  16-1-0-0019 | String | Select version of BIG-IP you wish to deploy. |
-| vpcId | Yes |   | String | Id for VPC to use with deployment. |
+| appDockerImageName | No | f5devcentral/f5-demo-app:latest  | string | The name of a container to download and install which is used for the example application server(s). If this value is left blank, the application module template is not deployed. |
+| application | No | f5app-quickstart  | string | Application Tag. |
+| artifactLocation | No | f5-aws-cloudformation-v2/v2.0.0.0/examples/ | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
+| bigIpCustomImageId | No |   | string | Provide BIG-IP AMI ID you wish to deploy. Otherwise, can leave empty. |
+| bigIpExternalSubnetId | Yes |   | string | Subnet id used for BIG-IP instance external interface. |
+| bigIpImage | No | Best | string | F5 BIG-IP Performance Type. |
+| bigIpInstanceType | No | m5.xlarge | string | Enter a valid instance type. |
+| bigIpInternalSubnetId | Yes |   | string | Subnet id used for BIG-IP instance internal interface. |
+| bigIpMgmtSubnetId | Yes |   | string | Subnet id used for BIG-IP instance management interface. |
+| bigIpRuntimeInitConfig | No | https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg-with-app.yaml | string | URL or JSON string for BIG-IP Runtime Init config. |
+| bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run  | string | Supply a URL to the bigip-runtime-init package |
+| cost | No | f5costcenter-quickstart  | string | Cost Center Tag. |
+| environment | No | f5env-quickstart  | string | Environment Tag. |
+| group | No | f5group-quickstart | string | Group Tag. |
+| licenseType | No | payg | string | Specifies license type used for BIG-IP VE. Default is payg. If selecting byol, see additional configuration notes. |
+| numAzs | No | 1 | integer | Number of Availability Zones. Default = 1 |
+| numSubnets | No | 4 | integer | Number of Subnets. NOTE: Quickstart requires leaving at Default = 4 as Application Subnet is hardcoded to be in 4th subnet |
+| numNics | No | 3 | integer | Number of interfaces to create on BIG-IP instance. Maximum of 3 allowed. Minimum of 1 allowed. |
+| owner | No | f5owner-quickstart | string | Owner Tag. |
+| provisionPublicIp | No | true | string | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host will be provisioned instead. See [diagram](diagram-w-bastion.png). |
+| restrictedSrcAddressMgmt | Yes |   | string | An IP address or address range (in CIDR notation) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please do NOT use "0.0.0.0/0". Instead, restrict the IP address range to your client or trusted network, for example "55.55.55.55/32". Production should never expose the BIG-IP Management interface to the Internet. |
+| restrictedSrcAddressApp | Yes |   | string | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
+| s3BucketRegion | No | us-east-1 | string | The AWS Region for the S3 bucket containing the templates. |
+| s3BucketName | No | f5-cft-v2 | string | The S3 bucket containing the templates. The S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-). |
+| sshKey | Yes |   | string | Supply the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. Example: ``myAWSkey`` |
+| throughput | No | 25Mbps | string | Maximum amount of throughput for BIG-IP VE. |
+| uniqueString | No | myUniqStr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+| version | No |  16-1-0-0019 | string | Select version of BIG-IP you wish to deploy. |
+| vpcId | Yes |   | string | Id for VPC to use with deployment. |
 
 <br>
 
@@ -280,14 +280,22 @@ You will most likely want or need to change the BIG-IP configuration. This gener
 
 F5 has provided the following example configuration files in the `examples/quickstart/bigip-configurations` folder:
 
-- These examples install Automation Tool Chain packages and create WAF-protected services for a PAYG licensed deployment.
+- These examples install Automation Tool Chain packages for a PAYG licensed deployment.
   - `runtime-init-conf-1nic-payg.yaml`
   - `runtime-init-conf-2nic-payg.yaml`
   - `runtime-init-conf-3nic-payg.yaml`
-- These examples install Automation Tool Chain packages and create WAF-protected services for a BYOL licensed deployment.
+- These examples install Automation Tool Chain packages and create WAF-protected services for a PAYG licensed deployment.
+  - `runtime-init-conf-1nic-payg-with-app.yaml`
+  - `runtime-init-conf-2nic-payg-with-app.yaml`
+  - `runtime-init-conf-3nic-payg-with-app.yaml`
+- These examples install Automation Tool Chain packages for a BYOL licensed deployment.
   - `runtime-init-conf-1nic-byol.yaml`
   - `runtime-init-conf-2nic-byol.yaml`
   - `runtime-init-conf-3nic-byol.yaml`
+- These examples install Automation Tool Chain packages and create WAF-protected services for a BYOL licensed deployment.
+  - `runtime-init-conf-1nic-byol-with-app.yaml`
+  - `runtime-init-conf-2nic-byol-with-app.yaml`
+  - `runtime-init-conf-3nic-byol-with-app.yaml`
 - `Rapid_Deployment_Policy_13_1.xml`: This ASM security policy is supported for BIG-IP 13.1 and later.
 
 See [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) for more examples.
