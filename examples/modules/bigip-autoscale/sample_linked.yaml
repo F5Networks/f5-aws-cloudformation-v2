@@ -6,7 +6,7 @@ Resources:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: >-
-        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v2.0.0.0/examples/modules/bigip-autoscale/bigip-autoscale.yaml
+        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v2.1.0.0/examples/modules/bigip-autoscale/bigip-autoscale.yaml
       Parameters:
         bigIpExternalSecurityGroup: example-security-group
         bigIpInstanceProfile: example-instance-profile

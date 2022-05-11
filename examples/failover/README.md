@@ -133,7 +133,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | --- | --- | --- | --- | --- |
 | appDockerImageName | No | f5devcentral/f5-demo-app:latest  | string | The name of a container to download and install which is used for the example application server(s). If this value is left blank, the application module template is not deployed. |
 | application | No | f5app  | string | Application Tag. |
-| artifactLocation | No | f5-aws-cloudformation-v2/v2.0.0.0/examples/  | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
+| artifactLocation | No | f5-aws-cloudformation-v2/v2.1.0.0/examples/  | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
 | bigIpInstanceType | No | m5.xlarge | string | Enter a valid instance type. |
 | bigIpImage | No | \*16.1.2.1-0.0.10**PAYG-Adv WAF Plus 25Mbps\* | string | F5 BIG-IP Performance Type. |
 | bigIpCustomImageId | No |   | string | Provide a custom BIG-IP AMI ID you wish to deploy. Otherwise, can leave empty. |
@@ -192,7 +192,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | --- | --- | --- |  --- | --- | 
 | appDockerImageName | No | f5devcentral/f5-demo-app:latest  | string | The name of a container to download and install which is used for the example application server(s). If this value is left blank, the application module template is not deployed. |
 | application | No | f5app  | string | Application Tag. |
-| artifactLocation | No | f5-aws-cloudformation-v2/v2.0.0.0/examples/  | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
+| artifactLocation | No | f5-aws-cloudformation-v2/v2.1.0.0/examples/  | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
 | bigIpInstanceType | No | m5.xlarge | string | Enter a valid instance type. |
 | bigIpImage | No | \*16.1.2.1-0.0.10**PAYG-Adv WAF Plus 25Mbps\* | string | F5 BIG-IP Performance Type. |
 | bigIpCustomImageId | No |   | string | Provide a custom BIG-IP AMI ID you wish to deploy. Otherwise, can leave empty. |
@@ -261,11 +261,11 @@ The easiest way to deploy this CloudFormation template is to use the Launch butt
 **Important**: By default, the link takes you to an AWS console set to the us-east-1 region. Select the AWS region (upper right) in which you want to deploy after clicking the Launch Stack button.
 
 **Failover**<br>
-<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Failover-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/failover/failover.yaml">
+<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Failover-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.1.0.0/examples/failover/failover.yaml">
     <img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png"/></a>
 
 **Failover Existing Network**<br>
-<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Failover-Existing-Network-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/failover/failover-existing-network.yaml">
+<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Failover-Existing-Network-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.1.0.0/examples/failover/failover-existing-network.yaml">
     <img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png"/></a>
 
 
