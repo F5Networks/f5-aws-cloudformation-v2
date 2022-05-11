@@ -616,7 +616,7 @@ aws_failover_example_test_job:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
       - $CI_COMMIT_MESSAGE =~ /smart:init/
   variables:
-    TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/test_policy_full.yaml
+    TEST_POLICY: automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/test_policy.yaml
     STACK_TYPE: dewdrop-preproduction
   script:
     - pip install -r cloud-tools/master-job/requirements.txt
