@@ -19,11 +19,11 @@ Metadata:
           - numSubnets
           - subnetMask
           - vpcCidr
-          - bigIpMgmtSelfIp01
+          - bigIpMgmtAddress01
           - bigIpExternalSelfIp01
           - bigIpExternalVip01
           - bigIpInternalSelfIp01
-          - bigIpMgmtSelfIp02
+          - bigIpMgmtAddress02
           - bigIpExternalSelfIp02
           - bigIpExternalVip02
           - bigIpInternalSelfIp02
@@ -110,9 +110,9 @@ Metadata:
         default: Internal private ip address for BIGIP instance A
       bigIpInternalSelfIp02:
         default: Internal private ip address for BIGIP instance B
-      bigIpMgmtSelfIp01:
+      bigIpMgmtAddress01:
         default: Management private ip address for BIGIP instance A
-      bigIpMgmtSelfIp02:
+      bigIpMgmtAddress02:
         default: Management private ip address for BIGIP instance B
       numAzs:
         default: Number of Availability Zones
@@ -143,7 +143,7 @@ Metadata:
         default: Unique string
       vpcCidr:
         default: VPC CIDR
-  Version: 2.0.0.0
+  Version: 2.1.0.0
 Outputs:
   amiId:
     Condition: noCustomImageId
@@ -231,10 +231,10 @@ Parameters:
     Description: Application Tag.
     Type: String
   artifactLocation:
-    AllowedPattern: ^.*[a-zA-Z]+/$
+    AllowedPattern: ^.*[0-9a-zA-Z]+/$
     ConstraintDescription: key prefix can include numbers, lowercase letters, uppercase
       letters, hyphens (-), and forward slash (/).
-    Default: f5-aws-cloudformation-v2/v2.0.0.0/examples/
+    Default: f5-aws-cloudformation-v2/v2.1.0.0/examples/
     Description: The path in the S3Bucket where the modules folder is located. Can
       include numbers, lowercase letters, uppercase letters, hyphens (-), and forward
       slash (/).
@@ -246,7 +246,7 @@ Parameters:
     Type: String
   bigIpImage:
     ConstraintDescription: Must be a valid F5 BIG-IP market place image
-    Default: '*16.1.0-0.0.19**PAYG-Adv WAF Plus 25Mbps*'
+    Default: '*16.1.2.1-0.0.10**PAYG-Adv WAF Plus 25Mbps*'
     Description: F5 BIG-IP market place image
     Type: String
   bigIpInstanceType:
@@ -281,13 +281,13 @@ Parameters:
       string if not configuring peering with a remote host on this device.
     Type: String
   bigIpRuntimeInitConfig01:
-    Default: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.2.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml'
+    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.1.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01-with-app.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
       file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
       configuration.'
     Type: String
   bigIpRuntimeInitConfig02:
-    Default: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.2.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml'
+    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.1.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02-with-app.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
       file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
       configuration.'
@@ -311,7 +311,7 @@ Parameters:
     Description: Cloud Failover VIP tag value; provides private ip addresses to be
       assigned to VIP public ip.
     Type: String
-    Default: '10.0.0.101,10.0.3.101'
+    Default: '10.0.0.101,10.0.4.101'
   cost:
     Default: f5cost
     Description: Cost Center Tag.
@@ -330,7 +330,7 @@ Parameters:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: External Private IP Address for BIGIP instance B.
-    Default: 10.0.3.11
+    Default: 10.0.4.11
     Type: String
   bigIpExternalVip01:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
@@ -342,7 +342,7 @@ Parameters:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: External Secondary Private IP Address for BIGIP instance B.
-    Default: 10.0.3.101
+    Default: 10.0.4.101
     Type: String
   group:
     Default: f5group
@@ -358,19 +358,19 @@ Parameters:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: Internal Private IP Address for BIGIP instance B.
-    Default: 10.0.5.11
+    Default: 10.0.6.11
     Type: String
-  bigIpMgmtSelfIp01:
+  bigIpMgmtAddress01:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: Management Private IP Address for BIGIP instance A.
     Default: 10.0.1.11
     Type: String
-  bigIpMgmtSelfIp02:
+  bigIpMgmtAddress02:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: Management Private IP Address for BIGIP instance B.
-    Default: 10.0.4.11
+    Default: 10.0.5.11
     Type: String
   numAzs:
     Default: 2
@@ -380,8 +380,9 @@ Parameters:
     MinValue: 1
     Type: Number
   numSubnets:
-    Default: 3
-    Description: Indicate the number of subnets to create.
+    Default: 4
+    Description: Indicate the number of subnets to create. A minimum of 4 subnets
+      required when provisionExampleApp = false
     MaxValue: 8
     MinValue: 2
     Type: Number
@@ -497,6 +498,7 @@ Resources:
           S3Bucket: !Ref 's3BucketName'
       Parameters:
         application: !Ref 'application'
+        cfeTag: !Ref 'cfeTag'
         cost: !Ref 'cost'
         environment: !Ref 'environment'
         group: !Ref 'group'
@@ -524,31 +526,68 @@ Resources:
       Parameters:
         appContainerName: !Ref 'appDockerImageName'
         application: !Ref 'application'
-        applicationSubnet: !Join
-          - ','
-          - - !Select
-              - '2'
-              - !Split
-                - ','
-                - !GetAtt
-                  - Network
-                  - Outputs.subnetsA
+        applicationSubnet: !If
+          - usePublicIpVip
+          - !Join
+            - ','
+            - - !Select
+                - '3'
+                - !Split
+                  - ','
+                  - !GetAtt
+                    - Network
+                    - Outputs.subnetsA
+          - !Join
+            - ','
+            - - !Select
+                - '4'
+                - !Split
+                  - ','
+                  - !GetAtt
+                    - Network
+                    - Outputs.subnetsA
         applicationSubnets: !Join
           - ','
-          - - !Select
-              - '2'
-              - !Split
+          - - !If
+              - usePublicIpVip
+              - !Join
                 - ','
-                - !GetAtt
-                  - Network
-                  - Outputs.subnetsA
-            - !Select
-              - '2'
-              - !Split
+                - - !Select
+                    - '3'
+                    - !Split
+                      - ','
+                      - !GetAtt
+                        - Network
+                        - Outputs.subnetsA
+              - !Join
                 - ','
-                - !GetAtt
-                  - Network
-                  - Outputs.subnetsB
+                - - !Select
+                    - '4'
+                    - !Split
+                      - ','
+                      - !GetAtt
+                        - Network
+                        - Outputs.subnetsA
+            - !If
+              - usePublicIpVip
+              - !Join
+                - ','
+                - - !Select
+                    - '3'
+                    - !Split
+                      - ','
+                      - !GetAtt
+                        - Network
+                        - Outputs.subnetsB
+              - !Join
+                - ','
+                - - !Select
+                    - '4'
+                    - !Split
+                      - ','
+                      - !GetAtt
+                        - Network
+                        - Outputs.subnetsB
         appSecurityGroupId: !GetAtt [Dag, Outputs.appSecurityGroupId]
         cost: !Ref 'cost'
         environment: !Ref 'environment'
@@ -619,6 +658,7 @@ Resources:
         bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig01'
         cfeS3Bucket: !Ref 'cfeS3Bucket'
+        cfeTag: !Ref 'cfeTag'
         imageId: !If
           - noCustomImageId
           - !GetAtt
@@ -666,7 +706,7 @@ Resources:
         mgmtPublicIpId: !If [usePublicIpMgmt, !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId01],
           '']
         mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpMgmtSecurityGroup]
-        mgmtSelfIp: !Ref 'bigIpMgmtSelfIp01'
+        mgmtSelfIp: !Ref 'bigIpMgmtAddress01'
         mgmtSubnetId: !Join
           - ','
           - - !Select
@@ -691,6 +731,7 @@ Resources:
         bigIpPeerAddr: !Ref 'bigIpPeerAddr'
         bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig02'
+        cfeTag: !Ref 'cfeTag'
         imageId: !If
           - noCustomImageId
           - !GetAtt
@@ -737,7 +778,7 @@ Resources:
         mgmtPublicIpId: !If [usePublicIpMgmt, !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId02],
           '']
         mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpMgmtSecurityGroup]
-        mgmtSelfIp: !Ref 'bigIpMgmtSelfIp02'
+        mgmtSelfIp: !Ref 'bigIpMgmtAddress02'
         mgmtSubnetId: !Join
           - ','
           - - !Select

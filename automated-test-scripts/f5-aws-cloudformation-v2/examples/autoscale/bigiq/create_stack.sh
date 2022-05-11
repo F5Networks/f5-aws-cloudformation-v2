@@ -5,6 +5,7 @@
 
 
 TMP_DIR='/tmp/<DEWPOINT JOB ID>'
+src_ip=$(curl ifconfig.me)/32
 bucket_name=`echo <STACK NAME>|cut -c -60|tr '[:upper:]' '[:lower:]'| sed 's:-*$::'`
 echo "bucket_name=$bucket_name"
 
@@ -85,10 +86,10 @@ else
     /usr/bin/yq e ".extension_services.service_operations.[2].value.My_S3.bucket = \"{{{BUCKET_NAME}}}\"" -i <DEWPOINT JOB ID>.yaml
 
     # Runtime parameters
-    /usr/bin/yq e ".runtime_parameters.[3].secretProvider.secretId = \"$secret_name\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".runtime_parameters.[2].secretProvider.secretId = \"$secret_name\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".runtime_parameters += {\"name\":\"BUCKET_NAME\"}" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".runtime_parameters.[4].type = \"static\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".runtime_parameters.[4].value = \"$logging_bucket_name\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".runtime_parameters.[-1].type = \"static\"" -i <DEWPOINT JOB ID>.yaml
+    /usr/bin/yq e ".runtime_parameters.[-1].value = \"$logging_bucket_name\"" -i <DEWPOINT JOB ID>.yaml
 
     # print out config file
     /usr/bin/yq e <DEWPOINT JOB ID>.yaml
@@ -247,11 +248,11 @@ cat <<EOF > parameters.json
     },
     {
         "ParameterKey": "restrictedSrcAddressApp",
-        "ParameterValue": "0.0.0.0/0"
+        "ParameterValue": "$src_ip"
     },
     {
         "ParameterKey": "restrictedSrcAddressMgmt",
-        "ParameterValue": "0.0.0.0/0"
+        "ParameterValue": "$src_ip"
     },
     {
         "ParameterKey": "s3BucketName",

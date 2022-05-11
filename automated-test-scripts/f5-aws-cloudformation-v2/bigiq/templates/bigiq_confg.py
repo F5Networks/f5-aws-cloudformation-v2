@@ -312,7 +312,7 @@ class Setup:
             print("License key not really ready:" + str(result_body.get("items")[0].get("status")))
             print("Waiting for 10 seconds for license to really be ready")
             time.sleep(10)
-        if i == 120:
+        if i == 360:
             print("MAX tries reached, exiting")
         else:
             print("License really ready:" + str(result_body))

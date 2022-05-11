@@ -4,6 +4,7 @@
 #  replayTimeout = 0
 
 
+src_ip=$(curl ifconfig.me)/32
 bucket_name=`echo <STACK NAME>|cut -c -60|tr '[:upper:]' '[:lower:]'| sed 's:-*$::'`
 echo "bucket_name=$bucket_name"
 
@@ -70,6 +71,10 @@ else
         # Disable AutoPhoneHome
         /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>-0$counter.yaml
         /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>-0$counter.yaml
+
+        # Update CFE tag
+        /usr/bin/yq e ".extension_services.service_operations.[1].value.externalStorage.scopingTags.f5_cloud_failover_label = \"<DEWPOINT JOB ID>\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+        /usr/bin/yq e ".extension_services.service_operations.[1].value.failoverAddresses.scopingTags.f5_cloud_failover_label = \"<DEWPOINT JOB ID>\"" -i <DEWPOINT JOB ID>-0$counter.yaml
 
         # Runtime parameters
         /usr/bin/yq e ".runtime_parameters.[0].secretProvider.secretId = \"$secret_name\"" -i <DEWPOINT JOB ID>-0$counter.yaml
@@ -158,15 +163,19 @@ cat <<EOF > parameters.json
     },
     {
         "ParameterKey": "restrictedSrcAddressApp",
-        "ParameterValue": "0.0.0.0/0"
+        "ParameterValue": "$src_ip"
     },
     {
         "ParameterKey": "restrictedSrcAddressMgmt",
-        "ParameterValue": "0.0.0.0/0"
+        "ParameterValue": "$src_ip"
     },
     {
         "ParameterKey": "cfeS3Bucket",
         "ParameterValue": "bigip-ha-solution-<DEWPOINT JOB ID>"
+    },
+    {
+        "ParameterKey": "cfeTag",
+        "ParameterValue": "<DEWPOINT JOB ID>"
     },
     {
         "ParameterKey": "s3BucketName",
@@ -220,7 +229,7 @@ cat <<EOF >> parameters.json
         "ParameterValue": "10.0.6.11"
     },
     {
-        "ParameterKey": "bigIpMgmtSelfIp02",
+        "ParameterKey": "bigIpMgmtAddress02",
         "ParameterValue": "10.0.5.11"
     }
 ]
