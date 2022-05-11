@@ -117,7 +117,7 @@ Metadata:
         default: Unique string
       vpc:
         default: VPC ID
-  Version: 2.0.0.0
+  Version: 2.1.0.0
 Outputs:
   stackName:
     Description: bastion nested stack name
