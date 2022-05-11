@@ -4,6 +4,7 @@
 #  replayTimeout = 0
 
 
+src_ip=$(curl ifconfig.me)/32
 bucket_name=`echo <STACK NAME>|cut -c -60|tr '[:upper:]' '[:lower:]'| sed 's:-*$::'`
 echo "bucket_name=$bucket_name"
 region=$(aws s3api get-bucket-location --bucket $bucket_name | jq -r .LocationConstraint)
@@ -114,11 +115,11 @@ cat <<EOF > parameters.json
     },
     {
         "ParameterKey": "restrictedSrcAddressApp",
-        "ParameterValue": "0.0.0.0/0"
+        "ParameterValue": "$src_ip"
     },
     {
         "ParameterKey": "restrictedSrcAddressMgmt",
-        "ParameterValue": "0.0.0.0/0"
+        "ParameterValue": "$src_ip"
     },
     {
         "ParameterKey": "s3BucketName",

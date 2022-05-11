@@ -110,7 +110,7 @@ Metadata:
       internalTargetGroupHttps:
         default: Internal Load Balancer Target Group with BIG-IP VEs. for HTTPS requests
       licenseType:
-        default: Specifies licence type used for BIG-IP VE.
+        default: Specifies license type used for BIG-IP VE.
       maxBatchSize:
         default: Maximum number of instances CloudFormation updates
       metricNameSpace:
@@ -149,7 +149,7 @@ Metadata:
         default: Public or external subnets for the availability zones
       uniqueString:
         default: Unique string
-  Version: 2.0.0.0
+  Version: 2.1.0.0
 Outputs:
   stackName:
     Description: bigip-autoscale nested stack name
@@ -254,7 +254,7 @@ Parameters:
       - payg
       - bigiq
     Default: payg
-    Description: Specifies licence type used for BIG-IP VE.
+    Description: Specifies license type used for BIG-IP VE.
     Type: String
   maxBatchSize:
     Default: 5
@@ -582,7 +582,7 @@ Resources:
             - |
               # Run
             - |
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.0.0.0/examples/modules/bigip-autoscale/bigip-autoscale.yaml'
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.1.0.0/examples/modules/bigip-autoscale/bigip-autoscale.yaml'
             - |2+
 
             - |

@@ -200,7 +200,7 @@ Metadata:
         default: VPC CIDR
       vpcId:
         default: VPC ID
-  Version: 2.0.0.0
+  Version: 2.1.0.0
 Outputs:
   wafExternalDnsName:
     Condition: externalLB
@@ -244,10 +244,10 @@ Parameters:
     Description: Application Tag.
     Type: String
   artifactLocation:
-    AllowedPattern: ^.*[a-zA-Z]+/$
+    AllowedPattern: ^.*[0-9a-zA-Z]+/$
     ConstraintDescription: key prefix can include numbers, lowercase letters, uppercase
       letters, hyphens (-), and forward slash (/).
-    Default: f5-aws-cloudformation-v2/v2.0.0.0/examples/
+    Default: f5-aws-cloudformation-v2/v2.1.0.0/examples/
     Description: The path in the S3Bucket where the modules folder is located. Can
       include numbers, lowercase letters, uppercase letters, hyphens (-), and forward
       slash (/).
@@ -283,7 +283,7 @@ Parameters:
     Type: String
   bigIpImage:
     ConstraintDescription: Must be a valid F5 BIG-IP market place image
-    Default: '*16.1.0-0.0.19**BYOL-All Modules 2Boot*'
+    Default: '*16.1.2.1-0.0.10**BYOL-All Modules 2Boot*'
     Description: F5 BIG-IP market place image
     Type: String
   bigIpInstanceType:
@@ -334,7 +334,7 @@ Parameters:
     MinValue: 0
     Type: Number
   bigIpRuntimeInitConfig:
-    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg.yaml'
+    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.1.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
       file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
       configuration.'

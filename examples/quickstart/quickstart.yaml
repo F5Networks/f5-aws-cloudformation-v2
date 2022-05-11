@@ -506,7 +506,7 @@ Metadata:
       group:
         default: Group
       licenseType:
-        default: Licence Type
+        default: License Type
       numAzs:
         default: Availability Zones
       numNics:
@@ -533,7 +533,7 @@ Metadata:
         default: Unique String
       version:
         default: BIG-IP Version
-  Version: 2.0.0.0
+  Version: 2.1.0.0
 Outputs:
   bigIpInstanceId:
     Description: bigip's instance-id
@@ -591,20 +591,20 @@ Parameters:
     Description: Application docker image name
     Type: String
   application:
-    Default: f5app-quickstart
+    Default: f5app
     Description: Application Tag.
     Type: String
   artifactLocation:
-    AllowedPattern: ^.*[a-zA-Z]+/$
+    AllowedPattern: ^.*[0-9a-zA-Z]+/$
     ConstraintDescription: 'key prefix can include numbers, lowercase letters, uppercase
       letters, hyphens (-), and forward slash (/).'
-    Default: f5-aws-cloudformation-v2/v2.0.0.0/examples/
+    Default: f5-aws-cloudformation-v2/v2.1.0.0/examples/
     Description: 'The path in the S3Bucket where the modules folder is located. Can
       include numbers, lowercase letters, uppercase letters, hyphens (-), and forward
       slash (/).'
     Type: String
   bigIpRuntimeInitConfig:
-    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg_with_app.yaml'
+    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.1.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg-with-app.yaml'
     Description: 'Supply a URL to the bigip-runtime-init configuration file in YAML
       or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration.'
     Type: String
@@ -613,7 +613,7 @@ Parameters:
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   cost:
-    Default: f5costcenter-quickstart
+    Default: f5costcenter
     Description: Cost Center Tag.
     Type: String
   bigIpCustomImageId:
@@ -622,11 +622,11 @@ Parameters:
     MaxLength: 255
     Type: String
   environment:
-    Default: f5env-quickstart
+    Default: f5env
     Description: Environment Tag.
     Type: String
   group:
-    Default: f5group-quickstart
+    Default: f5group
     Description: Group Tag.
     Type: String
   bigIpImage:
@@ -667,7 +667,7 @@ Parameters:
       - payg
       - byol
     Default: payg
-    Description: Specifies licence type used for BIG-IP VE.
+    Description: Specifies license type used for BIG-IP VE.
     Type: String
   numAzs:
     AllowedValues:
@@ -699,7 +699,7 @@ Parameters:
     Description: Indicate the number of subnets to create.
     Type: Number
   owner:
-    Default: f5owner-quickstart
+    Default: f5owner
     Description: Owner Tag.
     Type: String
   provisionPublicIp:

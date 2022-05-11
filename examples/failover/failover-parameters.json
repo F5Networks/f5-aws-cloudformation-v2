@@ -9,7 +9,7 @@
   },
   {
     "ParameterKey": "artifactLocation",
-    "ParameterValue": "f5-aws-cloudformation-v2/v2.0.0.0/examples/"
+    "ParameterValue": "f5-aws-cloudformation-v2/v2.1.0.0/examples/"
   },
   {
     "ParameterKey": "bigIpCustomImageId",
@@ -17,7 +17,7 @@
   },
   {
     "ParameterKey": "bigIpImage",
-    "ParameterValue": "*16.1.0-0.0.19**PAYG-Adv WAF Plus 25Mbps*"
+    "ParameterValue": "*16.1.2.1-0.0.10**PAYG-Adv WAF Plus 25Mbps*"
   },
   {
     "ParameterKey": "bigIpInstanceType",
@@ -29,11 +29,11 @@
   },
   {
     "ParameterKey": "bigIpRuntimeInitConfig01",
-    "ParameterValue": "https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.2.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml"
+    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.1.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01-with-app.yaml"
   },
   {
     "ParameterKey": "bigIpRuntimeInitConfig02",
-    "ParameterValue": "https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v1.2.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml"
+    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.1.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02-with-app.yaml"
   },
   {
     "ParameterKey": "bigIpRuntimeInitPackageUrl",
@@ -49,7 +49,7 @@
   },
   {
     "ParameterKey": "cfeVipTag",
-    "ParameterValue": "10.0.0.101,10.0.3.101"
+    "ParameterValue": "10.0.0.101,10.0.4.101"
   },
   {
     "ParameterKey": "cost",
@@ -65,7 +65,7 @@
   },
   {
     "ParameterKey": "bigIpExternalSelfIp02",
-    "ParameterValue": "10.0.3.11"
+    "ParameterValue": "10.0.4.11"
   },
   {
     "ParameterKey": "bigIpExternalVip01",
@@ -73,7 +73,7 @@
   },
   {
     "ParameterKey": "bigIpExternalVip02",
-    "ParameterValue": "10.0.3.101"
+    "ParameterValue": "10.0.4.101"
   },
   {
     "ParameterKey": "group",
@@ -85,15 +85,15 @@
   },
   {
     "ParameterKey": "bigIpInternalSelfIp02",
-    "ParameterValue": "10.0.5.11"
+    "ParameterValue": "10.0.6.11"
   },
   {
-    "ParameterKey": "bigIpMgmtSelfIp01",
+    "ParameterKey": "bigIpMgmtAddress01",
     "ParameterValue": "10.0.1.11"
   },
   {
-    "ParameterKey": "bigIpMgmtSelfIp02",
-    "ParameterValue": "10.0.4.11"
+    "ParameterKey": "bigIpMgmtAddress02",
+    "ParameterValue": "10.0.5.11"
   },
   {
     "ParameterKey": "numAzs",
@@ -101,7 +101,7 @@
   },
   {
     "ParameterKey": "numSubnets",
-    "ParameterValue": "3"
+    "ParameterValue": "4"
   },
   {
     "ParameterKey": "owner",

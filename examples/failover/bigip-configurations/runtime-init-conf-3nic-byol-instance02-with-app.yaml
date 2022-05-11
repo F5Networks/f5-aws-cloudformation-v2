@@ -4,11 +4,11 @@ controls:
 extension_packages:
   install_operations:
     - extensionType: do
-      extensionVersion: 1.27.0
-      extensionHash: 2aee4a29ac64b38ac5af7d41607a966cac063c99a339b228225ffa38f8f9a4cf
+      extensionVersion: 1.28.0
+      extensionHash: fef1f81c259d1ead19c256a67b8dad492f2d70b1019ff520e16172a93e8c17c9
     - extensionType: as3
-      extensionVersion: 3.34.0
-      extensionHash: 05a80ec0848dc5b8876b78a8fbee2980d5a1671d635655b3af604dc830d5fed4
+      extensionVersion: 3.36.0
+      extensionHash: f7d88910535b97e024b7208b521c9f1a802d39176dc0f81da0ed166abc1617e0
     - extensionType: cf
       extensionVersion: 1.10.0
       extensionHash: d758c985cac4dbef4b0732fe5900317ae97e67c6efca621a5b2b02c8c4bbeace
@@ -24,7 +24,7 @@ extension_services:
           BYOL license
         Common:
           class: Tenant
-          My_DbVars:
+          My_DbVariables:
             class: DbVariables
             config.allow.rfc3927: enable
             tm.tcpudptxchecksum: Software-only
@@ -51,7 +51,7 @@ extension_services:
           My_License:
             class: License
             licenseType: regKey
-            regKey: REPLACE_WITH_VALID_REGKEY
+            regKey: AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE
           admin:
             class: User
             userType: regular
@@ -85,7 +85,7 @@ extension_services:
             vlan: internal
           default:
             class: Route
-            gw: '{{{DEFAULT_ROUTE}}}'
+            gw: '{{{DEFAULT_GW}}}'
             network: default
             mtu: 1500
             localOnly: true
@@ -137,7 +137,7 @@ extension_services:
             Custom_WAF_Policy:
               class: WAF_Policy
               url: >-
-                https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v2.0.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
+                https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v2.1.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
               enforcementMode: blocking
               ignoreChanges: false
             Service_Address_01_A:
@@ -146,7 +146,7 @@ extension_services:
               trafficGroup: none
             Service_Address_01_B:
               class: Service_Address
-              virtualAddress: 10.0.3.101
+              virtualAddress: 10.0.4.101
               trafficGroup: none
           HTTP_Service_01_A:
             class: Application
@@ -216,7 +216,7 @@ extension_services:
           BYOL license
         Common:
           class: Tenant
-          My_DbVars:
+          My_DbVariables:
             class: DbVariables
             config.allow.rfc3927: enable
             tm.tcpudptxchecksum: Software-only
@@ -273,7 +273,7 @@ extension_services:
             vlan: internal
           default:
             class: Route
-            gw: '{{{DEFAULT_ROUTE}}}'
+            gw: '{{{DEFAULT_GW}}}'
             network: default
             mtu: 1500
             localOnly: true
@@ -330,39 +330,23 @@ runtime_parameters:
       environment: aws
       field: local-ipv4s
       index: 2
-  - name: DEFAULT_ROUTE
+  - name: DEFAULT_GW
     type: metadata
     metadataProvider:
       environment: aws
       type: network
-      field: subnet-ipv4-cidr-block
+      field: local-ipv4s
       index: 1
-  - name: AWS_SESSION_TOKEN
-    type: url
-    value: http://169.254.169.254/latest/api/token
-    headers:
-      - name: Content-Type
-        value: json
-      - name: User-Agent
-        value: f5-bigip-runtime-init
-      - name: method
-        value: PUT
-      - name: X-aws-ec2-metadata-token-ttl-seconds
-        value: 21600
+      ipcalc: first
   - name: REGION
-    type: url
-    query: region
-    value: 'http://169.254.169.254/latest/dynamic/instance-identity/document'
-    headers:
-      - name: Content-Type
-        value: json
-      - name: User-Agent
-        value: f5-bigip-runtime-init
-      - name: X-aws-ec2-metadata-token
-        value: "{{{AWS_SESSION_TOKEN}}}"
+    type: metadata
+    metadataProvider:
+      environment: aws
+      type: uri
+      value: /latest/dynamic/instance-identity/document
+      query: region
   - name: REMOTE_HOST
     type: tag
     tagProvider:
       environment: aws
       key: bigIpPeerAddr
-

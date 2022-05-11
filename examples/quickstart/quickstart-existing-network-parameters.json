@@ -1,11 +1,11 @@
 [
   {
     "ParameterKey": "application",
-    "ParameterValue": "f5app-quickstart"
+    "ParameterValue": "f5app"
   },
   {
     "ParameterKey": "artifactLocation",
-    "ParameterValue": "f5-aws-cloudformation-v2/v2.0.0.0/examples/"
+    "ParameterValue": "f5-aws-cloudformation-v2/v2.1.0.0/examples/"
   },
   {
     "ParameterKey": "bigIpExternalSelfIp",
@@ -37,7 +37,7 @@
   },
   {
     "ParameterKey": "bigIpRuntimeInitConfig",
-    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.0.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml"
+    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.1.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml"
   },
   {
     "ParameterKey": "bigIpRuntimeInitPackageUrl",
@@ -45,7 +45,7 @@
   },
   {
     "ParameterKey": "cost",
-    "ParameterValue": "f5costcenter-quickstart"
+    "ParameterValue": "f5costcenter"
   },
   {
     "ParameterKey": "bigIpCustomImageId",
@@ -53,11 +53,11 @@
   },
   {
     "ParameterKey": "environment",
-    "ParameterValue": "f5env-quickstart"
+    "ParameterValue": "f5env"
   },
   {
     "ParameterKey": "group",
-    "ParameterValue": "f5group-quickstart"
+    "ParameterValue": "f5group"
   },
   {
     "ParameterKey": "bigIpImage",
@@ -77,7 +77,7 @@
   },
   {
     "ParameterKey": "owner",
-    "ParameterValue": "f5owner-quickstart"
+    "ParameterValue": "f5owner"
   },
   {
     "ParameterKey": "provisionPublicIp",

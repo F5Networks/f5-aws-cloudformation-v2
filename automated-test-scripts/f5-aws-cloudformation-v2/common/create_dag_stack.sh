@@ -4,6 +4,7 @@
 #  replayTimeout = 0
 
 
+src_ip=$(curl ifconfig.me)/32
 bucket_name=`echo <STACK NAME>|cut -c -60|tr '[:upper:]' '[:lower:]'| sed 's:-*$::'`
 echo "bucket_name=$bucket_name"
 
@@ -30,8 +31,8 @@ ParameterKey=createAppSecurityGroup,ParameterValue=<CREATE APP SECURITY GROUP> \
 ParameterKey=createBastionSecurityGroup,ParameterValue=<CREATE BASTION SECURITY GROUP> \
 ParameterKey=createExternalSecurityGroup,ParameterValue=<CREATE EXTERNAL SECURITY GROUP> \
 ParameterKey=createInternalSecurityGroup,ParameterValue=<CREATE INTERNAL SECURITY GROUP> \
-ParameterKey=restrictedSrcAddressMgmt,ParameterValue=0.0.0.0/0 \
-ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0 \
+ParameterKey=restrictedSrcAddressMgmt,ParameterValue=$src_ip \
+ParameterKey=restrictedSrcAddressApp,ParameterValue=$src_ip \
 ParameterKey=vpc,ParameterValue=$vpcId"
 echo "Parameters:$parameters"
 
