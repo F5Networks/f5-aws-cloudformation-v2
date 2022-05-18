@@ -136,7 +136,7 @@ By default, this solution creates a single Availability Zone VPC with four subne
 | sshKey | Yes |   | string | Supply the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. Example: ``myAWSkey`` |
 | throughput | No | 25Mbps | string | Maximum amount of throughput for BIG-IP VE. |
 | uniqueString | No | myUniqStr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
-| version | No |  16-1-0-0019 | string | Select version of BIG-IP you wish to deploy. |
+| version | No |  16-1-2-2-0028 | string | Select version of BIG-IP you wish to deploy. |
 
 
 ### Template Outputs
@@ -185,7 +185,7 @@ By default, this solution creates a single Availability Zone VPC with four subne
 | sshKey | Yes |   | string | Supply the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. Example: ``myAWSkey`` |
 | throughput | No | 25Mbps | string | Maximum amount of throughput for BIG-IP VE. |
 | uniqueString | No | myUniqStr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
-| version | No |  16-1-0-0019 | string | Select version of BIG-IP you wish to deploy. |
+| version | No |  16-1-2-2-0028 | string | Select version of BIG-IP you wish to deploy. |
 | vpcId | Yes |   | string | Id for VPC to use with deployment. |
 
 <br>
@@ -613,8 +613,8 @@ These templates have only been explicitly tested and validated with the followin
 
 | BIG-IP Version | Build Number |
 | --- | --- |
-| 16.1.2.1 | 0.0.10 |
-| 14.1.4.4 | 0.0.4 |
+| 16.1.2.2 | 0.0.28 |
+| 14.1.4.6 | 0.0.6 |
 
 These templates leverage Runtime-Init, which requires BIG-IP Versions 14.1.2.6 and up, and are assumed compatible to work. 
 

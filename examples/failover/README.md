@@ -135,7 +135,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | application | No | f5app  | string | Application Tag. |
 | artifactLocation | No | f5-aws-cloudformation-v2/v2.1.0.0/examples/  | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
 | bigIpInstanceType | No | m5.xlarge | string | Enter a valid instance type. |
-| bigIpImage | No | \*16.1.2.1-0.0.10**PAYG-Adv WAF Plus 25Mbps\* | string | F5 BIG-IP Performance Type. |
+| bigIpImage | No | \*16.1.2.2-0.0.28**PAYG-Adv WAF Plus 25Mbps\* | string | F5 BIG-IP Performance Type. |
 | bigIpCustomImageId | No |   | string | Provide a custom BIG-IP AMI ID you wish to deploy. Otherwise, can leave empty. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run  | string | Supply a URL to the bigip-runtime-init package. |
 | bigIpExternalSelfIp01 | No | 10.0.0.11 | string | External Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
@@ -194,7 +194,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | application | No | f5app  | string | Application Tag. |
 | artifactLocation | No | f5-aws-cloudformation-v2/v2.1.0.0/examples/  | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
 | bigIpInstanceType | No | m5.xlarge | string | Enter a valid instance type. |
-| bigIpImage | No | \*16.1.2.1-0.0.10**PAYG-Adv WAF Plus 25Mbps\* | string | F5 BIG-IP Performance Type. |
+| bigIpImage | No | \*16.1.2.2-0.0.28**PAYG-Adv WAF Plus 25Mbps\* | string | F5 BIG-IP Performance Type. |
 | bigIpCustomImageId | No |   | string | Provide a custom BIG-IP AMI ID you wish to deploy. Otherwise, can leave empty. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run  | string | Supply a URL to the bigip-runtime-init package. |
 | bigIpExternalSubnetId01 | Yes |   | string | Subnet ID used for BIGIP instance A external interface. |
@@ -382,7 +382,7 @@ Example:
         ```json
           {
             "ParameterKey": "bigIpImage",
-            "ParameterValue": "*16.1.2.1-0.0.10**BYOL-All Modules 2Boot*"
+            "ParameterValue": "*16.1.2.2-0.0.28**BYOL-All Modules 2Boot*"
           },
         ```
 
@@ -716,8 +716,8 @@ These templates have been tested and validated with the following versions of BI
 
 | AWS BIG-IP Image Version | BIG-IP Version |
 | --- | --- |
-| 16.1.000000 | 16.1.0 Build 0.0.0 |
-| 14.1.404001 | 14.1.4.4 Build 0.0.1 |
+| 16.1.2.2 | 0.0.28 |
+| 14.1.4.6 | 0.0.6 |
 
 
 ## Documentation
