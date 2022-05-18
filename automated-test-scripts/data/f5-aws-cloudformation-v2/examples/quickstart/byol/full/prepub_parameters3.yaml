@@ -2,7 +2,7 @@
 AUTOFILL EVAL LICENSE KEY: null
 BIGIP IMAGE: Best
 BIGIP INSTANCE TYPE: m5.2xlarge
-BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run'
+BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.2/dist/f5-bigip-runtime-init-1.4.2-1.gz.run'
 BIGIP USER: admin
 CUSTOM IMAGE: ''
 DOCKER IMAGE: 'f5devcentral/f5-demo-app:latest'
@@ -19,4 +19,4 @@ TEMPLATE NAME: quickstart-3nic-byol
 TEMPLATE URL: 'file://$PWD/examples/quickstart/quickstart.yaml'
 THROUGHPUT: 1000Mbps
 UNIQUESTRING: dew<DEWPOINT JOB ID>
-VERSION: 14-1-4-4004
+VERSION: 14-1-4-6-008

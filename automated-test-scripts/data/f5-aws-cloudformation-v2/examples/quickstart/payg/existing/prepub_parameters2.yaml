@@ -1,7 +1,7 @@
 ---
 BIGIP IMAGE: Best
 BIGIP INSTANCE TYPE: m5.2xlarge
-BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run'
+BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.2/dist/f5-bigip-runtime-init-1.4.2-1.gz.run'
 BIGIP USER: admin
 CIDR: 10.0.0.0/16
 CUSTOM IMAGE: ''
@@ -27,4 +27,4 @@ TEMPLATE URL: 'file://$PWD/examples/quickstart/quickstart-existing-network.yaml'
 TENANCY: default
 THROUGHPUT: 1000Mbps
 UNIQUESTRING: dew<DEWPOINT JOB ID>
-VERSION: 16-1-0-0019
+VERSION: 16-1-2-2-0028

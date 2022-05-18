@@ -13,7 +13,7 @@
   },
   {
     "ParameterKey": "bigIpImage",
-    "ParameterValue": "*16.1.2.1-0.0.10**PAYG-Adv WAF Plus 25Mbps*"
+    "ParameterValue": "*16.1.2.2-0.0.28**PAYG-Adv WAF Plus 25Mbps*"
   },
   {
     "ParameterKey": "bigIpInstanceType",
@@ -33,7 +33,7 @@
   },
   {
     "ParameterKey": "bigIpRuntimeInitPackageUrl",
-    "ParameterValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run"
+    "ParameterValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.2/dist/f5-bigip-runtime-init-1.4.2-1.gz.run"
   },
   {
     "ParameterKey": "cfeS3Bucket",
