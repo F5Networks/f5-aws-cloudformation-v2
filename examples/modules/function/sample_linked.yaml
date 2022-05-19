@@ -5,7 +5,7 @@ Resources:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: >-
-        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v2.1.0.0/examples/modules/function/function.yaml
+        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v2.2.0.0/examples/modules/function/function.yaml
       Parameters:
         amiLookupRole: ''
         bigIqAddressType: public
