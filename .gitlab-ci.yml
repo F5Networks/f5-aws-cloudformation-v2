@@ -11,6 +11,7 @@ stages:
   - publish
   - monitors
   - droplets
+  - admin
 
 variables:
     GIT_SUBMODULE_STRATEGY: recursive
@@ -803,6 +804,7 @@ post_release_test_job:
   except:
     variables:
       - $CREATE_BIGIQ == "true"
+      - $UPDATE_SCHEDULES == "true"
   variables:
     TEST_POLICY: automated-test-scripts/data/test_policies/post_release_test.yaml
     STACK_TYPE: dewdrop-preproduction
@@ -827,6 +829,7 @@ execute_test_job:
   except:
     variables:
       - $CREATE_BIGIQ == "true"
+      - $UPDATE_SCHEDULES == "true"
   variables:
     TEST_POLICY: set in schedule!
     STACK_TYPE: dewdrop-production
@@ -979,3 +982,20 @@ check_at_components_metadata:
   tags:
     - cm-official-docker-executor
   allow_failure: true
+
+# manually scheduled job to enable/disable daily scheduled test jobs
+update_daily_test_schedules:
+  image: ${ARTIFACTORY_SERVER}/dockerhub-remote/node:8
+  stage: admin
+  only:
+    variables:
+      - $UPDATE_SCHEDULES == "true"
+  script:
+    - apt-get update
+    - apt-get install -y jq
+    - ./cloud-tools/scheduler-tool/activate-schedule.sh
+  variables:
+    FILTER: "$FILTER"
+    GIT_LAB_API_URL: "$AWS_V2_URL"
+    GIT_LAB_PRIVATE_TOKEN: "$AWS_V2_GITLAB_API_TOKEN"
+    STATE: "$STATE"
