@@ -1,7 +1,6 @@
 ---
 AUTOFILL EVAL LICENSE KEY:
 BIGIP USER: admin
-BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.2/dist/f5-bigip-runtime-init-1.4.2-1.gz.run'
 LICENSE TYPE: byol
 NIC COUNT: 3
 REGION: us-east-2

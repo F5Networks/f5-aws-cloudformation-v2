@@ -55,7 +55,7 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | bigIpExternalSecurityGroup | Yes |  | string | BIG-IP external security group. |
 | bigIpInstanceProfile | Yes |  | string | BIG-IP instance profile with applied IAM policy. |
 | bigIpRuntimeInitConfig | Yes |  | string | Delivery URL for config file (YAML/JSON) or JSON string. |
-| bigIpRuntimeInitPackageUrl | Yes | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.1/dist/f5-bigip-runtime-init-1.4.1-1.gz.run | string | URL for f5-bigip-runtime-init package. |
+| bigIpRuntimeInitPackageUrl | Yes | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run | string | URL for f5-bigip-runtime-init package. |
 | bigIqLicenseRevokeSnsTopic | No |  | string | Provides SNS Topic ARN used for triggering Lambda Function for revoking license on BIG-IQ. |
 | bigIqNotificationRole | No |  | string | The ARN of the IAM role to assign to the Lifecycle Hook. |
 | cost | No | f5cost | string | Cost Center Tag. |

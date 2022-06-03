@@ -149,7 +149,7 @@ Metadata:
         default: Public or external subnets for the availability zones
       uniqueString:
         default: Unique string
-  Version: 2.2.0.0
+  Version: 2.3.0.0
 Outputs:
   stackName:
     Description: bigip-autoscale nested stack name
@@ -177,7 +177,7 @@ Parameters:
       configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.2/dist/f5-bigip-runtime-init-1.4.2-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   bigIqLicenseRevokeSnsTopic:
@@ -582,7 +582,7 @@ Resources:
             - |
               # Run
             - |
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.2.0.0/examples/modules/bigip-autoscale/bigip-autoscale.yaml'
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.3.0.0/examples/modules/bigip-autoscale/bigip-autoscale.yaml'
             - |2+
 
             - |

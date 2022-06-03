@@ -157,10 +157,6 @@ cat <<EOF > parameters.json
         "ParameterValue": $runtimeConfig02
     },
     {
-        "ParameterKey": "bigIpRuntimeInitPackageUrl",
-        "ParameterValue": "<BIGIP RUNTIME INIT PACKAGEURL>"
-    },
-    {
         "ParameterKey": "bigIpPeerAddr",
         "ParameterValue": "<BIGIP PEER ADDR>"
     },

@@ -42,7 +42,7 @@ else
     sp=$(( (successes * 100)/ requests_count ))
     echo ">>>> Failures: $fp%"
     echo ">>>> Successes: $sp%"
-    if [ $sp -ge 95 ]; then
+    if [ $sp -ge 50 ]; then
         echo "SUCCESS"
     fi
 fi
