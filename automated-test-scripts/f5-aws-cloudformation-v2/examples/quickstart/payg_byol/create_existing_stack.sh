@@ -98,10 +98,6 @@ cat <<EOF > parameters.json
         "ParameterValue": "$runtimeConfig"
     },
     {
-        "ParameterKey": "bigIpRuntimeInitPackageUrl",
-        "ParameterValue": "<BIGIP RUNTIME INIT PACKAGEURL>"
-    },
-    {
         "ParameterKey": "licenseType",
         "ParameterValue": "<LICENSE TYPE>"
     },

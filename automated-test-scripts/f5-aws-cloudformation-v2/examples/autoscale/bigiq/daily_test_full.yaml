@@ -18,7 +18,6 @@ onStart:
   - ./update_stack.sh
   - ../common/verify_pause_time.sh
   - ../../../common/verify_update.sh
-  - ../common/verify_login.sh
   - ../common/verify_traffic.sh
   - ../common/verify_waf_blocking.sh
   - ../common/verify_cloudwatch_logs.sh
