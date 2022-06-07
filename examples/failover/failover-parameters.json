@@ -9,7 +9,7 @@
   },
   {
     "ParameterKey": "artifactLocation",
-    "ParameterValue": "f5-aws-cloudformation-v2/v2.2.0.0/examples/"
+    "ParameterValue": "f5-aws-cloudformation-v2/v2.3.0.0/examples/"
   },
   {
     "ParameterKey": "bigIpCustomImageId",
@@ -17,7 +17,7 @@
   },
   {
     "ParameterKey": "bigIpImage",
-    "ParameterValue": "*16.1.2.2-0.0.28**PAYG-Adv WAF Plus 25Mbps*"
+    "ParameterValue": "*16.1.2.2-0.0.28**PAYG-Best Plus 25Mbps*"
   },
   {
     "ParameterKey": "bigIpInstanceType",
@@ -29,15 +29,15 @@
   },
   {
     "ParameterKey": "bigIpRuntimeInitConfig01",
-    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.2.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01-with-app.yaml"
+    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.3.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01-with-app.yaml"
   },
   {
     "ParameterKey": "bigIpRuntimeInitConfig02",
-    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.2.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02-with-app.yaml"
+    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.3.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02-with-app.yaml"
   },
   {
     "ParameterKey": "bigIpRuntimeInitPackageUrl",
-    "ParameterValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.2/dist/f5-bigip-runtime-init-1.4.2-1.gz.run"
+    "ParameterValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run"
   },
   {
     "ParameterKey": "cfeS3Bucket",

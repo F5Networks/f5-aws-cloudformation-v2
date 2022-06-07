@@ -13,6 +13,8 @@ else
     echo "Executing HTTP and HTTPS calls to application $dnsAppname"
     REJECTED_RESPONSE=$(curl -ks -X DELETE https://$dnsAppname)
 
+    echo "Rejected response: $REJECTED_RESPONSE"
+
     if echo ${REJECTED_RESPONSE} | grep -q "The requested URL was rejected"; then
         echo "Succeeded"
     else

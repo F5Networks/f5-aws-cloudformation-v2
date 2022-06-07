@@ -9,7 +9,6 @@ BASTION SCALE MIN SIZE: 1
 BIGIP IMAGE: '*16.1.2.2-0.0.28**BYOL-All Modules 2Boot*'
 BIGIP INSTANCE TYPE: m5.2xlarge
 BIGIP MGMT PORT: 8443
-BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.4.2/dist/f5-bigip-runtime-init-1.4.2-1.gz.run'
 BIGIQ LICENSE POOL: production
 BIGIQ LICENSE S3 ARN: 'arn:aws:s3:::bigiqtest/bigiq.txt'
 BIGIQ PASSWORD: b1gAdminPazz

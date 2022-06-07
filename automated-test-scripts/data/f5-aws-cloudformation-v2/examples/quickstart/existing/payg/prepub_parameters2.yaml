@@ -1,7 +1,6 @@
 ---
 BIGIP IMAGE: Best
 BIGIP INSTANCE TYPE: m5.2xlarge
-BIGIP RUNTIME INIT PACKAGEURL: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/develop/develop/dist/f5-bigip-runtime-init-1.4.0-1.gz.run'
 BIGIP USER: quickstart
 CIDR: 10.0.0.0/16
 CUSTOM IMAGE: ''
