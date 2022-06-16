@@ -139,7 +139,7 @@ extension_services:
           internal-self:
             class: SelfIp
             address: '{{{SELF_IP_INTERNAL}}}'
-            allowService: default
+            allowService: none
             trafficGroup: traffic-group-local-only
             vlan: internal
 post_onboard_enabled: []
