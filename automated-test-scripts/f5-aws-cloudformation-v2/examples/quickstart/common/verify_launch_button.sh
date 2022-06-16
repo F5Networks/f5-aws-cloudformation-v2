@@ -6,7 +6,11 @@
 
 # verify that the template we are launching matches the template we are testing
 test_link=<TEMPLATE URL>
-launch_link=$(cat examples/quickstart/README.md | grep -Eo 'href="[^\"]+"' |  grep -Eo '(https)://f5-cft-v2[^"]+')
+if echo "<TEMPLATE URL>" | grep -q "existing-nework"; then
+    launch_link=$(cat examples/quickstart/README.md | grep -Eo 'href="[^\"]+"' |  grep -Eo '(https)://f5-cft-v2[^"]+')
+else 
+    launch_link=$(cat examples/quickstart/README.md | grep -Eo 'href="[^\"]+"' |  grep -Eo '(https)://f5-cft-v2[^"]+')
+fi
 
 echo "Test link: $test_link"
 echo "Launch link: $launch_link"

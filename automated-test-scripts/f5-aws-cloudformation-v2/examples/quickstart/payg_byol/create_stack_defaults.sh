@@ -19,28 +19,34 @@ if [ -z $region ] || [ $region == null ]; then
     echo "using default bucket region:$region"
 fi
 
-runtimeConfig='<RUNTIME INIT CONFIG>'
-
-# Download and modify runtime-init, then upload to s3.
-curl https://f5-cft-v2.s3.amazonaws.com/${artifact_location}quickstart/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-with-app.yaml -o <DEWPOINT JOB ID>-config.yaml
-
-if [[ <LICENSE TYPE> == "byol" ]]; then
-    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.regKey = \"<AUTOFILL EVAL LICENSE KEY>\"" -i <DEWPOINT JOB ID>-config.yaml
+if echo "<TEMPLATE URL>" | grep -q "existing-network"; then
+    echo "Setting existing stack variables"
+    mgmtAz=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 2)
+    extAz=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 1)
+    intAz=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 3)
+    vpcId=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="vpcId").OutputValue')
 fi
-
-# print out config file
-/usr/bin/yq e <DEWPOINT JOB ID>-config.yaml
 
 # upload to s3
 aws s3 cp --region <REGION> <DEWPOINT JOB ID>-template.yaml s3://"$bucket_name"/<DEWPOINT JOB ID>-template.yaml --acl public-read
-aws s3 cp --region <REGION> <DEWPOINT JOB ID>-config.yaml s3://"$bucket_name"/<DEWPOINT JOB ID>-config.yaml --acl public-read
+
+# create parameters
+parameters="ParameterKey=restrictedSrcAddressMgmt,ParameterValue=$src_ip \
+ParameterKey=restrictedSrcAddressApp,ParameterValue=$src_ip \
+ParameterKey=uniqueString,ParameterValue=<UNIQUESTRING> \
+ParameterKey=sshKey,ParameterValue=<SSH KEY>"
+
+if echo "<TEMPLATE URL>" | grep -q "existing-network"; then
+    echo "Adding existing stack parameters"
+    parameters+=" ParameterKey=bigIpExternalSubnetId,ParameterValue=$extAz \
+    ParameterKey=bigIpInternalSubnetId,ParameterValue=$intAz \
+    ParameterKey=bigIpMgmtSubnetId,ParameterValue=$mgmtAz \
+    ParameterKey=vpcId,ParameterValue=$vpcId"
+fi
+echo "Parameters:$parameters"
 
 # create stack
 aws cloudformation create-stack --disable-rollback --region <REGION> --stack-name <STACK NAME> --tags Key=creator,Value=dewdrop Key=delete,Value=True \
---template-url <TEMPLATE S3 URL> \
+--template-url https://s3.amazonaws.com/"$bucket_name"/<DEWPOINT JOB ID>-template.yaml \
 --capabilities CAPABILITY_IAM \
---parameters ParameterKey=bigIpRuntimeInitConfig,ParameterValue=$runtimeConfig \
-ParameterKey=restrictedSrcAddressMgmt,ParameterValue=$src_ip \
-ParameterKey=restrictedSrcAddressApp,ParameterValue=$src_ip \
-ParameterKey=uniqueString,ParameterValue=<UNIQUESTRING> \
-ParameterKey=sshKey,ParameterValue=<SSH KEY>
+--parameters $parameters

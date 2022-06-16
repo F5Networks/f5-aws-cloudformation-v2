@@ -1,0 +1,15 @@
+---
+name: AWS Examples - QuickStart PAYG or BYOL licensed
+onStart:
+  - ../../../common/create_s3_bucket.sh
+  - ./create_stack_defaults.sh
+  - ../../../common/verify_create.sh
+  - ../../../common/delete_stack.sh
+  - ../../../common/verify_stack_deleted.sh
+  - ../../../common/delete_s3_bucket.sh
+onFail:
+  - ../../../../sleep/2_minutes.sh
+  - ../../../common/capture_stack_events.sh
+  - ../../../common/delete_stack.sh
+  - ../../../common/verify_stack_deleted.sh
+  - ../../../common/delete_s3_bucket.sh

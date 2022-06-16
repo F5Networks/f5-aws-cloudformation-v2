@@ -105,8 +105,6 @@ else
 fi
 echo "Runtime Init Config: $runtimeConfig"
 
-
-
 # Set Parameters using file to eiliminate issues when passing spaces in parameter values
 cat <<EOF > parameters.json
 [
