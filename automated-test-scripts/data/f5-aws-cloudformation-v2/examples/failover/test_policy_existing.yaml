@@ -5,12 +5,10 @@ aws-failover-byol-existing-test:
     run: "random"
     random-num-of-tests: 1
     parameters-files:
-        # using ami lookup to deploy in us-east-2; no public ip on BIGIP and Application; deploys Bastion Host
-       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/byol/existing/prepub_parameters.yaml"
-        # using ami lookup to deploy in us-east-2; with public ip on BIGIP and Application
-       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/byol/existing/prepub_parameters1.yaml"
-        # using ami lookup to deploy in us-east-2; with public ip on BIGIP and no Application
-       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/byol/existing/prepub_parameters2.yaml"
+       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/byol/existing/demo.yaml"
+       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/byol/existing/demo_app.yaml"
+       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/byol/existing/prod.yaml"
+       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/byol/existing/prod_app.yaml"
 
 # Failover PAYG Example Test
 aws-failover-payg-existing-test:
@@ -18,9 +16,7 @@ aws-failover-payg-existing-test:
     run: "random"
     random-num-of-tests: 1
     parameters-files:
-        # using ami lookup to deploy in us-east-2; no public ip on BIGIP and Application; deploys Bastion Host
-       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/existing/prepub_parameters.yaml"
-        # using ami lookup to deploy in us-east-2; with public ip on BIGIP and Application
-       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/existing/prepub_parameters1.yaml"
-        # using ami lookup to deploy in us-east-2; with public ip on BIGIP and no Application
-       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/existing/prepub_parameters2.yaml"
+       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/existing/demo.yaml"
+       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/existing/demo_app.yaml"
+       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/existing/prod.yaml"
+       - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/existing/prod_app.yaml"
