@@ -424,39 +424,7 @@ By default, this solution sends metrics and logs to the following CloudWatch des
   - logGroup: f5telemetry
   - logstream: f5-waf-logs
 
-Disclaimer: The default names in the example Telemetry Streaming configuration can only be used once per account as CloudWatch resources must be unique. To deploy more than one of these per account, one must follow customization steps below.
-
-To change the CloudWatch destination values:
-
-  1. Edit/modify the Telemetry Streaming (TS) declaration in a corresponding runtime-init config file [runtime-init-conf-bigiq.yaml](../bigip-configurations/runtime-init-conf-bigiq-with-app.yaml) with the new `metricNamespace`, `logGroup`, and `logStream` values. 
-
-Example:
-```yaml
-          My_Cloudwatch_Metrics:
-            class: Telemetry_Consumer
-            type: AWS_CloudWatch
-            region: '{{{REGION}}}'
-            dataType: metrics
-            metricNamespace: <YOUR_CUSTOM_METRICS_NAMESPACE>
-        My_Remote_Logs_Namespace:
-          class: Telemetry_Namespace
-          My_Listener:
-            class: Telemetry_Listener
-            port: 6514
-          My_Cloudwatch_Logs:
-            class: Telemetry_Consumer
-            type: AWS_CloudWatch
-            region: '{{{REGION}}}'
-            logGroup: <YOUR_CUSTOM_LOG_GROUP>
-            logStream: <YOUR_CUSTOM_LOG_STREAM>
-```
-  2. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, S3, git, etc.).
-  3. Update the **bigIpRuntimeInitConfig** template input parameter to reference the URL of the customized configuration file.
-  4. Update template input parameters with the custom CloudWatch destinations:
-    - **metricNameSpace**  *(to match the Telemetry Streaming Configuration)*
-    - **cloudWatchLogGroupName** *(to match the Telemetry Streaming Configuration)*
-    - **cloudWatchLogStreamName** *(to match the Telemetry Streaming Configuration)*
-    - **cloudWatchDashboardName** *(to be unique)*
+Disclaimer: The default metrics and logging values in this template can only be used once per account as CloudWatch resources must be unique. To deploy more than one of these per account, you must supply unique values for the metricNameSpace, cloudWatchLogGroupName, and cloudWatchLogStreamName input parameters.
 
 To log to an S3 Bucket:
   1. Ensure target S3 Logging destination exists in same region. See AWS's [documentation](https://docs.aws.amazon.com/AmazonS3/latest/userguide/creating-buckets-s3.html) for more information.

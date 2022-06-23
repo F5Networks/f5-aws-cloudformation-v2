@@ -663,6 +663,8 @@ Resources:
           - Access
           - Outputs.bigIqNotificationRole
         cost: !Ref 'cost'
+        cloudWatchLogGroupName: !If [customLogGroup, !Ref 'cloudWatchLogGroupName', 'f5telemetry']
+        cloudWatchLogStreamName: !If [customLogStream, !Ref 'cloudWatchLogStreamName', 'f5-waf-logs']
         environment: !Ref 'environment'
         externalTargetGroupHttp: !If
           - externalLB
@@ -698,7 +700,7 @@ Resources:
           - !Ref 'AWS::NoValue'
         licenseType: 'bigiq'
         maxBatchSize: !Ref 'bigIpMaxBatchSize'
-        metricNameSpace: !Ref 'metricNameSpace'
+        metricNameSpace: !If [customNameSpace, !Ref 'metricNameSpace', 'f5-scaling-metrics']
         minInstancesInService: !Ref 'bigIpMinInstancesInService'
         notificationEmail: !Ref 'notificationEmail'
         pauseTime: !Ref 'bigIpPauseTime'

@@ -604,6 +604,8 @@ Resources:
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig'
         bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         cost: !Ref 'cost'
+        cloudWatchLogGroupName: !If [customLogGroup, !Ref 'cloudWatchLogGroupName', 'f5telemetry']
+        cloudWatchLogStreamName: !If [customLogStream, !Ref 'cloudWatchLogStreamName', 'f5-waf-logs']
         environment: !Ref 'environment'
         externalTargetGroupHttp: !If
           - externalLB
@@ -638,7 +640,7 @@ Resources:
             - Outputs.internalTargetGroupHttps
           - !Ref 'AWS::NoValue'
         maxBatchSize: !Ref 'bigIpMaxBatchSize'
-        metricNameSpace: !Ref 'metricNameSpace'
+        metricNameSpace: !If [customNameSpace, !Ref 'metricNameSpace', 'f5-scaling-metrics']
         minInstancesInService: !Ref 'bigIpMinInstancesInService'
         notificationEmail: !Ref 'notificationEmail'
         pauseTime: !Ref 'bigIpPauseTime'
