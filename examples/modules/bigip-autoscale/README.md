@@ -58,6 +58,8 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | bigIpRuntimeInitPackageUrl | Yes | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run | string | URL for f5-bigip-runtime-init package. |
 | bigIqLicenseRevokeSnsTopic | No |  | string | Provides SNS Topic ARN used for triggering Lambda Function for revoking license on BIG-IQ. |
 | bigIqNotificationRole | No |  | string | The ARN of the IAM role to assign to the Lifecycle Hook. |
+| cloudWatchLogGroupName | No |  | string | The name of the CloudWatch Log Group. This parameter is required if your bigipRuntimInitConfig contains a telemetry services configuration for CloudWatch logging. |
+| cloudWatchLogStreamName | No |  | string | The name of the CloudWatch Log Stream. This parameter is required if your bigipRuntimInitConfig contains a telemetry services configuration for CloudWatch logging. |
 | cost | No | f5cost | string | Cost Center Tag. |
 | customImageId | No |  | string | If you would like to deploy using a custom BIG-IP image, provide the AMI ID. |
 | environment | No | f5env | string | Environment Tag. |
@@ -72,7 +74,7 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | licenseType | Yes | payg | string | Specifies license type used for BIG-IP VE. |
 | lowCpuThreshold | No |  | string | Low CPU Percentage threshold to begin scaling down BIG-IP VE instances. |
 | maxBatchSize | No | 5 | integer | Specifies the maximum number of instances that CloudFormation updates. |
-| metricNameSpace | Yes | f5-scaling-metrics | string | CloudWatch namespace used for custom metrics. This should match the namespace defined in your telemetry services declaration within bigipRuntimInitConfig. |
+| metricNameSpace | No | f5-scaling-metrics | string | CloudWatch namespace used for custom metrics. This parameter is required if your bigipRuntimInitConfig contains a telemetry services configuration for CloudWatch metrics. |
 | minInstancesInService | No | 1 | integer | Specifies the minimum number of instances that must be in service within the Auto Scaling group while CloudFormation updates old instances. |
 | notificationEmail | Yes |  | string | Valid email address to send Auto Scaling event notifications. |
 | owner | No | f5owner | string | Application Tag. |

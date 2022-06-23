@@ -28,6 +28,14 @@
     "ParameterValue": ""
   },
   {
+    "ParameterKey": "cloudWatchLogGroupName",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "cloudWatchLogStreamName",
+    "ParameterValue": ""
+  },
+  {
     "ParameterKey": "cost",
     "ParameterValue": "f5cost"
   },
