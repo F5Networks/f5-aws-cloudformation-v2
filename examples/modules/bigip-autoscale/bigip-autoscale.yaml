@@ -64,7 +64,7 @@ Metadata:
           - bigIpInstanceProfile
           - licenseType
       - Label:
-          default: Tags
+          default: Resources Tags
         Parameters:
           - uniqueString
           - application
@@ -394,7 +394,7 @@ Resources:
       AutoScalingGroupName: !Join
         - ''
         - - !Ref 'uniqueString'
-          - '-bigip-autoscale-group'
+          - '-bigip-autoscaling-group'
       Cooldown: '1500'
       HealthCheckGracePeriod: 1500
       HealthCheckType: EC2
@@ -453,7 +453,7 @@ Resources:
           Value: !Join
             - ''
             - - !Ref 'uniqueString'
-              - '-bigip-autoscale-instance'
+              - '-bigip-vm'
         - Key: owner
           PropagateAtLaunch: true
           Value: !Ref 'owner'

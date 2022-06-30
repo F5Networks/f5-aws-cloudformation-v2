@@ -508,6 +508,20 @@ Resources:
         - Key: stickiness.type
           Value: 'source_ip'
       VpcId: !Ref vpc
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-external-https-tg'
+        - Key: costcenter
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
   ExternalTargetGroupHttp:
     Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
     Condition: externalLB
@@ -528,19 +542,19 @@ Resources:
           Value: '20'
       VpcId: !Ref vpc
       Tags:
-      - Key: Name
-        Value: !Join
-          - ''
-          - - !Ref uniqueString
-            - '-external-http-tg'
-      - Key: costcenter
-        Value: !Ref cost
-      - Key: environment
-        Value: !Ref environment
-      - Key: group
-        Value: !Ref group
-      - Key: owner
-        Value: !Ref owner
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-external-http-tg'
+        - Key: costcenter
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
   InternalBigIpLoadBalancer:
     Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
     Condition: internalLB
@@ -595,7 +609,7 @@ Resources:
       Name: !Join
         - ''
         - - !Ref uniqueString
-          - '-internal-https'
+          - '-internal-https-tg'
       Port: 443
       Protocol: TCP
       HealthCheckIntervalSeconds: 10
@@ -607,6 +621,20 @@ Resources:
         - Key: deregistration_delay.timeout_seconds
           Value: '20'
       VpcId: !Ref vpc
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-internal-https-tg'
+        - Key: costcenter
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
   InternalTargetGroupHttp:
     Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
     Condition: internalLB
@@ -614,7 +642,7 @@ Resources:
       Name: !Join
         - ''
         - - !Ref uniqueString
-          - '-internal-http'
+          - '-internal-http-tg'
       Port: 80
       Protocol: TCP
       HealthCheckIntervalSeconds: 10
@@ -626,6 +654,20 @@ Resources:
         - Key: deregistration_delay.timeout_seconds
           Value: '20'
       VpcId: !Ref vpc
+      Tags:
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-internal-http-tg'
+        - Key: costcenter
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: owner
+          Value: !Ref owner
   BigipManagementEipAddress01:
     Condition: createMgmtPublicIP01
     Properties:
@@ -806,6 +848,10 @@ Resources:
     Condition: createExternalSecurityGroup
     Properties:
       GroupDescription: 'Public or external interface rules'
+      GroupName: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-bigip-external-sg'
       SecurityGroupIngress:
         - CidrIp: !Ref restrictedSrcAddressApp
           FromPort: 80
@@ -843,6 +889,10 @@ Resources:
     Condition: createInternalSecurityGroup
     Properties:
       GroupDescription: 'Internal interface rules'
+      GroupName: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-bigip-internal-sg'
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 80
@@ -871,6 +921,10 @@ Resources:
   BigipMgmtSecurityGroup:
     Properties:
       GroupDescription: 'Management interface rules'
+      GroupName: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-bigip-mgmt-sg'
       SecurityGroupIngress:
         - CidrIp: !Ref restrictedSrcAddressMgmt
           FromPort: 22
@@ -963,6 +1017,10 @@ Resources:
     Properties:
       VpcId: !Ref vpc
       GroupDescription: Enable SSH access via port 22 and enable access to web on 80 and 443 for the application
+      GroupName: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-application-sg'
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
@@ -1004,6 +1062,10 @@ Resources:
     Properties:
       VpcId: !Ref vpc
       GroupDescription: Enable SSH access via port 22 for the bastion
+      GroupName: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-bastion-sg'
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22

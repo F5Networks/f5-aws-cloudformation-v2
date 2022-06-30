@@ -541,6 +541,7 @@ Resources:
         externalSelfIp: !Ref 'bigIpExternalSelfIp01'
         externalServiceIps: !If [usePublicIpVip, !Ref 'bigIpExternalVip01', '']
         externalSubnetId: !Ref 'bigIpExternalSubnetId01'
+        instanceIndex: '01'
         instanceType: !Ref 'bigIpInstanceType'
         internalSelfIp: !Ref 'bigIpInternalSelfIp01'
         internalSubnetId: !Ref 'bigIpInternalSubnetId01'
@@ -578,6 +579,7 @@ Resources:
         externalSelfIp: !Ref 'bigIpExternalSelfIp02'
         externalServiceIps: !If [usePublicIpVip, !Ref 'bigIpExternalVip02', '']
         externalSubnetId: !Ref 'bigIpExternalSubnetId02'
+        instanceIndex: '02'
         instanceType: !Ref 'bigIpInstanceType'
         internalSelfIp: !Ref 'bigIpInternalSelfIp02'
         internalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup]
@@ -635,3 +637,4 @@ Resources:
           - Access
           - Outputs.lambdaAmiExecutionRole
         createAmiLookupFunction: 'true'
+        uniqueString: !Ref 'uniqueString'

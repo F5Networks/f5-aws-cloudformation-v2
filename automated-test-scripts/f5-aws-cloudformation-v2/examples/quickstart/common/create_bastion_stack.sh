@@ -3,7 +3,7 @@
 #  replayEnabled = false
 #  replayTimeout = 0
 
-if [[ "<PROVISION MGMT PUBLIC IP>" == "false" ]]; then
+if [[ "<PROVISION PUBLIC IP>" == "false" ]]; then
   src_ip=$(curl ifconfig.me)/32
   bucket_name=`echo <STACK NAME>|cut -c -60|tr '[:upper:]' '[:lower:]'| sed 's:-*$::'`
   echo "bucket_name=$bucket_name"

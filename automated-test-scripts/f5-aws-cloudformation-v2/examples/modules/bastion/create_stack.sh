@@ -45,7 +45,7 @@ echo "Parameters:$parameters"
 
 # aws cloudformation create-stack --disable-rollback --region <REGION> --stack-name <STACK NAME> --tags Key=creator,Value=dewdrop Key=delete,Value=True \
 # --template-url https://s3.amazonaws.com/"$bucket_name"/<TEMPLATE NAME> \
-# --capabilities CAPABILITY_IAM --parameters $parameters
+# --capabilities CAPABILITY_NAMED_IAM --parameters $parameters
 
 
 
@@ -57,7 +57,7 @@ echo "Parameters:$parameters"
 aws cloudformation create-stack --disable-rollback --region <REGION> --stack-name <STACK NAME> --tags Key=creator,Value=dewdrop \
 Key=delete,Value=True \
 --template-url https://s3.amazonaws.com/"$bucket_name"/<TEMPLATE NAME> \
---capabilities CAPABILITY_IAM \
+--capabilities CAPABILITY_NAMED_IAM \
 --parameters $parameters
 
 # ParameterKey=sshKey,ParameterValue=<SSH KEY> ParameterKey=restrictedSrcAddress,ParameterValue=<ACCESS> ParameterKey=vpc,ParameterValue=<STACK NAME>-vpc ParameterKey=applicationSubnets,ParameterValue=${mgmt_sub_az1}

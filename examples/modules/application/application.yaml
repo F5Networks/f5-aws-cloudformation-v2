@@ -88,6 +88,15 @@ Metadata:
           - sshKey
           - staticIp
           - vpc
+      - Label:
+          default: Resources Tags
+        Parameters:
+          - uniqueString
+          - application
+          - cost
+          - environment
+          - group
+          - owner
     ParameterLabels:
       application:
         default: Application
@@ -302,7 +311,7 @@ Resources:
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-application-instance'
+              - '-application-vm'
         - Key: group
           Value: !Ref group
         - Key: owner
@@ -358,7 +367,7 @@ Resources:
       AutoScalingGroupName: !Join
             - ''
             - - !Ref uniqueString
-              - '-application-autoscale-group'
+              - '-application-autoscaling-group'
       Tags:
         - Key: application
           PropagateAtLaunch: true
@@ -377,7 +386,7 @@ Resources:
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-application-autoscale-instance'
+              - '-application-vm'
         - Key: owner
           PropagateAtLaunch: true
           Value: !Ref owner

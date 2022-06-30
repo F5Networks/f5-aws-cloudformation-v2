@@ -62,6 +62,7 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | externalSubnetId | No |  | string | The resource ID of the external subnet. ***Note:*** SubnetId parameters used for identifying number of network interfaces. Example: *1NIC* - only Mgmt subnet ID provided; *2NIC* - Mgmt and External subnets ID provided; *3NIC* - Mgmt, External, and Internal subnets ID provided. |
 | group | No | f5group | string | Group Tag. |
 | imageId | Yes |  | string | Provide BIG-IP AMI ID you wish to deploy. |
+| instanceIndex | No | 01 | string | Enter valid string. This value will be appended to the name of the BIG-IP instance and related objects. |
 | instanceType | No | m5.2xlarge | string | Enter valid instance type. |
 | internalSecurityGroupId | No |  | string | The optional resource ID of a security group to apply to the internal network interface. |
 | internalSelfIp | No |  | string | The private IP address to apply to the primary IP configuration on the internal network interface. The address must reside in the subnet provided in the internalSubnetId parameter.|
