@@ -5,7 +5,7 @@
 stack_outputs=$(aws cloudformation describe-stacks --region <REGION> --stack-name dewdrop-<LICENSE TYPE>-<IMAGE NAME>-<DEWPOINT JOB ID> | jq .Stacks[0].Outputs)
 
 if [[ "<CREATE AUTOSCALE GROUP>" == "true" ]]; then
-    appAutoscaleGroupName='<UNIQUESTRING>-application-autoscale-group'
+    appAutoscaleGroupName='<UNIQUESTRING>-application-autoscaling-group'
     if echo $stack_outputs | grep $appAutoscaleGroupName; then
         echo "SUCCESS"
     else

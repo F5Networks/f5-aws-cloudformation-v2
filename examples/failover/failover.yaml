@@ -691,6 +691,7 @@ Resources:
                   - !GetAtt
                     - Network
                     - Outputs.subnetsA
+        instanceIndex: '01'
         instanceType: !Ref 'bigIpInstanceType'
         internalSelfIp: !Ref 'bigIpInternalSelfIp01'
         internalSubnetId: !Join
@@ -763,6 +764,7 @@ Resources:
                   - !GetAtt
                     - Network
                     - Outputs.subnetsB
+        instanceIndex: '02'
         instanceType: !Ref 'bigIpInstanceType'
         internalSelfIp: !Ref 'bigIpInternalSelfIp02'
         internalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup]
@@ -888,6 +890,7 @@ Resources:
           - Access
           - Outputs.lambdaAmiExecutionRole
         createAmiLookupFunction: 'true'
+        uniqueString: !Ref 'uniqueString'
   Network:
     Type: 'AWS::CloudFormation::Stack'
     Properties:

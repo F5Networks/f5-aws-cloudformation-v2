@@ -227,5 +227,5 @@ EOF
 cat parameters.json
 
 aws cloudformation update-stack --use-previous-template --region <REGION> --stack-name <STACK NAME> --tags Key=creator,Value=dewdrop Key=delete,Value=True \
---capabilities CAPABILITY_IAM \
+--capabilities CAPABILITY_NAMED_IAM \
 --parameters file://parameters.json

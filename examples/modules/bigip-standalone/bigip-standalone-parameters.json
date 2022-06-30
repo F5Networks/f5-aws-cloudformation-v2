@@ -68,6 +68,10 @@
     "ParameterValue": ""
   },
   {
+    "ParameterKey": "instanceIndex",
+    "ParameterValue": "01"
+  },
+  {
     "ParameterKey": "instanceType",
     "ParameterValue": "m5.2xlarge"
   },

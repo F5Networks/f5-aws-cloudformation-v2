@@ -166,11 +166,11 @@ Resources:
           Value: !Ref s3BucketName
         - Key: cost
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
-        - Key: Owner
+        - Key: owner
           Value: !Ref owner
   LogGroup: 
     Type: AWS::Logs::LogGroup
@@ -182,11 +182,11 @@ Resources:
           Value: !Ref cloudWatchLogGroupName
         - Key: cost
           Value: !Ref cost
-        - Key: Environment
+        - Key: environment
           Value: !Ref environment
-        - Key: Group
+        - Key: group
           Value: !Ref group
-        - Key: Owner
+        - Key: owner
           Value: !Ref owner
   LogStream: 
     Type: AWS::Logs::LogStream

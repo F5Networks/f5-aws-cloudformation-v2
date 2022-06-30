@@ -28,7 +28,7 @@ Metadata:
           - bigIqSecurityGroupId
           - bigIqSubnetId
       - Label:
-          default: TAGS
+          default: Resources Tags
         Parameters:
           - uniqueString
           - application
@@ -221,6 +221,10 @@ Resources:
                   raise
           if __name__ == '__main__':
               lambda_handler('event', 'handler')
+      FunctionName: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-ami-info-fn'
       Handler: !Join
         - ''
         - - index
@@ -228,11 +232,6 @@ Resources:
       Role: !Ref amiLookupRole
       Runtime: python3.7
       Timeout: 30
-    Type: 'AWS::Lambda::Function'
-  LambdaZipsBucket:
-    Condition: createRevoke
-    Type: AWS::S3::Bucket
-    Properties:
       Tags:
         - Key: costcenter
           Value: !Ref cost
@@ -240,12 +239,44 @@ Resources:
           Value: !Ref environment
         - Key: group
           Value: !Ref group
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-ami-info-fn'
+        - Key: owner
+          Value: !Ref owner
+    Type: 'AWS::Lambda::Function'
+  LambdaZipsBucket:
+    Condition: createRevoke
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-lambda-zips-bucket'
+      Tags:
+        - Key: costcenter
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-lambda-zips-bucket'
         - Key: owner
           Value: !Ref owner
   CopyZipsFunction:
     Condition: createRevoke
     Type: AWS::Lambda::Function
     Properties:
+      FunctionName: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-copy-zips-fn'
       Handler: index.handler
       Runtime: python3.7
       Role: !Ref copyZipsRole
@@ -316,6 +347,11 @@ Resources:
           Value: !Ref environment
         - Key: group
           Value: !Ref group
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-copy-zips-fn'
         - Key: owner
           Value: !Ref owner
   CopyZipsLogGroup:
@@ -344,6 +380,11 @@ Resources:
           Value: !Ref environment
         - Key: group
           Value: !Ref group
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-copy-zips-custom-resource'
         - Key: owner
           Value: !Ref owner
   LambdaInvokePermission:
@@ -359,6 +400,10 @@ Resources:
   SNSTopic:
     Condition: createRevoke
     Properties:
+      DisplayName: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-revoke-sns'
       Subscription:
         - Endpoint: !GetAtt
             - LambdaBigIqRevoke
@@ -385,6 +430,10 @@ Resources:
     DependsOn: CopyZips
     Type: AWS::Lambda::Function
     Properties:
+      FunctionName: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-bigiq-revoke-fn'
       Handler: revoke.lambda_handler
       MemorySize: 1536
       Role: !Ref lambdaAccessRole
@@ -420,6 +469,11 @@ Resources:
           Value: !Ref environment
         - Key: group
           Value: !Ref group
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-bigiq-revoke-fn'
         - Key: owner
           Value: !Ref owner
   LambdaLogGroup:
@@ -444,6 +498,11 @@ Resources:
           Value: !Ref environment
         - Key: group
           Value: !Ref group
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-deployment-cleanup-custom-resource'
         - Key: owner
           Value: !Ref owner
   LambdaDeploymentCleanup:
@@ -502,11 +561,29 @@ Resources:
         Variables:
           region: !Ref 'AWS::Region'
           bucketName: !Ref LambdaZipsBucket
+      FunctionName: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-deployment-cleanup-fn'
       Handler: index.handler
       MemorySize: 1536
       Role: !Ref copyZipsRole
       Runtime: python3.7
       Timeout: 300
+      Tags:
+        - Key: costcenter
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - Key: group
+          Value: !Ref group
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-deployment-cleanup-fn'
+        - Key: owner
+          Value: !Ref owner
   CleanupLogGroup:
     Condition: createRevoke
     DependsOn: LambdaDeploymentCleanup
