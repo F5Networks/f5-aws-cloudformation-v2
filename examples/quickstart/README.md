@@ -49,7 +49,7 @@ This solution uses a parent template to launch several linked child templates (m
 Use the *quickstart.yaml* parent template to deploy an example full stack BIG-IP solution, complete with network, bastion *(optional)*, dag/ingress, bigip and application.  
 
 ***Existing Network Stack (quickstart-existing-network.yaml)***<br>
-Use *quickstart-existing-network.yaml* parent template to deploy an example BIG-IP solution into an existing infrastructure. This template expects vpc and subnets have already been deployed. A demo application is also not part of this parent template as it intended use is for an existing environment.
+Use *quickstart-existing-network.yaml* parent template to deploy an example BIG-IP solution into an existing infrastructure. This template expects vpc and subnets have already been deployed. A demo application is also **NOT** part of this parent template as it intended use is for an existing environment.
 
 The modules below create the following resources:
 
@@ -252,14 +252,14 @@ By default, the templates in this repository are also publicly hosted on S3 at [
   --parameters "ParameterKey=<KEY>,ParameterValue=<VALUE> ParameterKey=<KEY>,ParameterValue=<VALUE>"
 ```
 
-or with a local parameters file (see `autoscale-parameters.json` example in this directory):
+or with a local parameters file (see `quickstart-parameters.json` example in this directory):
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
   --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.3.0.0/examples/quickstart/quickstart.yaml \
   --parameters file://quickstart-parameters.json
 ```
 
-Example:
+Example using `--parameters` option:
 
 ```bash
  aws cloudformation create-stack --region us-east-1 --stack-name myQuickstart \
@@ -275,6 +275,14 @@ For next steps, see [Validating the Deployment](#validating-the-deployment).
 
 
 You will most likely want or need to change the BIG-IP configuration. This generally involves referencing or customizing a [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) configuration file and passing it through the **bigIpRuntimeInitConfig** template parameter.
+
+Example from quickstart-parameters.json
+```json
+  {
+    "ParameterKey": "bigIpRuntimeInitPackageUrl",
+    "ParameterValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run"
+  },
+```
 
 **IMPORTANT**: Any URLs pointing to git **must** use the raw file format (for example, "raw.githubusercontent.com").
 
@@ -300,30 +308,32 @@ F5 has provided the following example configuration files in the `examples/quick
 
 See [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init) for more examples.
 
-By default, this solution deploys a 3NIC BIG-IP using the example `runtime-init-conf-3nic-payg.yaml` runtime-init config file.
+**IMPORTANT**: 
+By default, this solution deploys a 3-NIC PAYG BIG-IP:
+  - The **Full Stack** (quickstart.yaml) references the `runtime-init-conf-3nic-payg-with-app.yaml` BIG-IP config file, which includes an example virtual service, and can be used as is. This example configuration does not require any modifications to deploy successfully *(Disclaimer: "Successfully" implies the template deploys without errors and deploys BIG-IP WAFs capable of passing traffic. To be fully functional as designed, you would need to have satisfied the [Prerequisites](#prerequisites))*. However, in production, these files would commonly be customized. Some examples of small customizations or modifications are provided below. 
+  - The **Existing Network Stack** (quickstart-existing-network.yaml) references the `runtime-init-conf-3nic-payg.yaml` BIG-IP config file, which provides basic system onboarding and does **NOT** include an example virtual service, and can be used as is. 
 
 To deploy a **1NIC** instance:
-  1. Update the **bigIpRuntimeInitConfig** input parameter to reference a corresponding `1nic` config file (for example, runtime-init-conf-1nic-payg.yaml )
+  1. Update the **bigIpRuntimeInitConfig** input parameter to reference a corresponding `1nic` config file (for example, runtime-init-conf-1nic-payg-with-app.yaml )
   2. Update the **numNics** input parameter to **1**
 
 To deploy a **2NIC** instance:
-  1. Update the **bigIpRuntimeInitConfig** input parameter to reference a corresponding `2nic` config file (for example, runtime-init-conf-2nic-payg.yaml )
+  1. Update the **bigIpRuntimeInitConfig** input parameter to reference a corresponding `2nic` config file (for example, runtime-init-conf-2nic-payg-with-app.yaml )
   2. Update the **numNics** input parameter to **2**
 
-
-Some changes require republishing/rehosting configuration files (git, s3, etc.). For example:
+Other changes require customizing the example configuration files, republishing/rehosting (to git, s3, etc.). For example:
 
 To deploy a **BYOL** instance:
 
   1. Edit/modify the Declarative Onboarding (DO) declaration in a corresponding `byol` runtime-init config file with the new `regKey` value. 
 
-Example:
-```yaml
-          My_License:
-            class: License
-            licenseType: regKey
-            regKey: AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE
-```
+      Example:
+      ```yaml
+                My_License:
+                  class: License
+                  licenseType: regKey
+                  regKey: AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE
+      ```
   2. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example: git, S3, etc.). 
   3. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL of the updated configuration.
   4. Update the **licenseType** input parameter to use `byol` or **bigIpCustomImageId** input parameter to a valid byol image.
