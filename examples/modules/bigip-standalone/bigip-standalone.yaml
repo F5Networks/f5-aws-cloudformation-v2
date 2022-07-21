@@ -387,7 +387,7 @@ Parameters:
       configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.1/dist/f5-bigip-runtime-init-1.5.1-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   cfeS3Bucket:
@@ -455,7 +455,8 @@ Parameters:
     Type: String
   instanceIndex:
     Default: '01'
-    Description: Enter valid string. This value will be appended to the name of the BIG-IP instance and related objects.
+    Description: Enter valid string. This value will be appended to the name of the
+      BIG-IP instance and related objects.
     Type: String
   instanceType:
     ConstraintDescription: Must be a valid EC2 instance type for BIG-IP
