@@ -82,6 +82,15 @@ Metadata:
           - sshKey
           - staticIp
           - vpc
+      - Label:
+          default: Resources Tags
+        Parameters:
+          - uniqueString
+          - application
+          - cost
+          - environment
+          - group
+          - owner
     ParameterLabels:
       application:
         default: Application
@@ -117,7 +126,7 @@ Metadata:
         default: Unique string
       vpc:
         default: VPC ID
-  Version: 2.3.0.0
+  Version: 2.4.0.0
 Outputs:
   stackName:
     Description: bastion nested stack name
@@ -279,7 +288,7 @@ Resources:
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-bastion-instance'
+              - '-bastion-vm'
         - Key: group
           Value: !Ref group
         - Key: owner
@@ -315,7 +324,7 @@ Resources:
       AutoScalingGroupName: !Join
             - ''
             - - !Ref uniqueString
-              - '-bastion-autoscale-group'
+              - '-bastion-autoscaling-group'
       Tags:
         - Key: application
           PropagateAtLaunch: true
@@ -334,7 +343,7 @@ Resources:
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-bastion-autoscale-instance'
+              - '-bastion-vm'
         - Key: owner
           PropagateAtLaunch: true
           Value: !Ref owner

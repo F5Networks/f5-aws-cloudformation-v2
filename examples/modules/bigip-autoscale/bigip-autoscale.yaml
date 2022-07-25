@@ -43,6 +43,8 @@ Metadata:
           - minInstancesInService
           - pauseTime
           - metricNameSpace
+          - cloudWatchLogGroupName
+          - cloudWatchLogStreamName
       - Label:
           default: Networking
         Parameters:
@@ -62,7 +64,7 @@ Metadata:
           - bigIpInstanceProfile
           - licenseType
       - Label:
-          default: Tags
+          default: Resources Tags
         Parameters:
           - uniqueString
           - application
@@ -91,6 +93,10 @@ Metadata:
           license on BIG-IQ
       bigIqNotificationRole:
         default: The ARN of the IAM role to assign to the Lifecycle Hook
+      cloudWatchLogGroupName:
+        default: CloudWatch log group name
+      cloudWatchLogStreamName:
+        default: CloudWatch log stream name
       cost:
         default: Cost Center
       environment:
@@ -149,7 +155,7 @@ Metadata:
         default: Public or external subnets for the availability zones
       uniqueString:
         default: Unique string
-  Version: 2.3.0.0
+  Version: 2.4.0.0
 Outputs:
   stackName:
     Description: bigip-autoscale nested stack name
@@ -177,7 +183,7 @@ Parameters:
       configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.1/dist/f5-bigip-runtime-init-1.5.1-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   bigIqLicenseRevokeSnsTopic:
@@ -188,6 +194,14 @@ Parameters:
   bigIqNotificationRole:
     Default: ''
     Description: The ARN of the IAM role to assign to the Lifecycle Hook.
+    Type: String
+  cloudWatchLogGroupName:
+    Default: ''
+    Description: The name of the CloudWatch Log Group
+    Type: String
+  cloudWatchLogStreamName:
+    Default: ''
+    Description: The name of the CloudWatch Log Stream
     Type: String
   cost:
     Default: f5cost
@@ -380,7 +394,7 @@ Resources:
       AutoScalingGroupName: !Join
         - ''
         - - !Ref 'uniqueString'
-          - '-bigip-autoscale-group'
+          - '-bigip-autoscaling-group'
       Cooldown: '1500'
       HealthCheckGracePeriod: 1500
       HealthCheckType: EC2
@@ -416,6 +430,15 @@ Resources:
             TopicARN: !Ref 'bigIqLicenseRevokeSnsTopic'
           - !Ref 'AWS::NoValue'
       Tags:
+        - Key: cloudWatchLogGroup
+          PropagateAtLaunch: true
+          Value: !Ref 'cloudWatchLogGroupName'
+        - Key: cloudWatchLogStream
+          PropagateAtLaunch: true
+          Value: !Ref 'cloudWatchLogStreamName'
+        - Key: metricNamespace
+          PropagateAtLaunch: true
+          Value: !Ref 'metricNameSpace'
         - Key: costcenter
           PropagateAtLaunch: true
           Value: !Ref 'cost'
@@ -430,7 +453,7 @@ Resources:
           Value: !Join
             - ''
             - - !Ref 'uniqueString'
-              - '-bigip-autoscale-instance'
+              - '-bigip-vm'
         - Key: owner
           PropagateAtLaunch: true
           Value: !Ref 'owner'
@@ -582,7 +605,7 @@ Resources:
             - |
               # Run
             - |
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.3.0.0/examples/modules/bigip-autoscale/bigip-autoscale.yaml'
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.4.0.0/examples/modules/bigip-autoscale/bigip-autoscale.yaml'
             - |2+
 
             - |

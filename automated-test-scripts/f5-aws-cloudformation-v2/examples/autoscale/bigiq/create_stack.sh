@@ -77,9 +77,6 @@ else
     /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.Shared.Custom_WAF_Policy.url = \"https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>.yaml
 
     # Telemetry settings
-    /usr/bin/yq e ".extension_services.service_operations.[2].value.My_Metrics_Namespace.My_Cloudwatch_Metrics.metricNamespace = \"<METRIC NAME SPACE>\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[2].value.My_Remote_Logs_Namespace.My_Cloudwatch_Logs.logGroup = \"<UNIQUESTRING>-<CLOUDWATCH LOG GROUP NAME>\"" -i <DEWPOINT JOB ID>.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[2].value.My_Remote_Logs_Namespace.My_Cloudwatch_Logs.logStream = \"<UNIQUESTRING>-<CLOUDWATCH LOG STREAM NAME>\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[2].value.My_S3.class = \"Telemetry_Consumer\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[2].value.My_S3.type = \"AWS_S3\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[2].value.My_S3.region = \"{{{REGION}}}\"" -i <DEWPOINT JOB ID>.yaml
@@ -104,8 +101,6 @@ else
     aws s3 cp --region <REGION> <DEWPOINT JOB ID>.yaml s3://"$bucket_name"/examples/autoscale/bigip-configurations/<DEWPOINT JOB ID>.yaml --acl public-read
 fi
 echo "Runtime Init Config: $runtimeConfig"
-
-
 
 # Set Parameters using file to eiliminate issues when passing spaces in parameter values
 cat <<EOF > parameters.json
@@ -289,5 +284,5 @@ cat parameters.json
 
 aws cloudformation create-stack --disable-rollback --region <REGION> --stack-name <STACK NAME> --tags Key=creator,Value=dewdrop Key=delete,Value=True \
 --template-url https://s3.amazonaws.com/"$bucket_name"/<TEMPLATE NAME> \
---capabilities CAPABILITY_IAM \
+--capabilities CAPABILITY_NAMED_IAM \
 --parameters file://parameters.json

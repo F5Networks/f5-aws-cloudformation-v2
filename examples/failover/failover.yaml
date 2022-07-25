@@ -143,7 +143,7 @@ Metadata:
         default: Unique string
       vpcCidr:
         default: VPC CIDR
-  Version: 2.3.0.0
+  Version: 2.4.0.0
 Outputs:
   amiId:
     Condition: noCustomImageId
@@ -234,7 +234,7 @@ Parameters:
     AllowedPattern: ^.*[0-9a-zA-Z]+/$
     ConstraintDescription: key prefix can include numbers, lowercase letters, uppercase
       letters, hyphens (-), and forward slash (/).
-    Default: f5-aws-cloudformation-v2/v2.3.0.0/examples/
+    Default: f5-aws-cloudformation-v2/v2.4.0.0/examples/
     Description: The path in the S3Bucket where the modules folder is located. Can
       include numbers, lowercase letters, uppercase letters, hyphens (-), and forward
       slash (/).
@@ -281,19 +281,19 @@ Parameters:
       string if not configuring peering with a remote host on this device.
     Type: String
   bigIpRuntimeInitConfig01:
-    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.3.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01-with-app.yaml'
+    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.4.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01-with-app.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
       file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
       configuration.'
     Type: String
   bigIpRuntimeInitConfig02:
-    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.3.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02-with-app.yaml'
+    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.4.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02-with-app.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
       file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
       configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.1/dist/f5-bigip-runtime-init-1.5.1-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   cfeS3Bucket:
@@ -691,6 +691,7 @@ Resources:
                   - !GetAtt
                     - Network
                     - Outputs.subnetsA
+        instanceIndex: '01'
         instanceType: !Ref 'bigIpInstanceType'
         internalSelfIp: !Ref 'bigIpInternalSelfIp01'
         internalSubnetId: !Join
@@ -763,6 +764,7 @@ Resources:
                   - !GetAtt
                     - Network
                     - Outputs.subnetsB
+        instanceIndex: '02'
         instanceType: !Ref 'bigIpInstanceType'
         internalSelfIp: !Ref 'bigIpInternalSelfIp02'
         internalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup]
@@ -888,6 +890,7 @@ Resources:
           - Access
           - Outputs.lambdaAmiExecutionRole
         createAmiLookupFunction: 'true'
+        uniqueString: !Ref 'uniqueString'
   Network:
     Type: 'AWS::CloudFormation::Stack'
     Properties:

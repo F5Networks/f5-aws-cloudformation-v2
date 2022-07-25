@@ -5,6 +5,7 @@ aws-autoscale-bigiq-existing-test:
     run: "random"
     random-num-of-tests: 1
     parameters-files:
-        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/existing/prepub_parameters.yaml"
-        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/existing/prepub_parameters1.yaml"
-        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/existing/prepub_parameters2.yaml"
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/existing/demo.yaml"
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/existing/demo_app.yaml"
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/existing/prod.yaml"
+        - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/existing/prod_app.yaml"

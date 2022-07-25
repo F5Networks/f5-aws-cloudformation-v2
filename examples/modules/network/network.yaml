@@ -313,15 +313,14 @@ Metadata:
           - subnetMask
           - setPublicSubnet1
       - Label:
-          default: Resource Tags
+          default: Resources Tags
         Parameters:
+          - uniqueString
           - cost
           - environment
           - group
           - owner
     ParameterLabels:
-      application:
-        default: application tag
       cost:
         default: cost tag
       environment:
@@ -344,7 +343,7 @@ Metadata:
         default: VPC CIDR
       vpcTenancy:
         default: VPC Tenancy
-  Version: 2.3.0.0
+  Version: 2.4.0.0
 Outputs:
   stackName:
     Description: network nested stack name
@@ -443,10 +442,6 @@ Outputs:
     Export:
       Name: !Sub '${AWS::StackName}-privateSubnetRouteIdD'
 Parameters:
-  application:
-    Default: f5app
-    Description: Application Tag.
-    Type: String
   cost:
     Default: f5cost
     Description: Cost Center Tag.
@@ -519,9 +514,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - VPC
+              - '-vpc'
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -545,9 +540,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - DHCP Options
+              - '-dhcp-options'
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -572,9 +567,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Internet Gateway
+              - '-ig'
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -649,9 +644,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 0A
+              - '-subnet-0A'
         - Key: Network
           Value: Public
         - Key: costcenter
@@ -725,9 +720,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 1A
+              - '-subnet-1A'
         - Key: Network
           Value: !If
             - subnet1PrivateA
@@ -804,9 +799,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 2A
+              - '-subnet-2A'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -879,9 +874,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 3A
+              - '-subnet-3A'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -954,9 +949,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 4A
+              - '-subnet-4A'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -1029,9 +1024,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 5A
+              - '-subnet-5A'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -1104,9 +1099,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 6A
+              - '-subnet-6A'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -1179,9 +1174,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 7A
+              - '-subnet-7A'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -1254,9 +1249,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 0B
+              - '-subnet-0B'
         - Key: Network
           Value: Public
         - Key: costcenter
@@ -1330,9 +1325,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 1B
+              - '-subnet-1B'
         - Key: Network
           Value: !If
             - subnet1PrivateB
@@ -1409,9 +1404,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 2B
+              - '-subnet-2B'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -1484,9 +1479,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 3B
+              - '-subnet-3B'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -1559,9 +1554,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 4B
+              - '-subnet-4B'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -1634,9 +1629,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 5B
+              - '-subnet-5B'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -1709,9 +1704,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 6B
+              - '-subnet-6B'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -1784,9 +1779,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 7B
+              - '-subnet-7B'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -1859,9 +1854,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 0C
+              - '-subnet-0C'
         - Key: Network
           Value: Public
         - Key: costcenter
@@ -1935,9 +1930,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 1C
+              - '-subnet-1C'
         - Key: Network
           Value: !If
             - subnet1PrivateC
@@ -2014,9 +2009,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 2C
+              - '-subnet-2C'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -2089,9 +2084,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 3C
+              - '-subnet-3C'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -2164,9 +2159,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 4C
+              - '-subnet-4C'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -2239,9 +2234,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 5C
+              - '-subnet-5C'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -2314,9 +2309,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 6C
+              - '-subnet-6C'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -2389,9 +2384,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 7C
+              - '-subnet-7C'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -2464,9 +2459,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 0D
+              - '-subnet-0D'
         - Key: Network
           Value: Public
         - Key: costcenter
@@ -2540,9 +2535,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 1D
+              - '-subnet-1D'
         - Key: Network
           Value: !If
             - subnet1PrivateD
@@ -2619,9 +2614,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 2D
+              - '-subnet-2D'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -2695,9 +2690,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 3D
+              - '-subnet-3D'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -2770,9 +2765,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 4D
+              - '-subnet-4D'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -2845,9 +2840,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 5D
+              - '-subnet-5D'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -2920,9 +2915,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 6D
+              - '-subnet-6D'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -2995,9 +2990,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Subnet 7D
+              - '-subnet-7D'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -3015,9 +3010,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Public Subnets Route Table
+              - '-public-rt'
         - Key: Network
           Value: Public
         - Key: costcenter
@@ -3066,9 +3061,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Private SubnetA Route Table
+              - '-private-rt-A'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -3094,9 +3089,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - NACL Private Subnets A
+              - '-private-nacl-A'
         - Key: Network
           Value: NACL Protected
         - Key: costcenter
@@ -3197,9 +3192,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Private SubnetB Route Table
+              - '-private-rt-B'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -3225,9 +3220,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - NACL Private Subnets B
+              - '-private-nacl-B'
         - Key: Network
           Value: NACL Protected
         - Key: costcenter
@@ -3328,9 +3323,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Private SubnetC Route Table
+              - '-private-rt-C'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -3356,9 +3351,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - NACL Private Subnets C
+              - '-private-nacl-C'
         - Key: Network
           Value: NACL Protected
         - Key: costcenter
@@ -3459,9 +3454,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Private SubnetD Route Table
+              - '-private-rt-D'
         - Key: Network
           Value: Private
         - Key: costcenter
@@ -3487,9 +3482,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - NACL Private Subnets D
+              - '-private-nacl-D'
         - Key: Network
           Value: NACL Protected
         - Key: costcenter
@@ -3771,9 +3766,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - EIP NAT Gateway A
+              - '-nat-eip-A'
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3791,9 +3786,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - EIP NAT Gateway B
+              - '-nat-eip-B'
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3811,9 +3806,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - EIP NAT Gateway C
+              - '-nat-eip-C'
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3831,9 +3826,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - EIP NAT Gateway D
+              - '-nat-eip-D'
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3854,9 +3849,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Nat Gateway Subnets A
+              - '-nat-gw-A'
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3877,9 +3872,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Nat Gateway Subnets B
+              - '-nat-gw-B'
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3900,9 +3895,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Nat Gateway Subnets C
+              - '-nat-gw-C'
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3923,9 +3918,9 @@ Resources:
       Tags:
         - Key: Name
           Value: !Join
-            - '-'
+            - ''
             - - !Ref uniqueString
-              - Nat Gateway Subnets D
+              - '-nat-gw-D'
         - Key: costcenter
           Value: !Ref cost
         - Key: environment

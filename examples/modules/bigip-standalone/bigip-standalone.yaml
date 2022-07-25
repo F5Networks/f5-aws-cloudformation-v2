@@ -209,6 +209,7 @@ Metadata:
       - Label:
           default: EC2 Instances
         Parameters:
+          - instanceIndex
           - instanceType
           - imageId
           - externalPublicIpIds
@@ -278,6 +279,8 @@ Metadata:
         default: External Subnet Id
       group:
         default: Group
+      instanceIndex:
+        default: Enter valid string.
       instanceType:
         default: Enter valid instance type.
       internalSecurityGroupId:
@@ -304,7 +307,7 @@ Metadata:
         default: EC2 KeyPair
       uniqueString:
         default: Unique string
-  Version: 2.3.0.0
+  Version: 2.4.0.0
 Outputs:
   stackName:
     Description: BIG-IP nested stack name
@@ -384,7 +387,7 @@ Parameters:
       configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.1/dist/f5-bigip-runtime-init-1.5.1-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   cfeS3Bucket:
@@ -449,6 +452,11 @@ Parameters:
     Description: REQUIRED - Provide BIG-IP AMI ID you wish to deploy.
     MaxLength: 255
     MinLength: 1
+    Type: String
+  instanceIndex:
+    Default: '01'
+    Description: Enter valid string. This value will be appended to the name of the
+      BIG-IP instance and related objects.
     Type: String
   instanceType:
     ConstraintDescription: Must be a valid EC2 instance type for BIG-IP
@@ -560,6 +568,12 @@ Resources:
             - !Ref 'AWS::NoValue'
         - Key: group
           Value: !Ref 'group'
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref 'uniqueString'
+              - '-bigip-internal-int-'
+              - !Ref 'instanceIndex'
         - Key: owner
           Value: !Ref 'owner'
     Type: 'AWS::EC2::NetworkInterface'
@@ -574,6 +588,21 @@ Resources:
       GroupSet:
         - !Ref 'mgmtSecurityGroupId'
       SubnetId: !Ref 'mgmtSubnetId'
+      Tags:
+        - Key: costcenter
+          Value: !Ref 'cost'
+        - Key: environment
+          Value: !Ref 'environment'
+        - Key: group
+          Value: !Ref 'group'
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref 'uniqueString'
+              - '-bigip-mgmt-int-'
+              - !Ref 'instanceIndex'
+        - Key: owner
+          Value: !Ref 'owner'
     Type: 'AWS::EC2::NetworkInterface'
   BigipExternalInterface:
     Condition: useDynamicExternalIpAddr
@@ -600,6 +629,12 @@ Resources:
             - !Ref 'AWS::NoValue'
         - Key: group
           Value: !Ref 'group'
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref 'uniqueString'
+              - '-bigip-external-int-'
+              - !Ref 'instanceIndex'
         - Key: owner
           Value: !Ref 'owner'
     Type: 'AWS::EC2::NetworkInterface'
@@ -631,6 +666,12 @@ Resources:
             - !Ref 'AWS::NoValue'
         - Key: group
           Value: !Ref 'group'
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref 'uniqueString'
+              - '-bigip-static-internal-int-'
+              - !Ref 'instanceIndex'
         - Key: owner
           Value: !Ref 'owner'
     Type: 'AWS::EC2::NetworkInterface'
@@ -667,6 +708,21 @@ Resources:
           - !Ref 'AWS::NoValue'
         - !Ref 'AWS::NoValue'
       SubnetId: !Ref 'mgmtSubnetId'
+      Tags:
+        - Key: costcenter
+          Value: !Ref 'cost'
+        - Key: environment
+          Value: !Ref 'environment'
+        - Key: group
+          Value: !Ref 'group'
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref 'uniqueString'
+              - '-bigip-static-mgmt-int-'
+              - !Ref 'instanceIndex'
+        - Key: owner
+          Value: !Ref 'owner'
     Type: 'AWS::EC2::NetworkInterface'
   BigipStaticExternalInterface:
     Condition: useStaticExternalIpAddr
@@ -705,6 +761,12 @@ Resources:
             - !Ref 'AWS::NoValue'
         - Key: group
           Value: !Ref 'group'
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref 'uniqueString'
+              - '-bigip-static-external-int-'
+              - !Ref 'instanceIndex'
         - Key: owner
           Value: !Ref 'owner'
     Type: 'AWS::EC2::NetworkInterface'
@@ -950,7 +1012,8 @@ Resources:
           Value: !Join
             - ''
             - - !Ref 'uniqueString'
-              - '-bigip-instance'
+              - '-bigip-vm-'
+              - !Ref 'instanceIndex'
         - Key: owner
           Value: !Ref 'owner'
         - Key: bigIpPeerAddr
@@ -1039,7 +1102,7 @@ Resources:
             - |
               # Run
             - |
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.3.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.4.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
             - |2+
 
             - |
@@ -1106,7 +1169,8 @@ Resources:
           Value: !Join
             - ''
             - - !Ref 'uniqueString'
-              - '-bigip-instance'
+              - '-bigip-vm-'
+              - !Ref 'instanceIndex'
         - Key: owner
           Value: !Ref 'owner'
         - Key: bigIpPeerAddr
@@ -1195,7 +1259,7 @@ Resources:
             - |
               # Run
             - |
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.3.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.4.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
             - |2+
 
             - |
@@ -1256,7 +1320,8 @@ Resources:
           Value: !Join
             - ''
             - - !Ref 'uniqueString'
-              - '-bigip-instance'
+              - '-bigip-vm-'
+              - !Ref 'instanceIndex'
         - Key: owner
           Value: !Ref 'owner'
         - Key: bigIpPeerAddr
@@ -1345,7 +1410,7 @@ Resources:
             - |
               # Run
             - |
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.3.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.4.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
             - |2+
 
             - |

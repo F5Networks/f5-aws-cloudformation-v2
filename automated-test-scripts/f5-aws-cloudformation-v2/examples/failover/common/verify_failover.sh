@@ -56,6 +56,15 @@ else
     echo "State: $state"
     active=$(echo $state |grep active)
 
+    state2=$(sshpass -p ${PASSWORD} ssh -o "StrictHostKeyChecking no" admin@${bigip2_public_ip} "tmsh show sys failover")
+    echo "State2: $state2"
+    active2=$(echo $state2 |grep active)
+
+    if echo $active | grep 'active' && echo $active2 | grep 'active'; then
+        echo "Both BIG-IPs are Active, therefore Sync has failed."
+        echo "FAILED"
+    fi
+
     case $active in
     active)
       echo "Current State: $active , nothing to do, grab bigip2 status"

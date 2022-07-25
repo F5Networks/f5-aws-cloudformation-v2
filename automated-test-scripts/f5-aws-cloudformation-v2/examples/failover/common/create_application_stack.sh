@@ -58,7 +58,7 @@ EOF
    --stack-name app-<STACK NAME> \
    --tags Key=creator,Value=dewdrop Key=delete,Value=True \
    --template-url https://s3.amazonaws.com/"$bucket_name"/"$artifact_location"modules/application/application.yaml \
-   --capabilities CAPABILITY_IAM \
+   --capabilities CAPABILITY_NAMED_IAM \
    --parameters file://parameters.json
 
 else

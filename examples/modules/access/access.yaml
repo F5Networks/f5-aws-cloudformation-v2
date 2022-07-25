@@ -52,6 +52,15 @@ Metadata:
           - cloudWatchLogGroup
           - metricNameSpace
           - cfeTag
+      - Label:
+          default: Resources Tags
+        Parameters:
+          - uniqueString
+          - application
+          - cost
+          - environment
+          - group
+          - owner
     ParameterLabels:
       uniqueString:
         default: myBIGIP
@@ -81,7 +90,7 @@ Metadata:
         default: CloudWatch Log Group Name
       metricNameSpace:
         default: CloudWatch Metrics Namespace
-  Version: 2.3.0.0
+  Version: 2.4.0.0
 Outputs:
   stackName:
     Description: Access nested stack name
@@ -224,12 +233,16 @@ Resources:
                   - s3:PutObjectAcl
                   - s3:DeleteObject
                 Resource: arn:aws:s3:::*
+      RoleName: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-copy-zips-role'
       Tags:
         - Key: Name
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-BigipCopyZipsRole'
+              - '-copy-zips-role'
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -285,12 +298,16 @@ Resources:
                 Resource: 'arn:aws:logs:*:*:*'
             Version: 2012-10-17
           PolicyName: LambdaAccessPolicy
+      RoleName: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-lambda-access-role'
       Tags:
         - Key: Name
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-bigip-access-role'
+              - '-lambda-access-role'
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -328,12 +345,16 @@ Resources:
                 Action:
                   - 'ec2:DescribeImages'
                 Resource: '*'
+      RoleName: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-lambda-ami-execution-role'
       Tags:
         - Key: Name
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-lambda-ami-role'
+              - '-lambda-ami-execution-role'
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -357,12 +378,16 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AutoScalingNotificationAccessRole
       Path: /
+      RoleName: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-bigiq-notification-role'
       Tags:
         - Key: Name
           Value: !Join
             - ''
             - - !Ref uniqueString
-              - '-bigip-notification-role'
+              - '-bigiq-notification-role'
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -433,6 +458,10 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-BigipStandardAcccessPolicy'
+      RoleName: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-bigip-standard-access-role'
       Tags:
         - Key: Name
           Value: !Join
@@ -524,6 +553,10 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-BigipSecretAcccessPolicy'
+      RoleName: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-bigip-secret-access-role'
       Tags:
         - Key: Name
           Value: !Join
@@ -620,6 +653,10 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-BigipS3AcccessPolicy'
+      RoleName: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-bigip-s3-access-role'
       Tags:
         - Key: Name
           Value: !Join
@@ -728,6 +765,10 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-BigipSecretAndS3AcccessPolicy'
+      RoleName: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-bigip-secret-s3-access-role'
       Tags:
         - Key: Name
           Value: !Join
@@ -869,6 +910,10 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-BigipHighAvailabilityAcccessPolicy'
+      RoleName: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-bigip-high-availability-access-role'
       Tags:
         - Key: Name
           Value: !Join

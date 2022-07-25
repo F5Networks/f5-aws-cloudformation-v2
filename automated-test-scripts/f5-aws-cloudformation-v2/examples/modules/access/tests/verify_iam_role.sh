@@ -2,7 +2,7 @@
 #  scriptTimeout = 3
 #  replayEnabled = false
 
-iamRoleName=$(aws iam list-roles | jq .Roles[].RoleName | grep <DEWPOINT JOB ID>-BigIp | tr -d '"')
+iamRoleName=$(aws iam list-roles | jq .Roles[].RoleName | grep <DEWPOINT JOB ID>-bigip | tr -d '"')
 echo "Role Name: $iamRoleName"
 iamRoleDefinition=$(aws iam get-role --role-name "$iamRoleName")
 echo "Role Definition: $iamRoleDefinition"

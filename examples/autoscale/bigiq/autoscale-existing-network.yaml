@@ -200,7 +200,7 @@ Metadata:
         default: VPC CIDR
       vpcId:
         default: VPC ID
-  Version: 2.3.0.0
+  Version: 2.4.0.0
 Outputs:
   wafExternalDnsName:
     Condition: externalLB
@@ -247,7 +247,7 @@ Parameters:
     AllowedPattern: ^.*[0-9a-zA-Z]+/$
     ConstraintDescription: key prefix can include numbers, lowercase letters, uppercase
       letters, hyphens (-), and forward slash (/).
-    Default: f5-aws-cloudformation-v2/v2.3.0.0/examples/
+    Default: f5-aws-cloudformation-v2/v2.4.0.0/examples/
     Description: The path in the S3Bucket where the modules folder is located. Can
       include numbers, lowercase letters, uppercase letters, hyphens (-), and forward
       slash (/).
@@ -334,13 +334,13 @@ Parameters:
     MinValue: 0
     Type: Number
   bigIpRuntimeInitConfig:
-    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.3.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq.yaml'
+    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.4.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
       file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
       configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.1/dist/f5-bigip-runtime-init-1.5.1-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   bigIpScaleInCpuThreshold:
@@ -663,6 +663,10 @@ Resources:
           - Access
           - Outputs.bigIqNotificationRole
         cost: !Ref 'cost'
+        cloudWatchLogGroupName: !If [customLogGroup, !Ref 'cloudWatchLogGroupName',
+          'f5telemetry']
+        cloudWatchLogStreamName: !If [customLogStream, !Ref 'cloudWatchLogStreamName',
+          'f5-waf-logs']
         environment: !Ref 'environment'
         externalTargetGroupHttp: !If
           - externalLB
@@ -698,7 +702,7 @@ Resources:
           - !Ref 'AWS::NoValue'
         licenseType: 'bigiq'
         maxBatchSize: !Ref 'bigIpMaxBatchSize'
-        metricNameSpace: !Ref 'metricNameSpace'
+        metricNameSpace: !If [customNameSpace, !Ref 'metricNameSpace', 'f5-scaling-metrics']
         minInstancesInService: !Ref 'bigIpMinInstancesInService'
         notificationEmail: !Ref 'notificationEmail'
         pauseTime: !Ref 'bigIpPauseTime'

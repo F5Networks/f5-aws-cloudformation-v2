@@ -72,7 +72,7 @@ EOF
   --stack-name bastion-<STACK NAME> \
   --tags Key=creator,Value=dewdrop Key=delete,Value=True \
   --template-url https://s3.amazonaws.com/"$bucket_name"/"$artifact_location"modules/bastion/bastion.yaml \
-  --capabilities CAPABILITY_IAM \
+  --capabilities CAPABILITY_NAMED_IAM \
   --parameters file://parameters.json
 else
   echo "Bastion host not required"
