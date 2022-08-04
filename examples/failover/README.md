@@ -153,7 +153,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpExternalVip02 | No | 10.0.4.101 | string |External Secondary Private IP Address for BIGIP instance B. |
 | cfeVipTag | No |  10.0.0.101,10.0.4.101 | string | Cloud Failover VIP tag value; provides private IP addresses to be assigned to VIP public IP. |
 | cfeTag | No | bigip_high_availability_solution  | string | Cloud Failover deployment tag value. |
-| cfeS3Bucket | No | bigip-high-availability-solution  | string | S3 bucket name used by Cloud Failover Extension. |
+| cfeS3Bucket | No |   | string | Supply a unique name for a CFE S3 bucket created and used by Cloud Failover Extension. If a value is not provided, a bucket will be created using the value of the uniqueString input parameter. For example: **uniqueString-bigip-high-availability-solution**. |
 | cost | No | f5cost  | string | Cost Center Tag. |
 | environment | No | f5env  | string | Environment Tag. |
 | group | No | f5group  | string | Group Tag. |
@@ -218,7 +218,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpExternalVip02 | No | 10.0.4.101 | string | External Secondary Private IP Address for BIGIP instance B. |
 | cfeVipTag | No |  10.0.0.101,10.0.4.101 | string | Cloud Failover VIP tag value; provides private IP addresses to be assigned to VIP public IP. |
 | cfeTag | No | bigip_high_availability_solution  | string | Cloud Failover deployment tag value. |
-| cfeS3Bucket | No | bigip-high-availability-solution  | string | S3 bucket name used by Cloud Failover Extension. |
+| cfeS3Bucket | No |  | string | Unique S3 bucket name created and used by Cloud Failover Extension. If a value is not provided, a bucket will be created using the value of the uniqueString input parameter. For example: **uniqueString-bigip-high-availability-solution**. |
 | cost | No | f5cost  | string | Cost Center Tag. |
 | environment | No | f5env  | string | Environment Tag. |
 | group | No | f5group  | string | Group Tag. |
@@ -590,7 +590,7 @@ For information on the Cloud Failover solution, see [F5 Cloud Failover Extension
 ## Deleting this Solution
 
 
-As CloudFormation does not delete S3 buckets that contain data, in order to delete this deployment, you will first need to empty / delete the S3 bucket created for the Cloud Failover Extension (provided via **cfeS3Bucket** parameter). 
+As CloudFormation does not delete S3 buckets that contain data, in order to delete this deployment, you will first need to empty / delete the S3 bucket created for the Cloud Failover Extension (provided via **cfeS3Bucket** parameter or **uniqueString-bigip-high-availability-solution** if using the default value). 
 
 After the S3 Bucket is deleted, you can now delete the solution by deleting the CloudFormation stack.
 ### Deleting the S3 bucket using the AWS Console

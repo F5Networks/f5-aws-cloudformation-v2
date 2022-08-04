@@ -213,7 +213,13 @@ Outputs:
         - !GetAtt [Dag, Outputs.bigIpManagementEipAddress02]
   cfeS3Bucket:
     Description: cfe s3 bucket created and used for cloud-failover-extension
-    Value: !Ref 'cfeS3Bucket'
+    Value: !If
+      - useDefaultCfeS3Bucket
+      - !Join
+        - ''
+        - - !Ref 'uniqueString'
+          - '-bigip-high-availability-solution'
+      - !Ref 'cfeS3Bucket'
   vipPublicUrl:
     Condition: usePublicIpVip
     Description: url to public vip address
@@ -297,11 +303,12 @@ Parameters:
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   cfeS3Bucket:
-    AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
-    ConstraintDescription: 'S3 bucket name can include numbers, lowercase letters,
-      uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).'
-    Default: bigip-high-availability-solution
-    Description: 'S3 bucket name used by Cloud Failover Extension.'
+    AllowedPattern: '^$|^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
+    ConstraintDescription: 'S3 bucket name must be unique and can include numbers,
+      lowercase letters, uppercase letters, and hyphens (-). It cannot start or end
+      with a hyphen (-).'
+    Default: ''
+    Description: 'Supply a unique name for a CFE S3 bucket created and used by Cloud Failover Extension.'
     Type: String
   cfeTag:
     Description: Cloud Failover deployment tag value.
@@ -482,6 +489,9 @@ Conditions:
     - !Equals
       - ''
       - !Ref 'secretArn'
+  useDefaultCfeS3Bucket: !Equals
+    - !Ref 'cfeS3Bucket'
+    - ''
   usePublicIpMgmt: !Equals
     - 'true'
     - !Ref 'provisionPublicIpMgmt'
@@ -503,7 +513,13 @@ Resources:
         environment: !Ref 'environment'
         group: !Ref 'group'
         createAmiRole: 'true'
-        s3Bucket: !Ref 'cfeS3Bucket'
+        s3Bucket: !If
+          - useDefaultCfeS3Bucket
+          - !Join
+            - ''
+            - - !Ref 'uniqueString'
+              - '-bigip-high-availability-solution'
+          - !Ref 'cfeS3Bucket'
         secretArn: !If [useSecretArn, !Ref 'secretArn', !Ref 'AWS::NoValue']
         solutionType: failover
         uniqueString: !Ref 'uniqueString'
@@ -657,7 +673,13 @@ Resources:
         bigIpPeerAddr: !Ref 'bigIpPeerAddr'
         bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig01'
-        cfeS3Bucket: !Ref 'cfeS3Bucket'
+        cfeS3Bucket: !If
+          - useDefaultCfeS3Bucket
+          - !Join
+            - ''
+            - - !Ref 'uniqueString'
+              - '-bigip-high-availability-solution'
+          - !Ref 'cfeS3Bucket'
         cfeTag: !Ref 'cfeTag'
         imageId: !If
           - noCustomImageId
