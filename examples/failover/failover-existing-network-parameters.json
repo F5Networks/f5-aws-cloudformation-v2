@@ -37,7 +37,7 @@
   },
   {
     "ParameterKey": "cfeS3Bucket",
-    "ParameterValue": "bigip-high-availability-solution"
+    "ParameterValue": ""
   },
   {
     "ParameterKey": "cfeTag",

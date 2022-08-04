@@ -391,7 +391,7 @@ Parameters:
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   cfeS3Bucket:
-    Description: S3 bucket name used by Cloud Failover Extension.
+    Description: Supply a unique name for a CFE S3 bucket created and used by Cloud Failover Extension.
     Type: String
     Default: ''
   cfeTag:
