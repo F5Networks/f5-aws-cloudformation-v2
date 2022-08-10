@@ -9,7 +9,7 @@ Resources:
         https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v2.4.0.0/examples/modules/bigip-autoscale/bigip-autoscale.yaml
       Parameters:
         bigIpExternalSecurityGroup: example-security-group
-        bigIpInstanceProfile: example-instance-profile
+        instanceProfile: example-instance-profile
         bigIpRuntimeInitConfig: https://some-delivery-locatoion.com/config.yaml
         bigIpRuntimeInitPackageUrl: https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.1/dist/f5-bigip-runtime-init-1.5.1-1.gz.run
         bigIqLicenseRevokeSnsTopic: ''

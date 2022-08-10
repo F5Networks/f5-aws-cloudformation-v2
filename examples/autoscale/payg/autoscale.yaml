@@ -23,6 +23,7 @@ Metadata:
           default: Amazon EC2 Configuration
         Parameters:
           - sshKey
+          - bigIpInstanceProfile
       - Label:
           default: DAG / Ingress
         Parameters:
@@ -103,6 +104,8 @@ Metadata:
         default: Custom Image Id
       bigIpImage:
         default: F5 BIG-IP Image
+      bigIpInstanceProfile:
+        default: Instance profile
       bigIpInstanceType:
         default: Enter valid instance type.
       bigIpMaxBatchSize:
@@ -289,6 +292,12 @@ Parameters:
     ConstraintDescription: Must be a valid F5 BIG-IP market place image
     Default: '*16.1.2.2-0.0.28**PAYG-Best Plus 25Mbps*'
     Description: F5 BIG-IP market place image
+    Type: String
+  bigIpInstanceProfile:
+    Default: ''
+    Description: Enter the name of an existing IAM instance profile with applied IAM
+      policy to be associated to the BIG-IP virtual machine(s). Leave default to create
+      a new instance profile.
     Type: String
   bigIpInstanceType:
     AllowedValues:
@@ -546,6 +555,9 @@ Parameters:
     Description: CIDR block for the VPC.
     Type: String
 Conditions:
+  createBigIpInstanceProfile: !Equals
+    - !Ref 'bigIpInstanceProfile'
+    - ""
   createLogDestination: !Equals
     - 'true'
     - !Ref 'createLogDestination'
@@ -609,6 +621,7 @@ Resources:
             - Outputs.cloudWatchLogGroup
           - !Ref 'AWS::NoValue'
         createAmiRole: 'true'
+        createBigIpRoles: !If [createBigIpInstanceProfile, 'true', 'false']
         createBigIqRoles: 'false'
         environment: !Ref 'environment'
         group: !Ref 'group'
@@ -753,9 +766,12 @@ Resources:
         bigIpExternalSecurityGroup: !GetAtt
           - Dag
           - Outputs.bigIpMgmtSecurityGroup
-        bigIpInstanceProfile: !GetAtt
-          - Access
-          - Outputs.bigIpInstanceProfile
+        instanceProfile: !If
+          - createBigIpInstanceProfile
+          - !GetAtt
+            - Access
+            - Outputs.bigIpInstanceProfile
+          - !Ref 'bigIpInstanceProfile'
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig'
         bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         cost: !Ref 'cost'

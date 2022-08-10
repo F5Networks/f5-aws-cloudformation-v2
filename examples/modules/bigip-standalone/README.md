@@ -47,7 +47,6 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | Parameter | Required | Default | Type | Description |
 | --- | --- | --- | --- | --- |
 | application | No | f5app | string | Application Tag. |
-| bigIpInstanceProfile | No |  | string | BIG-IP instance profile with applied IAM policy. |
 | bigIpRuntimeInitConfig | Yes |  | string | Delivery URL for config file (YAML/JSON) or JSON string. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run | string | URL for BIG-IP Runtime Init package. |
 | bigIpPeerAddr | No | 10.0.1.11 | string | Type the static self IP address of the remote host here. Set to empty string if not configuring peering with a remote host on this device. |
@@ -62,6 +61,7 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | externalSubnetId | No |  | string | The resource ID of the external subnet. ***Note:*** SubnetId parameters used for identifying number of network interfaces. Example: *1NIC* - only Mgmt subnet ID provided; *2NIC* - Mgmt and External subnets ID provided; *3NIC* - Mgmt, External, and Internal subnets ID provided. |
 | group | No | f5group | string | Group Tag. |
 | imageId | Yes |  | string | Provide BIG-IP AMI ID you wish to deploy. |
+| instanceProfile | No |  | string | Instance profile with applied IAM policy. |
 | instanceIndex | No | 01 | string | Enter valid string. This value will be appended to the name of the BIG-IP instance and related objects. |
 | instanceType | No | m5.2xlarge | string | Enter valid instance type. |
 | internalSecurityGroupId | No |  | string | The optional resource ID of a security group to apply to the internal network interface. |

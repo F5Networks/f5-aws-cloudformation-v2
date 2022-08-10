@@ -120,6 +120,7 @@ These are the IAM permissions produced by each type of solution supported by thi
 | cloudWatchLogGroup | No |  | string | Provide the CloudWatch Log Group name used for telemetry. |
 | cost | No | f5cost | string | Cost Center Tag. |
 | createAmiRole | No | false | boolean | Value of 'true' creates IAM roles required for AMI lookup function. |
+| createBigIpRoles | No | true | boolean | Value of 'true' creates IAM roles and instance profile assigned to BIG-IP instance(s). |
 | createBigIqRoles | No | false | boolean | Value of 'true' creates IAM roles required to revoke license assignments from BIG-IQ. |
 | environment | No | f5env | string | Environment Tag. |
 | group | No | f5group | string | Group Tag. |

@@ -191,7 +191,7 @@ Conditions:
       - ''
   useBigIpInstanceProfile: !Not
     - !Equals
-      - !Ref 'bigIpInstanceProfile'
+      - !Ref 'instanceProfile'
       - ""
   createCfeS3Bucket: !Not
     - !Equals
@@ -215,7 +215,7 @@ Metadata:
           - externalPublicIpIds
           - numSecondaryPrivateIpAddress
           - sshKey
-          - bigIpInstanceProfile
+          - instanceProfile
       - Label:
           default: Networking
         Parameters:
@@ -247,7 +247,7 @@ Metadata:
     ParameterLabels:
       application:
         default: Application
-      bigIpInstanceProfile:
+      instanceProfile:
         default: Instance profile
       bigIpPeerAddr:
         default: Static self IP address for peer device.
@@ -372,7 +372,7 @@ Parameters:
     Default: f5app
     Description: Application Tag.
     Type: String
-  bigIpInstanceProfile:
+  instanceProfile:
     Default: ''
     Description: BIG-IP instance profile with applied IAM policy.
     Type: String
@@ -391,7 +391,8 @@ Parameters:
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   cfeS3Bucket:
-    Description: Supply a unique name for a CFE S3 bucket created and used by Cloud Failover Extension.
+    Description: Supply a unique name for a CFE S3 bucket created and used by Cloud
+      Failover Extension.
     Type: String
     Default: ''
   cfeTag:
@@ -977,7 +978,7 @@ Resources:
           NoDevice: {}
       IamInstanceProfile: !If
         - useBigIpInstanceProfile
-        - !Ref 'bigIpInstanceProfile'
+        - !Ref 'instanceProfile'
         - !Ref 'AWS::NoValue'
       ImageId: !Ref 'imageId'
       InstanceType: !Ref 'instanceType'
@@ -1140,7 +1141,7 @@ Resources:
           NoDevice: {}
       IamInstanceProfile: !If
         - useBigIpInstanceProfile
-        - !Ref 'bigIpInstanceProfile'
+        - !Ref 'instanceProfile'
         - !Ref 'AWS::NoValue'
       ImageId: !Ref 'imageId'
       InstanceType: !Ref 'instanceType'
@@ -1297,7 +1298,7 @@ Resources:
           NoDevice: {}
       IamInstanceProfile: !If
         - useBigIpInstanceProfile
-        - !Ref 'bigIpInstanceProfile'
+        - !Ref 'instanceProfile'
         - !Ref 'AWS::NoValue'
       ImageId: !Ref 'imageId'
       InstanceType: !Ref 'instanceType'

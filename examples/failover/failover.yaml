@@ -32,6 +32,7 @@ Metadata:
           default: Amazon EC2 Configuration
         Parameters:
           - sshKey
+          - bigIpInstanceProfile
       - Label:
           default: DAG / Ingress
         Parameters:
@@ -78,6 +79,8 @@ Metadata:
         default: F5 BIG-IP Image
       bigIpInstanceType:
         default: Enter valid instance type.
+      bigIpInstanceProfile:
+        default: Instance profile
       bigIpPeerAddr:
         default: Static self IP address for peer device.
       bigIpRuntimeInitConfig01:
@@ -255,6 +258,12 @@ Parameters:
     Default: '*16.1.2.2-0.0.28**PAYG-Best Plus 25Mbps*'
     Description: F5 BIG-IP market place image
     Type: String
+  bigIpInstanceProfile:
+    Default: ''
+    Description: Enter the name of an existing IAM instance profile with applied IAM
+      policy to be associated to the BIG-IP virtual machine(s). Leave default to create
+      a new instance profile.
+    Type: String
   bigIpInstanceType:
     AllowedValues:
       - m3.2xlarge
@@ -308,7 +317,8 @@ Parameters:
       lowercase letters, uppercase letters, and hyphens (-). It cannot start or end
       with a hyphen (-).'
     Default: ''
-    Description: 'Supply a unique name for a CFE S3 bucket created and used by Cloud Failover Extension.'
+    Description: 'Supply a unique name for a CFE S3 bucket created and used by Cloud
+      Failover Extension.'
     Type: String
   cfeTag:
     Description: Cloud Failover deployment tag value.
@@ -479,6 +489,9 @@ Parameters:
     Description: CIDR block for the VPC.
     Type: String
 Conditions:
+  createBigIpInstanceProfile: !Equals
+    - !Ref 'bigIpInstanceProfile'
+    - ""
   noCustomImageId: !Equals
     - ''
     - !Ref 'bigIpCustomImageId'
@@ -513,6 +526,7 @@ Resources:
         environment: !Ref 'environment'
         group: !Ref 'group'
         createAmiRole: 'true'
+        createBigIpRoles: !If [createBigIpInstanceProfile, 'true', 'false']
         s3Bucket: !If
           - useDefaultCfeS3Bucket
           - !Join
@@ -669,7 +683,12 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        bigIpInstanceProfile: !GetAtt [Access, Outputs.bigIpInstanceProfile]
+        instanceProfile: !If
+          - createBigIpInstanceProfile
+          - !GetAtt
+            - Access
+            - Outputs.bigIpInstanceProfile
+          - !Ref 'bigIpInstanceProfile'
         bigIpPeerAddr: !Ref 'bigIpPeerAddr'
         bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig01'
@@ -750,7 +769,12 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        bigIpInstanceProfile: !GetAtt [Access, Outputs.bigIpInstanceProfile]
+        instanceProfile: !If
+          - createBigIpInstanceProfile
+          - !GetAtt
+            - Access
+            - Outputs.bigIpInstanceProfile
+          - !Ref 'bigIpInstanceProfile'
         bigIpPeerAddr: !Ref 'bigIpPeerAddr'
         bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig02'

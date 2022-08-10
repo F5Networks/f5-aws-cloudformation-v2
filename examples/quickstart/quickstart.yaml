@@ -33,6 +33,10 @@ Conditions:
   noCustomImageId: !Equals
     - ''
     - !Ref 'bigIpCustomImageId'
+  useBigIpInstanceProfile: !Not
+    - !Equals
+      - !Ref 'bigIpInstanceProfile'
+      - ""
 Mappings:
   AWSBigipThroughput:
     1000Mbps:
@@ -538,6 +542,7 @@ Metadata:
           - sshKey
           - restrictedSrcAddressMgmt
           - restrictedSrcAddressApp
+          - bigIpInstanceProfile
       - Label:
           default: BIG-IP Configuration
         Parameters:
@@ -575,6 +580,8 @@ Metadata:
         default: Custom Image Id
       bigIpImage:
         default: F5 BIG-IP Performance Type (PAYG Only)
+      bigIpInstanceProfile:
+        default: Instance profile
       bigIpInstanceType:
         default: Instance Type
       bigIpRuntimeInitConfig:
@@ -717,6 +724,12 @@ Parameters:
     ConstraintDescription: Must be a valid F5 BIG-IP VE image type
     Default: Best
     Description: F5 BIG-IP Performance Type
+    Type: String
+  bigIpInstanceProfile:
+    Default: ''
+    Description: Enter the name of an existing IAM instance profile with applied IAM
+      policy to be associated to the BIG-IP virtual machine(s). Leave default if not
+      using an instance profile.
     Type: String
   bigIpInstanceType:
     AllowedValues:
@@ -916,6 +929,10 @@ Resources:
           S3Bucket: !Ref 's3BucketName'
       Parameters:
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig'
+        instanceProfile: !If
+          - useBigIpInstanceProfile
+          - !Ref 'bigIpInstanceProfile'
+          - !Ref 'AWS::NoValue'
         externalPrimaryPublicId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01]
         externalPublicIpIds: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId02]
         externalSecurityGroupId: !If [2nic, !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup],

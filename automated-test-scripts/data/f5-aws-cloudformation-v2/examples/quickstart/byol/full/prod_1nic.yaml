@@ -15,7 +15,7 @@ RUNTIME INIT CONFIG: https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/qui
 SOLUTION TYPE: standalone
 SSH KEY: dewpt
 STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
-TEMPLATE NAME: quickstart-2nic-byol
+TEMPLATE NAME: quickstart-1nic-byol
 TEMPLATE URL: 'file://$PWD/examples/quickstart/quickstart.yaml'
 THROUGHPUT: 1000Mbps
 UNIQUESTRING: dew<DEWPOINT JOB ID>

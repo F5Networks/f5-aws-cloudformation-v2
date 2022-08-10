@@ -53,7 +53,6 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | --- | --- | --- | --- | --- |
 | application | No | f5app | string | Application Tag. |
 | bigIpExternalSecurityGroup | Yes |  | string | BIG-IP external security group. |
-| bigIpInstanceProfile | Yes |  | string | BIG-IP instance profile with applied IAM policy. |
 | bigIpRuntimeInitConfig | Yes |  | string | Delivery URL for config file (YAML/JSON) or JSON string. |
 | bigIpRuntimeInitPackageUrl | Yes | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run | string | URL for f5-bigip-runtime-init package. |
 | bigIqLicenseRevokeSnsTopic | No |  | string | Provides SNS Topic ARN used for triggering Lambda Function for revoking license on BIG-IQ. |
@@ -68,6 +67,7 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | group | No | f5group | string | Group Tag. |
 | highCpuThreshold | No |  | string | High CPU Percentage threshold to begin scaling up BIG-IP VE instance. |
 | imageName | No |  | string | F5 BIG-IP Performance Type. |
+| instanceProfile | Yes |  | string | Instance profile with applied IAM policy. |
 | instanceType | No | m5.2xlarge | string | Enter valid instance type. |
 | internalTargetGroupHttp | No |  | string | Internal Load Balancer Target Group with BIG-IP VEs. |
 | internalTargetGroupHttps | No |  | string | Internal Load Balancer Target Group with BIG-IP VEs. |
