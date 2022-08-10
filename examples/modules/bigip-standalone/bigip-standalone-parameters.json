@@ -4,7 +4,7 @@
     "ParameterValue": "f5app"
   },
   {
-    "ParameterKey": "bigIpInstanceProfile",
+    "ParameterKey": "instanceProfile",
     "ParameterValue": ""
   },
   {

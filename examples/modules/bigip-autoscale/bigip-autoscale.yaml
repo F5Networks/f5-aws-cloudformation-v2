@@ -61,7 +61,7 @@ Metadata:
           - instanceType
           - provisionPublicIp
           - sshKey
-          - bigIpInstanceProfile
+          - instanceProfile
           - licenseType
       - Label:
           default: Resources Tags
@@ -84,7 +84,7 @@ Metadata:
         default: Application
       bigIpExternalSecurityGroup:
         default: BIG-IP external security group
-      bigIpInstanceProfile:
+      instanceProfile:
         default: BIG-IP instance profile with applied IAM policy
       bigIpRuntimeInitPackageUrl:
         default: Runtime Init Package
@@ -174,7 +174,7 @@ Parameters:
   bigIpExternalSecurityGroup:
     Description: REQUIRED - BIG-IP external security group.
     Type: String
-  bigIpInstanceProfile:
+  instanceProfile:
     Description: REQUIRED - BIG-IP instance profile with applied IAM policy.
     Type: String
   bigIpRuntimeInitConfig:
@@ -511,7 +511,7 @@ Resources:
             VolumeType: gp2
         - DeviceName: /dev/xvdb
           NoDevice: true
-      IamInstanceProfile: !Ref 'bigIpInstanceProfile'
+      IamInstanceProfile: !Ref 'instanceProfile'
       ImageId: !Ref 'imageId'
       InstanceMonitoring: false
       InstanceType: !Ref 'instanceType'

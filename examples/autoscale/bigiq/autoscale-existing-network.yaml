@@ -27,6 +27,7 @@ Metadata:
           default: Amazon EC2 Configuration
         Parameters:
           - sshKey
+          - bigIpInstanceProfile
       - Label:
           default: DAG / Ingress
         Parameters:
@@ -106,6 +107,8 @@ Metadata:
         default: Custom Image Id
       bigIpImage:
         default: F5 BIG-IP Image
+      bigIpInstanceProfile:
+        default: Instance profile
       bigIpInstanceType:
         default: Enter valid instance type.
       bigIpMaxBatchSize:
@@ -285,6 +288,12 @@ Parameters:
     ConstraintDescription: Must be a valid F5 BIG-IP market place image
     Default: '*16.1.2.2-0.0.28**BYOL-All Modules 2Boot*'
     Description: F5 BIG-IP market place image
+    Type: String
+  bigIpInstanceProfile:
+    Default: ''
+    Description: Enter the name of an existing IAM instance profile with applied IAM
+      policy to be associated to the BIG-IP virtual machine(s). Leave default to create
+      a new instance profile.
     Type: String
   bigIpInstanceType:
     AllowedValues:
@@ -555,6 +564,9 @@ Parameters:
     ConstraintDescription: Must be valid VPC ID
     Type: AWS::EC2::VPC::Id
 Conditions:
+  createBigIpInstanceProfile: !Equals
+    - !Ref 'bigIpInstanceProfile'
+    - ""
   createLogDestination: !Equals
     - 'true'
     - !Ref 'createLogDestination'
@@ -616,6 +628,7 @@ Resources:
           - !Ref 'AWS::NoValue'
         cost: !Ref 'cost'
         createAmiRole: 'true'
+        createBigIpRoles: !If [createBigIpInstanceProfile, 'true', 'false']
         createBigIqRoles: 'true'
         environment: !Ref 'environment'
         group: !Ref 'group'
@@ -653,9 +666,12 @@ Resources:
           - Outputs.bigIpMgmtSecurityGroup
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig'
         bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
-        bigIpInstanceProfile: !GetAtt
-          - Access
-          - Outputs.bigIpInstanceProfile
+        instanceProfile: !If
+          - createBigIpInstanceProfile
+          - !GetAtt
+            - Access
+            - Outputs.bigIpInstanceProfile
+          - !Ref 'bigIpInstanceProfile'
         bigIqLicenseRevokeSnsTopic: !GetAtt
           - Function
           - Outputs.snsTopic

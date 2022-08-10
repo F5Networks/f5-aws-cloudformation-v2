@@ -16,6 +16,10 @@
     "ParameterValue": "*16.1.2.2-0.0.28**PAYG-Best Plus 25Mbps*"
   },
   {
+    "ParameterKey": "bigIpInstanceProfile",
+    "ParameterValue": ""
+  },
+  {
     "ParameterKey": "bigIpInstanceType",
     "ParameterValue": "m5.xlarge"
   },

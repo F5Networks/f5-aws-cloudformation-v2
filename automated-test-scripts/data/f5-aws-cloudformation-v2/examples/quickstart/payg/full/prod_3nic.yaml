@@ -10,7 +10,7 @@ PUBLIC MGMT: 'false'
 PROVISION EXAMPLE APP: 'false'
 PROVISION PUBLIC IP: 'false'
 REGION: us-west-2
-TEMPLATE NAME: quickstart-2nic-payg
+TEMPLATE NAME: quickstart-3nic-payg
 RUNTIME INIT CONFIG: https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/quickstart/bigip-configurations/<DEWPOINT JOB ID>.yaml
 SOLUTION TYPE: standalone
 SSH KEY: dewpt

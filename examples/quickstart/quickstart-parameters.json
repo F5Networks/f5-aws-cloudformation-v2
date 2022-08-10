@@ -40,6 +40,10 @@
     "ParameterValue": "Best"
   },
   {
+    "ParameterKey": "bigIpInstanceProfile",
+    "ParameterValue": ""
+  },
+  {
     "ParameterKey": "bigIpInstanceType",
     "ParameterValue": "m5.2xlarge"
   },

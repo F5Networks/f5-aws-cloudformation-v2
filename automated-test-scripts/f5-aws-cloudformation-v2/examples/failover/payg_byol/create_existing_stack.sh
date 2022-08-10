@@ -35,6 +35,7 @@ runtimeConfig01='"<RUNTIME INIT CONFIG 01>"'
 runtimeConfig02='"<RUNTIME INIT CONFIG 02>"'
 secret_name=$(aws secretsmanager describe-secret --secret-id <DEWPOINT JOB ID>-secret-runtime --region <REGION> | jq -r .Name)
 secret_arn=$(aws secretsmanager describe-secret --secret-id <DEWPOINT JOB ID>-secret-runtime --region <REGION> | jq -r .ARN)
+instance_profile="<DEWPOINT JOB ID>-EC2-Instance-Profile"
 
 region=$(aws s3api get-bucket-location --bucket $bucket_name | jq -r .LocationConstraint)
 
@@ -144,6 +145,10 @@ cat <<EOF > parameters.json
     {
         "ParameterKey": "bigIpImage",
         "ParameterValue": "<BIGIP IMAGE>"
+    },
+    {
+        "ParameterKey": "bigIpInstanceProfile",
+        "ParameterValue": "$instance_profile"
     },
     {
         "ParameterKey": "bigIpInstanceType",

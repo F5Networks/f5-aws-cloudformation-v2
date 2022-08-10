@@ -36,6 +36,10 @@
     "ParameterValue": "*16.1.2.2-0.0.28**BYOL-All Modules 2Boot*"
   },
   {
+    "ParameterKey": "bigIpInstanceProfile",
+    "ParameterValue": ""
+  },
+  {
     "ParameterKey": "bigIpInstanceType",
     "ParameterValue": "m5.xlarge"
   },
