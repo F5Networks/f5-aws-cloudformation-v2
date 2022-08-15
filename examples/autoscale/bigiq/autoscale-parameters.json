@@ -88,6 +88,10 @@
     "ParameterValue": "1"
   },
   {
+    "ParameterKey": "bigIpSecretArn",
+    "ParameterValue": ""
+  },
+  {
     "ParameterKey": "bigIqAddressType",
     "ParameterValue": "private"
   },
@@ -190,10 +194,6 @@
   {
     "ParameterKey": "s3BucketRegion",
     "ParameterValue": "us-east-1"
-  },
-  {
-    "ParameterKey": "secretArn",
-    "ParameterValue": ""
   },
   {
     "ParameterKey": "snsEvents",

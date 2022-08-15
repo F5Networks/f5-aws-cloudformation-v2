@@ -52,10 +52,10 @@ Metadata:
           - bigIpImage
           - bigIpCustomImageId
           - bigIpInstanceType
+          - bigIpSecretArn
           - cfeS3Bucket
           - cfeVipTag
           - cfeTag
-          - secretArn
       - Label:
           default: Application Configuration
         Parameters:
@@ -130,6 +130,8 @@ Metadata:
         default: Management subnet id for BIGIP instance A
       bigIpMgmtSubnetId02:
         default: Management subnet id for BIGIP instance B
+      bigIpSecretArn:
+        default: ARN of Secrets Manager secret
       owner:
         default: Owner
       provisionPublicIpVip:
@@ -144,8 +146,6 @@ Metadata:
         default: S3 Bucket where Templates are Located
       s3BucketRegion:
         default: S3 Bucket Region where Templates are Located
-      secretArn:
-        default: ARN of Secrets Manager secret
       sshKey:
         default: Supply the public key that will be used for SSH authentication to
           the BIG-IP and application virtual machines
@@ -410,6 +410,10 @@ Parameters:
     ConstraintDescription: Must be a valid subnet id
     Description: Subnet id used for BIGIP instance B management interface
     Type: AWS::EC2::Subnet::Id
+  bigIpSecretArn:
+    Description: The ARN of the AWS secret manager secret where the BIG-IP password
+      used for clustering is stored.
+    Type: String
   owner:
     Default: f5owner
     Description: Owner Tag.
@@ -462,10 +466,6 @@ Parameters:
     Description: The AWS Region where the Quick Start S3 bucket (s3BucketName) is
       hosted. When using your own bucket, you must specify this value.
     Type: String
-  secretArn:
-    Default: ''
-    Description: ARN of Secrets Manager secret
-    Type: String
   sshKey:
     Description: REQUIRED - Supply the public key that will be used for SSH authentication
       to the BIG-IP and application virtual machines.
@@ -500,10 +500,6 @@ Conditions:
   useDefaultCfeS3Bucket: !Equals
     - !Ref 'cfeS3Bucket'
     - ''
-  useSecretArn: !Not
-    - !Equals
-      - ''
-      - !Ref 'secretArn'
   usePublicIpMgmt: !Equals
     - 'true'
     - !Ref 'provisionPublicIpMgmt'
@@ -533,7 +529,7 @@ Resources:
             - - !Ref 'uniqueString'
               - '-bigip-high-availability-solution'
           - !Ref 'cfeS3Bucket'
-        secretArn: !If [useSecretArn, !Ref 'secretArn', !Ref 'AWS::NoValue']
+        secretArn: !Ref 'bigIpSecretArn'
         solutionType: failover
         uniqueString: !Ref 'uniqueString'
   AmiInfo:
@@ -593,6 +589,7 @@ Resources:
         mgmtSelfIp: !Ref 'bigIpMgmtAddress01'
         mgmtSubnetId: !Ref 'bigIpMgmtSubnetId01'
         numSecondaryPrivateIpAddress: !If [usePublicIpVip, 1, 0]
+        secretArn: !Ref 'bigIpSecretArn'
         sshKey: !Ref 'sshKey'
         uniqueString: !Ref 'uniqueString'
   BigIpInstance02:
@@ -636,6 +633,7 @@ Resources:
         mgmtSelfIp: !Ref 'bigIpMgmtAddress02'
         mgmtSubnetId: !Ref 'bigIpMgmtSubnetId02'
         numSecondaryPrivateIpAddress: 0
+        secretArn: !Ref 'bigIpSecretArn'
         sshKey: !Ref 'sshKey'
         uniqueString: !Ref 'uniqueString'
   Dag:

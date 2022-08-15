@@ -28,6 +28,10 @@
     "ParameterValue": ""
   },
   {
+    "ParameterKey": "bigIqSecretArn",
+    "ParameterValue": ""
+  },
+  {
     "ParameterKey": "cloudWatchLogGroupName",
     "ParameterValue": ""
   },
@@ -126,6 +130,10 @@
   {
     "ParameterKey": "scalingMinSize",
     "ParameterValue": "1"
+  },
+  {
+    "ParameterKey": "secretArn",
+    "ParameterValue": ""
   },
   {
     "ParameterKey": "snsEvents",

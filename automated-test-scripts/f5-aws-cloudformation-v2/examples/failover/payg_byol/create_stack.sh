@@ -76,9 +76,6 @@ else
         /usr/bin/yq e ".extension_services.service_operations.[1].value.externalStorage.scopingTags.f5_cloud_failover_label = \"<DEWPOINT JOB ID>\"" -i <DEWPOINT JOB ID>-0$counter.yaml
         /usr/bin/yq e ".extension_services.service_operations.[1].value.failoverAddresses.scopingTags.f5_cloud_failover_label = \"<DEWPOINT JOB ID>\"" -i <DEWPOINT JOB ID>-0$counter.yaml
 
-        # Runtime parameters
-        /usr/bin/yq e ".runtime_parameters.[0].secretProvider.secretId = \"$secret_name\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-
         if [[ "<LICENSE TYPE>" == "byol" ]]; then
             # Add BYOL License to declaration
             if [[ $counter == 1 ]]; then
@@ -182,7 +179,7 @@ cat <<EOF > parameters.json
         "ParameterValue": "$region"
     },
     {
-        "ParameterKey": "secretArn",
+        "ParameterKey": "bigIpSecretArn",
         "ParameterValue": "$secret_arn"
     },
     {

@@ -45,7 +45,7 @@ ParameterKey=cloudWatchDashboardName,ParameterValue=<UNIQUESTRING>-F5-BIGIP-WAF-
 ParameterKey=notificationEmail,ParameterValue=<NOTIFICATION EMAIL> \
 ParameterKey=uniqueString,ParameterValue=<UNIQUESTRING> \
 ParameterKey=sshKey,ParameterValue=<SSH KEY> \
-ParameterKey=secretArn,ParameterValue=$secret_arn"
+ParameterKey=bigIpSecretArn,ParameterValue=$secret_arn"
 
 if echo "<TEMPLATE URL>" | grep -q "existing-network"; then
     echo "Adding existing stack parameters"

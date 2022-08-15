@@ -112,6 +112,10 @@
     "ParameterValue": "f5owner"
   },
   {
+    "ParameterKey": "secretArn",
+    "ParameterValue": ""
+  },
+  {
     "ParameterKey": "sshKey",
     "ParameterValue": ""
   },

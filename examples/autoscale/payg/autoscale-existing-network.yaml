@@ -53,9 +53,9 @@ Metadata:
           - bigIpImage
           - bigIpCustomImageId
           - bigIpInstanceType
+          - bigIpSecretArn
           - metricNameSpace
           - notificationEmail
-          - secretArn
           - snsEvents
       - Label:
           default: Telemetry Configuration
@@ -123,6 +123,8 @@ Metadata:
       bigIpScalingMinSize:
         default: Minimum number of BIG-IP instances that can be created in the Autoscale
           Group
+      bigIpSecretArn:
+        default: ARN of Secrets Manager secret
       cloudWatchLogGroupName:
         default: CloudWatch Log Group Name
       cloudWatchLogStreamName:
@@ -159,8 +161,6 @@ Metadata:
         default: S3 Bucket where Templates are Located
       s3BucketRegion:
         default: S3 Bucket Region where Templates are Located
-      secretArn:
-        default: ARN of Secrets Manager secret
       snsEvents:
         default: Provides list of SNS Events used for sending Notifications on Autoscale
           group
@@ -362,6 +362,12 @@ Parameters:
     MaxValue: 99
     MinValue: 1
     Type: Number
+  bigIpSecretArn:
+    Default: ''
+    Description: The ARN of a Secrets Manager secret to create READ permissions for.
+      For example, if customizing your runtime-init config with an admin password,
+      logging credential, etc.
+    Type: String
   cloudWatchLogGroupName:
     Default: ''
     Description: The name of the CloudWatch Log Group
@@ -469,10 +475,6 @@ Parameters:
     Description: The AWS Region where the Quick Start S3 bucket (s3BucketName) is
       hosted. When using your own bucket, you must specify this value.
     Type: String
-  secretArn:
-    Default: ''
-    Description: ARN of Secrets Manager secret
-    Type: String
   snsEvents:
     Description: Provides list of SNS Topics used on Autoscale Group.
     Type: List<String>
@@ -543,7 +545,7 @@ Conditions:
   useSecretArn: !Not
     - !Equals
       - ''
-      - !Ref 'secretArn'
+      - !Ref 'bigIpSecretArn'
   useSecretLoggingS3Bucket: !And
     - !Condition 'useLoggingS3Bucket'
     - !Condition 'useSecretArn'
@@ -579,7 +581,7 @@ Resources:
             - useLoggingS3Bucket
             - !Ref 'loggingS3BucketName'
             - !Ref 'AWS::NoValue'
-        secretArn: !If [useSecretArn, !Ref 'secretArn', !Ref 'AWS::NoValue']
+        secretArn: !If [useSecretArn, !Ref 'bigIpSecretArn', !Ref 'AWS::NoValue']
         solutionType: !If
           - useSecretLoggingS3Bucket
           - secretS3
@@ -669,6 +671,7 @@ Resources:
         scaleOutThroughputThreshold: !Ref 'bigIpScaleOutThroughputThreshold'
         scalingMinSize: !Ref 'bigIpScalingMinSize'
         scalingMaxSize: !Ref 'bigIpScalingMaxSize'
+        secretArn: !If [useSecretArn, !Ref 'bigIpSecretArn', !Ref 'AWS::NoValue']
         snsEvents: !Join [',', !Ref 'snsEvents']
         sshKey: !Ref 'sshKey'
         subnets: !Join

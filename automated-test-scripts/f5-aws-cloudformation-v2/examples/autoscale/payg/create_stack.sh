@@ -220,7 +220,7 @@ cat <<EOF > parameters.json
         "ParameterValue": "$region"
     },
     {
-        "ParameterKey": "secretArn",
+        "ParameterKey": "bigIpSecretArn",
         "ParameterValue": "$secret_arn"
     },
     {
