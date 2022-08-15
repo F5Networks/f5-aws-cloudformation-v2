@@ -16,11 +16,14 @@ runtime_parameters:
       type: uri
       value: /latest/dynamic/instance-identity/document
       query: region
+  - name: BIGIQ_SECRET_ID
+    type: url
+    value: file:///config/cloud/bigiq_secret_id
   - name: BIGIQ_PASSWORD
     type: secret
     secretProvider:
       environment: aws
-      secretId: mySecretId
+      secretId: '{{{BIGIQ_SECRET_ID}}}'
       type: SecretsManager
       version: AWSCURRENT
   - name: CLOUDWATCH_LOG_GROUP

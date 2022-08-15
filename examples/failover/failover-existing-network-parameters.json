@@ -120,6 +120,10 @@
     "ParameterValue": ""
   },
   {
+    "ParameterKey": "bigIpSecretArn",
+    "ParameterValue": ""
+  },
+  {
     "ParameterKey": "owner",
     "ParameterValue": "f5owner"
   },
@@ -146,10 +150,6 @@
   {
     "ParameterKey": "s3BucketRegion",
     "ParameterValue": "us-east-1"
-  },
-  {
-    "ParameterKey": "secretArn",
-    "ParameterValue": ""
   },
   {
     "ParameterKey": "sshKey",

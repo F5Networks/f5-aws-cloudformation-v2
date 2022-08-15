@@ -53,9 +53,9 @@ Metadata:
           - bigIpImage
           - bigIpCustomImageId
           - bigIpInstanceType
+          - bigIpSecretArn
           - metricNameSpace
           - notificationEmail
-          - secretArn
           - snsEvents
       - Label:
           default: BIG-IQ configuration
@@ -135,6 +135,8 @@ Metadata:
       bigIpScalingMinSize:
         default: Minimum number of BIG-IP instances that can be created in the Autoscale
           Group
+      bigIpSecretArn:
+        default: ARN of Secrets Manager secret
       bigIqAddressType:
         default: 'The type (public or private) of IP address or hostname for the BIG-IQ
           to be used when licensing the BIG-IP. When using a private IP address or
@@ -189,8 +191,6 @@ Metadata:
         default: S3 Bucket where Templates are Located
       s3BucketRegion:
         default: S3 Bucket Region where Templates are Located
-      secretArn:
-        default: ARN of Secrets Manager secret
       snsEvents:
         default: Provides list of SNS Events used for sending Notifications on Autoscale
           group
@@ -392,6 +392,16 @@ Parameters:
     MaxValue: 99
     MinValue: 1
     Type: Number
+  bigIpSecretArn:
+    Default: ''
+    Description: The ARN of a Secrets Manager secret to create READ permissions for.
+      For example, if customizing your runtime-init config with an admin password,
+      logging credential, etc.
+    Type: String
+  bigIqSecretArn:
+    Description: The ARN of the AWS secret containing the password for BIG-IQ used
+      during BIG-IP licensing via BIG-IQ.
+    Type: String
   bigIqAddressType:
     AllowedValues:
       - private
@@ -402,10 +412,6 @@ Parameters:
       to be used when licensing the BIG-IP.  Note: When using a private IP address
       or hostname, you must provide values for the bigIqSecurityGroupId and bigIqSubnetId
       parameters.'
-    Type: String
-  bigIqSecretArn:
-    Description: The ARN of the AWS secret containing the password used during BIG-IP
-      licensing via BIG-IQ.
     Type: String
   bigIqSecurityGroupId:
     Default: ''
@@ -534,10 +540,6 @@ Parameters:
     Description: The AWS Region where the Quick Start S3 bucket (s3BucketName) is
       hosted. When using your own bucket, you must specify this value.
     Type: String
-  secretArn:
-    Default: ''
-    Description: ARN of Secrets Manager secret
-    Type: String
   snsEvents:
     Description: Provides list of SNS Topics used on Autoscale Group.
     Type: List<String>
@@ -608,7 +610,7 @@ Conditions:
   useSecretArn: !Not
     - !Equals
       - ''
-      - !Ref 'secretArn'
+      - !Ref 'bigIpSecretArn'
 Resources:
   Access:
     Type: 'AWS::CloudFormation::Stack'
@@ -642,7 +644,7 @@ Resources:
             - useLoggingS3Bucket
             - !Ref 'loggingS3BucketName'
             - !Ref 'AWS::NoValue'
-        secretArn: !If [useSecretArn, !Ref 'secretArn', !Ref 'AWS::NoValue']
+        secretArn: !If [useSecretArn, !Ref 'bigIpSecretArn', !Ref 'AWS::NoValue']
         solutionType: !If [useLoggingS3Bucket, secretS3, secret]
         uniqueString: !Ref 'uniqueString'
   AmiInfo:
@@ -678,6 +680,7 @@ Resources:
         bigIqNotificationRole: !GetAtt
           - Access
           - Outputs.bigIqNotificationRole
+        bigIqSecretArn: !Ref 'bigIqSecretArn'
         cost: !Ref 'cost'
         cloudWatchLogGroupName: !If [customLogGroup, !Ref 'cloudWatchLogGroupName',
           'f5telemetry']
@@ -729,6 +732,7 @@ Resources:
         scaleOutThroughputThreshold: !Ref 'bigIpScaleOutThroughputThreshold'
         scalingMinSize: !Ref 'bigIpScalingMinSize'
         scalingMaxSize: !Ref 'bigIpScalingMaxSize'
+        secretArn: !If [useSecretArn, !Ref 'bigIpSecretArn', !Ref 'AWS::NoValue']
         snsEvents: !Join [',', !Ref 'snsEvents']
         sshKey: !Ref 'sshKey'
         subnets: !Join

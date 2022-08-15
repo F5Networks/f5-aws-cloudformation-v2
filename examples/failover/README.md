@@ -83,13 +83,12 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 
   - An **SSH Key pair** in AWS for management access to BIG-IP VE. For more information about creating and/or importing the key pair in AWS, see AWS SSH key [documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html).
 
-  - An **AWS secret** stored in AWS [Secrets Manager](https://aws.amazon.com/secrets-manager/) containing the password used to access and cluster the HA Pair. For example, to create a secret using the AWS CLI:
+  - An **AWS secret** stored in AWS [Secrets Manager](https://aws.amazon.com/secrets-manager/) containing the password used to access and cluster the HA Pair, created in the region where deploying the template. For example, to create a secret using the AWS CLI:
     ```bash
     aws secretsmanager create-secret --region us-east-1 --name mySecretId --secret-string 'YOUR_BIGIP_PASSWORD'
     ```
     - *NOTE:*
-      - By default, the secret name used is `mySecretId` and must be created in the region where deploying the template. Otherwise, see [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more details.
-      - Obtain the secret ARN. The ARN format required for the input parameter will look like _arn:aws:secretsmanager:us-east-1:111111111111:secret:mySecretId-xdg0kdf_ You will pass this value to the *secretArn* input parameter.
+      - Obtain the secret ARN. For a secret named mySecretId, the ARN format required for the input parameter will look like _arn:aws:secretsmanager:us-east-1:111111111111:secret:mySecretId-xdg0kdf_ You will pass this value to the *bigIpSecretArn* input parameter.
       - In the example above, the *--secret-string* value is in single quotes to avoid bash special character interpolation. See the AWS CLI secretsmanager [documentation](https://docs.aws.amazon.com/cli/latest/reference/secretsmanager/index.html#cli-aws-secretsmanager) for a more secure example using a file.
 
 
@@ -101,9 +100,9 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 
 ## Important Configuration Notes
 
-- By default, this solution modifies the username **admin** with a password set to value of the AWS Secret Manager secret which is provided in the input **secretArn** of the parent template.
+- By default, this solution modifies the username **admin** with a password set to value of the AWS Secret Manager secret which is provided in the input **bigIpSecretArn** of the parent template.
 
-- By default, this solution creates required IAM roles, policies, and instance profile. By specifying a value for the **bigIpInstanceProfile** input parameter, you can assign a pre-existing IAM instance profile with applied IAM policy to the BIG-IP instance(s). See AWS IAM [documentation](https://docs.aws.amazon.com/codedeploy/latest/userguide/getting-started-create-iam-instance-profile.html) for more information on creating these resources. See [IAM Permissions by Solution Type](../../modules/access/README.md#iam-permissions-by-solution-type) for a detailed list of the permissions required by this solution.
+- By default, this solution creates required IAM roles, policies, and instance profile. By specifying a value for the **bigIpInstanceProfile** input parameter, you can assign a pre-existing IAM instance profile with applied IAM policy to the BIG-IP instance(s).  See AWS IAM [documentation](https://docs.aws.amazon.com/codedeploy/latest/userguide/getting-started-create-iam-instance-profile.html) for more information on creating these resources. Ensure it contains the required permissions for the secret provided with **bigIpSecretArn**. See [IAM Permissions by Solution Type](../../modules/access/README.md#iam-permissions-by-solution-type) for a detailed list of the permissions required by this solution.
 
 - When specifying values for the **bigIpInstanceType** parameter, ensure that the instance type you select is appropriate for the deployment scenario. Each instance types allow a fixed number of NICs and Secondary IP addresses. See [AWS Virtual Machine Instance Types](https://aws.amazon.com/ec2/instance-types/) for more information.
 
@@ -151,9 +150,10 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpMgmtAddress02 | No | 10.0.5.11  | string | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
 | bigIpInternalSelfIp02 | No | 10.0.6.11  | string | Internal Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
 | bigIpRuntimeInitConfig02 | No | https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v2.4.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml  | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
-| bigIpPeerAddr | No | 10.0.1.11  | string | Type the static self IP address of the remote host here. Set to empty string if not configuring peering with a remote host on this device. |
+| bigIpPeerAddr | No | 10.0.1.11  | string | Provide the static address of the remote peer used for clustering. In this failover solution, clustering is initiated from the second instance (02) to the first instance (01) so you would provide first instance's Self IP address. |
 | bigIpExternalVip01 | No | 10.0.0.101 | string | External Secondary Private IP Address for BIGIP instance A. |
 | bigIpExternalVip02 | No | 10.0.4.101 | string |External Secondary Private IP Address for BIGIP instance B. |
+| bigIpSecretArn | Yes |  | string | The ARN of the AWS secret manager secret where the BIG-IP password used for clustering is stored. |
 | cfeVipTag | No |  10.0.0.101,10.0.4.101 | string | Cloud Failover VIP tag value; provides private IP addresses to be assigned to VIP public IP. |
 | cfeTag | No | bigip_high_availability_solution  | string | Cloud Failover deployment tag value. |
 | cfeS3Bucket | No |   | string | Supply a unique name for a CFE S3 bucket created and used by Cloud Failover Extension. If a value is not provided, a bucket will be created using the value of the uniqueString input parameter. For example: **uniqueString-bigip-high-availability-solution**. |
@@ -169,7 +169,6 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | restrictedSrcAddressMgmt | Yes |   | string | An IP address or address range (in CIDR notation) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please do NOT use "0.0.0.0/0". Instead, restrict the IP address range to your client or trusted network, for example "55.55.55.55/32". Production should never expose the BIG-IP Management interface to the Internet. |
 | s3BucketRegion | No | us-east-1 | string | The AWS Region that contains the S3 bucket containing templates. |
 | s3BucketName | No | f5-cft-v2 | string | The S3 bucket name for the modules. The S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-). |
-| secretArn | Yes |   | string | The URL of the AWS secret manager secret, including secret ARN, where the BIG-IP password used for clustering is stored. |
 | sshKey | Yes |   | string | Supply the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. Example: ``myAWSkey`` |
 | subnetMask | No | 24  | string | Mask for subnets. Valid values include 16-28. Note supernetting of VPC occurs based on mask provided; therefore, number of networks must be >= to the number of subnets created. Mask for subnets. Valid values include 16-28. |
 | uniqueString | No | myUniqStr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
@@ -217,9 +216,10 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpInternalSubnetId02 | Yes |   | string | Subnet ID used for BIGIP instance B internal interface. |
 | bigIpInternalSelfIp02 | No | 10.0.6.11  | string | Internal Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
 | bigIpRuntimeInitConfig02 | No | https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v2.4.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml  | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init configuration. |
-| bigIpPeerAddr | No | 10.0.1.11  | string | Type the static self IP address of the remote host here. Set to empty string if not configuring peering with a remote host on this device. |
+| bigIpPeerAddr | No | 10.0.1.11  | string | Provide the static address of the remote peer used for clustering. In this failover solution, clustering is initiated from the second instance (02) to the first instance (01) so you would provide first instance's Self IP address. |
 | bigIpExternalVip01 | No | 10.0.0.101 | string | External Secondary Private IP Address for BIGIP instance A. |
 | bigIpExternalVip02 | No | 10.0.4.101 | string | External Secondary Private IP Address for BIGIP instance B. |
+| bigIpSecretArn | Yes |  | string | The ARN of the AWS secret manager secret where the BIG-IP password used for clustering is stored. |
 | cfeVipTag | No |  10.0.0.101,10.0.4.101 | string | Cloud Failover VIP tag value; provides private IP addresses to be assigned to VIP public IP. |
 | cfeTag | No | bigip_high_availability_solution  | string | Cloud Failover deployment tag value. |
 | cfeS3Bucket | No |  | string | Unique S3 bucket name created and used by Cloud Failover Extension. If a value is not provided, a bucket will be created using the value of the uniqueString input parameter. For example: **uniqueString-bigip-high-availability-solution**. |
@@ -235,7 +235,6 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | restrictedSrcAddressMgmt | Yes |   | string | An IP address or address range (in CIDR notation) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please do NOT use "0.0.0.0/0". Instead, restrict the IP address range to your client or trusted network, for example "55.55.55.55/32". Production should never expose the BIG-IP Management interface to the Internet. |
 | s3BucketRegion | No | us-east-1 | string | The AWS Region that contains the S3 bucket containing templates. |
 | s3BucketName | No | f5-cft-v2 | string | The S3 bucket name for the modules. The S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-). |
-| secretArn | Yes |   | string | The URL of the AWS secret manager secret, including secret ARN, where the BIG-IP password used for clustering is stored. |
 | sshKey | Yes |   | string | Supply the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. Example: ``myAWSkey`` |
 | subnetMask | No | 24  | string | Mask for subnets. Valid values include 16-28. Note supernetting of VPC occurs based on mask provided; therefore, number of networks must be >= to the number of subnets created. Mask for subnets. Valid values include 16-28. |
 | uniqueString | No | myUniqStr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
@@ -284,7 +283,17 @@ The easiest way to deploy this CloudFormation template is to use the Launch butt
     - **sshKey**
     - **restrictedSrcAddressMgmt**
     - **restrictedSrcAddressApp**
-    - **secretArn** (Note: f5-bigip-runtime-init configurations need to use secrets name for the arn identified here)
+    - **bigIpSecretArn**
+  - And any network related parameters if deploying the the failover-existing-network.yaml template, for example:
+    - **vpcId**
+    - **vpcCidr**
+    - **bigIpMgmtSubnetId01**
+    - **bigIpMgmtSubnetId02**
+    - **bigIpExternalSubnetId01**
+    - **bigIpExternalSubnetId02**
+    - **bigIpInternalSubnetId01**
+    - **bigIpInternalSubnetId02**
+    - As well as the static IP address related parameters, which have defaults, but need to be mapped to your network.
   - Click "Next"
 
 *Step 3: Configure Stack Options*
@@ -322,7 +331,7 @@ Example:
 ```bash
  aws cloudformation create-stack --region us-east-1 --stack-name myFailover \
   --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.2.0.0/examples/failover/failover.yaml \
-  --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0,ParameterKey=secretArn,ParameterValue=arn:aws:secretsmanager:us-west-1:012345678901:secret:myBigipSecret-Qnju"
+  --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0,ParameterKey=bigIpSecretArn,ParameterValue=arn:aws:secretsmanager:us-west-1:012345678901:secret:myBigipSecret-Qnju"
 ```
 
 For next steps, see [Validating the Deployment](#validating-the-deployment).
@@ -511,7 +520,7 @@ From Parent Template Outputs:
   - *NOTE: By default, the BIG-IP system's WebUI starts with a self-signed cert. Follow your browser's instructions for accepting self-signed certs (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, click "Accept Risk and Continue").*
   - To Login: 
     - username: admin
-    - password: **password identified in secretArn**
+    - password: **password identified in bigIpSecretArn**
 
 
 ### Further Exploring

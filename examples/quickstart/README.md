@@ -234,6 +234,15 @@ The easiest way to deploy this CloudFormation template is to use the Launch butt
     - **sshKey**
     - **restrictedSrcAddressMgmt**
     - **restrictedSrcAddressApp**
+  - And any network related parameters if deploying the quickstart-existing-network.yaml template, for example:
+    - **vpcId**
+    - **vpcCidr**
+    - **bigIpMgmtSubnetId**
+    - **bigIpMgmtSelfIp**
+    - **bigIpExternalSubnetId**
+    - **bigipExternalSelfIp**
+    - **bigIpInternalSubnetId**
+    - **bigIpInternalSelfIp**
   - Click "Next"
 
 *Step 3: Configure Stack Options*

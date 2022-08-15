@@ -10,8 +10,8 @@ extension_packages:
       extensionVersion: 3.38.0
       extensionHash: 38b9b96826c2da997750ba2054811d8606768df43d08b870d68f8d7cb3fff58d
     - extensionType: cf
-      extensionVersion: 1.11.0
-      extensionHash: f3c7aca8a19d0dc01e529d38aa0d235b4dfad34beec2584f8402aa9a92c34699
+      extensionVersion: 1.12.0
+      extensionHash: 6ab10081ca13982d99f05500266a14dc6410646058fd04a4451a75bfd579d7ae
 extension_services:
   service_operations:
     - extensionType: do
@@ -213,11 +213,14 @@ extension_services:
             remoteUsername: admin
             remotePassword: '{{{BIGIP_PASSWORD}}}'
 runtime_parameters:
+  - name: SECRET_ID
+    type: url
+    value: file:///config/cloud/secret_id
   - name: BIGIP_PASSWORD
     type: secret
     secretProvider:
       environment: aws
-      secretId: mySecretId
+      secretId: '{{{SECRET_ID}}}'
       type: SecretsManager
       version: AWSCURRENT
   - name: HOST_NAME

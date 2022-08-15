@@ -90,7 +90,7 @@ This solution leverages more traditional Autoscale configuration management prac
 
 -  This solution requires you to customize and host your own runtime-init configurations. For your customized the Runtime Configurations, use the **bigIpRuntimeInitConfig** input parameter to specify the new location of the BIG-IP Runtime-Init config. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details.
 
-- By default, this solution creates required IAM roles, policies, and instance profile. By specifying a value for the **bigIpInstanceProfile** input parameter, you can assign a pre-existing IAM instance profile with applied IAM policy to the BIG-IP instance(s). See AWS IAM [documentation](https://docs.aws.amazon.com/codedeploy/latest/userguide/getting-started-create-iam-instance-profile.html) for more information on creating these resources. See [IAM Permissions by Solution Type](../../modules/access/README.md#iam-permissions-by-solution-type) for a detailed list of the permissions required by this solution.
+- By default, this solution creates required IAM roles, policies, and instance profile. By specifying a value for the **bigIpInstanceProfile** input parameter, you can assign a pre-existing IAM instance profile with applied IAM policy to the BIG-IP instance(s).  See AWS IAM [documentation](https://docs.aws.amazon.com/codedeploy/latest/userguide/getting-started-create-iam-instance-profile.html) for more information on creating these resources. Ensure it contains the required permissions for the secret provided with **bigIqSecretArn**. See [IAM Permissions by Solution Type](../../modules/access/README.md#iam-permissions-by-solution-type) for a detailed list of the permissions required by this solution.
 
 - If you have cloned this repository to modify the templates or BIG-IP config files and published to your own location (NOTE: CloudFormation can only reference S3 bucket locations for templates and not generic URLs like from GitHub), you can use the **s3BucketName**, **s3BucketRegion** and **artifactLocation** input parameters to specify the new location of the customized templates. You may also need to ensure that the user has READ IAM permissions to that bucket. See main [/examples/README.md](../README.md#cloud-configuration) for more template customization details.
 
@@ -153,8 +153,9 @@ This solution leverages more traditional Autoscale configuration management prac
 | bigIpScaleOutThroughputThreshold | No | 20000000 | string | Incoming bytes threshold to begin scaling out BIG-IP VE instances. |
 | bigIpScalingMaxSize | No | 50 | string | Maximum number of BIG-IP instances (2-100) that can be created in the Autoscale Group. |
 | bigIpScalingMinSize | No | 1 | string | Minimum number of BIG-IP instances (1-99) you want available in the Autoscale Group. |
+| bigIpSecretArn | No |  | string | The ARN of a Secrets Manager secret to create READ permissions for. For example, if customizing your runtime-init config with an admin password, logging credential, etc. |
 | bigIqAddressType | No | private | string | The type (public or private) of IP address or hostname for the BIG-IQ to be used when licensing the BIG-IP. Note: When using a private IP address or hostname, you must provide values for the bigIqSecurityGroupId and bigIqSubnetId parameters. |
-| bigIqSecretArn | Yes |   | string | The ARN of the AWS secret containing the password for BIG-IQ used during BIG-IP licensing via BIG-IQ. |
+| bigIqSecretArn | Yes |  | string | The ARN of the AWS secret containing the password for BIG-IQ used during BIG-IP licensing via BIG-IQ. |
 | bigIqSecurityGroupId | No |   | string | The ID of the security group where BIG-IQ is deployed. You must provide a value for this parameter when using a private BIG-IP address. |
 | bigIqSubnetId | No |   | string | The ID of the subnet where BIG-IQ is deployed. You must provide a value for this parameter when using a private BIG-IP address. |
 | cloudWatchLogGroupName | No | f5telemetry | string | The name of the CloudWatch Log Group. Note: The name is global for a region. |
@@ -179,7 +180,6 @@ This solution leverages more traditional Autoscale configuration management prac
 | restrictedSrcAddressApp | Yes |   | string | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
 | s3BucketRegion | No | us-east-1 | string | The AWS Region for the S3 bucket containing the templates. |
 | s3BucketName | No |  f5-cft-v2 | string | The S3 bucket containing the templates. The S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-). |
-| secretArn | No |   | string | The ARN of a Secrets Manager secret to create READ permissions for. For example, if customizing your runtime-init config with an admin password, logging credential, etc. |
 | snsEvents | No | autoscaling:EC2_INSTANCE_LAUNCH,autoscaling:EC2_INSTANCE_LAUNCH_ERROR  | string | Provides list of SNS Topics used on Autoscale Group. | 
 | sshKey | Yes |   | string | Enter the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. For example, `myAWSkey`. |
 | subnetMask | No | 24 | string | Mask for subnets. Valid values include 16-28. Note: supernetting of VPC occurs based on the mask provided; therefore, number of networks must be greater than or equal to the number of subnets created. |
@@ -228,10 +228,11 @@ This solution leverages more traditional Autoscale configuration management prac
 | bigIpScaleOutThroughputThreshold | No | 20000000 | string | Incoming bytes threshold to begin scaling out BIG-IP VE instances. |
 | bigIpScalingMaxSize | No | 50 | string | Maximum number of BIG-IP instances (2-100) that can be created in the Autoscale Group. |
 | bigIpScalingMinSize | No | 1 | string | Minimum number of BIG-IP instances (1-99) you want available in the Autoscale Group. |
+| bigIpSecretArn | No |  | string | The ARN of a Secrets Manager secret to create READ permissions for. For example, if customizing your runtime-init config with an admin password, logging credential, etc. |
 | bigIpSubnetAz1 | Yes |   | string | Availability Zone 1 BIG-IP Subnet ID. |
 | bigIpSubnetAz2 | Yes |   | string | Availability Zone 2 BIG-IP | 
 | bigIqAddressType | No | private | string | The type (public or private) of IP address or hostname for the BIG-IQ to be used when licensing the BIG-IP. Note: When using a private IP address or hostname, you must provide values for the bigIqSecurityGroupId and bigIqSubnetId parameters. |
-| bigIqSecretArn | Yes |   | string | The ARN of the AWS secret containing the password for BIG-IQ used during BIG-IP licensing via BIG-IQ. |
+| bigIqSecretArn | Yes |  | string | The ARN of the AWS secret containing the password for BIG-IQ used during BIG-IP licensing via BIG-IQ. |
 | bigIqSecurityGroupId | No |   | string |  The ID of the security group where BIG-IQ is deployed. You must provide a value for this parameter when using a private BIG-IP address. |
 | bigIqSubnetId | No |   | string | The ID of the subnet where BIG-IQ is deployed. You must provide a value for this parameter when using a private BIG-IP address. |
 | cloudWatchLogGroupName | No | f5telemetry | string | The name of the CloudWatch Log Group. Note: The name is global for a region. Will be added to IAM role. |
@@ -260,7 +261,6 @@ This solution leverages more traditional Autoscale configuration management prac
 | restrictedSrcAddressApp | Yes |   | string | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
 | s3BucketRegion | No | us-east-1 | string | The AWS Region for the S3 bucket containing the templates. |
 | s3BucketName | No |  f5-cft-v2 | string | The S3 bucket containing the templates. The S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-). |
-| secretArn | No |   | string | The ARN of a Secrets Manager secret to create READ permissions for. For example, if customizing your runtime-init config with an admin password, logging credential, etc. |
 | snsEvents | No | autoscaling:EC2_INSTANCE_LAUNCH,autoscaling:EC2_INSTANCE_LAUNCH_ERROR  | string | Provides list of SNS Topics used on Autoscale Group. | 
 | sshKey | Yes |   | string | Enter the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. For example, `myAWSkey`. |
 | subnetMask | No | 24 | string | Mask for subnets. Valid values include 16-28. Note: supernetting of VPC occurs based on the mask provided; therefore, number of networks must be greater than or equal to the number of subnets created. |
@@ -419,20 +419,9 @@ To change the BIG-IQ Licensing configuration:
                   unitOfMeasure: <YOUR_UNIT_OF_MEASURE>
                   reachable: false
       ```
-  2. Edit/modify the BIG-IQ secret runtime-parameter in the runtime-init config file [runtime-init-conf-bigiq-with-app.yaml](../bigip-configurations/runtime-init-conf-bigiq-with-app.yaml) with your `secretId` value. 
-
-      ```yaml
-        - name: BIGIQ_PASSWORD
-          type: secret
-          secretProvider:
-            type: SecretsManager
-            environment: aws
-            version: AWSCURRENT
-            secretId: <YOUR_SECRET_NAME>
-      ```
   3. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, git, S3, etc.).
   4. Update the **bigIpRuntimeInitConfig** input parameter to reference the URL of the customized configuration file.
-  5. Update the **bigIqSecretArn** input parameter with the ARN that corresponds to the customized **secretId** as well as the other required BIG-IQ related input parameters to match.
+  5. Update the **bigIqSecretArn** input parameter with the ARN that corresponds to the BIG-IQ password as well as the other required BIG-IQ related input parameters to match.
       - **bigIqAddressType**
       - **bigIqSecurityGroupId**
       - **bigIqSubnetId**
@@ -509,7 +498,7 @@ To log to an S3 Bucket instead:
               My_Cloudwatch_Logs:
                 class: Telemetry_Consumer
                 type: AWS_CloudWatch
-                region: '{{{ REGION }}}'
+                region: '{{{REGION}}}'
                 logGroup: f5telemetry
                 logStream: f5-waf-logs
       ```
@@ -518,7 +507,7 @@ To log to an S3 Bucket instead:
               My_S3_Logs:
                 class: Telemetry_Consumer
                 type: AWS_S3
-                region: '{{{ REGION }}}'
+                region: '{{{REGION}}}'
                 bucket: <YOUR_BUCKET_NAME>
       ```
   3. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, git, S3, etc.).
@@ -527,18 +516,21 @@ To log to an S3 Bucket instead:
 
 
 To log to another remote destination that may require authentication:
-  1. Edit/modify the `runtime_parameters:` in he runtime-init config file to ADD a secret. Example: Add a section below with your `secretId` value. 
+  1. Edit/modify the `runtime_parameters:` in the runtime-init config file to ADD a secret. If a secret is provided via the **bigIpSecretArn** parameter, it will made available on the BIG-IP via a file called `/config/cloud/secret_id`. For example: Add the section below. 
 
       ```yaml
+        - name: SECRET_ID
+          type: url
+          value: file:///config/cloud/secret_id
         - name: LOGGING_API_KEY
           type: secret
           secretProvider:
             type: SecretsManager
             environment: aws
             version: AWSCURRENT
-            secretId: <YOUR_SECRET_NAME>
+            secretId: '{{{SECRET_ID}}}'
       ```
-  2. Edit/modify the Telemetry Streaming (TS) declaration in the example runtime-init config with the new `Telemetry_Consumer` configuration.
+  2. Edit/modify the Telemetry Streaming (TS) declaration in the example runtime-init config with the new `Telemetry_Consumer` configuration, replacing `<YOUR_HOST>` with value for your host.
 
       ```yaml
               My_Consumer:
@@ -548,12 +540,12 @@ To log to another remote destination that may require authentication:
                 protocol: https
                 port: 8088
                 passphrase:
-                  cipherText: '{{{ LOGGING_API_KEY }}}'
+                  cipherText: '{{{LOGGING_API_KEY}}}'
                 compressionType: gzip
       ```
-  3. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example: S3, git, etc.).
+  3. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, S3, git, etc.).
   4. Update the **bigIpRuntimeInitConfig** input parameter to reference the URL of the customized configuration file.
-  5. Update **secretArn** with the ARN for your `YOUR_SECRET_NAME`. 
+  5. Update the **bigIpSecretArn** input parameter with the ARN of your logging secret. 
      - An IAM role will be created with permissions to fetch that secret.
 
 

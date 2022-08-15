@@ -92,6 +92,10 @@
     "ParameterValue": "1"
   },
   {
+    "ParameterKey": "bigIpSecretArn",
+    "ParameterValue": ""
+  },
+  {
     "ParameterKey": "cloudWatchLogGroupName",
     "ParameterValue": ""
   },
@@ -162,10 +166,6 @@
   {
     "ParameterKey": "s3BucketRegion",
     "ParameterValue": "us-east-1"
-  },
-  {
-    "ParameterKey": "secretArn",
-    "ParameterValue": ""
   },
   {
     "ParameterKey": "snsEvents",

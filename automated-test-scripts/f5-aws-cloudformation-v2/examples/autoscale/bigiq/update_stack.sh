@@ -198,7 +198,7 @@ cat <<EOF > parameters.json
         "ParameterValue": "$logging_bucket_name"
     },
     {
-        "ParameterKey": "secretArn",
+        "ParameterKey": "bigIpSecretArn",
         "ParameterValue": "$secret_arn"
     },
     {

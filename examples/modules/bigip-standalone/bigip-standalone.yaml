@@ -206,6 +206,7 @@ Metadata:
           - bigIpRuntimeInitConfig
           - bigIpRuntimeInitPackageUrl
           - cfeTag
+          - secretArn
       - Label:
           default: EC2 Instances
         Parameters:
@@ -303,6 +304,8 @@ Metadata:
         default: Number of Secondary Private Ips
       owner:
         default: Owner
+      secretArn:
+        default: Secret
       sshKey:
         default: EC2 KeyPair
       uniqueString:
@@ -512,6 +515,12 @@ Parameters:
   owner:
     Default: f5owner
     Description: Owner Tag.
+    Type: String
+  secretArn:
+    Default: ''
+    Description: The ARN of a Secrets Manager secret to create READ permissions for.
+      For example, if customizing your runtime-init config with an admin password,
+      logging credential, etc.
     Type: String
   sshKey:
     Description: REQUIRED - Supply the public key that will be used for SSH authentication
@@ -1072,6 +1081,12 @@ Resources:
             - !Ref 'bigIpRuntimeInitConfig'
             - |
               '
+            - SECRET_ID='
+            - !Ref 'secretArn'
+            - |
+              '
+            - |
+              echo $SECRET_ID > /config/cloud/secret_id
             - |
               # Download or render f5-bigip-runtime-init config
             - |
