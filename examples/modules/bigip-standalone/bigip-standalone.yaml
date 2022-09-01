@@ -540,6 +540,10 @@ Resources:
     Properties:
       BucketName: !Ref 'cfeS3Bucket'
       AccessControl: BucketOwnerFullControl
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: 'aws:kms'
       Tags:
         - Key: costcenter
           Value: !Ref 'cost'

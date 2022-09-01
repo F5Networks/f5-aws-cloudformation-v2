@@ -890,6 +890,18 @@ Resources:
                   - - "arn:*:s3:::"
                     - !Ref s3Bucket
                     - /*
+              - Action: 
+                  - s3:PutObject
+                Condition:
+                  'Null':
+                    's3:x-amz-server-side-encryption': true
+                Effect: Deny
+                Resource: !Join
+                  - ''
+                  - - "arn:*:s3:::"
+                    - !Ref s3Bucket
+                    - /*
+                Sid: DenyPublishingUnencryptedResources
               - Action:
                   - 'secretsmanager:DescribeSecret'
                   - 'secretsmanager:GetResourcePolicy'
