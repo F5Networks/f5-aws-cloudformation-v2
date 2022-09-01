@@ -104,6 +104,8 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 
 - By default, this solution creates required IAM roles, policies, and instance profile. By specifying a value for the **bigIpInstanceProfile** input parameter, you can assign a pre-existing IAM instance profile with applied IAM policy to the BIG-IP instance(s).  See AWS IAM [documentation](https://docs.aws.amazon.com/codedeploy/latest/userguide/getting-started-create-iam-instance-profile.html) for more information on creating these resources. Ensure it contains the required permissions for the secret provided with **bigIpSecretArn**. See [IAM Permissions by Solution Type](../../modules/access/README.md#iam-permissions-by-solution-type) for a detailed list of the permissions required by this solution.
 
+- By default, this solution creates an S3 bucket for use by the F5 Cloud Failover Extension. The bucket is configured with server-side AWS KMS encryption enabled, and uses the default AWS managed encryption key. See [Protecting data using server-side encryption with AWS Key Management Service](https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingKMSEncryption.html) for more information.
+
 - When specifying values for the **bigIpInstanceType** parameter, ensure that the instance type you select is appropriate for the deployment scenario. Each instance types allow a fixed number of NICs and Secondary IP addresses. See [AWS Virtual Machine Instance Types](https://aws.amazon.com/ec2/instance-types/) for more information.
 
 - This solution requires Internet access for: 
