@@ -205,8 +205,12 @@ Metadata:
         Parameters:
           - bigIpRuntimeInitConfig
           - bigIpRuntimeInitPackageUrl
+          - hostname
+          - bigIpPeerHostname
+          - licenseKey
           - cfeTag
           - secretArn
+          - allowUsageAnalytics
       - Label:
           default: EC2 Instances
         Parameters:
@@ -246,12 +250,16 @@ Metadata:
           - group
           - owner
     ParameterLabels:
+      allowUsageAnalytics:
+        default: Send anonymous statistics to F5
       application:
         default: Application
       instanceProfile:
         default: Instance profile
       bigIpPeerAddr:
         default: Static self IP address for peer device.
+      bigIpPeerHostname:
+        default: Hostname for peer device.
       bigIpRuntimeInitConfig:
         default: Runtime Init Configuration
       bigIpRuntimeInitPackageUrl:
@@ -280,6 +288,8 @@ Metadata:
         default: External Subnet Id
       group:
         default: Group
+      hostname:
+        default: Hostname for BIG-IP instance
       instanceIndex:
         default: Enter valid string.
       instanceType:
@@ -290,6 +300,8 @@ Metadata:
         default: Internal Private IP Address
       internalSubnetId:
         default: Internal Subnet Id
+      licenseKey:
+        default: License key for BIG-IP instance
       licenseType:
         default: License type used for BIG-IP VE
       mgmtPublicIpId:
@@ -371,6 +383,14 @@ Outputs:
         - BigipStaticInternalInterface
         - PrimaryPrivateIpAddress
 Parameters:
+  allowUsageAnalytics:
+    AllowedValues:
+      - 'Yes'
+      - 'No'
+    Default: 'Yes'
+    Description: This deployment can send anonymous statistics to F5 to help us determine
+      how to improve our solutions. If you select **false** statistics are not sent.
+    Type: String
   application:
     Default: f5app
     Description: Application Tag.
@@ -383,6 +403,11 @@ Parameters:
     Default: '10.0.1.11'
     Description: Type the static self IP address of the remote host here. Set to empty
       string if not configuring peering with a remote host on this device.
+    Type: String
+  bigIpPeerHostname:
+    Default: ''
+    Description: Type the hostname of the remote host here. Set to empty string if
+      not configuring peering with a remote host on this device.
     Type: String
   bigIpRuntimeInitConfig:
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
@@ -452,6 +477,13 @@ Parameters:
     Default: f5group
     Description: Group Tag.
     Type: String
+  hostname:
+    ConstraintDescription: Must be a valid hostname containing fewer than 63 characters.
+    Default: 'bigip01.local'
+    Description: Supply the hostname you would like to use for the BIG-IP instance.
+      The hostname must contain fewer than 63 characters.
+    MaxLength: 63
+    Type: String
   imageId:
     Description: REQUIRED - Provide BIG-IP AMI ID you wish to deploy.
     MaxLength: 255
@@ -480,6 +512,11 @@ Parameters:
   internalSubnetId:
     Default: ''
     Description: The resource ID of the internal subnet.
+    Type: String
+  licenseKey:
+    Default: ''
+    Description: Supply the F5 BYOL license key for the BIG-IP instance. Leave this
+      parameter blank if deploying the PAYG solution.
     Type: String
   mgmtPublicIpId:
     Default: ''
@@ -555,6 +592,13 @@ Resources:
           Value: !Ref 'group'
         - Key: owner
           Value: !Ref 'owner'
+  BigipLaunchTemplate:
+    Properties:
+      LaunchTemplateData:
+        MetadataOptions:
+          HttpTokens: optional
+          InstanceMetadataTags: enabled
+    Type: AWS::EC2::LaunchTemplate
   BigipInternalInterface:
     Condition: useDynamicInternalIpAddr
     Properties:
@@ -996,6 +1040,9 @@ Resources:
       ImageId: !Ref 'imageId'
       InstanceType: !Ref 'instanceType'
       KeyName: !Ref 'sshKey'
+      LaunchTemplate:
+        LaunchTemplateId: !Ref 'BigipLaunchTemplate'
+        Version: !GetAtt 'BigipLaunchTemplate.LatestVersionNumber'
       NetworkInterfaces:
         - Description: Management Interface
           DeviceIndex: '0'
@@ -1032,6 +1079,10 @@ Resources:
           Value: !Ref 'owner'
         - Key: bigIpPeerAddr
           Value: !Ref 'bigIpPeerAddr'
+        - Key: bigIpPeerHostname
+          Value: !Ref 'bigIpPeerHostname'
+        - Key: hostname
+          Value: !Ref 'hostname'
       UserData: !Base64
         Fn::Join:
           - ''
@@ -1089,8 +1140,20 @@ Resources:
             - !Ref 'secretArn'
             - |
               '
+            - LICENSE_KEY='
+            - !Ref 'licenseKey'
             - |
-              echo $SECRET_ID > /config/cloud/secret_id
+              '
+            - ALLOW_ANALYTICS='
+            - !Ref 'allowUsageAnalytics'
+            - |
+              '
+            - |
+              echo ${SECRET_ID} > /config/cloud/secret_id
+            - |
+              echo ${LICENSE_KEY} > /config/cloud/license_key
+            - |
+              if [[ ${ALLOW_ANALYTICS} == "No" ]]; then TELEMETRY_FLAG="--skip-telemetry"; else TELEMETRY_FLAG=""; fi
             - |
               # Download or render f5-bigip-runtime-init config
             - |
@@ -1128,7 +1191,7 @@ Resources:
             - |
               # Execute Runtime-init
             - |
-              f5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf
+              f5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf ${TELEMETRY_FLAG}
             - |2+
 
             - '[[ $? -eq 0 ]] && /opt/aws/bin/cfn-signal -e 0 --stack '
@@ -1165,6 +1228,9 @@ Resources:
       ImageId: !Ref 'imageId'
       InstanceType: !Ref 'instanceType'
       KeyName: !Ref 'sshKey'
+      LaunchTemplate:
+        LaunchTemplateId: !Ref 'BigipLaunchTemplate'
+        Version: !GetAtt 'BigipLaunchTemplate.LatestVersionNumber'
       NetworkInterfaces:
         - Description: Management Interface
           DeviceIndex: '0'
@@ -1195,6 +1261,10 @@ Resources:
           Value: !Ref 'owner'
         - Key: bigIpPeerAddr
           Value: !Ref 'bigIpPeerAddr'
+        - Key: bigIpPeerHostname
+          Value: !Ref 'bigIpPeerHostname'
+        - Key: hostname
+          Value: !Ref 'hostname'
       UserData: !Base64
         Fn::Join:
           - ''
@@ -1248,6 +1318,24 @@ Resources:
             - !Ref 'bigIpRuntimeInitConfig'
             - |
               '
+            - SECRET_ID='
+            - !Ref 'secretArn'
+            - |
+              '
+            - LICENSE_KEY='
+            - !Ref 'licenseKey'
+            - |
+              '
+            - ALLOW_ANALYTICS='
+            - !Ref 'allowUsageAnalytics'
+            - |
+              '
+            - |
+              echo $SECRET_ID > /config/cloud/secret_id
+            - |
+              echo $LICENSE_KEY > /config/cloud/license_key
+            - |
+              if [[ ${ALLOW_ANALYTICS} == "No" ]]; then TELEMETRY_FLAG="--skip-telemetry"; else TELEMETRY_FLAG=""; fi
             - |
               # Download or render f5-bigip-runtime-init config
             - |
@@ -1285,7 +1373,7 @@ Resources:
             - |
               # Execute Runtime-init
             - |
-              f5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf
+              f5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf ${TELEMETRY_FLAG}
             - |2+
 
             - '[[ $? -eq 0 ]] && /opt/aws/bin/cfn-signal -e 0 --stack '
@@ -1322,6 +1410,9 @@ Resources:
       ImageId: !Ref 'imageId'
       InstanceType: !Ref 'instanceType'
       KeyName: !Ref 'sshKey'
+      LaunchTemplate:
+        LaunchTemplateId: !Ref 'BigipLaunchTemplate'
+        Version: !GetAtt 'BigipLaunchTemplate.LatestVersionNumber'
       NetworkInterfaces:
         - Description: Management Interface
           DeviceIndex: '0'
@@ -1346,6 +1437,10 @@ Resources:
           Value: !Ref 'owner'
         - Key: bigIpPeerAddr
           Value: !Ref 'bigIpPeerAddr'
+        - Key: bigIpPeerHostname
+          Value: !Ref 'bigIpPeerHostname'
+        - Key: hostname
+          Value: !Ref 'hostname'
       UserData: !Base64
         Fn::Join:
           - ''
@@ -1399,6 +1494,24 @@ Resources:
             - !Ref 'bigIpRuntimeInitConfig'
             - |
               '
+            - SECRET_ID='
+            - !Ref 'secretArn'
+            - |
+              '
+            - LICENSE_KEY='
+            - !Ref 'licenseKey'
+            - |
+              '
+            - ALLOW_ANALYTICS='
+            - !Ref 'allowUsageAnalytics'
+            - |
+              '
+            - |
+              echo $SECRET_ID > /config/cloud/secret_id
+            - |
+              echo $LICENSE_KEY > /config/cloud/license_key
+            - |
+              if [[ ${ALLOW_ANALYTICS} == "No" ]]; then TELEMETRY_FLAG="--skip-telemetry"; else TELEMETRY_FLAG=""; fi
             - |
               # Download or render f5-bigip-runtime-init config
             - |
@@ -1436,7 +1549,7 @@ Resources:
             - |
               # Execute Runtime-init
             - |
-              f5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf
+              f5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf ${TELEMETRY_FLAG}
             - |2+
 
             - '[[ $? -eq 0 ]] && /opt/aws/bin/cfn-signal -e 0 --stack '

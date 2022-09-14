@@ -1,5 +1,9 @@
 [
   {
+    "ParameterKey": "allowUsageAnalytics",
+    "ParameterValue": "Yes"
+  },
+  {
     "ParameterKey": "application",
     "ParameterValue": "f5app"
   },

@@ -1,5 +1,9 @@
 [
   {
+    "ParameterKey": "allowUsageAnalytics",
+    "ParameterValue": "Yes"
+  },
+  {
     "ParameterKey": "appDockerImageName",
     "ParameterValue": "f5devcentral/f5-demo-app:latest"
   },
@@ -16,6 +20,14 @@
     "ParameterValue": ""
   },
   {
+    "ParameterKey": "bigIpHostname01",
+    "ParameterValue": "failover01.local"
+  },
+  {
+    "ParameterKey": "bigIpHostname02",
+    "ParameterValue": "failover02.local"
+  },
+  {
     "ParameterKey": "bigIpImage",
     "ParameterValue": "*16.1.2.2-0.0.28**PAYG-Best Plus 25Mbps*"
   },
@@ -26,6 +38,14 @@
   {
     "ParameterKey": "bigIpInstanceType",
     "ParameterValue": "m5.xlarge"
+  },
+  {
+    "ParameterKey": "bigIpLicenseKey01",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "bigIpLicenseKey02",
+    "ParameterValue": ""
   },
   {
     "ParameterKey": "bigIpPeerAddr",

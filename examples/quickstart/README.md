@@ -103,7 +103,7 @@ By default, this solution creates a single Availability Zone VPC with four subne
 
 - This solution has specifically been tested in AWS Commercial Cloud. Additional cloud environments such as AWS China Cloud have not yet been tested.
 
-- This template can send non-identifiable statistical information to F5 Networks to help us improve our templates. You can disable this functionality by setting the **autoPhonehome** system class property value to false in the F5 Declarative Onboarding declaration. See [Sending statistical information to F5](#sending-statistical-information-to-f5).
+- This template can send non-identifiable statistical information to F5 Networks to help us improve our templates. You can disable this functionality for this deployment only by supplying **false** for the value of the **allowUsageAnalytics** input parameter, or you can disable it system-wide by setting the **autoPhonehome** system class property value to false in the F5 Declarative Onboarding declaration. See [Sending statistical information to F5](#sending-statistical-information-to-f5).
 
 - See [trouble shooting steps](#troubleshooting-steps) for more details.
 
@@ -114,10 +114,12 @@ By default, this solution creates a single Availability Zone VPC with four subne
 
 | Parameter | Required* | Default | Type | Description |
 | --- | --- | --- | --- | --- |
+| allowUsageAnalytics | No | Yes | boolean | This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **No** statistics are not sent. |
 | appDockerImageName | No | f5devcentral/f5-demo-app:latest  | string | The name of a container to download and install which is used for the example application server(s). If this value is left blank, the application module template is not deployed. |
 | application | No | f5app  |  string |Application Tag. |
 | artifactLocation | No | f5-aws-cloudformation-v2/v2.4.0.0/examples/  |  string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
 | bigIpCustomImageId | No |   |  string | Provide a custom BIG-IP AMI ID you wish to deploy. Otherwise, can leave empty. |
+| bigIpHostname | No | bigip01.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
 | bigIpImage | No | Best |  string | F5 BIG-IP Performance Type. |
 | bigIpInstanceProfile | No |  | string | Enter the name of an existing IAM instance profile with applied IAM policy to be associated to the BIG-IP virtual machine(s). Leave default if not using an instance profile. |
 | bigIpInstanceType | No | m5.xlarge |  string | Enter a valid instance type. |
@@ -161,15 +163,18 @@ By default, this solution creates a single Availability Zone VPC with four subne
 
 | Parameter | Required* | Default | Type | Description |
 | --- | --- | --- | --- | --- |
+| allowUsageAnalytics | No | Yes | boolean | This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **No** statistics are not sent. |
 | appDockerImageName | No | f5devcentral/f5-demo-app:latest  | string | The name of a container to download and install which is used for the example application server(s). If this value is left blank, the application module template is not deployed. |
 | application | No | f5app | string | Application Tag. |
 | artifactLocation | No | f5-aws-cloudformation-v2/v2.4.0.0/examples/ | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
 | bigIpCustomImageId | No |   | string | Provide BIG-IP AMI ID you wish to deploy. Otherwise, can leave empty. |
+| bigIpHostname | No | bigip01.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
 | bigIpExternalSubnetId | Yes |   | string | Subnet id used for BIG-IP instance external interface. |
 | bigIpImage | No | Best | string | F5 BIG-IP Performance Type. |
 | bigIpInstanceProfile | No |  | string | Enter the name of an existing IAM instance profile with applied IAM policy to be associated to the BIG-IP virtual machine(s). Leave default if not using an instance profile. |
 | bigIpInstanceType | No | m5.xlarge | string | Enter a valid instance type. |
 | bigIpInternalSubnetId | Yes |   | string | Subnet id used for BIG-IP instance internal interface. |
+| bigIpLicenseKey | No |  | string | Supply the F5 BYOL license key for the BIG-IP instance. Leave this parameter blank if deploying the PAYG solution. |
 | bigIpMgmtSubnetId | Yes |   | string | Subnet id used for BIG-IP instance management interface. |
 | bigIpRuntimeInitConfig | No | https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.4.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg-with-app.yaml | string | URL or JSON string for BIG-IP Runtime Init config. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run | string | Supply a URL to the bigip-runtime-init package |
@@ -334,23 +339,18 @@ To deploy a **2NIC** instance:
   1. Update the **bigIpRuntimeInitConfig** input parameter to reference a corresponding `2nic` config file (for example, runtime-init-conf-2nic-payg-with-app.yaml )
   2. Update the **numNics** input parameter to **2**
 
-Other changes require customizing the example configuration files, republishing/rehosting (to git, s3, etc.). For example:
-
 To deploy a **BYOL** instance:
 
-  1. Edit/modify the Declarative Onboarding (DO) declaration in a corresponding `byol` runtime-init config file with the new `regKey` value. 
-
+  1. Update the **bigIpLicenseKey** input parameters to reference the registration key to use when licensing the BIG-IP instance.
       Example:
-      ```yaml
-                My_License:
-                  class: License
-                  licenseType: regKey
-                  regKey: AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE
+      ```json
+      "bigIpLicenseKey":{ 
+        "value": "AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE" 
+      }
       ```
-  2. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example: git, S3, etc.). 
-  3. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL of the updated configuration.
-  4. Update the **licenseType** input parameter to use `byol` or **bigIpCustomImageId** input parameter to a valid byol image.
+  2. Update the **licenseType** input parameter to use `byol` or update the **bigIpCustomImageId** input parameter to use `byol` image.
 
+Other changes may require customizing the example configuration files. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for customization details.
 
 In order deploy additional virtual services:
 

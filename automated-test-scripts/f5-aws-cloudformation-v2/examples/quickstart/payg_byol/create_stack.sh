@@ -20,6 +20,12 @@ else
     echo "bucket region:$region"
 fi
 
+# Replace LICENSE in case of BYOL
+regKey=''
+if [[ <LICENSE TYPE> == "byol" ]]; then
+    regKey='<AUTOFILL EVAL LICENSE KEY>'
+fi
+
 runtimeConfig='<RUNTIME INIT CONFIG>'
 
 if [[ '<RUNTIME INIT CONFIG>' == *{* ]]; then
@@ -28,13 +34,6 @@ else
     # Modify Runtime-init, then upload to s3.
     cp /$PWD/examples/quickstart/bigip-configurations/runtime-init-conf-<NIC COUNT>nic-<LICENSE TYPE>-with-app.yaml <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.Shared.Custom_WAF_Policy.url = \"https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/quickstart/bigip-configurations/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>.yaml
-
-    # Disable AutoPhoneHome
-    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>.yaml
-
-    if [[ "<LICENSE TYPE>" == "byol" ]]; then
-        /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.regKey = \"<AUTOFILL EVAL LICENSE KEY>\"" -i <DEWPOINT JOB ID>.yaml
-    fi
 
     # print out config file
     /usr/bin/yq e <DEWPOINT JOB ID>.yaml
@@ -47,6 +46,10 @@ echo "RUNTIME CONFIG:$runtimeConfig"
 # Set Parameters using file to eiliminate issues when passing spaces in parameter values
 cat <<EOF > parameters.json
 [
+    {
+        "ParameterKey": "allowUsageAnalytics",
+        "ParameterValue": "No"
+    },
     {
         "ParameterKey": "appContainerName",
         "ParameterValue": "<DOCKER IMAGE>"
@@ -70,6 +73,10 @@ cat <<EOF > parameters.json
     {
         "ParameterKey": "bigIpInstanceType",
         "ParameterValue": "<BIGIP INSTANCE TYPE>"
+    },
+    {
+        "ParameterKey": "bigIpLicenseKey",
+        "ParameterValue": "$regKey"
     },
     {
         "ParameterKey": "bigIpRuntimeInitConfig",

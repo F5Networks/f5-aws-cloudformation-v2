@@ -118,7 +118,8 @@ fi
 
 
 parameters="\
-ParameterKey=bigIpInstanceProfile,ParameterValue=$bigIpInstanceProfile \
+ParameterKey=allowUsageAnalytics,ParameterValue=No \
+ParameterKey=instanceProfile,ParameterValue=$bigIpInstanceProfile \
 ParameterKey=bigIpRuntimeInitConfig,ParameterValue=$runtimeConfig \
 ParameterKey=bigIpRuntimeInitPackageUrl,ParameterValue=<RUNTIME_URL> \
 ParameterKey=externalPrimaryPublicId,ParameterValue=$bigiExternalPublicIpAllocationId \

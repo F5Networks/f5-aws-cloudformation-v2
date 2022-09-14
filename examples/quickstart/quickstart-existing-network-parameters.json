@@ -1,5 +1,9 @@
 [
   {
+    "ParameterKey": "allowUsageAnalytics",
+    "ParameterValue": "Yes"
+  },
+  {
     "ParameterKey": "application",
     "ParameterValue": "f5app"
   },
@@ -33,6 +37,14 @@
   },
   {
     "ParameterKey": "bigIpMgmtSubnetId",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "bigIpHostname",
+    "ParameterValue": "bigip01.local"
+  },
+  {
+    "ParameterKey": "bigIpLicenseKey",
     "ParameterValue": ""
   },
   {

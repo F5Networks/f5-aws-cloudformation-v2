@@ -31,12 +31,16 @@ runtimeConfig='"<RUNTIME INIT CONFIG>"'
 
 cat <<EOF > parameters.json
 [
+    {
+        "ParameterKey": "allowUsageAnalytics",
+        "ParameterValue": "No"
+    },
     { 
         "ParameterKey": "bigIpExternalSecurityGroup",
         "ParameterValue": "$bigIpExternalSecurityGroup"
     },
     {
-        "ParameterKey": "bigIpInstanceProfile",
+        "ParameterKey": "instanceProfile",
         "ParameterValue": "$bigIpInstanceProfile"
     },
     {   "ParameterKey": "bigIpRuntimeInitConfig",

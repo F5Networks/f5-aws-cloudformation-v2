@@ -49,6 +49,10 @@ Metadata:
           - bigIpRuntimeInitPackageUrl
           - bigIpRuntimeInitConfig01
           - bigIpRuntimeInitConfig02
+          - bigIpHostname01
+          - bigIpHostname02
+          - bigIpLicenseKey01
+          - bigIpLicenseKey02
           - bigIpImage
           - bigIpCustomImageId
           - bigIpInstanceType
@@ -56,6 +60,7 @@ Metadata:
           - cfeS3Bucket
           - cfeVipTag
           - cfeTag
+          - allowUsageAnalytics
       - Label:
           default: Application Configuration
         Parameters:
@@ -70,18 +75,28 @@ Metadata:
           - group
           - owner
     ParameterLabels:
+      allowUsageAnalytics:
+        default: Send anonymous statistics to F5
       application:
         default: Application
       artifactLocation:
         default: Path to directory where the modules folder is located. ex. "examples/"
       bigIpCustomImageId:
         default: Custom Image Id
+      bigIpHostname01:
+        default: Hostname for BIG-IP instance 01
+      bigIpHostname02:
+        default: Hostname for BIG-IP instance 02
       bigIpImage:
         default: F5 BIG-IP Image
       bigIpInstanceType:
         default: Enter valid instance type.
       bigIpInstanceProfile:
         default: Instance profile
+      bigIpLicenseKey01:
+        default: License key for BIG-IP instance 01
+      bigIpLicenseKey02:
+        default: License key for BIG-IP instance 02
       bigIpPeerAddr:
         default: Static self IP address for peer device.
       bigIpRuntimeInitConfig01:
@@ -232,6 +247,14 @@ Outputs:
       - - 'https://'
         - !GetAtt [Dag, Outputs.bigIpExternalEipAddress03]
 Parameters:
+  allowUsageAnalytics:
+    AllowedValues:
+      - 'Yes'
+      - 'No'
+    Default: 'Yes'
+    Description: This deployment can send anonymous statistics to F5 to help us determine
+      how to improve our solutions. If you select **false** statistics are not sent.
+    Type: String
   application:
     Default: f5app
     Description: Application Tag.
@@ -249,6 +272,20 @@ Parameters:
     Default: ''
     Description: Provide BIG-IP AMI ID you wish to deploy.
     MaxLength: 255
+    Type: String
+  bigIpHostname01:
+    ConstraintDescription: Must be a valid hostname containing fewer than 63 characters.
+    Default: 'failover01.local'
+    Description: Supply the hostname you would like to use for the BIG-IP instance.
+      The hostname must contain fewer than 63 characters.
+    MaxLength: 63
+    Type: String
+  bigIpHostname02:
+    ConstraintDescription: Must be a valid hostname containing fewer than 63 characters.
+    Default: 'failover02.local'
+    Description: Supply the hostname you would like to use for the BIG-IP instance.
+      The hostname must contain fewer than 63 characters.
+    MaxLength: 63
     Type: String
   bigIpImage:
     ConstraintDescription: Must be a valid F5 BIG-IP market place image
@@ -286,6 +323,16 @@ Parameters:
     ConstraintDescription: Must be a valid EC2 instance type for BIG-IP
     Default: m5.xlarge
     Description: Enter valid instance type.
+    Type: String
+  bigIpLicenseKey01:
+    Default: ''
+    Description: Supply the F5 BYOL license key for BIG-IP instance 01. Leave this
+      parameter blank if deploying the PAYG solution.
+    Type: String
+  bigIpLicenseKey02:
+    Default: ''
+    Description: Supply the F5 BYOL license key for BIG-IP instance 02. Leave this
+      parameter blank if deploying the PAYG solution.
     Type: String
   bigIpPeerAddr:
     Default: '10.0.1.11'
@@ -548,15 +595,11 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        instanceProfile: !If
-          - createBigIpInstanceProfile
-          - !GetAtt
-            - Access
-            - Outputs.bigIpInstanceProfile
-          - !Ref 'bigIpInstanceProfile'
+        allowUsageAnalytics: !Ref 'allowUsageAnalytics'
         bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig01'
         bigIpPeerAddr: !Ref 'bigIpPeerAddr'
+        bigIpPeerHostname: !Ref 'bigIpHostname02'
         cfeS3Bucket: !If
           - useDefaultCfeS3Bucket
           - !Join
@@ -565,12 +608,6 @@ Resources:
               - '-bigip-high-availability-solution'
           - !Ref 'cfeS3Bucket'
         cfeTag: !Ref 'cfeTag'
-        imageId: !If
-          - noCustomImageId
-          - !GetAtt
-            - AmiInfo
-            - Id
-          - !Ref 'bigIpCustomImageId'
         externalPrimaryPublicId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01]
         externalPublicIpIds: !If [usePublicIpVip, !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId03],
           '']
@@ -578,11 +615,25 @@ Resources:
         externalSelfIp: !Ref 'bigIpExternalSelfIp01'
         externalServiceIps: !If [usePublicIpVip, !Ref 'bigIpExternalVip01', '']
         externalSubnetId: !Ref 'bigIpExternalSubnetId01'
+        hostname: !Ref 'bigIpHostname01'
+        imageId: !If
+          - noCustomImageId
+          - !GetAtt
+            - AmiInfo
+            - Id
+          - !Ref 'bigIpCustomImageId'
         instanceIndex: '01'
+        instanceProfile: !If
+          - createBigIpInstanceProfile
+          - !GetAtt
+            - Access
+            - Outputs.bigIpInstanceProfile
+          - !Ref 'bigIpInstanceProfile'
         instanceType: !Ref 'bigIpInstanceType'
         internalSelfIp: !Ref 'bigIpInternalSelfIp01'
         internalSubnetId: !Ref 'bigIpInternalSubnetId01'
         internalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup]
+        licenseKey: !Ref 'bigIpLicenseKey01'
         mgmtPublicIpId: !If [usePublicIpMgmt, !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId01],
           '']
         mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpMgmtSecurityGroup]
@@ -600,33 +651,37 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        instanceProfile: !If
-          - createBigIpInstanceProfile
-          - !GetAtt
-            - Access
-            - Outputs.bigIpInstanceProfile
-          - !Ref 'bigIpInstanceProfile'
+        allowUsageAnalytics: !Ref 'allowUsageAnalytics'
         bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig02'
         bigIpPeerAddr: !Ref 'bigIpPeerAddr'
+        bigIpPeerHostname: !Ref 'bigIpHostname01'
         cfeTag: !Ref 'cfeTag'
-        imageId: !If
-          - noCustomImageId
-          - !GetAtt
-            - AmiInfo
-            - Id
-          - !Ref 'bigIpCustomImageId'
         externalPrimaryPublicId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId02]
         externalPublicIpIds: ''
         externalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup]
         externalSelfIp: !Ref 'bigIpExternalSelfIp02'
         externalServiceIps: !If [usePublicIpVip, !Ref 'bigIpExternalVip02', '']
         externalSubnetId: !Ref 'bigIpExternalSubnetId02'
+        hostname: !Ref 'bigIpHostname02'
+        imageId: !If
+          - noCustomImageId
+          - !GetAtt
+            - AmiInfo
+            - Id
+          - !Ref 'bigIpCustomImageId'
         instanceIndex: '02'
+        instanceProfile: !If
+          - createBigIpInstanceProfile
+          - !GetAtt
+            - Access
+            - Outputs.bigIpInstanceProfile
+          - !Ref 'bigIpInstanceProfile'
         instanceType: !Ref 'bigIpInstanceType'
         internalSelfIp: !Ref 'bigIpInternalSelfIp02'
         internalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup]
         internalSubnetId: !Ref 'bigIpInternalSubnetId02'
+        licenseKey: !Ref 'bigIpLicenseKey02'
         mgmtPublicIpId: !If [usePublicIpMgmt, !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId02],
           '']
         mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpMgmtSecurityGroup]

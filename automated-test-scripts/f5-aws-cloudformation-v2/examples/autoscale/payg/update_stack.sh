@@ -38,6 +38,10 @@ fi
 cat <<EOF > parameters.json
 [
     {
+        "ParameterKey": "allowUsageAnalytics",
+        "ParameterValue": "No"
+    },
+    {
         "ParameterKey": "application",
         "ParameterValue": "f5-app-<DEWPOINT JOB ID>"
     },
