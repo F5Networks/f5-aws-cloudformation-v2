@@ -555,7 +555,10 @@ Metadata:
           - numNics
           - bigIpRuntimeInitConfig
           - bigIpRuntimeInitPackageUrl
+          - bigIpHostname
+          - bigIpLicenseKey
           - provisionPublicIp
+          - allowUsageAnalytics
       - Label:
           default: Application Configuration
         Parameters:
@@ -570,6 +573,8 @@ Metadata:
           - group
           - owner
     ParameterLabels:
+      allowUsageAnalytics:
+        default: Send anonymous statistics to F5
       appContainerName:
         default: Docker Image Name
       application:
@@ -578,12 +583,16 @@ Metadata:
         default: Directory Path
       bigIpCustomImageId:
         default: Custom Image Id
+      bigIpHostname:
+        default: Hostname for BIG-IP instance
       bigIpImage:
         default: F5 BIG-IP Performance Type (PAYG Only)
       bigIpInstanceProfile:
         default: Instance profile
       bigIpInstanceType:
         default: Instance Type
+      bigIpLicenseKey:
+        default: License key for BIG-IP instance
       bigIpRuntimeInitConfig:
         default: BIG-IP Runtime Init Config
       bigIpRuntimeInitPackageUrl:
@@ -675,6 +684,14 @@ Outputs:
       - - 'https://'
         - !GetAtt [Dag, Outputs.bigIpExternalEipAddress02]
 Parameters:
+  allowUsageAnalytics:
+    AllowedValues:
+      - 'Yes'
+      - 'No'
+    Default: 'Yes'
+    Description: This deployment can send anonymous statistics to F5 to help us determine
+      how to improve our solutions. If you select **false** statistics are not sent.
+    Type: String
   appContainerName:
     Default: 'f5devcentral/f5-demo-app:latest'
     Description: Application docker image name
@@ -691,6 +708,18 @@ Parameters:
     Description: 'The path in the S3Bucket where the modules folder is located. Can
       include numbers, lowercase letters, uppercase letters, hyphens (-), and forward
       slash (/).'
+    Type: String
+  bigIpHostname:
+    ConstraintDescription: Must be a valid hostname containing fewer than 63 characters.
+    Default: 'bigip01.local'
+    Description: Supply the hostname you would like to use for the BIG-IP instance.
+      The hostname must contain fewer than 63 characters.
+    MaxLength: 63
+    Type: String
+  bigIpLicenseKey:
+    Default: ''
+    Description: Supply the F5 BYOL license key for the BIG-IP instance. Leave this
+      parameter blank if deploying the PAYG solution.
     Type: String
   bigIpRuntimeInitConfig:
     Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.4.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg-with-app.yaml'
@@ -928,11 +957,8 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
+        allowUsageAnalytics: !Ref 'allowUsageAnalytics'
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig'
-        instanceProfile: !If
-          - useBigIpInstanceProfile
-          - !Ref 'bigIpInstanceProfile'
-          - !Ref 'AWS::NoValue'
         externalPrimaryPublicId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01]
         externalPublicIpIds: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId02]
         externalSecurityGroupId: !If [2nic, !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup],
@@ -941,17 +967,23 @@ Resources:
         externalServiceIps: !If [1nic, "10.0.1.101", "10.0.0.101"]
         externalSubnetId: !If [2nic, !Select [0, !Split [',', !GetAtt [Network, Outputs.subnetsA]]],
           !Ref 'AWS::NoValue']
+        hostname: !Ref 'bigIpHostname'
         imageId: !If [noCustomImageId, !If [isPaygLicensing, !FindInMap [!FindInMap [
                 VERSION, !Ref 'version', REGIONMAP], !Ref 'AWS::Region', !FindInMap [
                 AWSBigipThroughput, !Ref 'throughput', !Ref 'bigIpImage']], !FindInMap [
               !FindInMap [VERSION, !Ref 'version', REGIONMAP], !Ref 'AWS::Region',
               AllTwoBootLocations]], !Ref 'bigIpCustomImageId']
+        instanceProfile: !If
+          - useBigIpInstanceProfile
+          - !Ref 'bigIpInstanceProfile'
+          - !Ref 'AWS::NoValue'
         instanceType: !Ref 'bigIpInstanceType'
         internalSecurityGroupId: !If [3nic, !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup],
           !Ref 'AWS::NoValue']
         internalSelfIp: !If [3nic, "10.0.2.11", !Ref 'AWS::NoValue']
         internalSubnetId: !If [3nic, !Select [2, !Split [',', !GetAtt [Network, Outputs.subnetsA]]],
           !Ref 'AWS::NoValue']
+        licenseKey: !Ref 'bigIpLicenseKey'
         mgmtPublicIpId: !If [noPublicIp, !Ref 'AWS::NoValue', !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId01]]
         mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpMgmtSecurityGroup]
         mgmtSelfIp: "10.0.1.11"

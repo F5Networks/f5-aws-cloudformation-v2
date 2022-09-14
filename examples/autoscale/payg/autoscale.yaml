@@ -53,6 +53,7 @@ Metadata:
           - metricNameSpace
           - notificationEmail
           - snsEvents
+          - allowUsageAnalytics
       - Label:
           default: Application Configuration
         Parameters:
@@ -82,6 +83,8 @@ Metadata:
           - group
           - owner
     ParameterLabels:
+      allowUsageAnalytics:
+        default: Send anonymous statistics to F5
       appContainerName:
         default: Application docker image name
       appScalingMaxSize:
@@ -234,6 +237,14 @@ Outputs:
       - Bastion
       - Outputs.bastionAutoscaleGroupName
 Parameters:
+  allowUsageAnalytics:
+    AllowedValues:
+      - 'Yes'
+      - 'No'
+    Default: 'Yes'
+    Description: This deployment can send anonymous statistics to F5 to help us determine
+      how to improve our solutions. If you select **false** statistics are not sent.
+    Type: String
   appContainerName:
     Default: 'f5devcentral/f5-demo-app:latest'
     Description: Application docker image name
@@ -764,6 +775,7 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
+        allowUsageAnalytics: !Ref 'allowUsageAnalytics'
         application: !Ref 'application'
         bigIpExternalSecurityGroup: !GetAtt
           - Dag

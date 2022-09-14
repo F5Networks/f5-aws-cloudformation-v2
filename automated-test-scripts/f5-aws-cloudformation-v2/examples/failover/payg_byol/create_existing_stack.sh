@@ -46,6 +46,8 @@ else
     echo "bucket region:$region"
 fi
 
+regKey01=''
+regKey02=''
 if [[ "<LICENSE TYPE>" == "byol" ]]; then
     regKey01='<AUTOFILL EVAL LICENSE KEY>'
     regKey02='<AUTOFILL EVAL LICENSE KEY 2>'
@@ -89,22 +91,9 @@ else
         /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.admin.shell = \"bash\"" -i <DEWPOINT JOB ID>-0$counter.yaml
         /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.admin.userType = \"regular\"" -i <DEWPOINT JOB ID>-0$counter.yaml
 
-        # Disable AutoPhoneHome
-        /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>-0$counter.yaml
-        /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>-0$counter.yaml
-
         # Update CFE tag
         /usr/bin/yq e ".extension_services.service_operations.[1].value.externalStorage.scopingTags.f5_cloud_failover_label = \"<DEWPOINT JOB ID>\"" -i <DEWPOINT JOB ID>-0$counter.yaml
         /usr/bin/yq e ".extension_services.service_operations.[1].value.failoverAddresses.scopingTags.f5_cloud_failover_label = \"<DEWPOINT JOB ID>\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-
-        if [[ "<LICENSE TYPE>" == "byol" ]]; then
-            # Add BYOL License to declaration
-            if [[ $counter == 1 ]]; then
-                /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.regKey = \"$regKey01\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-            else
-                /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.regKey = \"$regKey02\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-            fi
-        fi
 
         if [[ "<PROVISION EXAMPLE APP>" == "true" ]]; then
             /usr/bin/yq e ".extension_services.service_operations.[2].value.Tenant_1.Shared.Custom_WAF_Policy.url = \"https://cdn.f5.com/product/cloudsolutions/solution-scripts/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>-0$counter.yaml
@@ -132,6 +121,10 @@ cat <<EOF > parameters.json
         "ParameterValue": "$artifact_location"
     },
     {
+        "ParameterKey": "allowUsageAnalytics",
+        "ParameterValue": "No"
+    },
+    {
         "ParameterKey": "application",
         "ParameterValue": "f5-app-<DEWPOINT JOB ID>"
     },
@@ -150,6 +143,14 @@ cat <<EOF > parameters.json
     {
         "ParameterKey": "bigIpInstanceType",
         "ParameterValue": "<BIGIP INSTANCE TYPE>"
+    },
+    {
+        "ParameterKey": "bigIpLicenseKey01",
+        "ParameterValue": "$regKey01"
+    },
+    {
+        "ParameterKey": "bigIpLicenseKey02",
+        "ParameterValue": "$regKey02"
     },
     {
         "ParameterKey": "bigIpRuntimeInitConfig01",

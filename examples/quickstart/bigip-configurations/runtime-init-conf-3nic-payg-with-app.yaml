@@ -11,9 +11,9 @@ runtime_parameters:
   - name: HOST_NAME
     type: metadata
     metadataProvider:
-      type: compute
       environment: aws
-      field: hostname
+      type: uri
+      value: /latest/meta-data/tags/instance/hostname
   - name: REGION
     type: metadata
     metadataProvider:

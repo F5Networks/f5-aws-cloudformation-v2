@@ -32,6 +32,7 @@ Metadata:
           - bigIpRuntimeInitPackageUrl
           - bigIqSecretArn
           - secretArn
+          - allowUsageAnalytics
       - Label:
           default: Autoscale Group
         Parameters:
@@ -82,6 +83,8 @@ Metadata:
           - bigIqLicenseRevokeSnsTopic
           - bigIqNotificationRole
     ParameterLabels:
+      allowUsageAnalytics:
+        default: Send anonymous statistics to F5
       application:
         default: Application
       bigIpExternalSecurityGroup:
@@ -173,6 +176,14 @@ Outputs:
     Description: SNS topic Autoscale should notify
     Value: !Ref 'SNSTopic'
 Parameters:
+  allowUsageAnalytics:
+    AllowedValues:
+      - 'Yes'
+      - 'No'
+    Default: 'Yes'
+    Description: This deployment can send anonymous statistics to F5 to help us determine
+      how to improve our solutions. If you select **false** statistics are not sent.
+    Type: String
   application:
     Default: f5app
     Description: Application Tag.
@@ -599,10 +610,16 @@ Resources:
             - !Ref 'bigIqSecretArn'
             - |
               '
+            - ALLOW_ANALYTICS='
+            - !Ref 'allowUsageAnalytics'
             - |
-              echo $SECRET_ID > /config/cloud/secret_id
+              '
             - |
-              echo $BIG_IQ_SECRET_ID > /config/cloud/bigiq_secret_id
+              echo ${SECRET_ID} > /config/cloud/secret_id
+            - |
+              echo ${BIG_IQ_SECRET_ID} > /config/cloud/bigiq_secret_id
+            - |
+              if [[ ${ALLOW_ANALYTICS} == "No" ]]; then TELEMETRY_FLAG="--skip-telemetry"; else TELEMETRY_FLAG=""; fi
             - |
               # Download or render f5-bigip-runtime-init config
             - |
@@ -640,7 +657,7 @@ Resources:
             - |
               # Execute Runtime-init
             - |
-              f5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf
+              f5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf ${TELEMETRY_FLAG}
             - |2+
 
             - '[[ $? -eq 0 ]] && /opt/aws/bin/cfn-signal -e 0 --stack '

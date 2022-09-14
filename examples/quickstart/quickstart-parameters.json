@@ -1,5 +1,9 @@
 [
   {
+    "ParameterKey": "allowUsageAnalytics",
+    "ParameterValue": "Yes"
+  },
+  {
     "ParameterKey": "appContainerName",
     "ParameterValue": "f5devcentral/f5-demo-app:latest"
   },
@@ -10,6 +14,14 @@
   {
     "ParameterKey": "artifactLocation",
     "ParameterValue": "f5-aws-cloudformation-v2/v2.4.0.0/examples/"
+  },
+  {
+    "ParameterKey": "bigIpHostname",
+    "ParameterValue": "bigip01.local"
+  },
+  {
+    "ParameterKey": "bigIpLicenseKey",
+    "ParameterValue": ""
   },
   {
     "ParameterKey": "bigIpRuntimeInitConfig",

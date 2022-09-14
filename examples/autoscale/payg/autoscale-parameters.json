@@ -1,5 +1,9 @@
 [
   {
+    "ParameterKey": "allowUsageAnalytics",
+    "ParameterValue": "Yes"
+  },
+  {
     "ParameterKey": "appContainerName",
     "ParameterValue": "f5devcentral/f5-demo-app:latest"
   },

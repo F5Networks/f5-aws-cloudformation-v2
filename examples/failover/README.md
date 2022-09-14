@@ -125,7 +125,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 
 - In this solution, the BIG-IP VE has the [LTM](https://f5.com/products/big-ip/local-traffic-manager-ltm) and [ASM](https://f5.com/products/big-ip/application-security-manager-asm) (when **provisionExampleApp** is set to **true**) modules enabled to provide advanced traffic management and web application security functionality. 
 
-- This template can send non-identifiable statistical information to F5 Networks to help us improve our templates. You can disable this functionality by setting the **autoPhonehome** system class property value to false in the F5 Declarative Onboarding declaration. See [Sending statistical information to F5](#sending-statistical-information-to-f5).
+- This template can send non-identifiable statistical information to F5 Networks to help us improve our templates. You can disable this functionality for this deployment only by supplying **false** for the value of the **allowUsageAnalytics** input parameter, or you can disable it system-wide by setting the **autoPhonehome** system class property value to false in the F5 Declarative Onboarding declaration. See [Sending statistical information to F5](#sending-statistical-information-to-f5).
 
 - See [trouble shooting steps](#troubleshooting-steps) for more details.
 
@@ -136,13 +136,18 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 
 | Parameter | Required* | Default | Type | Description |
 | --- | --- | --- | --- | --- |
+| allowUsageAnalytics | No | Yes | boolean | This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **No** statistics are not sent. |
 | appDockerImageName | No | f5devcentral/f5-demo-app:latest  | string | The name of a container to download and install which is used for the example application server(s). If this value is left blank, the application module template is not deployed. |
 | application | No | f5app  | string | Application Tag. |
 | artifactLocation | No | f5-aws-cloudformation-v2/v2.4.0.0/examples/  | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
+| bigIpHostname01 | No | failover01.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
+| bigIpHostname02 | No | failover02.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
 | bigIpInstanceType | No | m5.xlarge | string | Enter a valid instance type. |
 | bigIpImage | No | \*16.1.2.2-0.0.28 PAYG-Best Plus 25Mbps\* | string | F5 BIG-IP Performance Type. |
 | bigIpInstanceProfile | No |  | string | Enter the name of an existing IAM instance profile with applied IAM policy to be associated to the BIG-IP virtual machine(s). Leave default to create a new instance profile. |
 | bigIpCustomImageId | No |   | string | Provide a custom BIG-IP AMI ID you wish to deploy. Otherwise, can leave empty. |
+| bigIpLicenseKey01 | No |  | string | Supply the F5 BYOL license key for BIG-IP instance 01. Leave this parameter blank if deploying the PAYG solution. |
+| bigIpLicenseKey02 | No |  | string | Supply the F5 BYOL license key for BIG-IP instance 02. Leave this parameter blank if deploying the PAYG solution. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run | string | Supply a URL to the bigip-runtime-init package. |
 | bigIpExternalSelfIp01 | No | 10.0.0.11 | string | External Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
 | bigIpMgmtAddress01 | No | 10.0.1.11 | string | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
@@ -196,9 +201,12 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 
 | Parameter | Required | Default | Type | Description |
 | --- | --- | --- |  --- | --- | 
+| allowUsageAnalytics | No | Yes | boolean | This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **No** statistics are not sent. |
 | appDockerImageName | No | f5devcentral/f5-demo-app:latest  | string | The name of a container to download and install which is used for the example application server(s). If this value is left blank, the application module template is not deployed. |
 | application | No | f5app  | string | Application Tag. |
 | artifactLocation | No | f5-aws-cloudformation-v2/v2.4.0.0/examples/  | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
+| bigIpHostname01 | No | failover01.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
+| bigIpHostname02 | No | failover02.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
 | bigIpInstanceType | No | m5.xlarge | string | Enter a valid instance type. |
 | bigIpImage | No | \*16.1.2.2-0.0.28 PAYG-Best Plus 25Mbps\* | string | F5 BIG-IP Performance Type. |
 | bigIpInstanceProfile | No |  | string | Enter the name of an existing IAM instance profile with applied IAM policy to be associated to the BIG-IP virtual machine(s). Leave default to create a new instance profile. |
@@ -381,21 +389,19 @@ By default, this solution deploys 3-NIC PAYG BIG-IPs:
   - The **Full Stack** (failover.yaml) references the `runtime-init-conf-3nic-payg-instanceXX-with-app.yaml` BIG-IP config files, which include an example virtual service, and can be used as is. These example configurations do not require any modifications to deploy successfully *(Disclaimer: "Successfully" implies the template deploys without errors and deploys BIG-IP WAFs capable of passing traffic. To be fully functional as designed, you would need to have satisfied the [Prerequisites](#prerequisites))*. However, in production, these files would commonly be customized. Some examples of small customizations or modifications are provided below. 
   - The **Existing Network Stack** (failover-existing-network.yaml) references the `runtime-init-conf-3nic-payg-instanceXX.yaml` BIG-IP config files, which only provide basic system onboarding and do not **NOT** include an example virtual service, and can be used as is.
 
-However, most other changes require modifying the configurations themselves. For example:
-
 To deploy **BYOL** instances:
 
-  1. Edit/modify the Declarative Onboarding (DO) declarations in a corresponding `byol` runtime-init config file with the new `regKey` value. 
+  1. Update the **bigIpLicenseKey01** and **bigIpLicenseKey02** input parameters to reference the unique registration keys to use when licensing the BIG-IP instances.
       Example:
-      ```yaml
-                My_License:
-                  class: License
-                  licenseType: regKey
-                  regKey: AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE
+      ```json
+      "bigIpLicenseKey01":{ 
+        "value": "AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE" 
+      },
+      "bigIpLicenseKey02":{ 
+        "value": "AAAAA-BBBBB-CCCCC-DDDDD-FFFFFFF" 
+      }
       ```
-  2. Publish/host the customized runtime-init config files at a location reachable by the BIG-IP at deploy time (for example: github, AWS Storage, etc.)
-  3. Update the **bigIpRuntimeInitConfig01** and **bigIpRuntimeInitConfig02** input parameters to reference the new URL of the updated configuration.
-  4. Update the **bigIpImage** input parameter to use `byol` image.
+  2. Update the **bigIpImage** input parameter to use a `byol` image.
       Example:
       ```json
         {
@@ -403,6 +409,8 @@ To deploy **BYOL** instances:
           "ParameterValue": "*16.1.2.2-0.0.28**BYOL-All Modules 2Boot*"
         },
       ```
+
+Other changes may require customizing the example configuration files. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for customization details.
 
 In order deploy additional **virtual services**:
 

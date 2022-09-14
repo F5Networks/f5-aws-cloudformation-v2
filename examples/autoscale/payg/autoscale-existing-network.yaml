@@ -57,6 +57,7 @@ Metadata:
           - metricNameSpace
           - notificationEmail
           - snsEvents
+          - allowUsageAnalytics
       - Label:
           default: Telemetry Configuration
         Parameters:
@@ -75,6 +76,8 @@ Metadata:
           - group
           - owner
     ParameterLabels:
+      allowUsageAnalytics:
+        default: Send anonymous statistics to F5
       application:
         default: Application
       artifactLocation:
@@ -212,6 +215,14 @@ Outputs:
       - BigipAutoscale
       - Outputs.bigIpAutoscaleGroup
 Parameters:
+  allowUsageAnalytics:
+    AllowedValues:
+      - 'Yes'
+      - 'No'
+    Default: 'Yes'
+    Description: This deployment can send anonymous statistics to F5 to help us determine
+      how to improve our solutions. If you select **false** statistics are not sent.
+    Type: String
   application:
     Default: f5app
     Description: Application Tag.
@@ -609,6 +620,7 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
+        allowUsageAnalytics: !Ref 'allowUsageAnalytics'
         application: !Ref 'application'
         bigIpExternalSecurityGroup: !GetAtt
           - Dag
