@@ -66,20 +66,30 @@ By default, this solution creates a single Availability Zone VPC with four subne
 
 ## Diagram
 
-![Configuration Example](diagram.png)
+![Configuration Example](diagrams/diagram.png)
 
 ## Prerequisites
 
 
 - An SSH Key pair in AWS for management access to BIG-IP VE. For more information about creating and/or importing the key pair in AWS, see AWS's SSH key [documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html).
-- Accepted the EULA for the F5 image in the AWS marketplace. If you have not deployed BIG-IP VE in your environment before, search for F5 in the Marketplace and then click **Accept Software Terms**. This only appears the first time you attempt to launch an F5 image. By default, this solution deploys the [F5 BIG-IP BEST with IPI and Threat Campaigns (PAYG, 25Mbps)](https://aws.amazon.com/marketplace/pp/prodview-nlakutvltzij4) images. For more information, see [K14810: Overview of BIG-IP VE license and throughput limits](https://support.f5.com/csp/article/K14810).
+
+- Accepted the EULA for the F5 image in the AWS marketplace. If you have not deployed BIG-IP VE in your environment before, search for F5 in the Marketplace and then click **Accept Software Terms**. This only appears the first time you attempt to launch an F5 image. By default, this solution deploys the [F5 BIG-IP BEST with IPI and Threat Campaigns (PAYG, 25Mbps)](https://aws.amazon.com/marketplace/pp/prodview-nlakutvltzij4) images. For more information, see [K14810: Overview of BIG-IP VE license and throughput limits](https://support.f5.com/csp/article/K14810).  
+
 - The appropriate permission in AWS to launch CloudFormation (CFT) templates. You must be using an IAM user with the AdministratorAccess policy attached and have permission to create the objects contained in this solution. VPCs, Routes, EIPs, EC2 Instances. For details on permissions and all AWS configuration, see AWS's [documentation](https://aws.amazon.com/documentation/). 
+
 - Sufficient **EC2 Resources** to deploy this solution. For more information, see AWS's resource limit [documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-resource-limits.html). *NOTE:* The most likely resource limit to be hit by this solution is for Public IP addresses (AWS EIPs). This solution requires a minimum of two EIP addresses (for Single NIC deployments - one for the External Self-IP and one for an example Virtual Service) or three for Multi-Nic deployments (one for the Management Port, one for the External Self-IP and one for an example Virtual Service). By default, this solution deploys a 3NIC BIG-IP with 3 EIPs. 
 
 
 ## Important Configuration Notes
 
 - By default, this solution creates a username **admin** with a **temporary** password set to value of the instance-id **bigIpInstanceId** which is provided in the output of the parent template. **IMPORTANT**: You should change this temporary password immediately following deployment.
+
+- By default, this solution deploys the [F5 BIG-IP BEST with IPI and Threat Campaigns (PAYG, 25Mbps)](https://aws.amazon.com/marketplace/pp/prodview-nlakutvltzij4) images. To change the BIG-IP image to a BYOL image, update the  **licenseType** parameter to `byol` and see [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more details. For custom images (for example, different versions from the marketplace, clones or those created by the [F5 BIG-IP Image Generator](https://github.com/f5devcentral/f5-bigip-image-generator/)), update the **bigIpCustomImageId** parameter. To see a list of available BIG-IP images and IDs from the markeplace, you can run the aws command below:
+
+  ```
+  $ aws ec2 describe-images --owners aws-marketplace --region us-east-1 --filters "Name=description,Values=F5*BIGIP**"  --query 'Images[*].[ImageId,Description,CreationDate]'
+  ```
+
 
 - By default, this solution does not create IAM resources. By specifying a value for the **bigIpInstanceProfile** input parameter, you can assign a pre-existing IAM instance profile to the BIG-IP instance. See AWS IAM [documentation](https://docs.aws.amazon.com/codedeploy/latest/userguide/getting-started-create-iam-instance-profile.html) for more information on creating these resources.
 
@@ -341,16 +351,44 @@ To deploy a **2NIC** instance:
 
 To deploy a **BYOL** instance:
 
-  1. Update the **bigIpLicenseKey** input parameters to reference the registration key to use when licensing the BIG-IP instance.
+  1. Update the **licenseType** input parameter to use `byol` or update the **bigIpCustomImageId** input parameter to use `byol` image.
+  2. Update the **bigIpLicenseKey** input parameters to reference the registration key to use when licensing the BIG-IP instance.
       Example:
       ```json
       "bigIpLicenseKey":{ 
         "value": "AAAAA-BBBBB-CCCCC-DDDDD-EEEEEEE" 
       }
       ```
-  2. Update the **licenseType** input parameter to use `byol` or update the **bigIpCustomImageId** input parameter to use `byol` image.
+  3. Update the **bigIpRuntimeInitConfig** input parameter to reference the corresponding `byol` config file (for example, `runtime-init-conf-3nic-byol-with-app.yaml`).
 
-Other changes may require customizing the example configuration files. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for customization details.
+
+However, most changes require customizing the example configuration files. 
+
+To change BIG-IP configuration:
+
+1. Edit/modify the declaration(s) in the example runtime-init config file with the new `<VALUES>`. For example, if you wanted to change the DNS or NTP settings, update values in the Declarative Onboarding declaration:
+
+    Example:
+
+    ```yaml
+              My_Dns:
+                class: DNS
+                nameServers:
+                  - <YOUR_CUSTOM_DNS_SERVER>
+              My_License:
+                class: License
+                licenseType: regKey
+                regKey: '{{{LICENSE_KEY}}}'
+              My_Ntp:
+                class: NTP
+                servers:
+                  - <YOUR_CUSTOM_NTP_SERVER>
+                timezone: UTC
+    ```
+
+2. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, S3, git, etc.).
+3. Update the **bigIpRuntimeInitConfig** input parameter to reference the new URL of the updated BIG-IP configuration.
+
 
 In order deploy additional virtual services:
 

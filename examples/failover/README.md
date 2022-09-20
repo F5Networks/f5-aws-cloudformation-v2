@@ -75,7 +75,7 @@ Application traffic from the Internet traverses an external network interface co
 
 ## Diagram
 
-![Configuration Example](diagram.gif)
+![Configuration Example](diagrams/diagram.gif)
 
 For information about this type of deployment, see the F5 Cloud Failover Extension [documentation](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/userguide/aws.html).
 
@@ -93,7 +93,9 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 
 
   - Accepted the EULA for the F5 image in the AWS marketplace. If you have not deployed BIG-IP VE in your environment before, search for F5 in the Marketplace and then click **Accept Software Terms**. This only appears the first time you attempt to launch an F5 image. By default, this solution deploys the [F5 BIG-IP BEST with IPI and Threat Campaigns (PAYG, 25Mbps)](https://aws.amazon.com/marketplace/pp/prodview-nlakutvltzij4) images. For more information, see [K14810: Overview of BIG-IP VE license and throughput limits](https://support.f5.com/csp/article/K14810).
+
   - The appropriate permission in AWS to launch CloudFormation (CFT) templates. You must be using an IAM user with the AdministratorAccess policy attached and have permission to create the objects contained in this solution. VPCs, Routes, EIPs, EC2 Instances. For details on permissions and all AWS configuration, see AWS [documentation](https://aws.amazon.com/documentation/). 
+
   - Sufficient **EC2 Resources** to deploy this solution. For more information, see [AWS resource limit documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-resource-limits.html).
 
 
@@ -105,6 +107,8 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 - By default, this solution creates required IAM roles, policies, and instance profile. By specifying a value for the **bigIpInstanceProfile** input parameter, you can assign a pre-existing IAM instance profile with applied IAM policy to the BIG-IP instance(s).  See AWS IAM [documentation](https://docs.aws.amazon.com/codedeploy/latest/userguide/getting-started-create-iam-instance-profile.html) for more information on creating these resources. Ensure it contains the required permissions for the secret provided with **bigIpSecretArn**. See [IAM Permissions by Solution Type](../../modules/access/README.md#iam-permissions-by-solution-type) for a detailed list of the permissions required by this solution.
 
 - By default, this solution creates an S3 bucket for use by the F5 Cloud Failover Extension. The bucket is configured with server-side AWS KMS encryption enabled, and uses the default AWS managed encryption key. See [Protecting data using server-side encryption with AWS Key Management Service](https://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingKMSEncryption.html) for more information.
+
+- To change the BIG-IP image, update the  **bigIpImage** parameter. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. For non marketplace custom images (for example, clones or those created by the [F5 BIG-IP Image Generator](https://github.com/f5devcentral/f5-bigip-image-generator/)), update the **bigIpCustomImageId** parameter.
 
 - When specifying values for the **bigIpInstanceType** parameter, ensure that the instance type you select is appropriate for the deployment scenario. Each instance types allow a fixed number of NICs and Secondary IP addresses. See [AWS Virtual Machine Instance Types](https://aws.amazon.com/ec2/instance-types/) for more information.
 
@@ -143,7 +147,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpHostname01 | No | failover01.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
 | bigIpHostname02 | No | failover02.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
 | bigIpInstanceType | No | m5.xlarge | string | Enter a valid instance type. |
-| bigIpImage | No | \*16.1.2.2-0.0.28 PAYG-Best Plus 25Mbps\* | string | F5 BIG-IP Performance Type. |
+| bigIpImage | No | \*16.1.2.2-0.0.28 PAYG-Best Plus 25Mbps\* | string | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. bigIpImage is required when bigIpCustomImageId is not specified. |
 | bigIpInstanceProfile | No |  | string | Enter the name of an existing IAM instance profile with applied IAM policy to be associated to the BIG-IP virtual machine(s). Leave default to create a new instance profile. |
 | bigIpCustomImageId | No |   | string | Provide a custom BIG-IP AMI ID you wish to deploy. Otherwise, can leave empty. |
 | bigIpLicenseKey01 | No |  | string | Supply the F5 BYOL license key for BIG-IP instance 01. Leave this parameter blank if deploying the PAYG solution. |
@@ -208,7 +212,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpHostname01 | No | failover01.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
 | bigIpHostname02 | No | failover02.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
 | bigIpInstanceType | No | m5.xlarge | string | Enter a valid instance type. |
-| bigIpImage | No | \*16.1.2.2-0.0.28 PAYG-Best Plus 25Mbps\* | string | F5 BIG-IP Performance Type. |
+| bigIpImage | No | \*16.1.2.2-0.0.28 PAYG-Best Plus 25Mbps\* | string | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. bigIpImage is required when bigIpCustomImageId is not specified. |
 | bigIpInstanceProfile | No |  | string | Enter the name of an existing IAM instance profile with applied IAM policy to be associated to the BIG-IP virtual machine(s). Leave default to create a new instance profile. |
 | bigIpCustomImageId | No |   | string | Provide a custom BIG-IP AMI ID you wish to deploy. Otherwise, can leave empty. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run | string | Supply a URL to the bigip-runtime-init package. |
@@ -391,7 +395,15 @@ By default, this solution deploys 3-NIC PAYG BIG-IPs:
 
 To deploy **BYOL** instances:
 
-  1. Update the **bigIpLicenseKey01** and **bigIpLicenseKey02** input parameters to reference the unique registration keys to use when licensing the BIG-IP instances.
+  1. Update the **bigIpImage** input parameter to use a `byol` image.
+      Example:
+      ```json
+        {
+          "ParameterKey": "bigIpImage",
+          "ParameterValue": "*16.1.2.2-0.0.28**BYOL-All Modules 2Boot*"
+        },
+      ```
+  2. Update the **bigIpLicenseKey01** and **bigIpLicenseKey02** input parameters to reference the unique registration keys to use when licensing the BIG-IP instances.
       Example:
       ```json
       "bigIpLicenseKey01":{ 
@@ -401,16 +413,36 @@ To deploy **BYOL** instances:
         "value": "AAAAA-BBBBB-CCCCC-DDDDD-FFFFFFF" 
       }
       ```
-  2. Update the **bigIpImage** input parameter to use a `byol` image.
-      Example:
-      ```json
-        {
-          "ParameterKey": "bigIpImage",
-          "ParameterValue": "*16.1.2.2-0.0.28**BYOL-All Modules 2Boot*"
-        },
-      ```
+  3. Update the **bigIpRuntimeInitConfig01** and **bigIpRuntimeInitConfig02** input parameters to reference the corresponding `byol` config files (for example, `runtime-init-conf-3nic-byol-instance01-with-app.yaml` and `runtime-init-conf-3nic-byol-instance02-with-app.yaml`).
 
-Other changes may require customizing the example configuration files. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for customization details.
+
+However, most changes require customizing the example configuration files. 
+
+To change BIG-IP configuration(s):
+
+1. Edit/modify the declaration(s) in the example runtime-init config file(s) with the new `<VALUES>`. For example, if you wanted to change the DNS or NTP settings, update values in the Declarative Onboarding declaration(s):
+
+    Example:
+
+    ```yaml
+              My_Dns:
+                class: DNS
+                nameServers:
+                  - <YOUR_CUSTOM_DNS_SERVER>
+              My_License:
+                class: License
+                licenseType: regKey
+                regKey: '{{{LICENSE_KEY}}}'
+              My_Ntp:
+                class: NTP
+                servers:
+                  - <YOUR_CUSTOM_NTP_SERVER>
+                timezone: UTC
+    ```
+
+2. Publish/host the customized runtime-init config(s) file at a location reachable by the BIG-IP at deploy time (for example: github, Google Storage, etc.)
+3. Update the **bigIpRuntimeInitConfig** input parameter(s) to reference the new URL(s) of the updated BIG-IP configuration(s).
+
 
 In order deploy additional **virtual services**:
 
