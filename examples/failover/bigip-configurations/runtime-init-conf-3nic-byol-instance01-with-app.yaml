@@ -1,525 +1,378 @@
-{
-  "controls": {
-    "logLevel": "info",
-    "logFilename": "/var/log/cloud/bigIpRuntimeInit.log"
-  },
-  "extension_packages": {
-    "install_operations": [
-      {
-        "extensionType": "do",
-        "extensionVersion": "1.32.0",
-        "extensionHash": "56eff7e20abb8c0636d2293926cd5106cefff9e2b4bb71592c661cfd6732af3e"
-      },
-      {
-        "extensionType": "as3",
-        "extensionVersion": "3.39.0",
-        "extensionHash": "54d82a0844b46555c023e22a7887debd8ce49dd3ab4a4a4afca9ee30541dca23"
-      },
-      {
-        "extensionType": "cf",
-        "extensionVersion": "1.13.0",
-        "extensionHash": "93be496d250838697d8a9aca8bd0e6fe7480549ecd43280279f0a63fc741ab50"    
-      }
-    ]
-  },
-  "extension_services": {
-    "service_operations": [
-      {
-        "extensionType": "do",
-        "type": "inline",
-        "value": {
-          "schemaVersion": "1.0.0",
-          "class": "Device",
-          "async": true,
-          "label": "Standalone 3NIC BIG-IP declaration for Declarative Onboarding with BYOL license",
-          "Common": {
-            "class": "Tenant",
-            "My_DbVariables": {
-              "class": "DbVariables",
-              "config.allow.rfc3927": "enable",
-              "tm.tcpudptxchecksum": "Software-only"
-            },
-            "My_Provisioning": {
-              "asm": "nominal",
-              "class": "Provision",
-              "ltm": "nominal"
-            },
-            "My_Ntp": {
-              "class": "NTP",
-              "servers": [
-                "0.pool.ntp.org",
-                "1.pool.ntp.org"
-              ],
-              "timezone": "UTC"
-            },
-            "My_Dns": {
-              "class": "DNS",
-              "nameServers": [
-                "169.254.169.253"
-              ],
-              "search": [
-                "f5.com"
-              ]
-            },
-            "My_System": {
-              "autoPhonehome": true,
-              "class": "System",
-              "hostname": "{{{HOST_NAME}}}"
-            },
-            "My_License": {
-              "class": "License",
-              "licenseType": "regKey",
-              "regKey": "{{{LICENSE_KEY}}}"
-            },
-            "admin": {
-              "class": "User",
-              "userType": "regular",
-              "password": "{{{BIGIP_PASSWORD}}}",
-              "shell": "bash"
-            },
-            "external": {
-              "class": "VLAN",
-              "tag": 4094,
-              "mtu": 1500,
-              "interfaces": [
-                {
-                  "name": "1.1",
-                  "tagged": false
-                }
-              ]
-            },
-            "external-self": {
-              "class": "SelfIp",
-              "address": "{{{SELF_IP_EXTERNAL}}}",
-              "vlan": "external",
-              "allowService": [
-                "tcp:443",
-                "udp:1026",
-                "tcp:4353",
-                "tcp:6123",
-                "tcp:6124",
-                "tcp:6125",
-                "tcp:6126",
-                "tcp:6127",
-                "tcp:6128"
-              ],
-              "trafficGroup": "traffic-group-local-only"
-            },
-            "internal": {
-              "class": "VLAN",
-              "interfaces": [
-                {
-                  "name": "1.2",
-                  "tagged": false
-                }
-              ],
-              "mtu": 1500,
-              "tag": 4093
-            },
-            "internal-self": {
-              "class": "SelfIp",
-              "address": "{{{SELF_IP_INTERNAL}}}",
-              "allowService": "none",
-              "trafficGroup": "traffic-group-local-only",
-              "vlan": "internal"
-            },
-            "default": {
-              "class": "Route",
-              "gw": "{{{DEFAULT_GW}}}",
-              "network": "default",
-              "mtu": 1500,
-              "localOnly": true
-            }
-          }
-        }
-      },
-      {
-        "extensionType": "cf",
-        "type": "inline",
-        "value": {
-          "schemaVersion": "1.0.0",
-          "class": "Cloud_Failover",
-          "environment": "aws",
-          "controls": {
-            "class": "Controls",
-            "logLevel": "silly"
-          },
-          "externalStorage": {
-            "encryption": {
-              "serverSide": {
-                "enabled": true,
-                "algorithm": "aws:kms"
-              }
-            },
-            "scopingTags": {
-              "f5_cloud_failover_label": "bigip_high_availability_solution"
-            }
-          },
-          "failoverAddresses": {
-            "enabled": true,
-            "scopingTags": {
-              "f5_cloud_failover_label": "bigip_high_availability_solution"
-            },
-            "requireScopingTags": false
-          }
-        }
-      },
-      {
-        "extensionType": "as3",
-        "type": "inline",
-        "value": {
-          "class": "ADC",
-          "schemaVersion": "3.0.0",
-          "label": "Failover",
-          "remark": "Failover",
-          "Tenant_1": {
-            "class": "Tenant",
-            "Shared": {
-              "class": "Application",
-              "template": "shared",
-              "Service_01_Pool": {
-                "class": "Pool",
-                "remark": "Service 1 shared pool",
-                "members": [
-                  {
-                    "servicePort": 80,
-                    "addressDiscovery": "aws",
-                    "region": "{{{REGION}}}",
-                    "updateInterval": 60,
-                    "tagKey": "aws:cloudformation:logical-id",
-                    "tagValue": "AppInstance",
-                    "addressRealm": "private"
-                  }
-                ],
-                "monitors": [
-                  "http"
-                ]
-              },
-              "Custom_HTTP_Profile": {
-                "class": "HTTP_Profile",
-                "xForwardedFor": true
-              },
-              "Custom_WAF_Policy": {
-                "class": "WAF_Policy",
-                "url": "https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v2.4.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml",
-                "enforcementMode": "blocking",
-                "ignoreChanges": false
-              },
-              "Service_Address_01_A": {
-                "class": "Service_Address",
-                "virtualAddress": "10.0.0.101",
-                "trafficGroup": "none"
-              },
-              "Service_Address_01_B": {
-                "class": "Service_Address",
-                "virtualAddress": "10.0.4.101",
-                "trafficGroup": "none"
-              }
-            },
-            "HTTP_Service_01_A": {
-              "class": "Application",
-              "template": "http",
-              "serviceMain": {
-                "class": "Service_HTTP",
-                "virtualAddresses": [
-                  {
-                    "use": "/Tenant_1/Shared/Service_Address_01_A"
-                  }
-                ],
-                "snat": "auto",
-                "pool": "/Tenant_1/Shared/Service_01_Pool",
-                "profileHTTP": {
-                  "use": "/Tenant_1/Shared/Custom_HTTP_Profile"
-                },
-                "policyWAF": {
-                  "use": "/Tenant_1/Shared/Custom_WAF_Policy"
-                }
-              }
-            },
-            "HTTP_Service_01_B": {
-              "class": "Application",
-              "template": "http",
-              "serviceMain": {
-                "class": "Service_HTTP",
-                "virtualAddresses": [
-                  {
-                    "use": "/Tenant_1/Shared/Service_Address_01_B"
-                  }
-                ],
-                "snat": "auto",
-                "pool": "/Tenant_1/Shared/Service_01_Pool",
-                "profileHTTP": {
-                  "use": "/Tenant_1/Shared/Custom_HTTP_Profile"
-                },
-                "policyWAF": {
-                  "use": "/Tenant_1/Shared/Custom_WAF_Policy"
-                }
-              }
-            },
-            "HTTPS_Service_01_A": {
-              "class": "Application",
-              "template": "https",
-              "serviceMain": {
-                "class": "Service_HTTPS",
-                "virtualAddresses": [
-                  {
-                    "use": "/Tenant_1/Shared/Service_Address_01_A"
-                  }
-                ],
-                "snat": "auto",
-                "pool": "/Tenant_1/Shared/Service_01_Pool",
-                "serverTLS": {
-                  "bigip": "/Common/clientssl"
-                },
-                "redirect80": false,
-                "profileHTTP": {
-                  "use": "/Tenant_1/Shared/Custom_HTTP_Profile"
-                },
-                "policyWAF": {
-                  "use": "/Tenant_1/Shared/Custom_WAF_Policy"
-                }
-              }
-            },
-            "HTTPS_Service_01_B": {
-              "class": "Application",
-              "template": "https",
-              "serviceMain": {
-                "class": "Service_HTTPS",
-                "virtualAddresses": [
-                  {
-                    "use": "/Tenant_1/Shared/Service_Address_01_B"
-                  }
-                ],
-                "snat": "auto",
-                "pool": "/Tenant_1/Shared/Service_01_Pool",
-                "serverTLS": {
-                  "bigip": "/Common/clientssl"
-                },
-                "redirect80": false,
-                "profileHTTP": {
-                  "use": "/Tenant_1/Shared/Custom_HTTP_Profile"
-                },
-                "policyWAF": {
-                  "use": "/Tenant_1/Shared/Custom_WAF_Policy"
-                }
-              }
-            }
-          }
-        }
-      },
-      {
-        "extensionType": "do",
-        "type": "inline",
-        "value": {
-          "schemaVersion": "1.0.0",
-          "class": "Device",
-          "async": true,
-          "label": "Standalone 3NIC BIG-IP declaration for Declarative Onboarding with BYOL license",
-          "Common": {
-            "class": "Tenant",
-            "My_DbVariables": {
-              "class": "DbVariables",
-              "config.allow.rfc3927": "enable",
-              "tm.tcpudptxchecksum": "Software-only"
-            },
-            "My_Provisioning": {
-              "asm": "nominal",
-              "class": "Provision",
-              "ltm": "nominal"
-            },
-            "My_Ntp": {
-              "class": "NTP",
-              "servers": [
-                "0.pool.ntp.org",
-                "1.pool.ntp.org"
-              ],
-              "timezone": "UTC"
-            },
-            "My_Dns": {
-              "class": "DNS",
-              "nameServers": [
-                "169.254.169.253"
-              ],
-              "search": [
-                "f5.com"
-              ]
-            },
-            "My_System": {
-              "autoPhonehome": true,
-              "class": "System",
-              "hostname": "{{{HOST_NAME}}}"
-            },
-            "admin": {
-              "class": "User",
-              "userType": "regular",
-              "password": "{{{BIGIP_PASSWORD}}}",
-              "shell": "bash"
-            },
-            "external": {
-              "class": "VLAN",
-              "tag": 4094,
-              "mtu": 1500,
-              "interfaces": [
-                {
-                  "name": "1.1",
-                  "tagged": false
-                }
-              ]
-            },
-            "external-self": {
-              "class": "SelfIp",
-              "address": "{{{SELF_IP_EXTERNAL}}}",
-              "vlan": "external",
-              "allowService": [
-                "tcp:443",
-                "udp:1026",
-                "tcp:4353",
-                "tcp:6123",
-                "tcp:6124",
-                "tcp:6125",
-                "tcp:6126",
-                "tcp:6127",
-                "tcp:6128"
-              ],
-              "trafficGroup": "traffic-group-local-only"
-            },
-            "internal": {
-              "class": "VLAN",
-              "interfaces": [
-                {
-                  "name": "1.2",
-                  "tagged": false
-                }
-              ],
-              "mtu": 1500,
-              "tag": 4093
-            },
-            "internal-self": {
-              "class": "SelfIp",
-              "address": "{{{SELF_IP_INTERNAL}}}",
-              "allowService": "none",
-              "trafficGroup": "traffic-group-local-only",
-              "vlan": "internal"
-            },
-            "default": {
-              "class": "Route",
-              "gw": "{{{DEFAULT_GW}}}",
-              "network": "default",
-              "mtu": 1500,
-              "localOnly": true
-            },
-            "configSync": {
-              "class": "ConfigSync",
-              "configsyncIp": "/Common/external-self/address"
-            },
-            "failoverAddress": {
-              "class": "FailoverUnicast",
-              "address": "/Common/external-self/address"
-            },
-            "failoverGroup": {
-              "class": "DeviceGroup",
-              "type": "sync-failover",
-              "members": [
-                "{{{HOST_NAME}}}",
-                "{{{REMOTE_HOST_NAME}}}"
-              ],
-              "owner": "/Common/failoverGroup/members/0",
-              "autoSync": true,
-              "saveOnAutoSync": false,
-              "networkFailover": true,
-              "fullLoadOnSync": false,
-              "asmSync": false
-            },
-            "trust": {
-              "class": "DeviceTrust",
-              "localUsername": "admin",
-              "localPassword": "{{{BIGIP_PASSWORD}}}",
-              "remoteHost": "/Common/failoverGroup/members/0",
-              "remoteUsername": "admin",
-              "remotePassword": "{{{BIGIP_PASSWORD}}}"
-            }
-          }
-        }
-      }
-    ]
-  },
-  "runtime_parameters": [
-    {
-      "name": "SECRET_ID",
-      "type": "url",
-      "value": "file:///config/cloud/secret_id"
-    },
-    {
-      "name": "LICENSE_KEY",
-      "type": "url",
-      "value": "file:///config/cloud/license_key"
-    },
-    {
-      "name": "BIGIP_PASSWORD",
-      "type": "secret",
-      "secretProvider": {
-        "environment": "aws",
-        "secretId": "{{{SECRET_ID}}}",
-        "type": "SecretsManager",
-        "version": "AWSCURRENT"
-      }
-    },
-    {
-      "name": "HOST_NAME",
-      "type": "tag",
-      "tagProvider": {
-        "environment": "aws",
-        "key": "hostname"
-      }
-    },
-    {
-      "name": "REMOTE_HOST_NAME",
-      "type": "tag",
-      "tagProvider": {
-        "environment": "aws",
-        "key": "bigIpPeerHostname"
-      }
-    },
-    {
-      "name": "SELF_IP_EXTERNAL",
-      "type": "metadata",
-      "metadataProvider": {
-        "environment": "aws",
-        "type": "network",
-        "field": "local-ipv4s",
-        "index": 1
-      }
-    },
-    {
-      "name": "SELF_IP_INTERNAL",
-      "type": "metadata",
-      "metadataProvider": {
-        "type": "network",
-        "environment": "aws",
-        "field": "local-ipv4s",
-        "index": 2
-      }
-    },
-    {
-      "name": "DEFAULT_GW",
-      "type": "metadata",
-      "metadataProvider": {
-        "environment": "aws",
-        "type": "network",
-        "field": "local-ipv4s",
-        "index": 1,
-        "ipcalc": "first"
-      }
-    },
-    {
-      "name": "REGION",
-      "type": "metadata",
-      "metadataProvider": {
-        "environment": "aws",
-        "type": "uri",
-        "value": "/latest/dynamic/instance-identity/document",
-        "query": "region"
-      }
-    }
-  ]
-}
+controls:
+  logLevel: info
+  logFilename: "/var/log/cloud/bigIpRuntimeInit.log"
+extension_packages:
+  install_operations:
+    - extensionType: do
+      extensionVersion: 1.32.0
+      extensionHash: 56eff7e20abb8c0636d2293926cd5106cefff9e2b4bb71592c661cfd6732af3e
+    - extensionType: as3
+      extensionVersion: 3.39.0
+      extensionHash: 54d82a0844b46555c023e22a7887debd8ce49dd3ab4a4a4afca9ee30541dca23
+    - extensionType: cf
+      extensionVersion: 1.13.0
+      extensionHash: 93be496d250838697d8a9aca8bd0e6fe7480549ecd43280279f0a63fc741ab50
+extension_services:
+  service_operations:
+    - extensionType: do
+      type: inline
+      value:
+        schemaVersion: 1.0.0
+        class: Device
+        async: true
+        label: Standalone 3NIC BIG-IP declaration for Declarative Onboarding with BYOL
+          license
+        Common:
+          class: Tenant
+          My_DbVariables:
+            class: DbVariables
+            config.allow.rfc3927: enable
+            tm.tcpudptxchecksum: Software-only
+          My_Provisioning:
+            asm: nominal
+            class: Provision
+            ltm: nominal
+          My_Ntp:
+            class: NTP
+            servers:
+              - 0.pool.ntp.org
+              - 1.pool.ntp.org
+            timezone: UTC
+          My_Dns:
+            class: DNS
+            nameServers:
+              - 169.254.169.253
+            search:
+              - f5.com
+          My_System:
+            autoPhonehome: true
+            class: System
+            hostname: "{{{HOST_NAME}}}"
+          My_License:
+            class: License
+            licenseType: regKey
+            regKey: "{{{LICENSE_KEY}}}"
+          admin:
+            class: User
+            userType: regular
+            password: "{{{BIGIP_PASSWORD}}}"
+            shell: bash
+          external:
+            class: VLAN
+            tag: 4094
+            mtu: 1500
+            interfaces:
+              - name: '1.1'
+                tagged: false
+          external-self:
+            class: SelfIp
+            address: "{{{SELF_IP_EXTERNAL}}}"
+            vlan: external
+            allowService:
+              - tcp:443
+              - udp:1026
+              - tcp:4353
+              - tcp:6123
+              - tcp:6124
+              - tcp:6125
+              - tcp:6126
+              - tcp:6127
+              - tcp:6128
+            trafficGroup: traffic-group-local-only
+          internal:
+            class: VLAN
+            interfaces:
+              - name: '1.2'
+                tagged: false
+            mtu: 1500
+            tag: 4093
+          internal-self:
+            class: SelfIp
+            address: "{{{SELF_IP_INTERNAL}}}"
+            allowService: none
+            trafficGroup: traffic-group-local-only
+            vlan: internal
+          default:
+            class: Route
+            gw: "{{{DEFAULT_GW}}}"
+            network: default
+            mtu: 1500
+            localOnly: true
+    - extensionType: cf
+      type: inline
+      value:
+        schemaVersion: 1.0.0
+        class: Cloud_Failover
+        environment: aws
+        controls:
+          class: Controls
+          logLevel: silly
+        externalStorage:
+          encryption:
+            serverSide:
+              enabled: true
+              algorithm: aws:kms
+          scopingTags:
+            f5_cloud_failover_label: bigip_high_availability_solution
+        failoverAddresses:
+          enabled: true
+          scopingTags:
+            f5_cloud_failover_label: bigip_high_availability_solution
+          requireScopingTags: false
+    - extensionType: as3
+      type: inline
+      value:
+        class: ADC
+        schemaVersion: 3.0.0
+        label: Failover
+        remark: Failover
+        Tenant_1:
+          class: Tenant
+          Shared:
+            class: Application
+            template: shared
+            Service_01_Pool:
+              class: Pool
+              remark: Service 1 shared pool
+              members:
+                - servicePort: 80
+                  addressDiscovery: aws
+                  region: "{{{REGION}}}"
+                  updateInterval: 60
+                  tagKey: aws:cloudformation:logical-id
+                  tagValue: AppInstance
+                  addressRealm: private
+              monitors:
+                - http
+            Custom_HTTP_Profile:
+              class: HTTP_Profile
+              xForwardedFor: true
+            Custom_WAF_Policy:
+              class: WAF_Policy
+              url: https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v2.4.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
+              enforcementMode: blocking
+              ignoreChanges: false
+            Service_Address_01_A:
+              class: Service_Address
+              virtualAddress: 10.0.0.101
+              trafficGroup: none
+            Service_Address_01_B:
+              class: Service_Address
+              virtualAddress: 10.0.4.101
+              trafficGroup: none
+          HTTP_Service_01_A:
+            class: Application
+            template: http
+            serviceMain:
+              class: Service_HTTP
+              virtualAddresses:
+                - use: "/Tenant_1/Shared/Service_Address_01_A"
+              snat: auto
+              pool: "/Tenant_1/Shared/Service_01_Pool"
+              profileHTTP:
+                use: "/Tenant_1/Shared/Custom_HTTP_Profile"
+              policyWAF:
+                use: "/Tenant_1/Shared/Custom_WAF_Policy"
+          HTTP_Service_01_B:
+            class: Application
+            template: http
+            serviceMain:
+              class: Service_HTTP
+              virtualAddresses:
+                - use: "/Tenant_1/Shared/Service_Address_01_B"
+              snat: auto
+              pool: "/Tenant_1/Shared/Service_01_Pool"
+              profileHTTP:
+                use: "/Tenant_1/Shared/Custom_HTTP_Profile"
+              policyWAF:
+                use: "/Tenant_1/Shared/Custom_WAF_Policy"
+          HTTPS_Service_01_A:
+            class: Application
+            template: https
+            serviceMain:
+              class: Service_HTTPS
+              virtualAddresses:
+                - use: "/Tenant_1/Shared/Service_Address_01_A"
+              snat: auto
+              pool: "/Tenant_1/Shared/Service_01_Pool"
+              serverTLS:
+                bigip: "/Common/clientssl"
+              redirect80: false
+              profileHTTP:
+                use: "/Tenant_1/Shared/Custom_HTTP_Profile"
+              policyWAF:
+                use: "/Tenant_1/Shared/Custom_WAF_Policy"
+          HTTPS_Service_01_B:
+            class: Application
+            template: https
+            serviceMain:
+              class: Service_HTTPS
+              virtualAddresses:
+                - use: "/Tenant_1/Shared/Service_Address_01_B"
+              snat: auto
+              pool: "/Tenant_1/Shared/Service_01_Pool"
+              serverTLS:
+                bigip: "/Common/clientssl"
+              redirect80: false
+              profileHTTP:
+                use: "/Tenant_1/Shared/Custom_HTTP_Profile"
+              policyWAF:
+                use: "/Tenant_1/Shared/Custom_WAF_Policy"
+    - extensionType: do
+      type: inline
+      value:
+        schemaVersion: 1.0.0
+        class: Device
+        async: true
+        label: Standalone 3NIC BIG-IP declaration for Declarative Onboarding with BYOL
+          license
+        Common:
+          class: Tenant
+          My_DbVariables:
+            class: DbVariables
+            config.allow.rfc3927: enable
+            tm.tcpudptxchecksum: Software-only
+          My_Provisioning:
+            asm: nominal
+            class: Provision
+            ltm: nominal
+          My_Ntp:
+            class: NTP
+            servers:
+              - 0.pool.ntp.org
+              - 1.pool.ntp.org
+            timezone: UTC
+          My_Dns:
+            class: DNS
+            nameServers:
+              - 169.254.169.253
+            search:
+              - f5.com
+          My_System:
+            autoPhonehome: true
+            class: System
+            hostname: "{{{HOST_NAME}}}"
+          admin:
+            class: User
+            userType: regular
+            password: "{{{BIGIP_PASSWORD}}}"
+            shell: bash
+          external:
+            class: VLAN
+            tag: 4094
+            mtu: 1500
+            interfaces:
+              - name: '1.1'
+                tagged: false
+          external-self:
+            class: SelfIp
+            address: "{{{SELF_IP_EXTERNAL}}}"
+            vlan: external
+            allowService:
+              - tcp:443
+              - udp:1026
+              - tcp:4353
+              - tcp:6123
+              - tcp:6124
+              - tcp:6125
+              - tcp:6126
+              - tcp:6127
+              - tcp:6128
+            trafficGroup: traffic-group-local-only
+          internal:
+            class: VLAN
+            interfaces:
+              - name: '1.2'
+                tagged: false
+            mtu: 1500
+            tag: 4093
+          internal-self:
+            class: SelfIp
+            address: "{{{SELF_IP_INTERNAL}}}"
+            allowService: none
+            trafficGroup: traffic-group-local-only
+            vlan: internal
+          default:
+            class: Route
+            gw: "{{{DEFAULT_GW}}}"
+            network: default
+            mtu: 1500
+            localOnly: true
+          configSync:
+            class: ConfigSync
+            configsyncIp: "/Common/external-self/address"
+          failoverAddress:
+            class: FailoverUnicast
+            address: "/Common/external-self/address"
+          failoverGroup:
+            class: DeviceGroup
+            type: sync-failover
+            members:
+              - "{{{HOST_NAME}}}"
+              - "{{{REMOTE_HOST_NAME}}}"
+            owner: "/Common/failoverGroup/members/0"
+            autoSync: true
+            saveOnAutoSync: false
+            networkFailover: true
+            fullLoadOnSync: false
+            asmSync: false
+          trust:
+            class: DeviceTrust
+            localUsername: admin
+            localPassword: "{{{BIGIP_PASSWORD}}}"
+            remoteHost: "/Common/failoverGroup/members/0"
+            remoteUsername: admin
+            remotePassword: "{{{BIGIP_PASSWORD}}}"
+runtime_parameters:
+  - name: SECRET_ID
+    type: url
+    value: file:///config/cloud/secret_id
+  - name: LICENSE_KEY
+    type: url
+    value: file:///config/cloud/license_key
+  - name: BIGIP_PASSWORD
+    type: secret
+    secretProvider:
+      environment: aws
+      secretId: "{{{SECRET_ID}}}"
+      type: SecretsManager
+      version: AWSCURRENT
+  - name: HOST_NAME
+    type: tag
+    tagProvider:
+      environment: aws
+      key: hostname
+  - name: REMOTE_HOST_NAME
+    type: tag
+    tagProvider:
+      environment: aws
+      key: bigIpPeerHostname
+  - name: SELF_IP_EXTERNAL
+    type: metadata
+    metadataProvider:
+      environment: aws
+      type: network
+      field: local-ipv4s
+      index: 1
+  - name: SELF_IP_INTERNAL
+    type: metadata
+    metadataProvider:
+      type: network
+      environment: aws
+      field: local-ipv4s
+      index: 2
+  - name: DEFAULT_GW
+    type: metadata
+    metadataProvider:
+      environment: aws
+      type: network
+      field: local-ipv4s
+      index: 1
+      ipcalc: first
+  - name: REGION
+    type: metadata
+    metadataProvider:
+      environment: aws
+      type: uri
+      value: "/latest/dynamic/instance-identity/document"
+      query: region
