@@ -401,8 +401,10 @@ Parameters:
     Type: String
   bigIpPeerAddr:
     Default: '10.0.1.11'
-    Description: Type the static self IP address of the remote host here. Set to empty
-      string if not configuring peering with a remote host on this device.
+    Description: Provide the static address of the remote peer used for clustering.
+      In this failover solution, clustering is initiated from the second instance
+      (02) to the first instance (01) so you would provide the first instances Self
+      IP address.
     Type: String
   bigIpPeerHostname:
     Default: ''
