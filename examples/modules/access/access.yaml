@@ -902,6 +902,18 @@ Resources:
                     - !Ref s3Bucket
                     - /*
                 Sid: DenyPublishingUnencryptedResources
+              - Action: 
+                  - s3:PutObject
+                Condition:
+                  StringNotEquals:
+                      s3:x-amz-server-side-encryption: AES256
+                Effect: Deny
+                Resource: !Join
+                  - ''
+                  - - "arn:*:s3:::"
+                    - !Ref s3Bucket
+                    - /*
+                Sid: DenyIncorrectEncryptionHeader
               - Action:
                   - 'secretsmanager:DescribeSecret'
                   - 'secretsmanager:GetResourcePolicy'

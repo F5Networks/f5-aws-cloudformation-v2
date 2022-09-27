@@ -111,7 +111,7 @@ extension_services:
           encryption:
             serverSide:
               enabled: true
-              algorithm: aws:kms
+              algorithm: AES256
           scopingTags:
             f5_cloud_failover_label: bigip_high_availability_solution
         failoverAddresses:
