@@ -143,7 +143,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | bastionScalingMaxSize | No | 2 | string | Maximum number of Bastion instances (2-10) that can be created in the Autoscale Group. |
 | bastionScalingMinSize | No | 1 | string | Minimum number of Bastion instances (1-9) you want available in the Autoscale Group. |
 | bigIpCustomImageId | No |  | string | Provide BIG-IP AMI ID you wish to deploy. bigIpCustomImageId is required when bigIpImage is not specified. Otherwise, can leave empty. |
-| bigIpImage | No | \*16.1.2.2-0.0.28**PAYG-Adv WAF Plus 25Mbps\*  | string | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. bigIpImage is required when bigIpCustomImageId is not specified. |
+| bigIpImage | No | \*16.1.3.1-0.0.11**PAYG-Adv WAF Plus 25Mbps\*  | string | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. bigIpImage is required when bigIpCustomImageId is not specified. |
 | bigIpInstanceProfile | No |  | string | Enter the name of an existing IAM instance profile with applied IAM policy to be associated to the BIG-IP virtual machine(s). Leave default to create a new instance profile. |
 | bigIpInstanceType | No | m5.xlarge  | string | Enter valid instance type. |
 | bigIpMaxBatchSize | No | 5  | string | Specifies the maximum number of instances that CloudFormation updates. |
@@ -219,7 +219,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | bastionScalingMaxSize | No | 2 | string | Maximum number of Bastion instances (2-10) that can be created in the Autoscale Group. |
 | bastionScalingMinSize | No | 1 | string | Minimum number of Bastion instances (1-9) you want available in the Autoscale Group. |
 | bigIpCustomImageId | No |  | string | Provide BIG-IP AMI ID you wish to deploy. bigIpCustomImageId is required when bigIpImage is not specified. Otherwise, can leave empty. |
-| bigIpImage | No | \*16.1.2.2-0.0.28**PAYG-Adv WAF Plus 25Mbps\*  | string | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. bigIpImage is required when bigIpCustomImageId is not specified. |
+| bigIpImage | No | \*16.1.3.1-0.0.11**PAYG-Adv WAF Plus 25Mbps\*  | string | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. bigIpImage is required when bigIpCustomImageId is not specified. |
 | bigIpInstanceProfile | No |  | string | Enter the name of an existing IAM instance profile with applied IAM policy to be associated to the BIG-IP virtual machine(s). Leave default to create a new instance profile. |
 | bigIpInstanceType | No | m5.xlarge  | string | Enter valid instance type. |
 | bigIpMaxBatchSize | No | 5  | string | Specifies the maximum number of instances that CloudFormation updates. |
@@ -930,7 +930,7 @@ List of endpoints BIG-IP may contact during onboarding:
 
 | BIG-IP Version | Build Number |
 | --- | --- |
-| 16.1.2.2 | 0.0.28 |
+| 16.1.3.1 | 0.0.11 |
 | 14.1.4.6 | 0.0.6 |
 
 

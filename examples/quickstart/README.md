@@ -674,7 +674,7 @@ These templates have only been explicitly tested and validated with the followin
 
 | BIG-IP Version | Build Number |
 | --- | --- |
-| 16.1.2.2 | 0.0.28 |
+| 16.1.3.1 | 0.0.11 |
 | 14.1.4.6 | 0.0.6 |
 
 These templates leverage Runtime-Init, which requires BIG-IP Versions 14.1.2.6 and up, and are assumed compatible to work. 
