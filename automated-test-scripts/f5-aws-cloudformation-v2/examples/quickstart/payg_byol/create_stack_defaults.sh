@@ -31,7 +31,7 @@ fi
 aws s3 cp --region <REGION> <DEWPOINT JOB ID>-template.yaml s3://"$bucket_name"/<DEWPOINT JOB ID>-template.yaml --acl public-read
 
 # create parameters
-parameters="ParameterKey=allowUsageAnalytics,ParameterValue=No \
+parameters="ParameterKey=allowUsageAnalytics,ParameterValue=false \
 ParameterKey=restrictedSrcAddressMgmt,ParameterValue=$src_ip \
 ParameterKey=restrictedSrcAddressApp,ParameterValue=$src_ip \
 ParameterKey=uniqueString,ParameterValue=<UNIQUESTRING> \

@@ -118,7 +118,7 @@ fi
 
 
 parameters="\
-ParameterKey=allowUsageAnalytics,ParameterValue=No \
+ParameterKey=allowUsageAnalytics,ParameterValue=false \
 ParameterKey=instanceProfile,ParameterValue=$bigIpInstanceProfile \
 ParameterKey=bigIpRuntimeInitConfig,ParameterValue=$runtimeConfig \
 ParameterKey=bigIpRuntimeInitPackageUrl,ParameterValue=<RUNTIME_URL> \

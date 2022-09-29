@@ -178,9 +178,9 @@ Outputs:
 Parameters:
   allowUsageAnalytics:
     AllowedValues:
-      - 'Yes'
-      - 'No'
-    Default: 'Yes'
+      - 'true'
+      - 'false'
+    Default: 'true'
     Description: This deployment can send anonymous statistics to F5 to help us determine
       how to improve our solutions. If you select **false** statistics are not sent.
     Type: String
@@ -619,7 +619,7 @@ Resources:
             - |
               echo ${BIG_IQ_SECRET_ID} > /config/cloud/bigiq_secret_id
             - |
-              if [[ ${ALLOW_ANALYTICS} == "No" ]]; then TELEMETRY_FLAG="--skip-telemetry"; else TELEMETRY_FLAG=""; fi
+              if [[ ${ALLOW_ANALYTICS} == "false" ]]; then TELEMETRY_FLAG="--skip-telemetry"; else TELEMETRY_FLAG=""; fi
             - |
               # Download or render f5-bigip-runtime-init config
             - |

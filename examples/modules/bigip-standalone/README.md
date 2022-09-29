@@ -46,7 +46,7 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 
 | Parameter | Required | Default | Type | Description |
 | --- | --- | --- | --- | --- |
-| allowUsageAnalytics | No | Yes | boolean | This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **No** statistics are not sent. |
+| allowUsageAnalytics | No | true | boolean | This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **No** statistics are not sent. |
 | application | No | f5app | string | Application Tag. |
 | bigIpRuntimeInitConfig | Yes |  | string | Delivery URL for config file (YAML/JSON) or JSON string. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run | string | URL for BIG-IP Runtime Init package. |
