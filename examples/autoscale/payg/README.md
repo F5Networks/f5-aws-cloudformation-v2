@@ -129,7 +129,7 @@ This solution leverages more traditional Autoscale configuration management prac
 
 | Parameter | Required | Default | Type | Description |
 | --- | --- | --- |  --- | --- |
-| allowUsageAnalytics | No | Yes | boolean | This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **No** statistics are not sent. |
+| allowUsageAnalytics | No | true | string | This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **false** statistics are not sent. |
 | appContainerName | No | f5devcentral/f5-demo-app:latest  | string | The name of the public container used when configuring the application server. If this value is left blank, the application module template is not deployed. |
 | application | No | f5app | string | Application Tag. |
 | appScalingMaxSize | No | 50 | string | Maximum number of Application instances (2-50) that can be created in the Autoscale Group. |
@@ -161,20 +161,20 @@ This solution leverages more traditional Autoscale configuration management prac
 | environment | No | f5env | string | Environment Tag. |
 | group | No | f5group  | string | Group Tag. |
 | loggingS3BucketName | No |   | string | The name of the S3 bucket where BIG-IP logs will be sent. |
-| metricNameSpace | Yes |   | string | CloudWatch namespace used for custom metrics. This should match the namespace defined in your Telemetry Streaming declaration within bigipRuntimInitConfig. |
-| notificationEmail | Yes |   | string | Valid email address to send Autoscaling event notifications. |
+| metricNameSpace | **Yes** |   | string | CloudWatch namespace used for custom metrics. This should match the namespace defined in your Telemetry Streaming declaration within bigipRuntimInitConfig. |
+| notificationEmail | **Yes** |   | string | Valid email address to send Autoscaling event notifications. |
 | numAzs | No | 2  | string | Number of Availability Zones to use in the VPC. The region must support the number of availability zones entered. The minimum is 1 and the maximum is 4. |
 | numSubnets | No | 3  | string | Number of subnets per Availability Zone to create. Subnets are labeled `subnetx` where x is the subnet number. The minimum is 2 and the maximum is 8. In a case when BIG-IP has no public IP, |numSubnets needs to be set to 3 |
 | owner | No | f5owner | string | Application Tag. |
 | provisionExternalBigipLoadBalancer | No | true | string | Flag to provision external Load Balancer. |
 | provisionInternalBigipLoadBalancer | No | false  | string | Flag to provision internal Load Balancer. |
 | provisionPublicIp | No | true  | string | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host tier will be provisioned instead. See [diagram](diagram-w-bastion.png). |
-| restrictedSrcAddressMgmt | Yes |   | string | An IP address or address range (in CIDR notation) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please do NOT use "0.0.0.0/0". Instead, restrict the IP address range to your client or trusted network, for example "55.55.55.55/32". Production should never expose the BIG-IP Management interface to the Internet. |
-| restrictedSrcAddressApp | Yes |   | string | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
+| restrictedSrcAddressMgmt | **Yes** |   | string | An IP address or address range (in CIDR notation) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please do NOT use "0.0.0.0/0". Instead, restrict the IP address range to your client or trusted network, for example "55.55.55.55/32". Production should never expose the BIG-IP Management interface to the Internet. |
+| restrictedSrcAddressApp | **Yes** |   | string | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
 | s3BucketRegion | No | us-east-1 | string | The AWS Region for the S3 bucket containing the templates. |
 | s3BucketName | No |  f5-cft-v2 | string | The S3 bucket containing the templates. The S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-). |
 | snsEvents | No | autoscaling:EC2_INSTANCE_LAUNCH,autoscaling:EC2_INSTANCE_LAUNCH_ERROR  | string | Provides list of SNS Topics used on Autoscale Group. | 
-| sshKey | Yes |   | string | Enter the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. For example, `myAWSkey`. |
+| sshKey | **Yes** |   | string | Enter the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. For example, `myAWSkey`. |
 | subnetMask | No | 24 | string | Mask for subnets. Valid values include 16-28. Note: supernetting of VPC occurs based on the mask provided; therefore, number of networks must be greater than or equal to the number of subnets created. |
 | uniqueString | No | myUniqStr  | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
 | vpcCidr | No | 10.0.0.0/16 | string | CIDR block for the VPC. |
@@ -197,7 +197,7 @@ This solution leverages more traditional Autoscale configuration management prac
 
 | Parameter | Required | Default | Type | Description |
 | --- | --- | --- |  --- | --- |
-| allowUsageAnalytics | No | Yes | boolean | This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **No** statistics are not sent. |
+| allowUsageAnalytics | No | true | string | This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **false** statistics are not sent. |
 | appContainerName | No | f5devcentral/f5-demo-app:latest  | string | The name of the public container used when configuring the application server. If this value is left blank, the application module template is not deployed. |
 | application | No | f5app | string | Application Tag. |
 | appScalingMaxSize | No | 50 | string | Maximum number of Application instances (2-50) that can be created in the Autoscale Group. |
@@ -221,38 +221,38 @@ This solution leverages more traditional Autoscale configuration management prac
 | bigIpScalingMaxSize | No | 50 | string | Maximum number of BIG-IP instances (2-100) that can be created in the Autoscale Group. |
 | bigIpScalingMinSize | No | 1 | string | Minimum number of BIG-IP instances (1-99) you want available in the Autoscale Group. |
 | bigIpSecretArn | No |  | string | The ARN of a Secrets Manager secret to create READ permissions for. For example, if customizing your runtime-init config with an admin password, logging credential, etc. |
-| bigIpSubnetAz1 | Yes |   | string | Availability Zone 1 BIG-IP Subnet ID. |
-| bigIpSubnetAz2 | Yes |   | string | Availability Zone 2 BIG-IP | 
+| bigIpSubnetAz1 | **Yes** |   | string | Availability Zone 1 BIG-IP Subnet ID. |
+| bigIpSubnetAz2 | **Yes** |   | string | Availability Zone 2 BIG-IP | 
 | cloudWatchLogGroupName | No | f5telemetry | string | The name of the CloudWatch Log Group. Note: The name is global for a region. Will be added to IAM role. |
 | cloudWatchLogStreamName | No | f5-waf-logs  | string | The name of the CloudWatch Log Stream. |
 | cloudWatchDashboardName | No | F5-BIGIP-WAF-View  | string | The name of the CloudWatch Log Dashboard. The name is global for a region. |
 | cost | No | f5cost  | string | Cost Center Tag. |
 | createLogDestination | No | true | string | Select true to create a new CloudWatch logging destination. |
 | environment | No | f5env | string | Environment Tag. |
-| externalSubnetAz1 | Yes |   | string | Availability Zone 1 External Subnet ID. |
-| externalSubnetAz2 | Yes |   | string | Availability Zone 2 External Subnet ID. |
-| internalSubnetAz2 | Yes |   | string | Availability Zone 1 Internal Subnet ID. |
-| internalSubnetAz2 | Yes |   | string | Availability Zone 2 Internal Subnet ID. |
+| externalSubnetAz1 | **Yes** |   | string | Availability Zone 1 External Subnet ID. |
+| externalSubnetAz2 | **Yes** |   | string | Availability Zone 2 External Subnet ID. |
+| internalSubnetAz2 | **Yes** |   | string | Availability Zone 1 Internal Subnet ID. |
+| internalSubnetAz2 | **Yes** |   | string | Availability Zone 2 Internal Subnet ID. |
 | group | No | f5group  | string | Group Tag. |
 | loggingS3BucketName | No |   | string | The name of the S3 bucket where BIG-IP logs will be sent. |
-| metricNameSpace | Yes |   | string | CloudWatch namespace used for custom metrics. This should match the namespace defined in your Telemetry Streaming declaration within bigipRuntimInitConfig. |
-| notificationEmail | Yes |   | string | Valid email address to send Autoscaling event notifications. |
+| metricNameSpace | **Yes** |   | string | CloudWatch namespace used for custom metrics. This should match the namespace defined in your Telemetry Streaming declaration within bigipRuntimInitConfig. |
+| notificationEmail | **Yes** |   | string | Valid email address to send Autoscaling event notifications. |
 | numAzs | No | 2  | string | Number of Availability Zones to use in the VPC. The region must support the number of availability zones entered. The minimum is 1 and the maximum is 4. |
 | numSubnets | No | 3  | string | Number of subnets per Availability Zone to create. Subnets are labeled `subnetx` where x is the subnet number. The minimum is 2 and the maximum is 8. In a case when BIG-IP has no public IP, |numSubnets needs to be set to 3 |
 | owner | No | f5owner  | string | Application Tag. |
 | provisionExternalBigipLoadBalancer | No | true | string | Flag to provision external Load Balancer. |
 | provisionInternalBigipLoadBalancer | No | false  | string | Flag to provision internal Load Balancer. |
 | provisionPublicIp | No | true  | string | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host tier will be provisioned instead. See [diagram](diagram-w-bastion.png). |
-| restrictedSrcAddressMgmt | Yes |   | string | An IP address or address range (in CIDR notation) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please do NOT use "0.0.0.0/0". Instead, restrict the IP address range to your client or trusted network, for example "55.55.55.55/32". Production should never expose the BIG-IP Management interface to the Internet. |
-| restrictedSrcAddressApp | Yes |   | string | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
+| restrictedSrcAddressMgmt | **Yes** |   | string | An IP address or address range (in CIDR notation) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please do NOT use "0.0.0.0/0". Instead, restrict the IP address range to your client or trusted network, for example "55.55.55.55/32". Production should never expose the BIG-IP Management interface to the Internet. |
+| restrictedSrcAddressApp | **Yes** |   | string | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
 | s3BucketRegion | No | us-east-1 | string | The AWS Region for the S3 bucket containing the templates. |
 | s3BucketName | No |  f5-cft-v2 | string | The S3 bucket containing the templates. The S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-). |
 | snsEvents | No | autoscaling:EC2_INSTANCE_LAUNCH,autoscaling:EC2_INSTANCE_LAUNCH_ERROR  | string | Provides list of SNS Topics used on Autoscale Group. | 
-| sshKey | Yes |   | string | Enter the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. For example, `myAWSkey`. |
+| sshKey | **Yes** |   | string | Enter the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP and application virtual machines. For example, `myAWSkey`. |
 | subnetMask | No | 24 | string | Mask for subnets. Valid values include 16-28. Note: supernetting of VPC occurs based on the mask provided; therefore, number of networks must be greater than or equal to the number of subnets created. |
 | uniqueString | No | myUniqStr  | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
 | vpcCidr | No | 10.0.0.0/16 | string | CIDR block for the VPC. |
-| vpcId | Yes |   | string | ID for the existing VPC. |
+| vpcId | **Yes** |   | string | ID for the existing VPC. |
 
 ### Existing Network Template Outputs
 

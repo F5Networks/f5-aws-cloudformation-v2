@@ -239,9 +239,9 @@ Outputs:
 Parameters:
   allowUsageAnalytics:
     AllowedValues:
-      - 'Yes'
-      - 'No'
-    Default: 'Yes'
+      - 'true'
+      - 'false'
+    Default: 'true'
     Description: This deployment can send anonymous statistics to F5 to help us determine
       how to improve our solutions. If you select **false** statistics are not sent.
     Type: String

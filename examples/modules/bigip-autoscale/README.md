@@ -51,7 +51,7 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 
 | Parameter | Required | Default | Type | Description |
 | --- | --- | --- | --- | --- |
-| allowUsageAnalytics | No | Yes | boolean | This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **No** statistics are not sent. |
+| allowUsageAnalytics | No | true | boolean | This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **No** statistics are not sent. |
 | application | No | f5app | string | Application Tag. |
 | bigIpExternalSecurityGroup | Yes |  | string | BIG-IP external security group. |
 | bigIpRuntimeInitConfig | Yes |  | string | Delivery URL for config file (YAML/JSON) or JSON string. |

@@ -55,7 +55,7 @@ cat <<EOF > parameters.json
 [
     {
         "ParameterKey": "allowUsageAnalytics",
-        "ParameterValue": "No"
+        "ParameterValue": "false"
     },
     {
         "ParameterKey": "application",
