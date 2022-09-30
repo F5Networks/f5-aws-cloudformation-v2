@@ -9,7 +9,7 @@
   },
   {
     "ParameterKey": "artifactLocation",
-    "ParameterValue": "f5-aws-cloudformation-v2/v2.4.0.0/examples/"
+    "ParameterValue": "f5-aws-cloudformation-v2/v2.5.0.0/examples/"
   },
   {
     "ParameterKey": "bigIpExternalSelfIp",
@@ -49,7 +49,7 @@
   },
   {
     "ParameterKey": "bigIpRuntimeInitConfig",
-    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.4.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml"
+    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg.yaml"
   },
   {
     "ParameterKey": "bigIpRuntimeInitPackageUrl",

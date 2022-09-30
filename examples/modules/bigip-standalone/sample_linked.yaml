@@ -6,7 +6,7 @@ Resources:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: >-
-        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v2.4.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml
+        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v2.5.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml
       Parameters:
         instanceProfile: ''
         bigIpRuntimeInitConfig: 'https://some-delivery-locatoion.com/config.yaml'
