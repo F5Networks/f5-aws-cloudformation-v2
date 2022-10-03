@@ -54,6 +54,10 @@ fi
 cat <<EOF > parameters.json
 [
     {
+        "ParameterKey": "allowUsageAnalytics",
+        "ParameterValue": "false"
+    },
+    {
         "ParameterKey": "application",
         "ParameterValue": "f5-app-<DEWPOINT JOB ID>"
     },
@@ -198,7 +202,7 @@ cat <<EOF > parameters.json
         "ParameterValue": "$logging_bucket_name"
     },
     {
-        "ParameterKey": "secretArn",
+        "ParameterKey": "bigIpSecretArn",
         "ParameterValue": "$secret_arn"
     },
     {

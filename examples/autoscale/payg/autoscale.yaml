@@ -23,6 +23,7 @@ Metadata:
           default: Amazon EC2 Configuration
         Parameters:
           - sshKey
+          - bigIpInstanceProfile
       - Label:
           default: DAG / Ingress
         Parameters:
@@ -48,10 +49,11 @@ Metadata:
           - bigIpImage
           - bigIpCustomImageId
           - bigIpInstanceType
+          - bigIpSecretArn
           - metricNameSpace
           - notificationEmail
-          - secretArn
           - snsEvents
+          - allowUsageAnalytics
       - Label:
           default: Application Configuration
         Parameters:
@@ -81,6 +83,8 @@ Metadata:
           - group
           - owner
     ParameterLabels:
+      allowUsageAnalytics:
+        default: Send anonymous statistics to F5
       appContainerName:
         default: Application docker image name
       appScalingMaxSize:
@@ -103,6 +107,8 @@ Metadata:
         default: Custom Image Id
       bigIpImage:
         default: F5 BIG-IP Image
+      bigIpInstanceProfile:
+        default: Instance profile
       bigIpInstanceType:
         default: Enter valid instance type.
       bigIpMaxBatchSize:
@@ -129,6 +135,8 @@ Metadata:
       bigIpScalingMinSize:
         default: Minimum number of BIG-IP instances that can be created in the Autoscale
           Group
+      bigIpSecretArn:
+        default: ARN of Secrets Manager secret
       cloudWatchLogGroupName:
         default: CloudWatch Log Group Name
       cloudWatchLogStreamName:
@@ -169,8 +177,6 @@ Metadata:
         default: S3 Bucket where Templates are Located
       s3BucketRegion:
         default: S3 Bucket Region where Templates are Located
-      secretArn:
-        default: ARN of Secrets Manager secret
       snsEvents:
         default: Provides list of SNS Events used for sending Notifications on Autoscale
           group
@@ -183,7 +189,7 @@ Metadata:
         default: Unique string
       vpcCidr:
         default: VPC CIDR
-  Version: 2.4.0.0
+  Version: 2.5.0.0
 Outputs:
   wafExternalDnsName:
     Condition: externalLB
@@ -231,6 +237,14 @@ Outputs:
       - Bastion
       - Outputs.bastionAutoscaleGroupName
 Parameters:
+  allowUsageAnalytics:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'true'
+    Description: This deployment can send anonymous statistics to F5 to help us determine
+      how to improve our solutions. If you select **false** statistics are not sent.
+    Type: String
   appContainerName:
     Default: 'f5devcentral/f5-demo-app:latest'
     Description: Application docker image name
@@ -259,7 +273,7 @@ Parameters:
     AllowedPattern: ^.*[0-9a-zA-Z]+/$
     ConstraintDescription: key prefix can include numbers, lowercase letters, uppercase
       letters, hyphens (-), and forward slash (/).
-    Default: f5-aws-cloudformation-v2/v2.4.0.0/examples/
+    Default: f5-aws-cloudformation-v2/v2.5.0.0/examples/
     Description: The path in the S3Bucket where the modules folder is located. Can
       include numbers, lowercase letters, uppercase letters, hyphens (-), and forward
       slash (/).
@@ -287,8 +301,14 @@ Parameters:
     Type: String
   bigIpImage:
     ConstraintDescription: Must be a valid F5 BIG-IP market place image
-    Default: '*16.1.2.2-0.0.28**PAYG-Best Plus 25Mbps*'
+    Default: '*16.1.3.1-0.0.11**PAYG-Best Plus 25Mbps*'
     Description: F5 BIG-IP market place image
+    Type: String
+  bigIpInstanceProfile:
+    Default: ''
+    Description: Enter the name of an existing IAM instance profile with applied IAM
+      policy to be associated to the BIG-IP virtual machine(s). Leave default to create
+      a new instance profile.
     Type: String
   bigIpInstanceType:
     AllowedValues:
@@ -338,7 +358,7 @@ Parameters:
     MinValue: 0
     Type: Number
   bigIpRuntimeInitConfig:
-    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.4.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg-with-app.yaml'
+    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg-with-app.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
       file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
       configuration.'
@@ -387,6 +407,12 @@ Parameters:
     MaxValue: 99
     MinValue: 1
     Type: Number
+  bigIpSecretArn:
+    Default: ''
+    Description: The ARN of a Secrets Manager secret to create READ permissions for.
+      For example, if customizing your runtime-init config with an admin password,
+      logging credential, etc.
+    Type: String
   cloudWatchLogGroupName:
     Default: ''
     Description: The name of the CloudWatch Log Group
@@ -507,10 +533,6 @@ Parameters:
     Description: The AWS Region where the Quick Start S3 bucket (s3BucketName) is
       hosted. When using your own bucket, you must specify this value.
     Type: String
-  secretArn:
-    Default: ''
-    Description: ARN of Secrets Manager secret
-    Type: String
   snsEvents:
     Description: Provides list of SNS Topics used on Autoscale Group.
     Type: List<String>
@@ -546,6 +568,9 @@ Parameters:
     Description: CIDR block for the VPC.
     Type: String
 Conditions:
+  createBigIpInstanceProfile: !Equals
+    - !Ref 'bigIpInstanceProfile'
+    - ""
   createLogDestination: !Equals
     - 'true'
     - !Ref 'createLogDestination'
@@ -587,7 +612,7 @@ Conditions:
   useSecretArn: !Not
     - !Equals
       - ''
-      - !Ref 'secretArn'
+      - !Ref 'bigIpSecretArn'
   useSecretLoggingS3Bucket: !And
     - !Condition 'useLoggingS3Bucket'
     - !Condition 'useSecretArn'
@@ -609,6 +634,7 @@ Resources:
             - Outputs.cloudWatchLogGroup
           - !Ref 'AWS::NoValue'
         createAmiRole: 'true'
+        createBigIpRoles: !If [createBigIpInstanceProfile, 'true', 'false']
         createBigIqRoles: 'false'
         environment: !Ref 'environment'
         group: !Ref 'group'
@@ -622,7 +648,7 @@ Resources:
             - useLoggingS3Bucket
             - !Ref 'loggingS3BucketName'
             - !Ref 'AWS::NoValue'
-        secretArn: !If [useSecretArn, !Ref 'secretArn', !Ref 'AWS::NoValue']
+        secretArn: !If [useSecretArn, !Ref 'bigIpSecretArn', !Ref 'AWS::NoValue']
         solutionType: !If
           - useSecretLoggingS3Bucket
           - secretS3
@@ -749,13 +775,17 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
+        allowUsageAnalytics: !Ref 'allowUsageAnalytics'
         application: !Ref 'application'
         bigIpExternalSecurityGroup: !GetAtt
           - Dag
           - Outputs.bigIpMgmtSecurityGroup
-        bigIpInstanceProfile: !GetAtt
-          - Access
-          - Outputs.bigIpInstanceProfile
+        instanceProfile: !If
+          - createBigIpInstanceProfile
+          - !GetAtt
+            - Access
+            - Outputs.bigIpInstanceProfile
+          - !Ref 'bigIpInstanceProfile'
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig'
         bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         cost: !Ref 'cost'
@@ -808,6 +838,7 @@ Resources:
         scaleOutThroughputThreshold: !Ref 'bigIpScaleOutThroughputThreshold'
         scalingMinSize: !Ref 'bigIpScalingMinSize'
         scalingMaxSize: !Ref 'bigIpScalingMaxSize'
+        secretArn: !If [useSecretArn, !Ref 'bigIpSecretArn', !Ref 'AWS::NoValue']
         snsEvents: !Join [',', !Ref 'snsEvents']
         sshKey: !Ref 'sshKey'
         subnets: !Join

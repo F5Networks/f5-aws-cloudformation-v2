@@ -24,6 +24,10 @@
     "ParameterValue": "false"
   },
   {
+    "ParameterKey": "createBigIpRoles",
+    "ParameterValue": "true"
+  },
+  {
     "ParameterKey": "createBigIqRoles",
     "ParameterValue": "false"
   },

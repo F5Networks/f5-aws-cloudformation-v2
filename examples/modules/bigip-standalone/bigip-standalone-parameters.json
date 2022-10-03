@@ -1,15 +1,23 @@
 [
   {
+    "ParameterKey": "allowUsageAnalytics",
+    "ParameterValue": "true"
+  },
+  {
     "ParameterKey": "application",
     "ParameterValue": "f5app"
   },
   {
-    "ParameterKey": "bigIpInstanceProfile",
+    "ParameterKey": "instanceProfile",
     "ParameterValue": ""
   },
   {
     "ParameterKey": "bigIpPeerAddr",
     "ParameterValue": "10.0.1.11"
+  },
+  {
+    "ParameterKey": "bigIpPeerHostname",
+    "ParameterValue": ""
   },
   {
     "ParameterKey": "bigIpRuntimeInitConfig",
@@ -64,6 +72,10 @@
     "ParameterValue": "f5group"
   },
   {
+    "ParameterKey": "hostname",
+    "ParameterValue": "bigip01.local"
+  },
+  {
     "ParameterKey": "imageId",
     "ParameterValue": ""
   },
@@ -85,6 +97,10 @@
   },
   {
     "ParameterKey": "internalSubnetId",
+    "ParameterValue": ""
+  },
+  {
+    "ParameterKey": "licenseKey",
     "ParameterValue": ""
   },
   {
@@ -110,6 +126,10 @@
   {
     "ParameterKey": "owner",
     "ParameterValue": "f5owner"
+  },
+  {
+    "ParameterKey": "secretArn",
+    "ParameterValue": ""
   },
   {
     "ParameterKey": "sshKey",

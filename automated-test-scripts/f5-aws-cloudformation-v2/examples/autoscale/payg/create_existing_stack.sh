@@ -54,9 +54,6 @@ else
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.shell = \"bash\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.userType = \"regular\"" -i <DEWPOINT JOB ID>.yaml
 
-    # Disable AutoPhoneHome
-    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>.yaml
-
     # WAF policy settings
     /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.Shared.Custom_WAF_Policy.enforcementMode = \"transparent\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.Shared.Custom_WAF_Policy.url = \"https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>.yaml
@@ -97,6 +94,10 @@ cat <<EOF > parameters.json
     {
         "ParameterKey": "artifactLocation",
         "ParameterValue": "$artifact_location"
+    },
+    {
+        "ParameterKey": "allowUsageAnalytics",
+        "ParameterValue": "false"
     },
     {
         "ParameterKey": "application",
@@ -203,7 +204,7 @@ cat <<EOF > parameters.json
         "ParameterValue": "$region"
     },
     {
-        "ParameterKey": "secretArn",
+        "ParameterKey": "bigIpSecretArn",
         "ParameterValue": "$secret_arn"
     },
     {

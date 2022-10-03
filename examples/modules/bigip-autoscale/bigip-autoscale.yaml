@@ -30,6 +30,9 @@ Metadata:
         Parameters:
           - bigIpRuntimeInitConfig
           - bigIpRuntimeInitPackageUrl
+          - bigIqSecretArn
+          - secretArn
+          - allowUsageAnalytics
       - Label:
           default: Autoscale Group
         Parameters:
@@ -61,7 +64,7 @@ Metadata:
           - instanceType
           - provisionPublicIp
           - sshKey
-          - bigIpInstanceProfile
+          - instanceProfile
           - licenseType
       - Label:
           default: Resources Tags
@@ -80,11 +83,13 @@ Metadata:
           - bigIqLicenseRevokeSnsTopic
           - bigIqNotificationRole
     ParameterLabels:
+      allowUsageAnalytics:
+        default: Send anonymous statistics to F5
       application:
         default: Application
       bigIpExternalSecurityGroup:
         default: BIG-IP external security group
-      bigIpInstanceProfile:
+      instanceProfile:
         default: BIG-IP instance profile with applied IAM policy
       bigIpRuntimeInitPackageUrl:
         default: Runtime Init Package
@@ -93,6 +98,8 @@ Metadata:
           license on BIG-IQ
       bigIqNotificationRole:
         default: The ARN of the IAM role to assign to the Lifecycle Hook
+      bigIqSecretArn:
+        default: Secret
       cloudWatchLogGroupName:
         default: CloudWatch log group name
       cloudWatchLogStreamName:
@@ -145,6 +152,8 @@ Metadata:
       scalingMinSize:
         default: Minimum number of BIG-IP instances (2-8) that can be created in the
           Autoscale Group
+      secretArn:
+        default: Secret
       snsEvents:
         default: Provides list of SNS Events used for sending Notifications on Autoscale
           group
@@ -155,7 +164,7 @@ Metadata:
         default: Public or external subnets for the availability zones
       uniqueString:
         default: Unique string
-  Version: 2.4.0.0
+  Version: 2.5.0.0
 Outputs:
   stackName:
     Description: bigip-autoscale nested stack name
@@ -167,6 +176,14 @@ Outputs:
     Description: SNS topic Autoscale should notify
     Value: !Ref 'SNSTopic'
 Parameters:
+  allowUsageAnalytics:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'true'
+    Description: This deployment can send anonymous statistics to F5 to help us determine
+      how to improve our solutions. If you select **false** statistics are not sent.
+    Type: String
   application:
     Default: f5app
     Description: Application Tag.
@@ -174,7 +191,7 @@ Parameters:
   bigIpExternalSecurityGroup:
     Description: REQUIRED - BIG-IP external security group.
     Type: String
-  bigIpInstanceProfile:
+  instanceProfile:
     Description: REQUIRED - BIG-IP instance profile with applied IAM policy.
     Type: String
   bigIpRuntimeInitConfig:
@@ -194,6 +211,11 @@ Parameters:
   bigIqNotificationRole:
     Default: ''
     Description: The ARN of the IAM role to assign to the Lifecycle Hook.
+    Type: String
+  bigIqSecretArn:
+    Default: ''
+    Description: The ARN of the AWS secret containing the password for BIG-IQ used
+      during BIG-IP licensing via BIG-IQ.
     Type: String
   cloudWatchLogGroupName:
     Default: ''
@@ -350,6 +372,12 @@ Parameters:
     MaxValue: 99
     MinValue: 1
     Type: Number
+  secretArn:
+    Default: ''
+    Description: The ARN of a Secrets Manager secret to create READ permissions for.
+      For example, if customizing your runtime-init config with an admin password,
+      logging credential, etc.
+    Type: String
   snsEvents:
     Default: autoscaling:EC2_INSTANCE_LAUNCH,autoscaling:EC2_INSTANCE_LAUNCH_ERROR
     Description: Provides list of SNS Topics used on Autoscale Group.
@@ -511,7 +539,7 @@ Resources:
             VolumeType: gp2
         - DeviceName: /dev/xvdb
           NoDevice: true
-      IamInstanceProfile: !Ref 'bigIpInstanceProfile'
+      IamInstanceProfile: !Ref 'instanceProfile'
       ImageId: !Ref 'imageId'
       InstanceMonitoring: false
       InstanceType: !Ref 'instanceType'
@@ -574,6 +602,24 @@ Resources:
             - !Ref 'bigIpRuntimeInitConfig'
             - |
               '
+            - SECRET_ID='
+            - !Ref 'secretArn'
+            - |
+              '
+            - BIG_IQ_SECRET_ID='
+            - !Ref 'bigIqSecretArn'
+            - |
+              '
+            - ALLOW_ANALYTICS='
+            - !Ref 'allowUsageAnalytics'
+            - |
+              '
+            - |
+              echo ${SECRET_ID} > /config/cloud/secret_id
+            - |
+              echo ${BIG_IQ_SECRET_ID} > /config/cloud/bigiq_secret_id
+            - |
+              if [[ ${ALLOW_ANALYTICS} == "false" ]]; then TELEMETRY_FLAG="--skip-telemetry"; else TELEMETRY_FLAG=""; fi
             - |
               # Download or render f5-bigip-runtime-init config
             - |
@@ -605,13 +651,13 @@ Resources:
             - |
               # Run
             - |
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.4.0.0/examples/modules/bigip-autoscale/bigip-autoscale.yaml'
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.5.0.0/examples/modules/bigip-autoscale/bigip-autoscale.yaml'
             - |2+
 
             - |
               # Execute Runtime-init
             - |
-              f5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf
+              f5-bigip-runtime-init --config-file /config/cloud/runtime-init.conf ${TELEMETRY_FLAG}
             - |2+
 
             - '[[ $? -eq 0 ]] && /opt/aws/bin/cfn-signal -e 0 --stack '

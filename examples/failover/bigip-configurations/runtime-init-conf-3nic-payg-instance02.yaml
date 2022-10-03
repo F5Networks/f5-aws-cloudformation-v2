@@ -1,17 +1,17 @@
 controls:
   logLevel: info
-  logFilename: /var/log/cloud/bigIpRuntimeInit.log
+  logFilename: "/var/log/cloud/bigIpRuntimeInit.log"
 extension_packages:
   install_operations:
     - extensionType: do
-      extensionVersion: 1.31.0
-      extensionHash: 8c31d858f78100ce866b70fdf73ebc47f05adbdd2e62ac6ecc4a2162645fc852
+      extensionVersion: 1.32.0
+      extensionHash: 56eff7e20abb8c0636d2293926cd5106cefff9e2b4bb71592c661cfd6732af3e
     - extensionType: as3
-      extensionVersion: 3.38.0
-      extensionHash: 38b9b96826c2da997750ba2054811d8606768df43d08b870d68f8d7cb3fff58d
+      extensionVersion: 3.39.0
+      extensionHash: 54d82a0844b46555c023e22a7887debd8ce49dd3ab4a4a4afca9ee30541dca23
     - extensionType: cf
-      extensionVersion: 1.11.0
-      extensionHash: f3c7aca8a19d0dc01e529d38aa0d235b4dfad34beec2584f8402aa9a92c34699
+      extensionVersion: 1.13.0
+      extensionHash: 93be496d250838697d8a9aca8bd0e6fe7480549ecd43280279f0a63fc741ab50
 extension_services:
   service_operations:
     - extensionType: do
@@ -20,8 +20,8 @@ extension_services:
         schemaVersion: 1.0.0
         class: Device
         async: true
-        label: Standalone 3NIC BIG-IP declaration for Declarative Onboarding with
-          PAYG license
+        label: Standalone 3NIC BIG-IP declaration for Declarative Onboarding with PAYG
+          license
         Common:
           class: Tenant
           My_DbVariables:
@@ -43,11 +43,11 @@ extension_services:
           My_System:
             autoPhonehome: true
             class: System
-            hostname: 'failover02.local'
+            hostname: "{{{HOST_NAME}}}"
           admin:
             class: User
             userType: regular
-            password: '{{{BIGIP_PASSWORD}}}'
+            password: "{{{BIGIP_PASSWORD}}}"
             shell: bash
           external:
             class: VLAN
@@ -58,7 +58,7 @@ extension_services:
                 tagged: false
           external-self:
             class: SelfIp
-            address: '{{{SELF_IP_EXTERNAL}}}'
+            address: "{{{SELF_IP_EXTERNAL}}}"
             vlan: external
             allowService:
               - tcp:443
@@ -80,13 +80,13 @@ extension_services:
             tag: 4093
           internal-self:
             class: SelfIp
-            address: '{{{SELF_IP_INTERNAL}}}'
+            address: "{{{SELF_IP_INTERNAL}}}"
             allowService: none
             trafficGroup: traffic-group-local-only
             vlan: internal
           default:
             class: Route
-            gw: '{{{DEFAULT_GW}}}'
+            gw: "{{{DEFAULT_GW}}}"
             network: default
             mtu: 1500
             localOnly: true
@@ -100,6 +100,10 @@ extension_services:
           class: Controls
           logLevel: silly
         externalStorage:
+          encryption:
+            serverSide:
+              enabled: true
+              algorithm: AES256
           scopingTags:
             f5_cloud_failover_label: bigip_high_availability_solution
         failoverAddresses:
@@ -113,8 +117,8 @@ extension_services:
         schemaVersion: 1.0.0
         class: Device
         async: true
-        label: Standalone 3NIC BIG-IP declaration for Declarative Onboarding with
-          PAYG license
+        label: Standalone 3NIC BIG-IP declaration for Declarative Onboarding with PAYG
+          license
         Common:
           class: Tenant
           My_DbVariables:
@@ -136,11 +140,11 @@ extension_services:
           My_System:
             autoPhonehome: true
             class: System
-            hostname: 'failover02.local'
+            hostname: "{{{HOST_NAME}}}"
           admin:
             class: User
             userType: regular
-            password: '{{{BIGIP_PASSWORD}}}'
+            password: "{{{BIGIP_PASSWORD}}}"
             shell: bash
           external:
             class: VLAN
@@ -151,7 +155,7 @@ extension_services:
                 tagged: false
           external-self:
             class: SelfIp
-            address: '{{{SELF_IP_EXTERNAL}}}'
+            address: "{{{SELF_IP_EXTERNAL}}}"
             vlan: external
             allowService:
               - tcp:443
@@ -173,29 +177,29 @@ extension_services:
             tag: 4093
           internal-self:
             class: SelfIp
-            address: '{{{SELF_IP_INTERNAL}}}'
+            address: "{{{SELF_IP_INTERNAL}}}"
             allowService: none
             trafficGroup: traffic-group-local-only
             vlan: internal
           default:
             class: Route
-            gw: '{{{DEFAULT_GW}}}'
+            gw: "{{{DEFAULT_GW}}}"
             network: default
             mtu: 1500
             localOnly: true
           configSync:
             class: ConfigSync
-            configsyncIp: /Common/external-self/address
+            configsyncIp: "/Common/external-self/address"
           failoverAddress:
             class: FailoverUnicast
-            address: /Common/external-self/address
+            address: "/Common/external-self/address"
           failoverGroup:
             class: DeviceGroup
             type: sync-failover
             members:
-              - failover01.local
-              - failover02.local
-            owner: /Common/failoverGroup/members/0
+              - "{{{REMOTE_HOST_NAME}}}"
+              - "{{{HOST_NAME}}}"
+            owner: "/Common/failoverGroup/members/0"
             autoSync: true
             saveOnAutoSync: false
             networkFailover: true
@@ -204,24 +208,36 @@ extension_services:
           trust:
             class: DeviceTrust
             localUsername: admin
-            localPassword: '{{{BIGIP_PASSWORD}}}'
-            remoteHost: '{{{REMOTE_HOST}}}'
+            localPassword: "{{{BIGIP_PASSWORD}}}"
+            remoteHost: "{{{REMOTE_HOST}}}"
             remoteUsername: admin
-            remotePassword: '{{{BIGIP_PASSWORD}}}'
+            remotePassword: "{{{BIGIP_PASSWORD}}}"
 runtime_parameters:
+  - name: SECRET_ID
+    type: url
+    value: file:///config/cloud/secret_id
   - name: BIGIP_PASSWORD
     type: secret
     secretProvider:
       environment: aws
-      secretId: mySecretId
+      secretId: "{{{SECRET_ID}}}"
       type: SecretsManager
       version: AWSCURRENT
   - name: HOST_NAME
-    type: metadata
-    metadataProvider:
+    type: tag
+    tagProvider:
       environment: aws
-      type: compute
-      field: hostname
+      key: hostname
+  - name: REMOTE_HOST
+    type: tag
+    tagProvider:
+      environment: aws
+      key: bigIpPeerAddr
+  - name: REMOTE_HOST_NAME
+    type: tag
+    tagProvider:
+      environment: aws
+      key: bigIpPeerHostname
   - name: SELF_IP_EXTERNAL
     type: metadata
     metadataProvider:
@@ -244,8 +260,3 @@ runtime_parameters:
       field: local-ipv4s
       index: 1
       ipcalc: first
-  - name: REMOTE_HOST
-    type: tag
-    tagProvider:
-      environment: aws
-      key: bigIpPeerAddr

@@ -32,6 +32,7 @@ Metadata:
           default: Amazon EC2 Configuration
         Parameters:
           - sshKey
+          - bigIpInstanceProfile
       - Label:
           default: DAG / Ingress
         Parameters:
@@ -44,13 +45,18 @@ Metadata:
           - bigIpRuntimeInitPackageUrl
           - bigIpRuntimeInitConfig01
           - bigIpRuntimeInitConfig02
+          - bigIpHostname01
+          - bigIpHostname02
+          - bigIpLicenseKey01
+          - bigIpLicenseKey02
           - bigIpImage
           - bigIpCustomImageId
           - bigIpInstanceType
+          - bigIpSecretArn
           - cfeS3Bucket
           - cfeVipTag
           - cfeTag
-          - secretArn
+          - allowUsageAnalytics
       - Label:
           default: Application Configuration
         Parameters:
@@ -66,6 +72,8 @@ Metadata:
           - group
           - owner
     ParameterLabels:
+      allowUsageAnalytics:
+        default: Send anonymous statistics to F5
       appDockerImageName:
         default: Application docker image name
       application:
@@ -74,10 +82,20 @@ Metadata:
         default: Path to directory where the modules folder is located. ex. "examples/"
       bigIpCustomImageId:
         default: Custom Image Id
+      bigIpHostname01:
+        default: Hostname for BIG-IP instance 01
+      bigIpHostname02:
+        default: Hostname for BIG-IP instance 02
       bigIpImage:
         default: F5 BIG-IP Image
       bigIpInstanceType:
         default: Enter valid instance type.
+      bigIpInstanceProfile:
+        default: Instance profile
+      bigIpLicenseKey01:
+        default: License key for BIG-IP instance 01
+      bigIpLicenseKey02:
+        default: License key for BIG-IP instance 02
       bigIpPeerAddr:
         default: Static self IP address for peer device.
       bigIpRuntimeInitConfig01:
@@ -114,6 +132,8 @@ Metadata:
         default: Management private ip address for BIGIP instance A
       bigIpMgmtAddress02:
         default: Management private ip address for BIGIP instance B
+      bigIpSecretArn:
+        default: ARN of Secrets Manager secret
       numAzs:
         default: Number of Availability Zones
       numSubnets:
@@ -132,8 +152,6 @@ Metadata:
         default: S3 Bucket where Templates are Located
       s3BucketRegion:
         default: S3 Bucket Region where Templates are Located
-      secretArn:
-        default: ARN of Secrets Manager secret
       sshKey:
         default: Supply the public key that will be used for SSH authentication to
           the BIG-IP and application virtual machines
@@ -143,7 +161,7 @@ Metadata:
         default: Unique string
       vpcCidr:
         default: VPC CIDR
-  Version: 2.4.0.0
+  Version: 2.5.0.0
 Outputs:
   amiId:
     Condition: noCustomImageId
@@ -213,7 +231,13 @@ Outputs:
         - !GetAtt [Dag, Outputs.bigIpManagementEipAddress02]
   cfeS3Bucket:
     Description: cfe s3 bucket created and used for cloud-failover-extension
-    Value: !Ref 'cfeS3Bucket'
+    Value: !If
+      - useDefaultCfeS3Bucket
+      - !Join
+        - ''
+        - - !Ref 'uniqueString'
+          - '-bigip-high-availability-solution'
+      - !Ref 'cfeS3Bucket'
   vipPublicUrl:
     Condition: usePublicIpVip
     Description: url to public vip address
@@ -222,6 +246,14 @@ Outputs:
       - - 'https://'
         - !GetAtt [Dag, Outputs.bigIpExternalEipAddress03]
 Parameters:
+  allowUsageAnalytics:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'true'
+    Description: This deployment can send anonymous statistics to F5 to help us determine
+      how to improve our solutions. If you select **false** statistics are not sent.
+    Type: String
   appDockerImageName:
     Default: 'f5devcentral/f5-demo-app:latest'
     Description: Application docker image name
@@ -234,7 +266,7 @@ Parameters:
     AllowedPattern: ^.*[0-9a-zA-Z]+/$
     ConstraintDescription: key prefix can include numbers, lowercase letters, uppercase
       letters, hyphens (-), and forward slash (/).
-    Default: f5-aws-cloudformation-v2/v2.4.0.0/examples/
+    Default: f5-aws-cloudformation-v2/v2.5.0.0/examples/
     Description: The path in the S3Bucket where the modules folder is located. Can
       include numbers, lowercase letters, uppercase letters, hyphens (-), and forward
       slash (/).
@@ -244,10 +276,30 @@ Parameters:
     Description: Provide BIG-IP AMI ID you wish to deploy.
     MaxLength: 255
     Type: String
+  bigIpHostname01:
+    ConstraintDescription: Must be a valid hostname containing fewer than 63 characters.
+    Default: 'failover01.local'
+    Description: Supply the hostname you would like to use for the BIG-IP instance.
+      The hostname must contain fewer than 63 characters.
+    MaxLength: 63
+    Type: String
+  bigIpHostname02:
+    ConstraintDescription: Must be a valid hostname containing fewer than 63 characters.
+    Default: 'failover02.local'
+    Description: Supply the hostname you would like to use for the BIG-IP instance.
+      The hostname must contain fewer than 63 characters.
+    MaxLength: 63
+    Type: String
   bigIpImage:
     ConstraintDescription: Must be a valid F5 BIG-IP market place image
-    Default: '*16.1.2.2-0.0.28**PAYG-Best Plus 25Mbps*'
+    Default: '*16.1.3.1-0.0.11**PAYG-Best Plus 25Mbps*'
     Description: F5 BIG-IP market place image
+    Type: String
+  bigIpInstanceProfile:
+    Default: ''
+    Description: Enter the name of an existing IAM instance profile with applied IAM
+      policy to be associated to the BIG-IP virtual machine(s). Leave default to create
+      a new instance profile.
     Type: String
   bigIpInstanceType:
     AllowedValues:
@@ -275,19 +327,31 @@ Parameters:
     Default: m5.xlarge
     Description: Enter valid instance type.
     Type: String
+  bigIpLicenseKey01:
+    Default: ''
+    Description: Supply the F5 BYOL license key for BIG-IP instance 01. Leave this
+      parameter blank if deploying the PAYG solution.
+    Type: String
+  bigIpLicenseKey02:
+    Default: ''
+    Description: Supply the F5 BYOL license key for BIG-IP instance 02. Leave this
+      parameter blank if deploying the PAYG solution.
+    Type: String
   bigIpPeerAddr:
     Default: '10.0.1.11'
-    Description: Type the static self IP address of the remote host here. Set to empty
-      string if not configuring peering with a remote host on this device.
+    Description: Provide the static address of the remote peer used for clustering.
+      In this failover solution, clustering is initiated from the second instance
+      (02) to the first instance (01) so you would provide the first instances Self
+      IP address.
     Type: String
   bigIpRuntimeInitConfig01:
-    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.4.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01-with-app.yaml'
+    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01-with-app.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
       file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
       configuration.'
     Type: String
   bigIpRuntimeInitConfig02:
-    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.4.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02-with-app.yaml'
+    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02-with-app.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
       file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
       configuration.'
@@ -297,11 +361,13 @@ Parameters:
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   cfeS3Bucket:
-    AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
-    ConstraintDescription: 'S3 bucket name can include numbers, lowercase letters,
-      uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-).'
-    Default: bigip-high-availability-solution
-    Description: 'S3 bucket name used by Cloud Failover Extension.'
+    AllowedPattern: '^$|^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
+    ConstraintDescription: 'S3 bucket name must be unique and can include numbers,
+      lowercase letters, uppercase letters, and hyphens (-). It cannot start or end
+      with a hyphen (-).'
+    Default: ''
+    Description: 'Supply a unique name for a CFE S3 bucket created and used by Cloud
+      Failover Extension.'
     Type: String
   cfeTag:
     Description: Cloud Failover deployment tag value.
@@ -372,6 +438,10 @@ Parameters:
     Description: Management Private IP Address for BIGIP instance B.
     Default: 10.0.5.11
     Type: String
+  bigIpSecretArn:
+    Description: The ARN of the AWS secret manager secret where the BIG-IP password
+      used for clustering is stored.
+    Type: String
   numAzs:
     Default: 2
     Description: Number of Availability Zones to use in the VPC. Region must support
@@ -437,10 +507,6 @@ Parameters:
     Description: The AWS Region where the Quick Start S3 bucket (s3BucketName) is
       hosted. When using your own bucket, you must specify this value.
     Type: String
-  secretArn:
-    Default: ''
-    Description: ARN of Secrets Manager secret
-    Type: String
   sshKey:
     Description: REQUIRED - Supply the public key that will be used for SSH authentication
       to the BIG-IP and application virtual machines.
@@ -472,16 +538,18 @@ Parameters:
     Description: CIDR block for the VPC.
     Type: String
 Conditions:
+  createBigIpInstanceProfile: !Equals
+    - !Ref 'bigIpInstanceProfile'
+    - ""
   noCustomImageId: !Equals
     - ''
     - !Ref 'bigIpCustomImageId'
   noPublicIp: !Equals
     - 'false'
     - !Ref 'provisionPublicIpMgmt'
-  useSecretArn: !Not
-    - !Equals
-      - ''
-      - !Ref 'secretArn'
+  useDefaultCfeS3Bucket: !Equals
+    - !Ref 'cfeS3Bucket'
+    - ''
   usePublicIpMgmt: !Equals
     - 'true'
     - !Ref 'provisionPublicIpMgmt'
@@ -503,8 +571,15 @@ Resources:
         environment: !Ref 'environment'
         group: !Ref 'group'
         createAmiRole: 'true'
-        s3Bucket: !Ref 'cfeS3Bucket'
-        secretArn: !If [useSecretArn, !Ref 'secretArn', !Ref 'AWS::NoValue']
+        createBigIpRoles: !If [createBigIpInstanceProfile, 'true', 'false']
+        s3Bucket: !If
+          - useDefaultCfeS3Bucket
+          - !Join
+            - ''
+            - - !Ref 'uniqueString'
+              - '-bigip-high-availability-solution'
+          - !Ref 'cfeS3Bucket'
+        secretArn: !Ref 'bigIpSecretArn'
         solutionType: failover
         uniqueString: !Ref 'uniqueString'
   AmiInfo:
@@ -653,18 +728,19 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        bigIpInstanceProfile: !GetAtt [Access, Outputs.bigIpInstanceProfile]
+        allowUsageAnalytics: !Ref 'allowUsageAnalytics'
         bigIpPeerAddr: !Ref 'bigIpPeerAddr'
+        bigIpPeerHostname: !Ref 'bigIpHostname02'
         bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig01'
-        cfeS3Bucket: !Ref 'cfeS3Bucket'
+        cfeS3Bucket: !If
+          - useDefaultCfeS3Bucket
+          - !Join
+            - ''
+            - - !Ref 'uniqueString'
+              - '-bigip-high-availability-solution'
+          - !Ref 'cfeS3Bucket'
         cfeTag: !Ref 'cfeTag'
-        imageId: !If
-          - noCustomImageId
-          - !GetAtt
-            - AmiInfo
-            - Id
-          - !Ref 'bigIpCustomImageId'
         externalPrimaryPublicId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01]
         externalPublicIpIds: !If [usePublicIpVip, !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId03],
           '']
@@ -691,7 +767,20 @@ Resources:
                   - !GetAtt
                     - Network
                     - Outputs.subnetsA
+        hostname: !Ref 'bigIpHostname01'
+        imageId: !If
+          - noCustomImageId
+          - !GetAtt
+            - AmiInfo
+            - Id
+          - !Ref 'bigIpCustomImageId'
         instanceIndex: '01'
+        instanceProfile: !If
+          - createBigIpInstanceProfile
+          - !GetAtt
+            - Access
+            - Outputs.bigIpInstanceProfile
+          - !Ref 'bigIpInstanceProfile'
         instanceType: !Ref 'bigIpInstanceType'
         internalSelfIp: !Ref 'bigIpInternalSelfIp01'
         internalSubnetId: !Join
@@ -704,6 +793,7 @@ Resources:
                   - Network
                   - Outputs.subnetsA
         internalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup]
+        licenseKey: !Ref 'bigIpLicenseKey01'
         mgmtPublicIpId: !If [usePublicIpMgmt, !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId01],
           '']
         mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpMgmtSecurityGroup]
@@ -718,6 +808,7 @@ Resources:
                   - Network
                   - Outputs.subnetsA
         numSecondaryPrivateIpAddress: !If [usePublicIpVip, 1, 0]
+        secretArn: !Ref 'bigIpSecretArn'
         sshKey: !Ref 'sshKey'
         uniqueString: !Ref 'uniqueString'
   BigIpInstance02:
@@ -728,17 +819,12 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        bigIpInstanceProfile: !GetAtt [Access, Outputs.bigIpInstanceProfile]
+        allowUsageAnalytics: !Ref 'allowUsageAnalytics'
         bigIpPeerAddr: !Ref 'bigIpPeerAddr'
+        bigIpPeerHostname: !Ref 'bigIpHostname01'
         bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig02'
         cfeTag: !Ref 'cfeTag'
-        imageId: !If
-          - noCustomImageId
-          - !GetAtt
-            - AmiInfo
-            - Id
-          - !Ref 'bigIpCustomImageId'
         externalPrimaryPublicId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId02]
         externalPublicIpIds: ''
         externalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup]
@@ -764,7 +850,20 @@ Resources:
                   - !GetAtt
                     - Network
                     - Outputs.subnetsB
+        hostname: !Ref 'bigIpHostname02'
+        imageId: !If
+          - noCustomImageId
+          - !GetAtt
+            - AmiInfo
+            - Id
+          - !Ref 'bigIpCustomImageId'
         instanceIndex: '02'
+        instanceProfile: !If
+          - createBigIpInstanceProfile
+          - !GetAtt
+            - Access
+            - Outputs.bigIpInstanceProfile
+          - !Ref 'bigIpInstanceProfile'
         instanceType: !Ref 'bigIpInstanceType'
         internalSelfIp: !Ref 'bigIpInternalSelfIp02'
         internalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup]
@@ -777,6 +876,7 @@ Resources:
                 - !GetAtt
                   - Network
                   - Outputs.subnetsB
+        licenseKey: !Ref 'bigIpLicenseKey02'
         mgmtPublicIpId: !If [usePublicIpMgmt, !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId02],
           '']
         mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpMgmtSecurityGroup]
@@ -791,6 +891,7 @@ Resources:
                   - Network
                   - Outputs.subnetsB
         numSecondaryPrivateIpAddress: 0
+        secretArn: !Ref 'bigIpSecretArn'
         sshKey: !Ref 'sshKey'
         uniqueString: !Ref 'uniqueString'
   Dag:

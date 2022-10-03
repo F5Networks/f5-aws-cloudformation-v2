@@ -4,27 +4,40 @@ Description: >-
   (i.e. High-Availability or Autoscale)
   Secret Manager service.
 Conditions:
+  createBigIpRoles: !Equals
+    - !Ref createBigIpRoles
+    - 'true'
   createBigIqRoles: !Equals
     - !Ref createBigIqRoles
     - 'true'
   createAmiRole: !Equals
     - !Ref createAmiRole
     - 'true'
-  standard: !Equals
-    - !Ref solutionType
-    - standard
-  secret: !Equals
-    - !Ref solutionType
-    - secret
-  s3: !Equals
-    - !Ref solutionType
-    - s3
-  secretS3: !Equals
-    - !Ref solutionType
-    - secretS3
-  failover: !Equals
-    - !Ref solutionType
-    - failover
+  standard: !And
+    - !Condition createBigIpRoles
+    - !Equals
+      - !Ref solutionType
+      - standard
+  secret: !And
+    - !Condition createBigIpRoles
+    - !Equals
+      - !Ref solutionType
+      - secret
+  s3: !And
+    - !Condition createBigIpRoles
+    - !Equals
+      - !Ref solutionType
+      - s3
+  secretS3: !And
+    - !Condition createBigIpRoles
+    - !Equals
+      - !Ref solutionType
+      - secretS3
+  failover: !And
+    - !Condition createBigIpRoles
+    - !Equals
+      - !Ref solutionType
+      - failover
   useBigIqSecretArn: !Not
     - !Equals
       - ''
@@ -46,6 +59,7 @@ Metadata:
           - uniqueString
           - solutionType
           - s3Bucket
+          - createBigIpRoles
           - createBigIqRoles
           - secretArn
           - bigIqSecretArn
@@ -80,6 +94,8 @@ Metadata:
         default: Cloud Solution type
       s3Bucket:
         default: S3 bucket used as BIG-IP storage for Failover solution
+      createBigIpRoles:
+        default: Creates IAM roles for BIG-IP
       createBigIqRoles:
         default: Creates IAM roles for BIG-IQ
       bigIqSecretArn:
@@ -90,12 +106,13 @@ Metadata:
         default: CloudWatch Log Group Name
       metricNameSpace:
         default: CloudWatch Metrics Namespace
-  Version: 2.4.0.0
+  Version: 2.5.0.0
 Outputs:
   stackName:
     Description: Access nested stack name
     Value: !Ref "AWS::StackName"
   bigIpInstanceProfile:
+    Condition: createBigIpRoles
     Description: BIG-IP instance profile with applied IAM policy.
     Value: !If
       - standard
@@ -156,6 +173,13 @@ Parameters:
       - 'false'
     Default: 'false'
     Description: Value of true creates IAM roles required for ami lookup function.
+    Type: String
+  createBigIpRoles:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'true'
+    Description: Value of true creates IAM roles and instance profile assigned to BIG-IP instance(s).
     Type: String
   createBigIqRoles:
     AllowedValues:
@@ -866,6 +890,30 @@ Resources:
                   - - "arn:*:s3:::"
                     - !Ref s3Bucket
                     - /*
+              - Action: 
+                  - s3:PutObject
+                Condition:
+                  'Null':
+                    's3:x-amz-server-side-encryption': true
+                Effect: Deny
+                Resource: !Join
+                  - ''
+                  - - "arn:*:s3:::"
+                    - !Ref s3Bucket
+                    - /*
+                Sid: DenyPublishingUnencryptedResources
+              - Action: 
+                  - s3:PutObject
+                Condition:
+                  StringNotEquals:
+                      s3:x-amz-server-side-encryption: AES256
+                Effect: Deny
+                Resource: !Join
+                  - ''
+                  - - "arn:*:s3:::"
+                    - !Ref s3Bucket
+                    - /*
+                Sid: DenyIncorrectEncryptionHeader
               - Action:
                   - 'secretsmanager:DescribeSecret'
                   - 'secretsmanager:GetResourcePolicy'

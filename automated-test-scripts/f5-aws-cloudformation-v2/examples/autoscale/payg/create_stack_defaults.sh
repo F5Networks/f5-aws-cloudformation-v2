@@ -38,14 +38,15 @@ secret_arn="arn:aws:secretsmanager:<REGION>:089591600128:secret:mySecretId-n0PHS
 aws s3 cp --region <REGION> <DEWPOINT JOB ID>-template.yaml s3://"$bucket_name"/<DEWPOINT JOB ID>-template.yaml --acl public-read
 
 # create parameters
-parameters="ParameterKey=restrictedSrcAddressMgmt,ParameterValue=$src_ip \
+parameters="ParameterKey=allowUsageAnalytics,ParameterValue=false \
+ParameterKey=restrictedSrcAddressMgmt,ParameterValue=$src_ip \
 ParameterKey=restrictedSrcAddressApp,ParameterValue=$src_ip \
 ParameterKey=cloudWatchLogGroupName,ParameterValue=<UNIQUESTRING>-f5telemetry \
 ParameterKey=cloudWatchDashboardName,ParameterValue=<UNIQUESTRING>-F5-BIGIP-WAF-View \
 ParameterKey=notificationEmail,ParameterValue=<NOTIFICATION EMAIL> \
 ParameterKey=uniqueString,ParameterValue=<UNIQUESTRING> \
 ParameterKey=sshKey,ParameterValue=<SSH KEY> \
-ParameterKey=secretArn,ParameterValue=$secret_arn"
+ParameterKey=bigIpSecretArn,ParameterValue=$secret_arn"
 
 if echo "<TEMPLATE URL>" | grep -q "existing-network"; then
     echo "Adding existing stack parameters"

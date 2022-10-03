@@ -69,9 +69,6 @@ else
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.overwrite = \"false\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_License.tenant = \"<DEWPOINT JOB ID>\"" -i <DEWPOINT JOB ID>.yaml
 
-    # Disable AutoPhoneHome
-    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.My_System.autoPhonehome = false" -i <DEWPOINT JOB ID>.yaml
-
     # WAF policy settings
     /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.Shared.Custom_WAF_Policy.enforcementMode = \"transparent\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".extension_services.service_operations.[1].value.Tenant_1.Shared.Custom_WAF_Policy.url = \"https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>.yaml
@@ -83,7 +80,6 @@ else
     /usr/bin/yq e ".extension_services.service_operations.[2].value.My_S3.bucket = \"{{{BUCKET_NAME}}}\"" -i <DEWPOINT JOB ID>.yaml
 
     # Runtime parameters
-    /usr/bin/yq e ".runtime_parameters.[2].secretProvider.secretId = \"$secret_name\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".runtime_parameters += {\"name\":\"BUCKET_NAME\"}" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".runtime_parameters.[-1].type = \"static\"" -i <DEWPOINT JOB ID>.yaml
     /usr/bin/yq e ".runtime_parameters.[-1].value = \"$logging_bucket_name\"" -i <DEWPOINT JOB ID>.yaml
@@ -108,6 +104,10 @@ cat <<EOF > parameters.json
     {
         "ParameterKey": "artifactLocation",
         "ParameterValue": "$artifact_location"
+    },
+    {
+        "ParameterKey": "allowUsageAnalytics",
+        "ParameterValue": "false"
     },
     {
         "ParameterKey": "application",
@@ -254,7 +254,7 @@ cat <<EOF > parameters.json
         "ParameterValue": "$region"
     },
     {
-        "ParameterKey": "secretArn",
+        "ParameterKey": "bigIpSecretArn",
         "ParameterValue": "$secret_arn"
     },
     {
