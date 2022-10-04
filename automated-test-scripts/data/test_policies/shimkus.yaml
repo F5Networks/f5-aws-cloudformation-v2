@@ -4,7 +4,7 @@
 aws-autoscale-bigiq-example-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/bigiq/daily_test_full.yaml"
   run: "random"
-  random-num-of-tests: 1
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/full/demo.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/bigiq/full/demo_app.yaml"
@@ -60,7 +60,7 @@ aws-failover-byol-existing-test:
 aws-failover-payg-existing-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/failover/payg_byol/daily_test_existing.yaml"
   run: "random"
-  random-num-of-tests: 0
+  random-num-of-tests: 1
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/existing/demo.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/existing/demo_app.yaml"
@@ -169,7 +169,7 @@ aws-application-module-test:
 aws-bigip-autoscale-module-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/daily_test.yaml"
   run: "random"
-  random-num-of-tests: 1
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/prepub_parameters.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-autoscale/prepub_parameters1.yaml"
@@ -177,7 +177,7 @@ aws-bigip-autoscale-module-test:
 aws-bigip-standalone-module-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/daily_test.yaml"
   run: "random"
-  random-num-of-tests: 1
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/prepub_parameters.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/modules/bigip-standalone/prepub_parameters1.yaml"

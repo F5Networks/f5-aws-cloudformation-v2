@@ -139,7 +139,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | application | No | f5app | string | Application Tag. |
 | appScalingMaxSize | No | 50 | string | Maximum number of Application instances (2-50) that can be created in the Autoscale Group. |
 | appScalingMinSize | No | 1 | string | Minimum number of Application instances (1-49) you want available in the Autoscale Group. |
-| artifactLocation | No | f5-aws-cloudformation-v2/v2.4.0.0/examples/  | string | The path in the S3Bucket where the modules folder is located. |
+| artifactLocation | No | f5-aws-cloudformation-v2/v2.5.0.0/examples/  | string | The path in the S3Bucket where the modules folder is located. |
 | bastionScalingMaxSize | No | 2 | string | Maximum number of Bastion instances (2-10) that can be created in the Autoscale Group. |
 | bastionScalingMinSize | No | 1 | string | Minimum number of Bastion instances (1-9) you want available in the Autoscale Group. |
 | bigIpCustomImageId | No |  | string | Provide BIG-IP AMI ID you wish to deploy. bigIpCustomImageId is required when bigIpImage is not specified. Otherwise, can leave empty. |
@@ -149,7 +149,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | bigIpMaxBatchSize | No | 5  | string | Specifies the maximum number of instances that CloudFormation updates. |
 | bigIpMinInstancesInService | No | 1 | string | Specifies the minimum number of instances that must be in service within the Auto Scaling group while CloudFormation updates old instances. |
 | bigIpPauseTime | No | 480  | string | The amount of time in seconds that CloudFormation pauses after making a change to a batch of instances to give those instances time to start software applications. |
-| bigIpRuntimeInitConfig | No | https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.4.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml | string | IMPORTANT: For this solution, this parameter should be customized. Enter a URL to the bigip-runtime-init configuration file in YAML or JSON format. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more details.|
+| bigIpRuntimeInitConfig | No | https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml | string | IMPORTANT: For this solution, this parameter should be customized. Enter a URL to the bigip-runtime-init configuration file in YAML or JSON format. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more details.|
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run | string | Enter a URL to the bigip-runtime-init package. |
 | bigIpScaleInCpuThreshold | No | 20  | string | Low CPU Percentage threshold to begin scaling in BIG-IP VE instances. | 
 | bigIpScaleInThroughputThreshold | No | 10000000 | string | Incoming bytes threshold to begin scaling in BIG-IP VE instances. | 
@@ -179,7 +179,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | owner | No | f5owne  | string | Application Tag. |
 | provisionExternalBigipLoadBalancer | No | true | string | Flag to provision external Load Balancer. |
 | provisionInternalBigipLoadBalancer | No | false  | string | Flag to provision internal Load Balancer. |
-| provisionPublicIp | No | true  | string | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host tier will be provisioned instead. See [diagram](diagram-w-bastion.png). |
+| provisionPublicIp | No | true  | string | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host tier will be provisioned instead. See [diagram](diagrams/diagram-w-bastion.png). |
 | restrictedSrcAddressMgmt | **Yes** |   | string | An IP address or address range (in CIDR notation) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please do NOT use "0.0.0.0/0". Instead, restrict the IP address range to your client or trusted network, for example "55.55.55.55/32". Production should never expose the BIG-IP Management interface to the Internet. |
 | restrictedSrcAddressApp | **Yes** |   | string | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
 | s3BucketRegion | No | us-east-1 | string | The AWS Region for the S3 bucket containing the templates. |
@@ -215,7 +215,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | application | No | f5app | string | Application Tag. |
 | appScalingMaxSize | No | 50 | string | Maximum number of Application instances (2-50) that can be created in the Autoscale Group. |
 | appScalingMinSize | No | 1 | string | Minimum number of Application instances (1-49) you want available in the Autoscale Group. |
-| artifactLocation | No | f5-aws-cloudformation-v2/v2.4.0.0/examples/  | string | The path in the S3Bucket where the modules folder is located. |
+| artifactLocation | No | f5-aws-cloudformation-v2/v2.5.0.0/examples/  | string | The path in the S3Bucket where the modules folder is located. |
 | bastionScalingMaxSize | No | 2 | string | Maximum number of Bastion instances (2-10) that can be created in the Autoscale Group. |
 | bastionScalingMinSize | No | 1 | string | Minimum number of Bastion instances (1-9) you want available in the Autoscale Group. |
 | bigIpCustomImageId | No |  | string | Provide BIG-IP AMI ID you wish to deploy. bigIpCustomImageId is required when bigIpImage is not specified. Otherwise, can leave empty. |
@@ -225,7 +225,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | bigIpMaxBatchSize | No | 5  | string | Specifies the maximum number of instances that CloudFormation updates. |
 | bigIpMinInstancesInService | No | 1 | string | Specifies the minimum number of instances that must be in service within the Auto Scaling group while CloudFormation updates old instances. |
 | bigIpPauseTime | No | 480  | string | The amount of time in seconds that CloudFormation pauses after making a change to a batch of instances to give those instances time to start software applications. |
-| bigIpRuntimeInitConfig | No | https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.4.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml | string | Enter a URL to the bigip-runtime-init configuration file in YAML or JSON format. |
+| bigIpRuntimeInitConfig | No | https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml | string | Enter a URL to the bigip-runtime-init configuration file in YAML or JSON format. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run | string |Enter a URL to the bigip-runtime-init package. |
 | bigIpScaleInCpuThreshold | No | 20  | string | Low CPU Percentage threshold to begin scaling in BIG-IP VE instances. | 
 | bigIpScaleInThroughputThreshold | No | 10000000 | string | Incoming bytes threshold to begin scaling in BIG-IP VE instances. | 
@@ -261,7 +261,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | owner | No | f5owner  | string | Application Tag. |
 | provisionExternalBigipLoadBalancer | No | true | string | Flag to provision external Load Balancer. |
 | provisionInternalBigipLoadBalancer | No | false  | string | Flag to provision internal Load Balancer. |
-| provisionPublicIp | No | true  | string | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host tier will be provisioned instead. See [diagram](diagram-w-bastion.png). |
+| provisionPublicIp | No | true  | string | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host tier will be provisioned instead. See [diagram](diagrams/diagram-w-bastion.png). |
 | restrictedSrcAddressMgmt | **Yes** |   | string | An IP address or address range (in CIDR notation) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please do NOT use "0.0.0.0/0". Instead, restrict the IP address range to your client or trusted network, for example "55.55.55.55/32". Production should never expose the BIG-IP Management interface to the Internet. |
 | restrictedSrcAddressApp | **Yes** |   | string | An IP address range (CIDR) that can be used to restrict access web traffic (80/443) to the BIG-IP instances, for example 'X.X.X.X/32' for a host, '0.0.0.0/0' for the Internet, etc. **NOTE**: The VPC CIDR is automatically added for internal use. |
 | s3BucketRegion | No | us-east-1 | string | The AWS Region for the S3 bucket containing the templates. |
@@ -299,11 +299,11 @@ An easy first way to deploy this solution is to use the deploy button below. How
 **NOTE**: By default, the link takes you to an AWS console set to the us-east-1 region. Select the AWS region (upper right) in which you want to deploy after clicking the Launch Stack button. 
 
 **Full Stack**
-<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Autoscale-WAF-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.4.0.0/examples/autoscale/bigiq/autoscale.yaml">
+<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Autoscale-WAF-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/autoscale/bigiq/autoscale.yaml">
     <img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png"/></a>
 
 **Existing Stack**
-<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Autoscale-WAF-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.4.0.0/examples/autoscale/bigiq/autoscale-existing-network.yaml">
+<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Autoscale-WAF-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/autoscale/bigiq/autoscale-existing-network.yaml">
     <img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png"/></a>
 
 
@@ -346,15 +346,17 @@ By default, the templates in this repository are also publicly hosted on S3 at [
 
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.4.0.0/examples/autoscale/bigiq/autoscale.yaml \
-  --parameters "ParameterKey=<KEY>,ParameterValue=<VALUE> ParameterKey=<KEY>,ParameterValue=<VALUE>"
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/autoscale/bigiq/autoscale.yaml \
+  --parameters "ParameterKey=<KEY>,ParameterValue=<VALUE> ParameterKey=<KEY>,ParameterValue=<VALUE>" \
+  --capabilities CAPABILITY_NAMED_IAM
 ```
 
 or with a local parameters file (see `autoscale-parameters.json` example in this directory):
 ```bash
  aws cloudformation create-stack --region us-east-1 --stack-name mywaf \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.4.0.0/examples/autoscale/bigiq/autoscale.yaml \
-  --parameters file://autoscale-parameters.json
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/autoscale/bigiq/autoscale.yaml \
+  --parameters file://autoscale-parameters.json \
+  --capabilities CAPABILITY_NAMED_IAM
 ```
 
 Example:
@@ -362,14 +364,16 @@ Example:
 **Full Stack**
 ```bash
  aws cloudformation create-stack --region us-east-1 --stack-name mywaf \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.4.0.0/examples/autoscale/bigiq/autoscale.yaml \
-  --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0 ParameterKey=uniqueString,ParameterValue=mywaf ParameterKey=bigIqAddressType,ParameterValue=public ParameterKey=bigIqSecretArn ParameterValue=arn:aws:secretsmanager:us-east-1:111111111111:secret:myBigIqSecret-xdg0kdf ParameterKey=bigIpRuntimeInitConfig,ParameterValue=https://raw.githubusercontent.com/myAccount/myRepo/0.0.1/runtime-init.conf" 
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/autoscale/bigiq/autoscale.yaml \
+  --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0 ParameterKey=uniqueString,ParameterValue=mywaf ParameterKey=bigIqAddressType,ParameterValue=public ParameterKey=bigIqSecretArn ParameterValue=arn:aws:secretsmanager:us-east-1:111111111111:secret:myBigIqSecret-xdg0kdf ParameterKey=bigIpRuntimeInitConfig,ParameterValue=https://raw.githubusercontent.com/myAccount/myRepo/0.0.1/runtime-init.conf" \
+  --capabilities CAPABILITY_NAMED_IAM
 ```
 **Existing Stack**
 ```bash
  aws cloudformation create-stack --region us-east-1 --stack-name mywaf \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.4.0.0/examples/autoscale/bigiq/autoscale-existing-network.yaml \
-  --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0 ParameterKey=uniqueString,ParameterValue=mywaf ParameterKey=bigIqAddressType,ParameterValue=public ParameterKey=bigIqSecretArn ParameterValue=arn:aws:secretsmanager:us-east-1:111111111111:secret:myBigIqSecret-xdg0kdf ParameterKey=bigIpRuntimeInitConfig,ParameterValue=https://raw.githubusercontent.com/myAccount/myRepo/0.0.1/runtime-init.conf ParameterKey=bigIpSubnetAz1,ParameterValue=<SUBNET ID> ParameterKey=bigIpSubnetAz2,ParameterValue=<SUBNET ID> ParameterKey=externalSubnetAz1,ParameterValue=<SUBNET ID> ParameterKey=externalSubnetAz2,ParameterValue=<SUBNET ID> ParameterKey=internalSubnetAz1,ParameterValue=<SUBNET ID> ParameterKey=internalSubnetAz2,ParameterValue=<SUBNET ID> ParameterKey=vpcId,ParameterValue=<VPC ID>" 
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/autoscale/bigiq/autoscale-existing-network.yaml \
+  --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0 ParameterKey=uniqueString,ParameterValue=mywaf ParameterKey=bigIqAddressType,ParameterValue=public ParameterKey=bigIqSecretArn ParameterValue=arn:aws:secretsmanager:us-east-1:111111111111:secret:myBigIqSecret-xdg0kdf ParameterKey=bigIpRuntimeInitConfig,ParameterValue=https://raw.githubusercontent.com/myAccount/myRepo/0.0.1/runtime-init.conf ParameterKey=bigIpSubnetAz1,ParameterValue=<SUBNET ID> ParameterKey=bigIpSubnetAz2,ParameterValue=<SUBNET ID> ParameterKey=externalSubnetAz1,ParameterValue=<SUBNET ID> ParameterKey=externalSubnetAz2,ParameterValue=<SUBNET ID> ParameterKey=internalSubnetAz1,ParameterValue=<SUBNET ID> ParameterKey=internalSubnetAz2,ParameterValue=<SUBNET ID> ParameterKey=vpcId,ParameterValue=<VPC ID>" \
+  --capabilities CAPABILITY_NAMED_IAM 
 ```
 
 For next steps, see [Validating the Deployment](#validating-the-deployment).
@@ -384,7 +388,7 @@ Example from autoscale-parameters.json
 ```json
   {
     "ParameterKey": "bigIpRuntimeInitConfig",
-    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.4.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml"
+    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml"
   },
 ```
 
@@ -744,7 +748,7 @@ To update the BIG-IP configuration:
   4. Update the CloudFormation Stack with the new **bigIpRuntimeInitConfig** parameter:
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
-        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.4.0.0/examples/autoscale/bigiq/autoscale.yaml \
+        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/autoscale/bigiq/autoscale.yaml \
         --parameters "ParameterKey=bigIpRuntimeInitConfig,ParameterValue=https://<YOUR_NEW_LOCATION> ParameterKey=<KEY>,ParameterValue=<VALUE>"
       ```
 
@@ -754,7 +758,7 @@ To update the BIG-IP OS version:
   1. Update the CloudFormation Stack with new **imageName** parameter:
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
-        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.4.0.0/examples/autoscale/bigiq/autoscale.yaml \
+        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/autoscale/bigiq/autoscale.yaml \
         --parameters "ParameterKey=imageName,ParameterValue=${imageName} ParameterKey=<KEY>,ParameterValue=<VALUE>"
       ```
 
@@ -763,7 +767,7 @@ To update the BIG-IP instance size:
   2. Update the CloudFormation Stack with new **instanceType** parameter:
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
-        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.4.0.0/examples/autoscale/bigiq/autoscale.yaml \
+        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/autoscale/bigiq/autoscale.yaml \
         --parameters "ParameterKey=instanceSize,ParameterValue=${instanceType} ParameterKey=<KEY>,ParameterValue=<VALUE>"
       ```
 
