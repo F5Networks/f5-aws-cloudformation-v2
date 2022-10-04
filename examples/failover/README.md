@@ -331,7 +331,7 @@ By default, the templates in this repository are also publicly hosted on S3 at [
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
   --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.2.0.0/examples/failover/failover.yaml \
-  --parameters "ParameterKey=<KEY>,ParameterValue=<VALUE> ParameterKey=<KEY>,ParameterValue=<VALUE>"
+  --parameters "ParameterKey=<KEY>,ParameterValue=<VALUE> ParameterKey=<KEY>,ParameterValue=<VALUE>" \
   --capabilities CAPABILITY_NAMED_IAM
 ```
 
@@ -339,7 +339,7 @@ or with a local parameters file (see `failover-parameters.json` example in this 
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
   --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.2.0.0/examples/failover/failover.yaml \
-  --parameters file://failover-parameters.json
+  --parameters file://failover-parameters.json \
   --capabilities CAPABILITY_NAMED_IAM
 ```
 
@@ -348,7 +348,7 @@ Example:
 ```bash
  aws cloudformation create-stack --region us-east-1 --stack-name myFailover \
   --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v1.2.0.0/examples/failover/failover.yaml \
-  --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0,ParameterKey=bigIpSecretArn,ParameterValue=arn:aws:secretsmanager:us-west-1:012345678901:secret:myBigipSecret-Qnju"
+  --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0,ParameterKey=bigIpSecretArn,ParameterValue=arn:aws:secretsmanager:us-west-1:012345678901:secret:myBigipSecret-Qnju" \
   --capabilities CAPABILITY_NAMED_IAM
 ```
 
