@@ -229,10 +229,10 @@ This solution leverages more traditional Autoscale configuration management prac
 | cost | No | f5cost  | string | Cost Center Tag. |
 | createLogDestination | No | true | string | Select true to create a new CloudWatch logging destination. |
 | environment | No | f5env | string | Environment Tag. |
-| externalSubnetAz1 | **Yes** |   | string | Availability Zone 1 External Subnet ID. |
-| externalSubnetAz2 | **Yes** |   | string | Availability Zone 2 External Subnet ID. |
-| internalSubnetAz2 | **Yes** |   | string | Availability Zone 1 Internal Subnet ID. |
-| internalSubnetAz2 | **Yes** |   | string | Availability Zone 2 Internal Subnet ID. |
+| externalSubnetAz1 | No |   | string | Availability Zone 1 External Subnet ID. Required if you are provisioning an external load balancer. |
+| externalSubnetAz2 | No |   | string | Availability Zone 2 External Subnet ID. Required if you are provisioning an external load balancer. |
+| internalSubnetAz2 | No |   | string | Availability Zone 1 Internal Subnet ID. Required if you are provisioning an internal load balancer. |
+| internalSubnetAz2 | No |   | string | Availability Zone 2 Internal Subnet ID. Required if you are provisioning an internal load balancer. |
 | group | No | f5group  | string | Group Tag. |
 | loggingS3BucketName | No |   | string | The name of the S3 bucket where BIG-IP logs will be sent. |
 | metricNameSpace | **Yes** |   | string | CloudWatch namespace used for custom metrics. This should match the namespace defined in your Telemetry Streaming declaration within bigipRuntimInitConfig. |
