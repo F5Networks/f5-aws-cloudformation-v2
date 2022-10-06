@@ -413,8 +413,7 @@ Parameters:
     Type: String
   bigIpRuntimeInitConfig:
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
-      file in YAML or JSON format to use for f5-bigip-runtime-init
-      configuration.'
+      file in YAML or JSON format to use for f5-bigip-runtime-init configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
     Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.1/dist/f5-bigip-runtime-init-1.5.1-1.gz.run'
