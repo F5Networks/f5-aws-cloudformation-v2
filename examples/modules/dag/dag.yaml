@@ -355,11 +355,11 @@ Parameters:
     Type: String
   externalSubnetAz1:
     Default: ''
-    Description: Availability Zone 1 External Subnet ID.
+    Description: Availability Zone 1 External Subnet ID. This is required if you are provisioning an external load balancer.
     Type: String
   externalSubnetAz2:
     Default: ''
-    Description: Availability Zone 2 External Subnet ID.
+    Description: Availability Zone 2 External Subnet ID. This is required if you are provisioning an external load balancer.
     Type: String
   group:
     Default: f5group
@@ -367,11 +367,11 @@ Parameters:
     Type: String
   internalSubnetAz1:
     Default: ''
-    Description: Availability Zone 1 Internal Subnet ID.
+    Description: Availability Zone 1 Internal Subnet ID. This is required if you are provisioning an internal load balancer.
     Type: String
   internalSubnetAz2:
     Default: ''
-    Description: Availability Zone 2 Internal Subnet ID.
+    Description: Availability Zone 2 Internal Subnet ID. This is required if you are provisioning an internal load balancer.
     Type: String
   numberPublicExternalIpAddresses:
     Default: 0
