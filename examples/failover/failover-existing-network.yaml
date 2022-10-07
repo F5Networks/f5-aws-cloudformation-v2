@@ -344,14 +344,12 @@ Parameters:
   bigIpRuntimeInitConfig01:
     Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
-      file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
-      configuration.'
+      file in YAML or JSON format to use for f5-bigip-runtime-init configuration.'
     Type: String
   bigIpRuntimeInitConfig02:
     Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance02.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
-      file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
-      configuration.'
+      file in YAML or JSON format to use for f5-bigip-runtime-init configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
     Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.1/dist/f5-bigip-runtime-init-1.5.1-1.gz.run'

@@ -246,19 +246,27 @@ Parameters:
     Type: AWS::EC2::Subnet::Id
   externalSubnetAz1:
     ConstraintDescription: Must be a valid subnet id
-    Description: Availability Zone 1 External Subnet ID.
+    Default: ''
+    Description: Availability Zone 1 External Subnet ID. Required if you are provisioning
+      an external load balancer.
     Type: AWS::EC2::Subnet::Id
   externalSubnetAz2:
     ConstraintDescription: Must be a valid subnet id
-    Description: Availability Zone 2 External Subnet ID.
+    Default: ''
+    Description: Availability Zone 2 External Subnet ID. Required if you are provisioning
+      an external load balancer.
     Type: AWS::EC2::Subnet::Id
   internalSubnetAz1:
     ConstraintDescription: Must be a valid subnet id
-    Description: Availability Zone 1 Internal Subnet ID.
+    Default: ''
+    Description: Availability Zone 1 Internal Subnet ID. Required if you are provisioning
+      an internal load balancer.
     Type: AWS::EC2::Subnet::Id
   internalSubnetAz2:
     ConstraintDescription: Must be a valid subnet id
-    Description: Availability Zone 2 Internal Subnet ID.
+    Default: ''
+    Description: Availability Zone 2 Internal Subnet ID. Required if you are provisioning
+      an internal load balancer.
     Type: AWS::EC2::Subnet::Id
   bigIpCustomImageId:
     Default: ''
@@ -326,8 +334,7 @@ Parameters:
   bigIpRuntimeInitConfig:
     Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg-with-app.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
-      file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
-      configuration.'
+      file in YAML or JSON format to use for f5-bigip-runtime-init configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
     Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.1/dist/f5-bigip-runtime-init-1.5.1-1.gz.run'
@@ -706,11 +713,11 @@ Resources:
         createExternalSecurityGroup: 'false'
         createInternalSecurityGroup: 'false'
         environment: !Ref 'environment'
-        externalSubnetAz1: !Ref 'externalSubnetAz1'
-        externalSubnetAz2: !Ref 'externalSubnetAz2'
+        externalSubnetAz1: !If [externalLB, !Ref 'externalSubnetAz1', !Ref 'AWS::NoValue']
+        externalSubnetAz2: !If [externalLB, !Ref 'externalSubnetAz2', !Ref 'AWS::NoValue']
         group: !Ref 'group'
-        internalSubnetAz1: !Ref 'internalSubnetAz1'
-        internalSubnetAz2: !Ref 'internalSubnetAz2'
+        internalSubnetAz1: !If [internalLB, !Ref 'internalSubnetAz1', !Ref 'AWS::NoValue']
+        internalSubnetAz2: !If [internalLB, !Ref 'internalSubnetAz2', !Ref 'AWS::NoValue']
         numberPublicMgmtIpAddresses: 0
         numberPublicExternalIpAddresses: 0
         provisionExternalBigipLoadBalancer: !Ref 'provisionExternalBigipLoadBalancer'

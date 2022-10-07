@@ -52,11 +52,11 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | createInternalSecurityGroup | No | false | boolean | Select true if you would like to create a Security Group for the internal BIG-IP interface. Required if you are deploying a BIG-IP with 3 or more interfaces. |
 | createFailoverIngress | No | false | boolean | Creates Security Group rules to allow Config Sync and HA between peer BIG-IP instances. |
 | environment | No | f5env | string | Environment Tag. |
-| externalSubnetAz1 | No |  | string | Availability Zone 1 External Subnet ID. |
-| externalSubnetAz2 | No |  | string | Availability Zone 2 External Subnet ID. |
+| externalSubnetAz1 | No |  | string | Availability Zone 1 External Subnet ID. Required if you are provisioning an external load balancer. |
+| externalSubnetAz2 | No |  | string | Availability Zone 2 External Subnet ID. Required if you are provisioning an external load balancer. |
 | group | No | f5group | string | Group Tag. |
-| internalSubnetAz1 | No |  | string | Availability Zone 1 Internal Subnet ID. |
-| internalSubnetAz2 | No |  | string | Availability Zone 2 Internal Subnet ID. |
+| internalSubnetAz1 | No |  | string | Availability Zone 1 Internal Subnet ID. Required if you are provisioning an internal load balancer. |
+| internalSubnetAz2 | No |  | string | Availability Zone 2 Internal Subnet ID. Required if you are provisioning an internal load balancer. |
 | numberPublicExternalIpAddresses | No | 0 | integer | Number of external public IP addresses to create. Value must be minimum 0 and maximum 4. |
 | numberPublicMgmtIpAddresses | No | 0 | integer | Number of public management IP addresses to create. Value must be minimum 0 and maximum 4.  |
 | owner | No | f5owner | string | Application Tag. |

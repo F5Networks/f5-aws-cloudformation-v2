@@ -76,7 +76,7 @@ Parameters:
   bigIpRuntimeInitConfig:
     Default: ''
     Description: 'Supply a URL to the bigip-runtime-init configuration
-      file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
+      file in YAML or JSON format to use for f5-bigip-runtime-init
       configuration.'
     Type: String
   bigIqAddressType:

@@ -222,17 +222,17 @@ This solution leverages more traditional Autoscale configuration management prac
 | bigIpScalingMinSize | No | 1 | string | Minimum number of BIG-IP instances (1-99) you want available in the Autoscale Group. |
 | bigIpSecretArn | No |  | string | The ARN of a Secrets Manager secret to create READ permissions for. For example, if customizing your runtime-init config with an admin password, logging credential, etc. |
 | bigIpSubnetAz1 | **Yes** |   | string | Availability Zone 1 BIG-IP Subnet ID. |
-| bigIpSubnetAz2 | **Yes** |   | string | Availability Zone 2 BIG-IP | 
+| bigIpSubnetAz2 | **Yes** |   | string | Availability Zone 2 BIG-IP Subnet ID. |
 | cloudWatchLogGroupName | No | f5telemetry | string | The name of the CloudWatch Log Group. Note: The name is global for a region. Will be added to IAM role. |
 | cloudWatchLogStreamName | No | f5-waf-logs  | string | The name of the CloudWatch Log Stream. |
 | cloudWatchDashboardName | No | F5-BIGIP-WAF-View  | string | The name of the CloudWatch Log Dashboard. The name is global for a region. |
 | cost | No | f5cost  | string | Cost Center Tag. |
 | createLogDestination | No | true | string | Select true to create a new CloudWatch logging destination. |
 | environment | No | f5env | string | Environment Tag. |
-| externalSubnetAz1 | **Yes** |   | string | Availability Zone 1 External Subnet ID. |
-| externalSubnetAz2 | **Yes** |   | string | Availability Zone 2 External Subnet ID. |
-| internalSubnetAz2 | **Yes** |   | string | Availability Zone 1 Internal Subnet ID. |
-| internalSubnetAz2 | **Yes** |   | string | Availability Zone 2 Internal Subnet ID. |
+| externalSubnetAz1 | No |   | string | Availability Zone 1 External Subnet ID. Required if you are provisioning an external load balancer. |
+| externalSubnetAz2 | No |   | string | Availability Zone 2 External Subnet ID. Required if you are provisioning an external load balancer. |
+| internalSubnetAz2 | No |   | string | Availability Zone 1 Internal Subnet ID. Required if you are provisioning an internal load balancer. |
+| internalSubnetAz2 | No |   | string | Availability Zone 2 Internal Subnet ID. Required if you are provisioning an internal load balancer. |
 | group | No | f5group  | string | Group Tag. |
 | loggingS3BucketName | No |   | string | The name of the S3 bucket where BIG-IP logs will be sent. |
 | metricNameSpace | **Yes** |   | string | CloudWatch namespace used for custom metrics. This should match the namespace defined in your Telemetry Streaming declaration within bigipRuntimInitConfig. |
@@ -297,14 +297,10 @@ The easiest way to deploy this CloudFormation template is to use the Launch butt
     - **restrictedSrcAddressApp**
     - **uniqueString**
     - **notificationEmail**
-  - The following parameters are required if deploying the autoscale-existing-network.yaml template:
-    - **bigIpRuntimeInitConfig** (Customization required. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) below)
+  - And any network related parameters if deploying the autoscale-existing-network.yaml template:
+    - **bigIpRuntimeInitConfig** (Customization always required. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) below)
     - **bigIpSubnetAz1**
     - **bigIpSubnetAz2**
-    - **externalSubnetAz1**
-    - **externalSubnetAz2**
-    - **internalSubnetAz1**
-    - **internalSubnetAz2**
     - **vpcId**
   - Click "Next".
 
@@ -350,7 +346,7 @@ Example:
 ```bash
  aws cloudformation create-stack --region us-east-1 --stack-name mywaf \
   --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/autoscale/payg/autoscale-existing-network.yaml \
-  --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0 ParameterKey=uniqueString,ParameterValue=mywaf ParameterKey=notificationEmail,ParameterValue=myemail@example.com ParameterKey=bigIpSubnetAz1,ParameterValue=<SUBNET ID> ParameterKey=bigIpSubnetAz2,ParameterValue=<SUBNET ID> ParameterKey=externalSubnetAz1,ParameterValue=<SUBNET ID> ParameterKey=externalSubnetAz2,ParameterValue=<SUBNET ID> ParameterKey=internalSubnetAz1,ParameterValue=<SUBNET ID> ParameterKey=internalSubnetAz2,ParameterValue=<SUBNET ID> ParameterKey=vpcId,ParameterValue=<VPC ID>" \
+  --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0 ParameterKey=uniqueString,ParameterValue=mywaf ParameterKey=notificationEmail,ParameterValue=myemail@example.com ParameterKey=bigIpSubnetAz1,ParameterValue=<SUBNET ID> ParameterKey=bigIpSubnetAz2,ParameterValue=<SUBNET ID> ParameterKey=vpcId,ParameterValue=<VPC ID>" \
   --capabilities CAPABILITY_NAMED_IAM
 ```
 
@@ -823,7 +819,7 @@ If all stacks were created "successfully" but maybe the BIG-IP or Service is not
     - */var/log/cloud-init-output.log*
   - runtime-init Logs:
     - */var/log/cloud/startup-script.log*: This file contains events that happen prior to execution of f5-bigip-runtime-init. If the files required by the deployment fail to download, for example, you will see those events logged here.
-    - */var/log/cloud/bigipRuntimeInit.log*: This file contains events logged by the f5-bigip-runtime-init onboarding utility. If the configuration is invalid causing onboarding to fail, you will see those events logged here. If deployment is successful, you will see an event with the body "All operations completed successfully".
+    - */var/log/cloud/bigIpRuntimeInit.log*: This file contains events logged by the f5-bigip-runtime-init onboarding utility. If the configuration is invalid causing onboarding to fail, you will see those events logged here. If deployment is successful, you will see an event with the body "All operations completed successfully".
   - Automation Tool Chain Logs:
     - */var/log/restnoded/restnoded.log*: This file contains events logged by the F5 Automation Toolchain components. If an Automation Toolchain declaration fails to deploy, you will see more details for those events logged here.
 - *GENERAL LOG TIP*: Search most critical error level errors first (for example, egrep -i err /var/log/<Logname>).
