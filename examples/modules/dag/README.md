@@ -57,6 +57,7 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | group | No | f5group | string | Group Tag. |
 | internalSubnetAz1 | No |  | string | Availability Zone 1 Internal Subnet ID. Required if you are provisioning an internal load balancer. |
 | internalSubnetAz2 | No |  | string | Availability Zone 2 Internal Subnet ID. Required if you are provisioning an internal load balancer. |
+| networkBorderGroup | No |  | string | Supply the name of the AWS Network Border Group for the [AWS Local Zone](https://aws.amazon.com/about-aws/global-infrastructure/localzones) where the BIG-IP subnets are located. ex. 'us-east-1-bos'. |
 | numberPublicExternalIpAddresses | No | 0 | integer | Number of external public IP addresses to create. Value must be minimum 0 and maximum 4. |
 | numberPublicMgmtIpAddresses | No | 0 | integer | Number of public management IP addresses to create. Value must be minimum 0 and maximum 4.  |
 | owner | No | f5owner | string | Application Tag. |

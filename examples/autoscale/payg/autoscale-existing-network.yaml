@@ -249,25 +249,25 @@ Parameters:
     Default: ''
     Description: Availability Zone 1 External Subnet ID. Required if you are provisioning
       an external load balancer.
-    Type: AWS::EC2::Subnet::Id
+    Type: String
   externalSubnetAz2:
     ConstraintDescription: Must be a valid subnet id
     Default: ''
     Description: Availability Zone 2 External Subnet ID. Required if you are provisioning
       an external load balancer.
-    Type: AWS::EC2::Subnet::Id
+    Type: String
   internalSubnetAz1:
     ConstraintDescription: Must be a valid subnet id
     Default: ''
     Description: Availability Zone 1 Internal Subnet ID. Required if you are provisioning
       an internal load balancer.
-    Type: AWS::EC2::Subnet::Id
+    Type: String
   internalSubnetAz2:
     ConstraintDescription: Must be a valid subnet id
     Default: ''
     Description: Availability Zone 2 Internal Subnet ID. Required if you are provisioning
       an internal load balancer.
-    Type: AWS::EC2::Subnet::Id
+    Type: String
   bigIpCustomImageId:
     Default: ''
     Description: Provide BIG-IP AMI ID you wish to deploy.
@@ -285,28 +285,6 @@ Parameters:
       a new instance profile.
     Type: String
   bigIpInstanceType:
-    AllowedValues:
-      - t3.large
-      - m3.2xlarge
-      - m4.xlarge
-      - m4.2xlarge
-      - m4.4xlarge
-      - m4.10xlarge
-      - m5.large
-      - m5.xlarge
-      - m5.2xlarge
-      - m5.4xlarge
-      - c3.4xlarge
-      - c3.8xlarge
-      - c4.4xlarge
-      - c4.8xlarge
-      - c5.large
-      - c5.xlarge
-      - c5.2xlarge
-      - c5.4xlarge
-      - cc2.8xlarge
-      - c5n.2xlarge
-      - c5n.4xlarge
     ConstraintDescription: Must be a valid EC2 instance type for BIG-IP
     Default: m5.xlarge
     Description: Enter valid instance type.

@@ -192,6 +192,7 @@ By default, this solution creates a single Availability Zone VPC with four subne
 | environment | No | f5env | string | Environment Tag. |
 | group | No | f5group | string | Group Tag. |
 | licenseType | No | payg | string | Specifies license type used for BIG-IP VE. Default is payg. If selecting byol, see additional configuration notes. |
+| networkBorderGroup | No |  | string | Supply the name of the AWS Network Border Group for the [AWS Local Zone](https://aws.amazon.com/about-aws/global-infrastructure/localzones) where the BIG-IP subnets are located. ex. 'us-east-1-bos'. |
 | numAzs | No | 1 | integer | Number of Availability Zones. Default = 1 |
 | numSubnets | No | 4 | integer | Number of Subnets. NOTE: Quickstart requires leaving at Default = 4 as Application Subnet is hardcoded to be in 4th subnet |
 | numNics | No | 3 | integer | Number of interfaces to create on BIG-IP instance. Maximum of 3 allowed. Minimum of 1 allowed. |
