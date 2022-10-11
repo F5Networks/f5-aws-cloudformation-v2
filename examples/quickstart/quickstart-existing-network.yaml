@@ -541,6 +541,7 @@ Metadata:
           - bigIpInternalSubnetId
           - bigIpMgmtSelfIp
           - bigIpMgmtSubnetId
+          - networkBorderGroup
       - Label:
           default: Amazon EC2 Configuration
         Parameters:
@@ -616,6 +617,8 @@ Metadata:
         default: Group
       licenseType:
         default: License Type
+      networkBorderGroup:
+        default: Name of the network border group for the local zone.
       numNics:
         default: Interfaces
       owner:
@@ -792,27 +795,6 @@ Parameters:
       using an instance profile.
     Type: String
   bigIpInstanceType:
-    AllowedValues:
-      - m3.2xlarge
-      - m4.xlarge
-      - m4.2xlarge
-      - m4.4xlarge
-      - m4.10xlarge
-      - m5.large
-      - m5.xlarge
-      - m5.2xlarge
-      - m5.4xlarge
-      - c3.4xlarge
-      - c3.8xlarge
-      - c4.4xlarge
-      - c4.8xlarge
-      - c5.large
-      - c5.xlarge
-      - c5.2xlarge
-      - c5.4xlarge
-      - cc2.8xlarge
-      - c5n.2xlarge
-      - c5n.4xlarge
     ConstraintDescription: Must be a valid EC2 instance type for BIG-IP
     Default: m5.2xlarge
     Description: Enter valid instance type.
@@ -823,6 +805,12 @@ Parameters:
       - byol
     Default: payg
     Description: Specifies license type used for BIG-IP VE.
+    Type: String
+  networkBorderGroup:
+    Default: ''
+    Description: Supply the name of the AWS Network Border Group for the [AWS Local
+      Zone](https://aws.amazon.com/about-aws/global-infrastructure/localzones) where
+      the BIG-IP subnets are located. ex. 'us-east-1-bos'.
     Type: String
   numNics:
     AllowedValues:
@@ -974,6 +962,7 @@ Resources:
         createInternalSecurityGroup: !If [3nic, 'true', 'false']
         environment: !Ref 'environment'
         group: !Ref 'group'
+        networkBorderGroup: !Ref 'networkBorderGroup'
         numberPublicExternalIpAddresses: 2
         numberPublicMgmtIpAddresses: !If [noPublicIp, 0, 1]
         restrictedSrcAddressApp: !Ref 'restrictedSrcAddressApp'

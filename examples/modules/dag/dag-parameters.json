@@ -60,6 +60,10 @@
     "ParameterValue": ""
   },
   {
+    "ParameterKey": "networkBorderGroup",
+    "ParameterValue": ""
+  },
+  {
     "ParameterKey": "numberPublicExternalIpAddresses",
     "ParameterValue": "0"
   },

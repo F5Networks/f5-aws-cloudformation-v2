@@ -14,7 +14,7 @@ NUMBER SUBNETS: 4
 PUBLIC MGMT: 'true'
 PROVISION EXAMPLE APP: 'true'
 PROVISION PUBLIC IP: 'true'
-REGION: us-east-2
+REGION: us-west-2
 RUNTIME INIT CONFIG: https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/quickstart/bigip-configurations/<DEWPOINT JOB ID>.yaml
 SOLUTION TYPE: standalone
 SSH KEY: dewpt

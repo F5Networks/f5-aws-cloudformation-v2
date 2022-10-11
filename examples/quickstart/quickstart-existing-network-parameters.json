@@ -88,6 +88,10 @@
     "ParameterValue": "payg"
   },
   {
+    "ParameterKey": "networkBorderGroup",
+    "ParameterValue": ""
+  },
+  {
     "ParameterKey": "numNics",
     "ParameterValue": "3"
   },

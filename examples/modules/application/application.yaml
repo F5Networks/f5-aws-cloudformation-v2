@@ -194,8 +194,6 @@ Parameters:
     MaxLength: 50
     Type: String
   instanceType:
-    AllowedValues:
-      - t2.small
     ConstraintDescription: Must be a valid EC2 instance type for BIG-IP
     Default: t2.small
     Description: Enter valid instance type.

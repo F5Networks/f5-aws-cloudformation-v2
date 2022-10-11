@@ -16,6 +16,14 @@ mgmtAz=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETW
 extAz=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 1)
 intAz=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 3)
 vpcId=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="vpcId").OutputValue')
+networkBorderGroup=''
+
+## for testing local zones (us-west-2 only)
+# mgmtAz='subnet-039af0b70fbdb1064'
+# extAz='subnet-07785c9c63a93a05a'
+# intAz='subnet-005f3267acdf91721'
+# vpcId='vpc-0ff232a8a13fcfa09'
+# networkBorderGroup='us-west-2-phx-1'
 
 if [ -z $region ] || [ $region == null ]; then
     region="us-east-1"
@@ -90,6 +98,10 @@ cat <<EOF > parameters.json
     {
         "ParameterKey": "bigIpLicenseKey",
         "ParameterValue": "$regKey"
+    },
+    {
+        "ParameterKey": "networkBorderGroup",
+        "ParameterValue": "$networkBorderGroup"
     },
     {
         "ParameterKey": "bigIpRuntimeInitConfig",
