@@ -127,13 +127,13 @@ By default, this solution creates a single Availability Zone VPC with four subne
 | allowUsageAnalytics | No | true | string | This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **false** statistics are not sent. |
 | appDockerImageName | No | f5devcentral/f5-demo-app:latest  | string | The name of a container to download and install which is used for the example application server(s). If this value is left blank, the application module template is not deployed. |
 | application | No | f5app  |  string |Application Tag. |
-| artifactLocation | No | f5-aws-cloudformation-v2/v2.5.0.0/examples/  |  string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
+| artifactLocation | No | f5-aws-cloudformation-v2/v2.6.0.0/examples/  |  string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
 | bigIpCustomImageId | No |   |  string | Provide a custom BIG-IP AMI ID you wish to deploy. Otherwise, can leave empty. |
 | bigIpHostname | No | bigip01.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
 | bigIpImage | No | Best |  string | F5 BIG-IP Performance Type. |
 | bigIpInstanceProfile | No |  | string | Enter the name of an existing IAM instance profile with applied IAM policy to be associated to the BIG-IP virtual machine(s). Leave default if not using an instance profile. |
 | bigIpInstanceType | No | m5.xlarge |  string | Enter a valid instance type. |
-| bigIpRuntimeInitConfig | No | https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg-with-app.yaml | string | URL or JSON string for BIG-IP Runtime Init config. |
+| bigIpRuntimeInitConfig | No | https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.6.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg-with-app.yaml | string | URL or JSON string for BIG-IP Runtime Init config. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run | string | Supply a URL to the bigip-runtime-init package |
 | cost | No | f5costcenter  | string | Cost Center Tag. |
 | environment | No | f5env  | string | Environment Tag. |
@@ -174,27 +174,28 @@ By default, this solution creates a single Availability Zone VPC with four subne
 | Parameter | Required* | Default | Type | Description |
 | --- | --- | --- | --- | --- |
 | allowUsageAnalytics | No | true | string | This deployment can send anonymous statistics to F5 to help us determine how to improve our solutions. If you select **false** statistics are not sent. |
-| appDockerImageName | No | f5devcentral/f5-demo-app:latest  | string | The name of a container to download and install which is used for the example application server(s). If this value is left blank, the application module template is not deployed. |
 | application | No | f5app | string | Application Tag. |
-| artifactLocation | No | f5-aws-cloudformation-v2/v2.5.0.0/examples/ | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
+| artifactLocation | No | f5-aws-cloudformation-v2/v2.6.0.0/examples/ | string | The directory, relative to the templateBaseUrl, where the modules folder is located. |
 | bigIpCustomImageId | No |   | string | Provide BIG-IP AMI ID you wish to deploy. Otherwise, can leave empty. |
 | bigIpHostname | No | bigip01.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
-| bigIpExternalSubnetId | **Yes** |   | string | Subnet id used for BIG-IP instance external interface. |
+| bigIpExternalServiceIps | No | 10.0.1.101,10.0.0.101 | string | A comma seperated list of one or more private IP addresses to apply to the external network interface as secondary private addresses. |      
+| bigIpExternalSelfIp | No | 10.0.0.11 | string | External Private IP Address for the BIG-IP instance. The address must reside in the subnet provided in the bigIpExternalSubnetId parameter. |
+| bigIpExternalSubnetId | **Yes** |   | string | Subnet id used for BIG-IP instance external interface. Required for 2 NIC deployments. |
 | bigIpImage | No | Best | string | F5 BIG-IP Performance Type. |
 | bigIpInstanceProfile | No |  | string | Enter the name of an existing IAM instance profile with applied IAM policy to be associated to the BIG-IP virtual machine(s). Leave default if not using an instance profile. |
 | bigIpInstanceType | No | m5.xlarge | string | Enter a valid instance type. |
-| bigIpInternalSubnetId | **Yes** |   | string | Subnet id used for BIG-IP instance internal interface. |
+| bigIpInternalSelfIp | No | 10.0.2.11  | string | Internal Private IP Address for the BIG-IP instance. The address must reside in the subnet provided in the bigIpInternalSubnetId parameter.  |
+| bigIpInternalSubnetId | **Yes** |   | string | Subnet id used for BIG-IP instance internal interface. Required for 3 NIC deployments. |
 | bigIpLicenseKey | No |  | string | Supply the F5 BYOL license key for the BIG-IP instance. Leave this parameter blank if deploying the PAYG solution. |
-| bigIpMgmtSubnetId | **Yes** |   | string | Subnet id used for BIG-IP instance management interface. |
-| bigIpRuntimeInitConfig | No | https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg-with-app.yaml | string | URL or JSON string for BIG-IP Runtime Init config. |
+| bigIpMgmtSelfIp | No | 10.0.1.11 | string | Management Private IP Address for the BIG-IP instance. The address must reside in the subnet provided in the bigIpMgmtSubnetId parameter. |
+| bigIpMgmtSubnetId | **Yes** |   | string | Subnet id used for BIG-IP instance management interface. Required for 1 NIC deployments. |
+| bigIpRuntimeInitConfig | No | https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.6.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg-with-app.yaml | string | URL or JSON string for BIG-IP Runtime Init config. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run | string | Supply a URL to the bigip-runtime-init package |
 | cost | No | f5costcenter | string | Cost Center Tag. |
 | environment | No | f5env | string | Environment Tag. |
 | group | No | f5group | string | Group Tag. |
 | licenseType | No | payg | string | Specifies license type used for BIG-IP VE. Default is payg. If selecting byol, see additional configuration notes. |
 | networkBorderGroup | No |  | string | Supply the name of the AWS Network Border Group for the [AWS Local Zone](https://aws.amazon.com/about-aws/global-infrastructure/localzones) where the BIG-IP subnets are located. ex. 'us-east-1-bos'. |
-| numAzs | No | 1 | integer | Number of Availability Zones. Default = 1 |
-| numSubnets | No | 4 | integer | Number of Subnets. NOTE: Quickstart requires leaving at Default = 4 as Application Subnet is hardcoded to be in 4th subnet |
 | numNics | No | 3 | integer | Number of interfaces to create on BIG-IP instance. Maximum of 3 allowed. Minimum of 1 allowed. |
 | owner | No | f5owner | string | Owner Tag. |
 | provisionPublicIp | No | true | string | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host will be provisioned instead. See [diagram](diagrams/diagram-w-bastion.png). |
@@ -235,11 +236,11 @@ The easiest way to deploy this CloudFormation template is to use the Launch butt
 **Important**: By default, the link takes you to an AWS console set to the us-east-1 region. Select the AWS region (upper right) in which you want to deploy after clicking the Launch Stack button. 
 
 **Quickstart**<br>
-<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Quickstart-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/quickstart/quickstart.yaml">
+<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Quickstart-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.6.0.0/examples/quickstart/quickstart.yaml">
     <img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png"/></a>
 
 **Quickstart Existing Network**<br>
-<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Quickstart-Existing-Network-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/quickstart/quickstart-existing-network.yaml">
+<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Quickstart-Existing-Network-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.6.0.0/examples/quickstart/quickstart-existing-network.yaml">
     <img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png"/></a>
 
 *Step 1: Specify template* 
@@ -253,12 +254,9 @@ The easiest way to deploy this CloudFormation template is to use the Launch butt
   - And any network related parameters if deploying the quickstart-existing-network.yaml template, for example:
     - **vpcId**
     - **vpcCidr**
-    - **bigIpMgmtSubnetId**
-    - **bigIpMgmtSelfIp**
-    - **bigIpExternalSubnetId**
-    - **bigipExternalSelfIp**
-    - **bigIpInternalSubnetId**
-    - **bigIpInternalSelfIp**
+    - **bigIpMgmtSubnetId** *(for 1 NIC)*
+    - **bigIpExternalSubnetId** *(for 2 NIC)*
+    - **bigIpInternalSubnetId** *(for 3 NIC)*
   - Click "Next"
 
 *Step 3: Configure Stack Options*
@@ -277,14 +275,14 @@ By default, the templates in this repository are also publicly hosted on S3 at [
 
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/quickstart/quickstart.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.6.0.0/examples/quickstart/quickstart.yaml \
   --parameters "ParameterKey=<KEY>,ParameterValue=<VALUE> ParameterKey=<KEY>,ParameterValue=<VALUE>"
 ```
 
 or with a local parameters file (see `quickstart-parameters.json` example in this directory):
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/quickstart/quickstart.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.6.0.0/examples/quickstart/quickstart.yaml \
   --parameters file://quickstart-parameters.json
 ```
 
@@ -292,7 +290,7 @@ Example using `--parameters` option:
 
 ```bash
  aws cloudformation create-stack --region us-east-1 --stack-name myQuickstart \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.5.0.0/examples/quickstart/quickstart.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.6.0.0/examples/quickstart/quickstart.yaml \
   --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0"
 ```
 
@@ -675,8 +673,8 @@ These templates have only been explicitly tested and validated with the followin
 
 | BIG-IP Version | Build Number |
 | --- | --- |
-| 16.1.3.1 | 0.0.11 |
-| 14.1.4.6 | 0.0.6 |
+| 16.1.3.2 | 0.0.4 |
+| 14.1.5.2 | 0.0.3 |
 
 These templates leverage Runtime-Init, which requires BIG-IP Versions 14.1.2.6 and up, and are assumed compatible to work. 
 
