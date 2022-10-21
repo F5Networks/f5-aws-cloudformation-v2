@@ -136,7 +136,7 @@ Metadata:
         default: Unique string
       vpc:
         default: VPC ID
-  Version: 2.5.0.0
+  Version: 2.6.0.0
 Outputs:
   stackName:
     Description: application nested stack name
@@ -194,8 +194,6 @@ Parameters:
     MaxLength: 50
     Type: String
   instanceType:
-    AllowedValues:
-      - t2.small
     ConstraintDescription: Must be a valid EC2 instance type for BIG-IP
     Default: t2.small
     Description: Enter valid instance type.

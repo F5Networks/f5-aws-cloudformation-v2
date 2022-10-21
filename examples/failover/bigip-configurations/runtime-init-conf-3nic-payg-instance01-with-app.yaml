@@ -48,6 +48,7 @@ extension_services:
             autoPhonehome: true
             class: System
             hostname: "{{{HOST_NAME}}}"
+            mgmtDhcpEnabled: false
           admin:
             class: User
             userType: regular
@@ -145,7 +146,7 @@ extension_services:
               xForwardedFor: true
             Custom_WAF_Policy:
               class: WAF_Policy
-              url: https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v2.5.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
+              url: https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v2.6.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
               enforcementMode: blocking
               ignoreChanges: false
             Service_Address_01_A:
@@ -248,6 +249,7 @@ extension_services:
             autoPhonehome: true
             class: System
             hostname: "{{{HOST_NAME}}}"
+            mgmtDhcpEnabled: false
           admin:
             class: User
             userType: regular

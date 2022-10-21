@@ -164,7 +164,7 @@ Metadata:
         default: Public or external subnets for the availability zones
       uniqueString:
         default: Unique string
-  Version: 2.5.0.0
+  Version: 2.6.0.0
 Outputs:
   stackName:
     Description: bigip-autoscale nested stack name
@@ -196,8 +196,7 @@ Parameters:
     Type: String
   bigIpRuntimeInitConfig:
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
-      file in YAML or JSON format, or an escaped JSON string to use for f5-bigip-runtime-init
-      configuration.'
+      file in YAML or JSON format to use for f5-bigip-runtime-init configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
     Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.1/dist/f5-bigip-runtime-init-1.5.1-1.gz.run'
@@ -251,28 +250,6 @@ Parameters:
     MinLength: 1
     Type: String
   instanceType:
-    AllowedValues:
-      - m3.2xlarge
-      - m4.xlarge
-      - m4.2xlarge
-      - m4.4xlarge
-      - m4.10xlarge
-      - m5.large
-      - m5.xlarge
-      - m5.2xlarge
-      - m5.4xlarge
-      - t3.large
-      - c3.4xlarge
-      - c3.8xlarge
-      - c4.4xlarge
-      - c4.8xlarge
-      - c5.large
-      - c5.xlarge
-      - c5.2xlarge
-      - c5.4xlarge
-      - cc2.8xlarge
-      - c5n.2xlarge
-      - c5n.4xlarge
     ConstraintDescription: Must be a valid EC2 instance type for BIG-IP
     Default: m5.2xlarge
     Description: Enter valid instance type.
@@ -651,7 +628,7 @@ Resources:
             - |
               # Run
             - |
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.5.0.0/examples/modules/bigip-autoscale/bigip-autoscale.yaml'
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.6.0.0/examples/modules/bigip-autoscale/bigip-autoscale.yaml'
             - |2+
 
             - |

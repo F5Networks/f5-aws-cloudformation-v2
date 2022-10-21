@@ -12,13 +12,40 @@ echo "bucket_name=$bucket_name"
 artifact_location=$(cat /$PWD/examples/autoscale/<LICENSE TYPE>/autoscale-existing-network.yaml | yq -r .Parameters.artifactLocation.Default)
 echo "artifact_location=$artifact_location"
 
-mgmtAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 2)
-extAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 1)
-intAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 3)
-mgmtAz2=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsB").OutputValue' | cut -d ',' -f 2)
-extAz2=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsB").OutputValue' | cut -d ',' -f 1)
-intAz2=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsB").OutputValue' | cut -d ',' -f 3)
 vpcId=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="vpcId").OutputValue')
+mgmtAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 2)
+mgmtAz2=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsB").OutputValue' | cut -d ',' -f 2)
+
+extAz1=''
+extAz2=''
+intAz1=''
+intAz2=''
+if [[ <PROVISION EXTERNAL LB> == "true" ]]; then
+    extAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 1)
+    extAz2=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsB").OutputValue' | cut -d ',' -f 1)
+fi
+if [[ <PROVISION INTERNAL LB> == "true" ]]; then
+    intAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 3)
+    intAz2=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsB").OutputValue' | cut -d ',' -f 3)
+fi
+
+## for testing local zones (us-west-2 only)
+# vpcId='vpc-0ff232a8a13fcfa09'
+# mgmtAz1='subnet-039af0b70fbdb1064'
+# mgmtAz2='subnet-03e503edecafbf6d1'
+
+# extAz1=''
+# extAz2=''
+# intAz1=''
+# intAz2=''
+# if [[ <PROVISION EXTERNAL LB> == "true" ]]; then
+#     extAz1='subnet-0f420f622a395d177'
+#     extAz2='subnet-0c1943e3ba9b7b873'
+# fi
+# if [[ <PROVISION INTERNAL LB> == "true" ]]; then
+#     intAz1='subnet-05793396e16aff2a1'
+#     intAz2='subnet-07720d61fb5b256df'
+# fi
 
 runtimeConfig='"<RUNTIME INIT CONFIG>"'
 secret_name=$(aws secretsmanager describe-secret --secret-id <DEWPOINT JOB ID>-secret-runtime --region <REGION> | jq -r .Name)
@@ -237,11 +264,11 @@ cat <<EOF > parameters.json
     },
     {
         "ParameterKey": "internalSubnetAz1",
-        "ParameterValue": "$extAz1"
+        "ParameterValue": "$intAz1"
     },
     {
         "ParameterKey": "internalSubnetAz2",
-        "ParameterValue": "$extAz2"
+        "ParameterValue": "$intAz2"
     },
     {
         "ParameterKey": "vpcId",

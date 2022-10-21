@@ -70,6 +70,10 @@ Conditions:
     - !Equals
       - 'false'
       - !Ref createInternalSecurityGroup
+  useLocalZone: !Not
+    - !Equals
+      - !Ref 'networkBorderGroup'
+      - ""
 Metadata:
   'AWS::CloudFormation::Interface':
     ParameterGroups:
@@ -91,6 +95,7 @@ Metadata:
           - externalSubnetAz1
           - externalSubnetAz2
           - vpc
+          - networkBorderGroup
       - Label:
           default: Internal Elastic Load Balancer
         Parameters:
@@ -129,6 +134,8 @@ Metadata:
         default: Subnet Availability Zone 1
       internalSubnetAz2:
         default: Subnet Availability Zone 2
+      networkBorderGroup:
+        default: Name of the network border group for the local zone.
       numberPublicExternalIpAddresses:
         default: Number of External Public IP addresses
       numberPublicMgmtIpAddresses:
@@ -157,7 +164,7 @@ Metadata:
         default: Unique string
       vpc:
         default: VPC Id
-  Version: 2.5.0.0
+  Version: 2.6.0.0
 Outputs:
   stackName:
     Description: dag nested stack name
@@ -355,11 +362,11 @@ Parameters:
     Type: String
   externalSubnetAz1:
     Default: ''
-    Description: Availability Zone 1 External Subnet ID.
+    Description: Availability Zone 1 External Subnet ID. Required if you are provisioning an external load balancer.
     Type: String
   externalSubnetAz2:
     Default: ''
-    Description: Availability Zone 2 External Subnet ID.
+    Description: Availability Zone 2 External Subnet ID. Required if you are provisioning an external load balancer.
     Type: String
   group:
     Default: f5group
@@ -367,11 +374,15 @@ Parameters:
     Type: String
   internalSubnetAz1:
     Default: ''
-    Description: Availability Zone 1 Internal Subnet ID.
+    Description: Availability Zone 1 Internal Subnet ID. Required if you are provisioning an internal load balancer.
     Type: String
   internalSubnetAz2:
     Default: ''
-    Description: Availability Zone 2 Internal Subnet ID.
+    Description: Availability Zone 2 Internal Subnet ID. Required if you are provisioning an internal load balancer.
+    Type: String
+  networkBorderGroup:
+    Default: ''
+    Description: Supply the name of the AWS Network Border Group for the [AWS Local Zone](https://aws.amazon.com/about-aws/global-infrastructure/localzones) where the BIG-IP subnets are located. ex. 'us-east-1-bos'.
     Type: String
   numberPublicExternalIpAddresses:
     Default: 0
@@ -672,6 +683,7 @@ Resources:
     Condition: createMgmtPublicIP01
     Properties:
       Domain: vpc
+      NetworkBorderGroup: !If [useLocalZone, !Ref 'networkBorderGroup', !Ref 'AWS::Region']
       Tags:
         - Key: costcenter
           Value: !Ref cost
@@ -691,6 +703,7 @@ Resources:
     Condition: createMgmtPublicIP02
     Properties:
       Domain: vpc
+      NetworkBorderGroup: !If [useLocalZone, !Ref 'networkBorderGroup', !Ref 'AWS::Region']
       Tags:
         - Key: costcenter
           Value: !Ref cost
@@ -710,6 +723,7 @@ Resources:
     Condition: createMgmtPublicIP03
     Properties:
       Domain: vpc
+      NetworkBorderGroup: !If [useLocalZone, !Ref 'networkBorderGroup', !Ref 'AWS::Region']
       Tags:
         - Key: costcenter
           Value: !Ref cost
@@ -729,6 +743,7 @@ Resources:
     Condition: createMgmtPublicIP04
     Properties:
       Domain: vpc
+      NetworkBorderGroup: !If [useLocalZone, !Ref 'networkBorderGroup', !Ref 'AWS::Region']
       Tags:
         - Key: costcenter
           Value: !Ref cost
@@ -748,6 +763,7 @@ Resources:
     Condition: createExternalPublicIP01
     Properties:
       Domain: vpc
+      NetworkBorderGroup: !If [useLocalZone, !Ref 'networkBorderGroup', !Ref 'AWS::Region']
       Tags:
         - Key: costcenter
           Value: !Ref cost
@@ -767,6 +783,7 @@ Resources:
     Condition: createExternalPublicIP02
     Properties:
       Domain: vpc
+      NetworkBorderGroup: !If [useLocalZone, !Ref 'networkBorderGroup', !Ref 'AWS::Region']
       Tags:
         - Key: costcenter
           Value: !Ref cost
@@ -786,6 +803,7 @@ Resources:
     Condition: createExternalPublicIP03
     Properties:
       Domain: vpc
+      NetworkBorderGroup: !If [useLocalZone, !Ref 'networkBorderGroup', !Ref 'AWS::Region']
       Tags:
         - Key: costcenter
           Value: !Ref cost
@@ -817,6 +835,7 @@ Resources:
     Condition: createExternalPublicIP04
     Properties:
       Domain: vpc
+      NetworkBorderGroup: !If [useLocalZone, !Ref 'networkBorderGroup', !Ref 'AWS::Region']
       Tags:
         - Key: costcenter
           Value: !Ref cost
