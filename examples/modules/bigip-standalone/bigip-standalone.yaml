@@ -1124,6 +1124,14 @@ Resources:
               /usr/bin/setdb provision.extramb 1000
             - |
               /usr/bin/setdb restjavad.useextramb true
+            - |
+              /usr/bin/setdb iapplxrpm.timeout 300 || true
+            - |
+              /usr/bin/setdb icrd.timeout 180 || true
+            - |
+              /usr/bin/setdb restjavad.timeout 180 || true
+            - |
+              /usr/bin/setdb restnoded.timeout 180 || true
             - |2+
 
             - |
@@ -1306,6 +1314,14 @@ Resources:
               /usr/bin/setdb provision.extramb 1000
             - |
               /usr/bin/setdb restjavad.useextramb true
+            - |
+              /usr/bin/setdb iapplxrpm.timeout 300 || true
+            - |
+              /usr/bin/setdb icrd.timeout 180 || true
+            - |
+              /usr/bin/setdb restjavad.timeout 180 || true
+            - |
+              /usr/bin/setdb restnoded.timeout 180 || true
             - |2+
 
             - |
@@ -1482,6 +1498,14 @@ Resources:
               /usr/bin/setdb provision.extramb 1000
             - |
               /usr/bin/setdb restjavad.useextramb true
+            - |
+              /usr/bin/setdb iapplxrpm.timeout 300 || true
+            - |
+              /usr/bin/setdb icrd.timeout 180 || true
+            - |
+              /usr/bin/setdb restjavad.timeout 180 || true
+            - |
+              /usr/bin/setdb restnoded.timeout 180 || true
             - |2+
 
             - |
