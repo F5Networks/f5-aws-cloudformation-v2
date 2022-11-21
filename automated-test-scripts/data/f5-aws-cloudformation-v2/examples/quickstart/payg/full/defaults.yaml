@@ -13,6 +13,7 @@ TEMPLATE NAME: quickstart-3nic-payg
 SOLUTION TYPE: standalone
 SSH KEY: dewpt
 STACK NAME: dewdrop-<TEMPLATE NAME>-<DEWPOINT JOB ID>
+STACK TYPE: full-stack
 TEMPLATE URL: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/main/examples/quickstart/quickstart.yaml'
 THROUGHPUT: 25Mbps
 UNIQUESTRING: dew<DEWPOINT JOB ID>

@@ -37,6 +37,29 @@ Conditions:
     - !Equals
       - !Ref 'bigIpInstanceProfile'
       - ""
+  createKeyPair: !Equals
+    - ''
+    - !Ref sshKey
+  createSecret: !And
+    - !Equals
+      - !Ref provisionSecret
+      - 'true'
+    - !Equals
+      - ''
+      - !Ref bigIpSecretArn
+  useSecretArn: !Not
+    - !Equals
+      - ''
+      - !Ref bigIpSecretArn
+  useSecret: !And
+    - !Or
+      - !Condition createSecret
+      - !Condition useSecretArn
+    - !Not
+      - !Condition useBigIpInstanceProfile
+  useAccess: !Or
+    - !Condition createKeyPair
+    - !Condition useSecret
 Mappings:
   AWSBigipThroughput:
     1000Mbps:
@@ -558,6 +581,8 @@ Metadata:
           - bigIpHostname
           - bigIpLicenseKey
           - provisionPublicIp
+          - provisionSecret
+          - bigIpSecretArn
           - allowUsageAnalytics
       - Label:
           default: Application Configuration
@@ -597,8 +622,12 @@ Metadata:
         default: BIG-IP Runtime Init Config
       bigIpRuntimeInitPackageUrl:
         default: Runtime Init Package
+      bigIpSecretArn:
+        default: ARN of Secrets Manager secret
       cost:
         default: Cost Center
+      provisionSecret:
+        default: Creates Secrets Manager secret for BIG-IP password
       environment:
         default: Environment
       group:
@@ -644,6 +673,10 @@ Outputs:
     Condition: noPublicIp
     Description: bastion's public IP address
     Value: !GetAtt [Bastion, Outputs.bastionPublicIp]
+  bigIpKeyPairName:
+    Condition: createKeyPair
+    Description: SSH key pair name
+    Value: !GetAtt [Access, Outputs.keyPairName]
   bigIpManagementPrivateIp:
     Description: bigip's private management address
     Value: !GetAtt [BigipStandalone, Outputs.bigIpManagementInterfacePrivateIp]
@@ -677,6 +710,10 @@ Outputs:
       - - 'https://'
         - !GetAtt [Dag, Outputs.bigIpManagementEipAddress01]
         - ':8443'
+  bigIpSecretArn:
+    Condition: createSecret
+    Description: Secret ARN
+    Value: !GetAtt [Access, Outputs.secretArn]
   vipPublicUrl:
     Description: url to public vip address
     Value: !Join
@@ -729,6 +766,10 @@ Parameters:
   bigIpRuntimeInitPackageUrl:
     Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.1/dist/f5-bigip-runtime-init-1.5.1-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
+    Type: String
+  bigIpSecretArn:
+    Default: ''
+    Description: The ARN of an existing AWS Secrets Manager secret where the BIG-IP password used for clustering is stored. If left empty, and provisionSecret is true, a secret will be created.
     Type: String
   cost:
     Default: f5costcenter
@@ -813,6 +854,13 @@ Parameters:
     Description: Whether or not to provision Public IP Addresses for the BIG-IP Network
       Interfaces.
     Type: String
+  provisionSecret:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+    Description: Value of true creates AWS Secrets Manager secret.
+    Type: String
   restrictedSrcAddressApp:
     AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
     ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
@@ -845,9 +893,9 @@ Parameters:
       hosted. When using your own bucket, you must specify this value.'
     Type: String
   sshKey:
-    Description: REQUIRED - Supply the public key that will be used for SSH authentication
-      to the BIG-IP and application virtual machines.
-    Type: 'AWS::EC2::KeyPair::KeyName'
+    Default: ''
+    Description: Supply the public key that will be used for SSH authentication to the BIG-IP, application, and bastion virtual machines. If left empty, one will be created.
+    Type: String
   throughput:
     AllowedValues:
       - 25Mbps
@@ -874,6 +922,25 @@ Parameters:
     Description: Select version of BIG-IP you wish to deploy.
     Type: String
 Resources:
+  Access:
+    Type: 'AWS::CloudFormation::Stack'
+    Condition: useAccess
+    Properties:
+      TemplateURL: !Sub
+        - 'https://${S3Bucket}.s3.${S3Region}.amazonaws.com/${artifactLocation}modules/access/access.yaml'
+        - S3Region: !Ref 's3BucketRegion'
+          S3Bucket: !Ref 's3BucketName'
+      Parameters:
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        createBigIpRoles: !If [useSecret, 'true', 'false']
+        createSecret: !If [createSecret, 'true', 'false']
+        createSshKey: !If [createKeyPair, 'true', 'false']
+        secretArn: !If [useSecretArn, !Ref 'bigIpSecretArn', !Ref 'AWS::NoValue']
+        solutionType: !If [useSecret, 'secret', 'standard']
+        uniqueString: !Ref 'uniqueString'
   Application:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -890,7 +957,7 @@ Resources:
         environment: !Ref 'environment'
         group: !Ref 'group'
         restrictedSrcAddress: !Ref 'restrictedSrcAddressApp'
-        sshKey: !Ref 'sshKey'
+        sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
         staticIp: "10.0.3.4"
         uniqueString: !Ref 'uniqueString'
         vpc: !GetAtt
@@ -922,7 +989,7 @@ Resources:
         createAutoscaleGroup: 'false'
         environment: !Ref 'environment'
         group: !Ref 'group'
-        sshKey: !Ref 'sshKey'
+        sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
         restrictedSrcAddress: !Ref 'restrictedSrcAddressMgmt'
         uniqueString: !Ref 'uniqueString'
         vpc: !GetAtt
@@ -952,10 +1019,7 @@ Resources:
                 AWSBigipThroughput, !Ref 'throughput', !Ref 'bigIpImage']], !FindInMap [
               !FindInMap [VERSION, !Ref 'version', REGIONMAP], !Ref 'AWS::Region',
               AllTwoBootLocations]], !Ref 'bigIpCustomImageId']
-        instanceProfile: !If
-          - useBigIpInstanceProfile
-          - !Ref 'bigIpInstanceProfile'
-          - !Ref 'AWS::NoValue'
+        instanceProfile: !If [useBigIpInstanceProfile, !Ref 'bigIpInstanceProfile', !If [useSecret, !GetAtt [Access, Outputs.bigIpInstanceProfile], !Ref 'AWS::NoValue']]
         instanceType: !Ref 'bigIpInstanceType'
         internalSecurityGroupId: !If [3nic, !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup],
           !Ref 'AWS::NoValue']
@@ -968,7 +1032,8 @@ Resources:
         mgmtSelfIp: "10.0.1.11"
         mgmtSubnetId: !Select [1, !Split [',', !GetAtt [Network, Outputs.subnetsA]]]
         numSecondaryPrivateIpAddress: 1
-        sshKey: !Ref 'sshKey'
+        secretArn: !If [useSecret, !If [createSecret, !GetAtt [Access, Outputs.secretArn], !Ref 'bigIpSecretArn'], !Ref 'AWS::NoValue']
+        sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
         uniqueString: !Ref 'uniqueString'
   Dag:
     Type: 'AWS::CloudFormation::Stack'

@@ -214,6 +214,10 @@ Outputs:
     Value: !GetAtt
       - BigipAutoscale
       - Outputs.bigIpAutoscaleGroup
+  bigIpKeyPairName:
+    Condition: createKeyPair
+    Description: SSH key pair name
+    Value: !GetAtt [Access, Outputs.keyPairName]
 Parameters:
   allowUsageAnalytics:
     AllowedValues:
@@ -476,9 +480,9 @@ Parameters:
     Type: List<String>
     Default: autoscaling:EC2_INSTANCE_LAUNCH,autoscaling:EC2_INSTANCE_LAUNCH_ERROR
   sshKey:
-    Description: REQUIRED - Supply the public key that will be used for SSH authentication
-      to the BIG-IP and application virtual machines.
-    Type: 'AWS::EC2::KeyPair::KeyName'
+    Default: ''
+    Description: Supply the public key that will be used for SSH authentication to the BIG-IP, application, and bastion virtual machines. If left empty, one will be created.
+    Type: String
   uniqueString:
     ConstraintDescription: 'Must Contain between 1 and 12 alphanumeric characters
       with first character as a letter.'
@@ -506,6 +510,9 @@ Conditions:
   createLoggingS3Bucket: !And
     - !Condition 'createLogDestination'
     - !Condition 'useLoggingS3Bucket'
+  createKeyPair: !Equals
+    - ''
+    - !Ref sshKey
   customDashboard: !Not
     - !Equals
       - ''
@@ -565,6 +572,8 @@ Resources:
         createAmiRole: 'true'
         createBigIpRoles: !If [createBigIpInstanceProfile, 'true', 'false']
         createBigIqRoles: 'false'
+        createSecret: 'false'
+        createSshKey: !If [createKeyPair, 'true', 'false']
         environment: !Ref 'environment'
         group: !Ref 'group'
         metricNameSpace: !If [customNameSpace, !Ref 'metricNameSpace', 'f5-scaling-metrics']
@@ -670,7 +679,7 @@ Resources:
         scalingMaxSize: !Ref 'bigIpScalingMaxSize'
         secretArn: !If [useSecretArn, !Ref 'bigIpSecretArn', !Ref 'AWS::NoValue']
         snsEvents: !Join [',', !Ref 'snsEvents']
-        sshKey: !Ref 'sshKey'
+        sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
         subnets: !Join
           - ','
           - - !Ref 'bigIpSubnetAz1'

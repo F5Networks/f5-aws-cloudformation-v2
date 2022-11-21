@@ -12,6 +12,12 @@ echo "bucket_name=$bucket_name"
 artifact_location=$(cat /$PWD/examples/autoscale/<LICENSE TYPE>/autoscale.yaml | yq -r .Parameters.artifactLocation.Default)
 echo "artifact_location=$artifact_location"
 
+private_key=''
+if [[ "<CREATE NEW KEY PAIR>" == 'false' ]]; then
+    private_key='<SSH KEY>'
+fi
+echo "Private key: ${private_key}"
+
 runtimeConfig='"<RUNTIME INIT CONFIG>"'
 secret_name=$(aws secretsmanager describe-secret --secret-id <DEWPOINT JOB ID>-secret-runtime --region <REGION> | jq -r .Name)
 secret_arn=$(aws secretsmanager describe-secret --secret-id <DEWPOINT JOB ID>-secret-runtime --region <REGION> | jq -r .ARN)
@@ -230,7 +236,7 @@ cat <<EOF > parameters.json
     },
     {
         "ParameterKey": "sshKey",
-        "ParameterValue": "<SSH KEY>"
+        "ParameterValue": "$private_key"
     },
     {
         "ParameterKey": "subnetMask",

@@ -24,7 +24,7 @@ As a basic framework, an example full stack deployment may consist of:
   -  **(Child) Network Template** - creates virtual networks (VPC), subnets, internet/NAT gateways, DHCP options, network ACLs, and other network related resources. 
   -  **(Child) Application Template** - creates a generic application for demonstrating live traffic through the BIG-IP.
   -  **(Child) DAG/Ingress Template** - creates resources required to get traffic to the BIG-IP (for example, Elastic IP Addresses, External and Internal Load Balancers, Security Groups).
-  -  **(Child) Access Template** - creates Identity and Access related resources, like IAM Roles and Instance profiles, with permissions for various use cases (for example, accessing a secret in a cloud vault, S3 buckets, etc.)
+  -  **(Child) Access Template** - creates Identity and Access related resources, like IAM Roles and Instance profiles, with permissions for various use cases (for example, accessing a secret in a cloud vault, S3 buckets, etc.) and SSH keys.
   -  **(Child) Function Template** - creates AWS Lambda functions used for tasks like managing licenses for an AWS Autoscale Group of BIG-IP instances licensed with BIG-IQ, convenience functions like looking up AMIs by name, etc.
   -  **(Child) BIG-IP Template** *(existing-stack)* - creates a BIG-IP instance or instances in an AWS Autoscale Group, failover cluster, etc. 
 

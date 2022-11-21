@@ -12,6 +12,12 @@ region=$(aws s3api get-bucket-location --bucket $bucket_name | jq -r .LocationCo
 artifact_location=$(cat /$PWD/examples/quickstart/quickstart.yaml | yq -r .Parameters.artifactLocation.Default)
 echo "artifact_location=$artifact_location"
 
+private_key=''
+if [[ "<CREATE NEW KEY PAIR>" == 'false' ]]; then
+    private_key='<SSH KEY>'
+fi
+echo "Private key: ${private_key}"
+
 mgmtAz=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 2)
 extAz=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 1)
 intAz=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 3)
@@ -136,8 +142,16 @@ cat <<EOF > parameters.json
         "ParameterValue": "$region"
     },
     {
+        "ParameterKey": "bigIpSecretArn",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "provisionSecret",
+        "ParameterValue": "<CREATE NEW SECRET>"
+    },
+    {
         "ParameterKey": "sshKey",
-        "ParameterValue": "<SSH KEY>"
+        "ParameterValue": "$private_key"
     },
     {
         "ParameterKey": "throughput",

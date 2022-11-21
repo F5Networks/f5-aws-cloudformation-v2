@@ -21,6 +21,8 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 
   - AWS IAM Role
   - AWS IAM Instance Profile
+  - AWS SSH Key Pair
+  - AWS Secrets Manager Secret
 
 This solution creates IAM roles based on the following **solutionTypes**:
 
@@ -63,6 +65,10 @@ This solution creates IAM roles based on the following **solutionTypes**:
     - Creates IAM roles for standalone, failover, and autoscale solutions.
   * [AWS IAM Instance Profile](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html)
     - Instance profile is associated with IAM Role and assigned to EC2 instance used for hosting BIG-IP system.
+  * [AWS SSH Key Pair](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html)
+    - (Optional) SSH Key Pair used to access the BIG-IP, bastion, and application virtual machine instances.
+  * [AWS Secrets Manager Secret](https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html)
+    - (Optional) Secret used to create the BIG-IP quickstart user password.
 
 
 ### IAM Permissions by Solution Type
@@ -122,6 +128,8 @@ These are the IAM permissions produced by each type of solution supported by thi
 | createAmiRole | No | false | boolean | Value of 'true' creates IAM roles required for AMI lookup function. |
 | createBigIpRoles | No | true | boolean | Value of 'true' creates IAM roles and instance profile assigned to BIG-IP instance(s). |
 | createBigIqRoles | No | false | boolean | Value of 'true' creates IAM roles required to revoke license assignments from BIG-IQ. |
+| createSecret | No | false | boolean | Value of true creates AWS Secrets Manager secret. |
+| createSshKey | No | false | boolean | Value of true creates public key that will be used for SSH authentication to the virtual machine instances. |
 | environment | No | f5env | string | Environment Tag. |
 | group | No | f5group | string | Group Tag. |
 | metricNameSpace | No |  | string | CloudWatch namespace used for custom metrics. This should match the namespace defined in your telemetry services declaration within bigipRuntimInitConfig. |
@@ -141,6 +149,8 @@ These are the IAM permissions produced by each type of solution supported by thi
 | copyZipsRole | CopyZips IAM role | string | IAM policy for CopyZips lambda function. |
 | lambdaAccessRole | Lambda IAM role | string | IAM policy for BIG-IQ lambda function. |
 | lambdaAmiExecutionRole| Lambda ami IAM role | string | IAM policy for ami lookup function. |
+| keyPairName| SSH Key Pair | string | SSH key pair name. |
+| secretArn| Secrets Manager secret | string | Secret ARN. |
 
 ## Resource Creation Flow Chart
 

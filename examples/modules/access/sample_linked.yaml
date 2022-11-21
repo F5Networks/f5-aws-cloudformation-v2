@@ -12,6 +12,8 @@ Resources:
         cloudWatchLogGroup: ''
         createAmiRole: 'true'
         createBigIqRoles: 'false'
+        createSecret: 'false'
+        createSshKey: 'false'
         metricNameSpace: ''
         s3Bucket: example-s3-bucket-name
         secretArn: ''
@@ -28,3 +30,7 @@ Outputs:
     Value: !GetAtt Access.Outputs.copyZipsRole
   bigIqNotificationRole:
     Value: !GetAtt Access.Outputs.bigIqNotificationRole
+  keyPairName:
+    Value: !GetAtt Access.Outputs.keyPairName
+  secretArn:
+    Value: !GetAtt Access.Outputs.secretArn

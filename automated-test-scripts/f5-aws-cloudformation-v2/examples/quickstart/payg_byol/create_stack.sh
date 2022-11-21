@@ -13,6 +13,12 @@ region=$(aws s3api get-bucket-location --bucket $bucket_name | jq -r .LocationCo
 artifact_location=$(cat /$PWD/examples/quickstart/quickstart.yaml | yq -r .Parameters.artifactLocation.Default)
 echo "artifact_location=$artifact_location"
 
+private_key=''
+if [[ "<CREATE NEW KEY PAIR>" == 'false' ]]; then
+    private_key='<SSH KEY>'
+fi
+echo "Private key: ${private_key}"
+
 if [ -z $region ] || [ $region == null ]; then
     region="us-east-1"
     echo "bucket region:$region"
@@ -111,8 +117,16 @@ cat <<EOF > parameters.json
         "ParameterValue": "$region"
     },
     {
+        "ParameterKey": "bigIpSecretArn",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "provisionSecret",
+        "ParameterValue": "<CREATE NEW SECRET>"
+    },
+    {
         "ParameterKey": "sshKey",
-        "ParameterValue": "<SSH KEY>"
+        "ParameterValue": "$private_key"
     },
     {
         "ParameterKey": "throughput",

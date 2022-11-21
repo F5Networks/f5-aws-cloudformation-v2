@@ -56,6 +56,10 @@
     "ParameterValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.1/dist/f5-bigip-runtime-init-1.5.1-1.gz.run"
   },
   {
+    "ParameterKey": "bigIpSecretArn",
+    "ParameterValue": ""
+  },
+  {
     "ParameterKey": "cost",
     "ParameterValue": "f5costcenter"
   },
@@ -102,6 +106,10 @@
   {
     "ParameterKey": "provisionPublicIp",
     "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "provisionSecret",
+    "ParameterValue": "false"
   },
   {
     "ParameterKey": "restrictedSrcAddressApp",

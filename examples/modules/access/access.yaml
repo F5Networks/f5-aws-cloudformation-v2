@@ -4,6 +4,16 @@ Description: >-
   (i.e. High-Availability or Autoscale)
   Secret Manager service.
 Conditions:
+  createKeyPair: !Equals
+    - !Ref createSshKey
+    - 'true'
+  createSecret: !And
+    - !Equals
+      - !Ref createSecret
+      - 'true'
+    - !Equals
+      - ''
+      - !Ref secretArn
   createBigIpRoles: !Equals
     - !Ref createBigIpRoles
     - 'true'
@@ -46,6 +56,9 @@ Conditions:
     - !Equals
       - ''
       - !Ref cloudWatchLogGroup
+  useSecret: !Or
+    - !Condition createSecret
+    - !Condition useSecretArn
   useSecretArn: !Not
     - !Equals
       - ''
@@ -66,6 +79,8 @@ Metadata:
           - cloudWatchLogGroup
           - metricNameSpace
           - cfeTag
+          - createSecret
+          - createSshKey
       - Label:
           default: Resources Tags
         Parameters:
@@ -98,6 +113,10 @@ Metadata:
         default: Creates IAM roles for BIG-IP
       createBigIqRoles:
         default: Creates IAM roles for BIG-IQ
+      createSecret:
+        default: Creates Secrets Manager secret for BIG-IP password
+      createSshKey:
+        default: Creates public key
       bigIqSecretArn:
         default: The ARN of the AWS secret containing the password used during BIG-IP licensing via BIG-IQ
       secretArn:
@@ -146,6 +165,14 @@ Outputs:
     Condition: createBigIqRoles
     Description: IAM policy for Lifecycle Hook notifications
     Value: !GetAtt BigIqNotificationRole.Arn
+  keyPairName:
+    Condition: createKeyPair
+    Description: SSH key pair name
+    Value: !Ref BigIpSshKeyPair
+  secretArn:
+    Condition: createSecret
+    Description: Secret ARN
+    Value: !Ref BigIpSecret
 Parameters:
   application:
     Default: f5app
@@ -187,6 +214,20 @@ Parameters:
       - 'false'
     Default: 'false'
     Description: Value of true creates IAM roles required to revoke license assignments from BIG-IQ.
+    Type: String
+  createSecret:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+    Description: Value of true creates AWS Secrets Manager secret.
+    Type: String
+  createSshKey:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'false'
+    Description: Value of true creates public key that will be used for SSH authentication to the virtual machine instances.
     Type: String
   environment:
     Default: f5env
@@ -230,6 +271,48 @@ Parameters:
     Description: Unique String used when creating object names or Tags.
     Type: String
 Resources:
+  BigIpSshKeyPair:
+    Condition: createKeyPair
+    Type: 'AWS::EC2::KeyPair'
+    Properties:
+      KeyName: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-keyPair'
+      Tags:
+        - Key: application
+          Value: !Ref 'application'
+        - Key: costcenter
+          Value: !Ref 'cost'
+        - Key: environment
+          Value: !Ref 'environment'
+        - Key: group
+          Value: !Ref 'group'
+        - Key: owner
+          Value: !Ref 'owner'
+  BigIpSecret:
+    Condition: createSecret
+    Type: 'AWS::SecretsManager::Secret'
+    Properties:
+      Name: !Join
+        - ''
+        - - !Ref uniqueString
+          - '-bigIpSecret'
+      Description: "This secret has a dynamically generated secret password."
+      GenerateSecretString:
+        PasswordLength: 10
+        ExcludePunctuation: true
+      Tags:
+        - Key: application
+          Value: !Ref 'application'
+        - Key: costcenter
+          Value: !Ref 'cost'
+        - Key: environment
+          Value: !Ref 'environment'
+        - Key: group
+          Value: !Ref 'group'
+        - Key: owner
+          Value: !Ref 'owner'
   CopyZipsRole:
     Condition: createBigIqRoles
     Type: 'AWS::IAM::Role'
@@ -565,8 +648,11 @@ Resources:
                 Effect: Allow
                 Resource:
                   - !If
-                    - useSecretArn
-                    - !Ref secretArn
+                    - useSecret
+                    - !If
+                      - useSecretArn
+                      - !Ref secretArn
+                      - !Ref BigIpSecret
                     - !Ref AWS::NoValue
                   - !If
                     - useBigIqSecretArn
@@ -760,8 +846,11 @@ Resources:
                 Effect: Allow
                 Resource:
                   - !If
-                    - useSecretArn
-                    - !Ref secretArn
+                    - useSecret
+                    - !If
+                      - useSecretArn
+                      - !Ref secretArn
+                      - !Ref BigIpSecret
                     - !Ref AWS::NoValue
                   - !If
                     - useBigIqSecretArn
@@ -922,8 +1011,11 @@ Resources:
                 Effect: Allow
                 Resource:
                   - !If
-                    - useSecretArn
-                    - !Ref secretArn
+                    - useSecret
+                    - !If
+                      - useSecretArn
+                      - !Ref secretArn
+                      - !Ref BigIpSecret
                     - !Ref AWS::NoValue
                   - !If
                     - useBigIqSecretArn
