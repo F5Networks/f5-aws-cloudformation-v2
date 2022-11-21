@@ -18,6 +18,7 @@ REGION: us-west-1
 SOLUTION TYPE: standalone
 SSH KEY: dewpt
 STACK NAME: dewdrop-quickstart-<NIC COUNT>nic-payg-<DEWPOINT JOB ID>
+STACK TYPE: existing-stack
 SUBNETMASK: 24
 TEMPLATE NAME: quickstart-3nic-payg
 TEMPLATE URL: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/main/examples/quickstart/quickstart-existing-network.yaml'

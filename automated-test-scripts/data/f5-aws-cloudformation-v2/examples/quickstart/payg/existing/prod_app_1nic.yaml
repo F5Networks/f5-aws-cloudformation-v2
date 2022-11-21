@@ -3,6 +3,8 @@ BIGIP IMAGE: Best
 BIGIP INSTANCE TYPE: m5.2xlarge
 BIGIP USER: admin
 CIDR: 10.0.0.0/16
+CREATE NEW KEY PAIR: 'false'
+CREATE NEW SECRET: 'false'
 CUSTOM IMAGE: ''
 DOCKER IMAGE: 'f5devcentral/f5-demo-app:latest'
 NETWORK STACK NAME: dewdrop-<NETWORK TEMPLATE NAME>-<DEWPOINT JOB ID>
@@ -19,6 +21,7 @@ RUNTIME INIT CONFIG: https://<STACK NAME>.s3.<REGION>.amazonaws.com/examples/qui
 SOLUTION TYPE: standalone
 SSH KEY: dewpt
 STACK NAME: dewdrop-quickstart-<NIC COUNT>nic-payg-<DEWPOINT JOB ID>
+STACK TYPE: existing-stack
 SUBNETMASK: 24
 # have to be explicit here because dewdrop only runs one substitution
 TEMPLATE NAME: quickstart-1nic-payg
