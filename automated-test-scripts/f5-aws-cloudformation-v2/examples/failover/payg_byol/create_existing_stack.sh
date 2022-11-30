@@ -26,22 +26,28 @@ if [[ "<CREATE NEW SECRET>" == 'false' ]]; then
     echo "Secret arn: ${secret_arn}"
 fi
 
+intAz1=''
+intAz2=''
 if [[ '<NUMBER SUBNETS>' == '4' && '<PROVISION EXAMPLE APP>' == 'false' ]]; then
     # This is 3 nic case with no public IP
     mgmtAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 2)
-    extAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 4)
-    intAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 3)
     mgmtAz2=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsB").OutputValue' | cut -d ',' -f 2)
+    extAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 4)
     extAz2=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsB").OutputValue' | cut -d ',' -f 4)
-    intAz2=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsB").OutputValue' | cut -d ',' -f 3)
+    if [[ '<NUMBER NICS>' == '3' ]]; then
+        intAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 3)
+        intAz2=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsB").OutputValue' | cut -d ',' -f 3)
+    fi
 else
     # This is 3 nic case with public ip
     mgmtAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 2)
-    extAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 1)
-    intAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 3)
     mgmtAz2=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsB").OutputValue' | cut -d ',' -f 2)
+    extAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 1)
     extAz2=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsB").OutputValue' | cut -d ',' -f 1)
-    intAz2=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsB").OutputValue' | cut -d ',' -f 3)
+    if [[ '<NUMBER NICS>' == '3' ]]; then
+        intAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 3)
+        intAz2=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsB").OutputValue' | cut -d ',' -f 3)
+    fi
 fi
 vpcId=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="vpcId").OutputValue')
 
@@ -70,9 +76,9 @@ if [[ "<PROVISION EXAMPLE APP>" == "true" ]]; then
 fi
 
 if [[ "<PROVISION EXAMPLE APP>" == "false" ]]; then
-    declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance01.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance02.yaml)
+    declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-<NUMBER NICS>nic-<LICENSE TYPE>-instance01.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-<NUMBER NICS>nic-<LICENSE TYPE>-instance02.yaml)
 else
-    declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance01-with-app.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance02-with-app.yaml)
+    declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-<NUMBER NICS>nic-<LICENSE TYPE>-instance01-with-app.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-<NUMBER NICS>nic-<LICENSE TYPE>-instance02-with-app.yaml)
 fi
 counter=1
 for config_path in "${runtime_init_config_files[@]}"; do
@@ -94,6 +100,7 @@ for config_path in "${runtime_init_config_files[@]}"; do
     /usr/bin/yq e ".extension_services.service_operations.[1].value.externalStorage.scopingTags.f5_cloud_failover_label = \"<DEWPOINT JOB ID>\"" -i <DEWPOINT JOB ID>-0$counter.yaml
     /usr/bin/yq e ".extension_services.service_operations.[1].value.failoverAddresses.scopingTags.f5_cloud_failover_label = \"<DEWPOINT JOB ID>\"" -i <DEWPOINT JOB ID>-0$counter.yaml
 
+    # Update WAF policy URL
     if [[ "<PROVISION EXAMPLE APP>" == "true" ]]; then
         /usr/bin/yq e ".extension_services.service_operations.[2].value.Tenant_1.Shared.Custom_WAF_Policy.url = \"https://cdn.f5.com/product/cloudsolutions/solution-scripts/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>-0$counter.yaml
     fi
@@ -186,6 +193,10 @@ cat <<EOF > parameters.json
     {
         "ParameterKey": "bigIpInternalSubnetId02",
         "ParameterValue": "$intAz2"
+    },
+    {
+        "ParameterKey": "numNics",
+        "ParameterValue": "<NUMBER NICS>"
     },
     {
         "ParameterKey": "provisionPublicIpMgmt",

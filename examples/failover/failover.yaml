@@ -52,6 +52,7 @@ Metadata:
           - bigIpImage
           - bigIpCustomImageId
           - bigIpInstanceType
+          - numNics
           - bigIpSecretArn
           - cfeS3Bucket
           - cfeVipTag
@@ -136,6 +137,8 @@ Metadata:
         default: ARN of Secrets Manager secret
       numAzs:
         default: Number of Availability Zones
+      numNics:
+        default: Interfaces
       numSubnets:
         default: Number of Subnets
       owner:
@@ -434,6 +437,14 @@ Parameters:
     MaxValue: 4
     MinValue: 1
     Type: Number
+  numNics:
+    AllowedValues:
+      - 2
+      - 3
+    Default: 3
+    Description: Number of interfaces to create on BIG-IP instance. Maximum of 3 allowed.
+      Minimum of 2 allowed.
+    Type: Number
   numSubnets:
     Default: 4
     Description: Indicate the number of subnets to create. A minimum of 4 subnets
@@ -523,6 +534,14 @@ Parameters:
     Description: CIDR block for the VPC.
     Type: String
 Conditions:
+  2nic: !Or
+    - !Condition '3nic'
+    - !Equals
+      - 2
+      - !Ref 'numNics'
+  3nic: !Equals
+    - 3
+    - !Ref 'numNics'
   createBigIpInstanceProfile: !Equals
     - !Ref 'bigIpInstanceProfile'
     - ""
@@ -775,17 +794,20 @@ Resources:
             - Outputs.bigIpInstanceProfile
           - !Ref 'bigIpInstanceProfile'
         instanceType: !Ref 'bigIpInstanceType'
-        internalSelfIp: !Ref 'bigIpInternalSelfIp01'
-        internalSubnetId: !Join
-          - ','
-          - - !Select
-              - '2'
-              - !Split
-                - ','
-                - !GetAtt
-                  - Network
-                  - Outputs.subnetsA
-        internalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup]
+        internalSecurityGroupId: !If [3nic, !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup], !Ref 'AWS::NoValue']
+        internalSelfIp: !If [3nic, !Ref 'bigIpInternalSelfIp01', !Ref 'AWS::NoValue']
+        internalSubnetId: !If
+          - 3nic
+          - !Join
+            - ','
+            - - !Select
+                - '2'
+                - !Split
+                  - ','
+                  - !GetAtt
+                    - Network
+                    - Outputs.subnetsA
+          - !Ref 'AWS::NoValue'
         licenseKey: !Ref 'bigIpLicenseKey01'
         mgmtPublicIpId: !If [usePublicIpMgmt, !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId01],
           '']
@@ -858,17 +880,20 @@ Resources:
             - Outputs.bigIpInstanceProfile
           - !Ref 'bigIpInstanceProfile'
         instanceType: !Ref 'bigIpInstanceType'
-        internalSelfIp: !Ref 'bigIpInternalSelfIp02'
-        internalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup]
-        internalSubnetId: !Join
-          - ','
-          - - !Select
-              - '2'
-              - !Split
-                - ','
-                - !GetAtt
-                  - Network
-                  - Outputs.subnetsB
+        internalSecurityGroupId: !If [3nic, !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup], !Ref 'AWS::NoValue']
+        internalSelfIp: !If [3nic, !Ref 'bigIpInternalSelfIp02', !Ref 'AWS::NoValue']
+        internalSubnetId: !If
+          - 3nic
+          - !Join
+            - ','
+            - - !Select
+                - '2'
+                - !Split
+                  - ','
+                  - !GetAtt
+                    - Network
+                    - Outputs.subnetsB
+          - !Ref 'AWS::NoValue'
         licenseKey: !Ref 'bigIpLicenseKey02'
         mgmtPublicIpId: !If [usePublicIpMgmt, !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId02],
           '']
@@ -899,7 +924,7 @@ Resources:
         cost: !Ref 'cost'
         createAppSecurityGroup: true
         createFailoverIngress: true
-        createInternalSecurityGroup: true
+        createInternalSecurityGroup: !If [3nic, 'true', 'false']
         createExternalSecurityGroup: true
         createBastionSecurityGroup: !If [usePublicIpMgmt, false, true]
         cfeTag: !Ref 'cfeTag'
@@ -946,20 +971,26 @@ Resources:
                     - Network
                     - Outputs.subnetsB
         group: !Ref 'group'
-        internalSubnetAz1: !Select
-          - '0'
-          - !Split
-            - ','
-            - !GetAtt
-              - Network
-              - Outputs.subnetsA
-        internalSubnetAz2: !Select
-          - '0'
-          - !Split
-            - ','
-            - !GetAtt
-              - Network
-              - Outputs.subnetsB
+        internalSubnetAz1: !If
+          - 3nic
+          - !Select
+            - '0'
+            - !Split
+              - ','
+              - !GetAtt
+                - Network
+                - Outputs.subnetsA
+          - !Ref 'AWS::NoValue'
+        internalSubnetAz2: !If
+          - 3nic
+          - !Select
+            - '0'
+            - !Split
+              - ','
+              - !GetAtt
+                - Network
+                - Outputs.subnetsB
+          - !Ref 'AWS::NoValue'
         numberPublicExternalIpAddresses: !If [usePublicIpVip, 3, 2]
         numberPublicMgmtIpAddresses: !If [usePublicIpMgmt, 2, 0]
         provisionExternalBigipLoadBalancer: false

@@ -20,7 +20,7 @@ extension_services:
         schemaVersion: 1.0.0
         class: Device
         async: true
-        label: Failover 3NIC BIG-IP declaration for Declarative Onboarding with
+        label: Failover 2NIC BIG-IP declaration for Declarative Onboarding with
           BYOL license
         Common:
           class: Tenant
@@ -28,10 +28,6 @@ extension_services:
             class: DbVariables
             config.allow.rfc3927: enable
             tm.tcpudptxchecksum: Software-only
-          My_Provisioning:
-            asm: nominal
-            class: Provision
-            ltm: nominal
           My_Ntp:
             class: NTP
             servers:
@@ -80,19 +76,6 @@ extension_services:
               - tcp:6127
               - tcp:6128
             trafficGroup: traffic-group-local-only
-          internal:
-            class: VLAN
-            interfaces:
-              - name: '1.2'
-                tagged: false
-            mtu: 1500
-            tag: 4093
-          internal-self:
-            class: SelfIp
-            address: "{{{SELF_IP_INTERNAL}}}"
-            allowService: none
-            trafficGroup: traffic-group-local-only
-            vlan: internal
           default:
             class: Route
             gw: "{{{DEFAULT_GW}}}"
@@ -120,112 +103,13 @@ extension_services:
           scopingTags:
             f5_cloud_failover_label: bigip_high_availability_solution
           requireScopingTags: false
-    - extensionType: as3
-      type: inline
-      value:
-        class: ADC
-        schemaVersion: 3.0.0
-        label: Failover
-        remark: Failover
-        Tenant_1:
-          class: Tenant
-          Shared:
-            class: Application
-            template: shared
-            Service_01_Pool:
-              class: Pool
-              remark: Service 1 shared pool
-              members:
-                - servicePort: 80
-                  addressDiscovery: aws
-                  region: "{{{REGION}}}"
-                  updateInterval: 60
-                  tagKey: aws:cloudformation:logical-id
-                  tagValue: AppInstance
-                  addressRealm: private
-              monitors:
-                - http
-            Custom_HTTP_Profile:
-              class: HTTP_Profile
-              xForwardedFor: true
-            Custom_WAF_Policy:
-              class: WAF_Policy
-              url: https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v2.6.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
-              enforcementMode: blocking
-              ignoreChanges: false
-            Service_Address_01_A:
-              class: Service_Address
-              virtualAddress: 10.0.0.101
-              trafficGroup: none
-            Service_Address_01_B:
-              class: Service_Address
-              virtualAddress: 10.0.4.101
-              trafficGroup: none
-          HTTP_Service_01_A:
-            class: Application
-            template: http
-            serviceMain:
-              class: Service_HTTP
-              virtualAddresses:
-                - use: "/Tenant_1/Shared/Service_Address_01_A"
-              snat: auto
-              pool: "/Tenant_1/Shared/Service_01_Pool"
-              profileHTTP:
-                use: "/Tenant_1/Shared/Custom_HTTP_Profile"
-              policyWAF:
-                use: "/Tenant_1/Shared/Custom_WAF_Policy"
-          HTTP_Service_01_B:
-            class: Application
-            template: http
-            serviceMain:
-              class: Service_HTTP
-              virtualAddresses:
-                - use: "/Tenant_1/Shared/Service_Address_01_B"
-              snat: auto
-              pool: "/Tenant_1/Shared/Service_01_Pool"
-              profileHTTP:
-                use: "/Tenant_1/Shared/Custom_HTTP_Profile"
-              policyWAF:
-                use: "/Tenant_1/Shared/Custom_WAF_Policy"
-          HTTPS_Service_01_A:
-            class: Application
-            template: https
-            serviceMain:
-              class: Service_HTTPS
-              virtualAddresses:
-                - use: "/Tenant_1/Shared/Service_Address_01_A"
-              snat: auto
-              pool: "/Tenant_1/Shared/Service_01_Pool"
-              serverTLS:
-                bigip: "/Common/clientssl"
-              redirect80: false
-              profileHTTP:
-                use: "/Tenant_1/Shared/Custom_HTTP_Profile"
-              policyWAF:
-                use: "/Tenant_1/Shared/Custom_WAF_Policy"
-          HTTPS_Service_01_B:
-            class: Application
-            template: https
-            serviceMain:
-              class: Service_HTTPS
-              virtualAddresses:
-                - use: "/Tenant_1/Shared/Service_Address_01_B"
-              snat: auto
-              pool: "/Tenant_1/Shared/Service_01_Pool"
-              serverTLS:
-                bigip: "/Common/clientssl"
-              redirect80: false
-              profileHTTP:
-                use: "/Tenant_1/Shared/Custom_HTTP_Profile"
-              policyWAF:
-                use: "/Tenant_1/Shared/Custom_WAF_Policy"
     - extensionType: do
       type: inline
       value:
         schemaVersion: 1.0.0
         class: Device
         async: true
-        label: Failover 3NIC BIG-IP declaration for Declarative Onboarding with
+        label: Failover 2NIC BIG-IP declaration for Declarative Onboarding with
           BYOL license
         Common:
           class: Tenant
@@ -233,10 +117,6 @@ extension_services:
             class: DbVariables
             config.allow.rfc3927: enable
             tm.tcpudptxchecksum: Software-only
-          My_Provisioning:
-            asm: nominal
-            class: Provision
-            ltm: nominal
           My_Ntp:
             class: NTP
             servers:
@@ -281,19 +161,6 @@ extension_services:
               - tcp:6127
               - tcp:6128
             trafficGroup: traffic-group-local-only
-          internal:
-            class: VLAN
-            interfaces:
-              - name: '1.2'
-                tagged: false
-            mtu: 1500
-            tag: 4093
-          internal-self:
-            class: SelfIp
-            address: "{{{SELF_IP_INTERNAL}}}"
-            allowService: none
-            trafficGroup: traffic-group-local-only
-            vlan: internal
           default:
             class: Route
             gw: "{{{DEFAULT_GW}}}"
@@ -356,13 +223,6 @@ runtime_parameters:
       type: network
       field: local-ipv4s
       index: 1
-  - name: SELF_IP_INTERNAL
-    type: metadata
-    metadataProvider:
-      type: network
-      environment: aws
-      field: local-ipv4s
-      index: 2
   - name: DEFAULT_GW
     type: metadata
     metadataProvider:
@@ -371,10 +231,3 @@ runtime_parameters:
       field: local-ipv4s
       index: 1
       ipcalc: first
-  - name: REGION
-    type: metadata
-    metadataProvider:
-      environment: aws
-      type: uri
-      value: "/latest/dynamic/instance-identity/document"
-      query: region

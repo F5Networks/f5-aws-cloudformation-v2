@@ -144,6 +144,10 @@
     "ParameterValue": ""
   },
   {
+    "ParameterKey": "numNics",
+    "ParameterValue": "3"
+  },
+  {
     "ParameterKey": "owner",
     "ParameterValue": "f5owner"
   },

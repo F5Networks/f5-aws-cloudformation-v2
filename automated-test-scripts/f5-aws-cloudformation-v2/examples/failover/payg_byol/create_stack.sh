@@ -50,9 +50,9 @@ if [[ "<PROVISION EXAMPLE APP>" == "true" ]]; then
 fi
 
 if [[ "<PROVISION EXAMPLE APP>" == "false" ]]; then
-    declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance01.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance02.yaml)
+    declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-<NUMBER NICS>nic-<LICENSE TYPE>-instance01.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-<NUMBER NICS>nic-<LICENSE TYPE>-instance02.yaml)
 else
-    declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance01-with-app.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance02-with-app.yaml)
+    declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-<NUMBER NICS>nic-<LICENSE TYPE>-instance01-with-app.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-<NUMBER NICS>nic-<LICENSE TYPE>-instance02-with-app.yaml)
 fi
 counter=1
 for config_path in "${runtime_init_config_files[@]}"; do
@@ -74,6 +74,7 @@ for config_path in "${runtime_init_config_files[@]}"; do
     /usr/bin/yq e ".extension_services.service_operations.[1].value.externalStorage.scopingTags.f5_cloud_failover_label = \"<DEWPOINT JOB ID>\"" -i <DEWPOINT JOB ID>-0$counter.yaml
     /usr/bin/yq e ".extension_services.service_operations.[1].value.failoverAddresses.scopingTags.f5_cloud_failover_label = \"<DEWPOINT JOB ID>\"" -i <DEWPOINT JOB ID>-0$counter.yaml
 
+    # Update WAF policy URL
     if [[ "<PROVISION EXAMPLE APP>" == "true" ]]; then
         /usr/bin/yq e ".extension_services.service_operations.[2].value.Tenant_1.Shared.Custom_WAF_Policy.url = \"https://cdn.f5.com/product/cloudsolutions/solution-scripts/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>-0$counter.yaml
     fi
@@ -141,6 +142,10 @@ cat <<EOF > parameters.json
     {
         "ParameterKey": "numAzs",
         "ParameterValue": "<NUMBER AZS>"
+    },
+    {
+        "ParameterKey": "numNics",
+        "ParameterValue": "<NUMBER NICS>"
     },
     {
         "ParameterKey": "numSubnets",
