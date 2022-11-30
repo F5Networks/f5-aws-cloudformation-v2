@@ -89,7 +89,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 
 ## Important Configuration Notes
 
-  - By default, this solution configures an SSH Key pair in AWS for management access to BIG-IP VE via the **sshKey** parameter. For more information about creating and/or importing the key pair in AWS, see [AWS SSH key documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html). If one is not specified, one will be created for you named `uniqueString-keyPair` where uniqueString is the value you provided in the **uniqueString** parameter. To obtain the private key, refer to AWS section [To retrieve the private key in plain text](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-keypair.html). 
+  - By default, this solution configures an SSH Key pair in AWS for management access to BIG-IP VE via the **sshKey** parameter. For more information about creating and/or importing the key pair in AWS, see [AWS SSH key documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html). If one is not specified, one will be created for you named `uniqueString-keyPair` *(where `uniqueString` is the value you provided in the **uniqueString** parameter)*. To obtain the private key, refer to AWS section [To retrieve the private key in plain text](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-keypair.html). 
     - For example, you first obtain the key pair ID.
       - If using the AWS Management Console, navigate to *EC2 > Key Pairs > uniqueString-keyPair > ID column*.
       - If using the AWS CLI, you can run the following aws cli [command](https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-key-pairs.html), replacing uniqueString and region with your values:
@@ -110,7 +110,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
           aws secretsmanager describe-secret --secret-id ${SECRET_NAME} --query ARN --output text --region ${REGION} 
           ```
         For example, for a secret named mySecretId, the ARN format required for the input parameter will look like _arn:aws:secretsmanager:us-east-1:111111111111:secret:mySecretId-xdg0kdf_.
-      - If you don't specify a secret, the solution creates one with an auto-generated password named `${uniqueString}-BigIpSecret` (where `${uniqueString}` is the value provided for the **uniqueString** input parameter). To obtain the secret value, you can run the following aws cli [command](https://docs.aws.amazon.com/cli/latest/reference/secretsmanager/get-secret-value.html), changing the secret-id and region as needed:
+      - If you don't specify a secret, the solution creates one with an auto-generated password named `uniqueString-BigIpSecret` (where `uniqueString` is the value provided for the **uniqueString** input parameter). To obtain the secret value, you can run the following aws cli [command](https://docs.aws.amazon.com/cli/latest/reference/secretsmanager/get-secret-value.html), changing the secret-id and region as needed:
         ```bash
         aws secretsmanager get-secret-value --secret-id ${uniqueString}-BigIpSecret --query "SecretString" --output text --region ${REGION}
         ```
@@ -184,6 +184,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | environment | No | f5env  | string | Environment Tag. |
 | group | No | f5group  | string | Group Tag. |
 | numAzs | No | 2  | string | Number of Availability Zones. Default = 2 |
+| numNics | No | 3 | integer | Number of interfaces to create on BIG-IP instance. Maximum of 3 allowed. Minimum of 2 allowed. |
 | numSubnets | No | 4 | string | Number of Subnets. Default = 3, 4 required when provisionExampleApp = false |
 | owner | No | f5own | string | Owner Tag. |
 | provisionExampleApp | No | true  | string | Flag to deploy the demo web application.. |
@@ -230,18 +231,18 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpInstanceProfile | No |  | string | Enter the name of an existing IAM instance profile with applied IAM policy to be associated to the BIG-IP virtual machine(s). Leave default to create a new instance profile. |
 | bigIpCustomImageId | No |   | string | Provide a custom BIG-IP AMI ID you wish to deploy. Otherwise, can leave empty. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run | string | Supply a URL to the bigip-runtime-init package. |
-| bigIpExternalSubnetId01 | **Yes** |   | string | Subnet ID used for BIGIP instance A external interface. |
+| bigIpExternalSubnetId01 | **Yes** |   | string | Subnet ID used for BIGIP instance A external interface. Required for 2 NIC deployments. |
 | bigIpExternalSelfIp01 | No | 10.0.0.11 | string | External Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
 | bigIpMgmtSubnetId01 | **Yes** |   | string | Subnet ID used for BIGIP instance A management interface. |
 | bigIpMgmtAddress01 | No | 10.0.1.11 | string | Management Private IP Address for BIGIP Instance 01. IP address parameter must be in the form x.x.x.x. |
-| bigIpInternalSubnetId01 | **Yes** |   | string | Subnet ID used for BIGIP instance A internal interface. |
+| bigIpInternalSubnetId01 | No |   | string | Subnet ID used for BIGIP instance A internal interface. Required for 3 NIC deployments. |
 | bigIpInternalSelfIp01 | No | 10.0.2.11  | string | Internal Private IP Address for BIGIP Instance A. IP address parameter must be in the form x.x.x.x. |
 | bigIpRuntimeInitConfig01 | No | https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v2.6.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml  | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format to use for f5-bigip-runtime-init configuration. |
-| bigIpExternalSubnetId02 | **Yes** |   | string | Subnet ID used for BIGIP instance B external interface. |
+| bigIpExternalSubnetId02 | **Yes** |   | string | Subnet ID used for BIGIP instance B external interface. Required for 2 NIC deployments. |
 | bigIpExternalSelfIp02 | No | 10.0.4.11 | string | External Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
-| bigIpMgmtSubnetId02 | **Yes** |   | string | Subnet ID used for BIGIP instance B management interface. |
+| bigIpMgmtSubnetId02 | **Yes** |   | string | Subnet ID used for BIGIP instance B management interface. Required for 3 NIC deployments. |
 | bigIpMgmtAddress02 | No | 10.0.5.11  | string | Management Private IP Address for BIGIP Instance 02. IP address parameter must be in the form x.x.x.x. |
-| bigIpInternalSubnetId02 | **Yes** |   | string | Subnet ID used for BIGIP instance B internal interface. |
+| bigIpInternalSubnetId02 | No |   | string | Subnet ID used for BIGIP instance B internal interface. Required for 3 NIC deployments. |
 | bigIpInternalSelfIp02 | No | 10.0.6.11  | string | Internal Private IP Address for BIGIP Instance B. IP address parameter must be in the form x.x.x.x. |
 | bigIpRuntimeInitConfig02 | No | https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v2.6.0.0/examples/failover/bigip-configurations/runtime-init-conf-3nic-payg-instance01.yaml  | string | Supply a URL to the bigip-runtime-init configuration file in YAML or JSON format to use for f5-bigip-runtime-init configuration. |
 | bigIpPeerAddr | No | 10.0.1.11  | string | Provide the static address of the remote peer used for clustering. In this failover solution, clustering is initiated from the second instance (02) to the first instance (01) so you would provide the first instances Self IP address. |
@@ -254,8 +255,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | cost | No | f5cost  | string | Cost Center Tag. |
 | environment | No | f5env  | string | Environment Tag. |
 | group | No | f5group  | string | Group Tag. |
-| numAzs | No | 2  | string | Number of Availability Zones. Default = 2 |
-| numSubnets | No | 4 | string | Number of Subnets. Default = 3, 4 required when provisionExampleApp = false |
+| numNics | No | 3 | integer | Number of interfaces to create on BIG-IP instance. Maximum of 3 allowed. Minimum of 2 allowed. |
 | owner | No | f5own | string |Owner Tag. |
 | provisionExampleApp | No | true  | string | Flag to deploy the demo web application. |
 | provisionPublicIpMgmt | No | true  | string | Whether or not to provision Public IP Addresses for the BIG-IP Management Network Interface. By default, Public IP addresses are provisioned. See the restrictedSrcAddressMgmt parameter below. If set to false, a bastion host will be provisioned instead. |
@@ -317,10 +317,10 @@ The easiest way to deploy this CloudFormation template is to use the Launch butt
     - **vpcCidr**
     - **bigIpMgmtSubnetId01**
     - **bigIpMgmtSubnetId02**
-    - **bigIpExternalSubnetId01**
-    - **bigIpExternalSubnetId02**
-    - **bigIpInternalSubnetId01**
-    - **bigIpInternalSubnetId02**
+    - **bigIpExternalSubnetId01** *(for 2 NIC)*
+    - **bigIpExternalSubnetId02** *(for 2 NIC)*
+    - **bigIpInternalSubnetId01** *(for 3 NIC)*
+    - **bigIpInternalSubnetId02** *(for 3 NIC)*
     - As well as the static IP address related parameters, which have defaults, but need to be mapped to your network.
   - Click "Next"
 
@@ -390,15 +390,23 @@ Example from failover-parameters.json
 F5 has provided the following example configuration files in the `examples/failover/bigip-configurations` folder:
 
 - These examples install Automation Tool Chain packages for a PAYG licensed deployment.
+  - `runtime-init-conf-2nic-payg-instance01.yaml`
+  - `runtime-init-conf-2nic-payg-instance02.yaml`
   - `runtime-init-conf-3nic-payg-instance01.yaml`
   - `runtime-init-conf-3nic-payg-instance02.yaml`
 - These examples install Automation Tool Chain packages and create WAF-protected services for a PAYG licensed deployment.
+  - `runtime-init-conf-2nic-payg-instance01-with-app.yaml`
+  - `runtime-init-conf-2nic-payg-instance02-with-app.yaml`
   - `runtime-init-conf-3nic-payg-instance01-with-app.yaml`
   - `runtime-init-conf-3nic-payg-instance02-with-app.yaml`
 - These examples install Automation Tool Chain packages for a BYOL licensed deployment.
+  - `runtime-init-conf-2nic-byol-instance01.yaml`
+  - `runtime-init-conf-2nic-byol-instance02.yaml`
   - `runtime-init-conf-3nic-byol-instance01.yaml`
   - `runtime-init-conf-3nic-byol-instance02.yaml`
 - These examples install Automation Tool Chain packages and create WAF-protected services for a BYOL licensed deployment.
+  - `runtime-init-conf-2nic-byol-instance01-with-app.yaml`
+  - `runtime-init-conf-2nic-byol-instance02-with-app.yaml`
   - `runtime-init-conf-3nic-byol-instance01-with-app.yaml`
   - `runtime-init-conf-3nic-byol-instance02-with-app.yaml`
 - `Rapid_Deployment_Policy_13_1.xml` - This ASM security policy is supported for BIG-IP 13.1 and later.
@@ -409,6 +417,10 @@ See [F5 BIG-IP Runtime Init](https://github.com/f5networks/f5-bigip-runtime-init
 By default, this solution deploys 3-NIC PAYG BIG-IPs:
   - The **Full Stack** (failover.yaml) references the `runtime-init-conf-3nic-payg-instanceXX-with-app.yaml` BIG-IP config files, which include an example virtual service, and can be used as is. These example configurations do not require any modifications to deploy successfully *(Disclaimer: "Successfully" implies the template deploys without errors and deploys BIG-IP WAFs capable of passing traffic. To be fully functional as designed, you would need to have satisfied the [Prerequisites](#prerequisites))*. However, in production, these files would commonly be customized. Some examples of small customizations or modifications are provided below. 
   - The **Existing Network Stack** (failover-existing-network.yaml) references the `runtime-init-conf-3nic-payg-instanceXX.yaml` BIG-IP config files, which only provide basic system onboarding and do not **NOT** include an example virtual service, and can be used as is.
+
+To deploy **2NIC** instances:
+  1. Update the **bigIpRuntimeInitConfig01** and **bigIpRuntimeInitConfig02** input parameters to reference the corresponding `2nic` config files (for example, `runtime-init-conf-2nic-payg-instance01-with-app.yaml` and `runtime-init-conf-2nic-payg-instance02-with-app.yaml`)
+  2. Update the **numNics** input parameter to **2**
 
 To deploy **BYOL** instances:
 

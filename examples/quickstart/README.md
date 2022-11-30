@@ -80,7 +80,7 @@ By default, this solution creates a single Availability Zone VPC with four subne
 
 ## Important Configuration Notes
 
-- By default, this solution configures an SSH Key pair in AWS for management access to BIG-IP VE via the **sshKey** parameter. For more information about creating and/or importing the key pair in AWS, see [AWS SSH key documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html). If one is not specified, one will be created for you named `uniqueString-keyPair` where uniqueString is the value you provided in the **uniqueString** parameter. To obtain the private key, refer to AWS section [To retrieve the private key in plain text](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-keypair.html). 
+- By default, this solution configures an SSH Key pair in AWS for management access to BIG-IP VE via the **sshKey** parameter. For more information about creating and/or importing the key pair in AWS, see [AWS SSH key documentation](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html). If one is not specified, one will be created for you named `uniqueString-keyPair` *(where `uniqueString` is the value you provided in the **uniqueString** parameter)*. To obtain the private key, refer to AWS section [To retrieve the private key in plain text](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-keypair.html). 
   - For example, you first obtain the key pair ID.
     - If using the AWS Management Console, navigate to *EC2 > Key Pairs > uniqueString-keyPair > ID column*.
     - If using the AWS CLI, you can run the following aws cli [command](https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-key-pairs.html), replacing uniqueString and region with your values:
@@ -101,7 +101,7 @@ By default, this solution creates a single Availability Zone VPC with four subne
 
   - If the **bigIpInstanceProfile** input parameter is empty, this solution does support creating an IAM instance profile granting access to an AWS Secrets Manager secret if you provide an existing secret (via the **bigIpSecretArn** parameter) OR the **provisionSecret** parameter is set to **true**.
 
-    - If **provisionSecret** is set to **true**, the solution also creates a secret with an auto-generated password named `${uniqueString}-BigIpSecret` (where `${uniqueString}` is the value provided for the **uniqueString** input parameter). To obtain the secret value, run the https://docs.aws.amazon.com/cli/latest/reference/secretsmanager/get-secret-value.html AWS Command Line Interface (AWS CLI) command, changing the region and secret-id as needed:
+    - If **provisionSecret** is set to **true**, the solution also creates a secret with an auto-generated password named `uniqueString-BigIpSecret` *(where `uniqueString` is the value provided for the **uniqueString** input parameter)*. To obtain the secret value, run the https://docs.aws.amazon.com/cli/latest/reference/secretsmanager/get-secret-value.html AWS Command Line Interface (AWS CLI) command, changing the region and secret-id as needed:
     
       ```bash
       $ aws secretsmanager get-secret-value --secret-id ${uniqueString}-BigIpSecret --query "SecretString" --output text --region ${REGION}

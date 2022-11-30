@@ -20,8 +20,8 @@ extension_services:
         schemaVersion: 1.0.0
         class: Device
         async: true
-        label: Failover 3NIC BIG-IP declaration for Declarative Onboarding with
-          BYOL license
+        label: Failover 2NIC BIG-IP declaration for Declarative Onboarding with
+          PAYG license
         Common:
           class: Tenant
           My_DbVariables:
@@ -49,10 +49,6 @@ extension_services:
             class: System
             hostname: "{{{HOST_NAME}}}"
             mgmtDhcpEnabled: false
-          My_License:
-            class: License
-            licenseType: regKey
-            regKey: "{{{LICENSE_KEY}}}"
           admin:
             class: User
             userType: regular
@@ -80,19 +76,6 @@ extension_services:
               - tcp:6127
               - tcp:6128
             trafficGroup: traffic-group-local-only
-          internal:
-            class: VLAN
-            interfaces:
-              - name: '1.2'
-                tagged: false
-            mtu: 1500
-            tag: 4093
-          internal-self:
-            class: SelfIp
-            address: "{{{SELF_IP_INTERNAL}}}"
-            allowService: none
-            trafficGroup: traffic-group-local-only
-            vlan: internal
           default:
             class: Route
             gw: "{{{DEFAULT_GW}}}"
@@ -169,9 +152,9 @@ extension_services:
               virtualAddresses:
                 - use: "/Tenant_1/Shared/Service_Address_01_A"
               snat: auto
-              pool: "/Tenant_1/Shared/Service_01_Pool"
               profileHTTP:
                 use: "/Tenant_1/Shared/Custom_HTTP_Profile"
+              pool: "/Tenant_1/Shared/Service_01_Pool"
               policyWAF:
                 use: "/Tenant_1/Shared/Custom_WAF_Policy"
           HTTP_Service_01_B:
@@ -225,8 +208,8 @@ extension_services:
         schemaVersion: 1.0.0
         class: Device
         async: true
-        label: Failover 3NIC BIG-IP declaration for Declarative Onboarding with
-          BYOL license
+        label: Failover 2NIC BIG-IP declaration for Declarative Onboarding with
+          PAYG license
         Common:
           class: Tenant
           My_DbVariables:
@@ -281,19 +264,6 @@ extension_services:
               - tcp:6127
               - tcp:6128
             trafficGroup: traffic-group-local-only
-          internal:
-            class: VLAN
-            interfaces:
-              - name: '1.2'
-                tagged: false
-            mtu: 1500
-            tag: 4093
-          internal-self:
-            class: SelfIp
-            address: "{{{SELF_IP_INTERNAL}}}"
-            allowService: none
-            trafficGroup: traffic-group-local-only
-            vlan: internal
           default:
             class: Route
             gw: "{{{DEFAULT_GW}}}"
@@ -310,8 +280,8 @@ extension_services:
             class: DeviceGroup
             type: sync-failover
             members:
-              - "{{{HOST_NAME}}}"
               - "{{{REMOTE_HOST_NAME}}}"
+              - "{{{HOST_NAME}}}"
             owner: "/Common/failoverGroup/members/0"
             autoSync: true
             saveOnAutoSync: false
@@ -322,16 +292,13 @@ extension_services:
             class: DeviceTrust
             localUsername: admin
             localPassword: "{{{BIGIP_PASSWORD}}}"
-            remoteHost: "/Common/failoverGroup/members/0"
+            remoteHost: "{{{REMOTE_HOST}}}"
             remoteUsername: admin
             remotePassword: "{{{BIGIP_PASSWORD}}}"
 runtime_parameters:
   - name: SECRET_ID
     type: url
     value: file:///config/cloud/secret_id
-  - name: LICENSE_KEY
-    type: url
-    value: file:///config/cloud/license_key
   - name: BIGIP_PASSWORD
     type: secret
     secretProvider:
@@ -344,6 +311,11 @@ runtime_parameters:
     tagProvider:
       environment: aws
       key: hostname
+  - name: REMOTE_HOST
+    type: tag
+    tagProvider:
+      environment: aws
+      key: bigIpPeerAddr
   - name: REMOTE_HOST_NAME
     type: tag
     tagProvider:
@@ -356,13 +328,6 @@ runtime_parameters:
       type: network
       field: local-ipv4s
       index: 1
-  - name: SELF_IP_INTERNAL
-    type: metadata
-    metadataProvider:
-      type: network
-      environment: aws
-      field: local-ipv4s
-      index: 2
   - name: DEFAULT_GW
     type: metadata
     metadataProvider:
