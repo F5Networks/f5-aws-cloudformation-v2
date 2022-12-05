@@ -48,7 +48,6 @@ extension_services:
             autoPhonehome: true
             class: System
             hostname: "{{{HOST_NAME}}}"
-            mgmtDhcpEnabled: false
           My_License:
             class: License
             licenseType: regKey
@@ -253,7 +252,6 @@ extension_services:
             autoPhonehome: true
             class: System
             hostname: "{{{HOST_NAME}}}"
-            mgmtDhcpEnabled: false
           admin:
             class: User
             userType: regular
