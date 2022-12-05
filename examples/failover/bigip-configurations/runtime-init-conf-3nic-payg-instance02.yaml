@@ -44,7 +44,6 @@ extension_services:
             autoPhonehome: true
             class: System
             hostname: "{{{HOST_NAME}}}"
-            mgmtDhcpEnabled: false
           admin:
             class: User
             userType: regular
@@ -142,7 +141,6 @@ extension_services:
             autoPhonehome: true
             class: System
             hostname: "{{{HOST_NAME}}}"
-            mgmtDhcpEnabled: false
           admin:
             class: User
             userType: regular

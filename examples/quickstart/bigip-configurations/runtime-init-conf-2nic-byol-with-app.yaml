@@ -102,7 +102,6 @@ extension_services:
             class: System
             autoPhonehome: true
             hostname: '{{{HOST_NAME}}}'
-            mgmtDhcpEnabled: false
           admin:
             class: User
             password: '{{{BIGIP_PASSWORD}}}'

@@ -60,6 +60,10 @@ Mappings:
       AMI: ami-0db6c6238a40c0681
     us-east-2:
       AMI: ami-03b6c8bd55e00d5ed
+    us-gov-east-1:
+      AMI: ami-0e54ab9730eacf59c
+    us-gov-west-1:
+      AMI: ami-0193b9d2e1d40243c
     us-west-1:
       AMI: ami-0f5868930cb63c89c
     us-west-2:
