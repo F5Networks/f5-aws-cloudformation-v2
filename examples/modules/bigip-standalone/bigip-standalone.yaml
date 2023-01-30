@@ -416,7 +416,7 @@ Parameters:
       file in YAML or JSON format to use for f5-bigip-runtime-init configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.1/dist/f5-bigip-runtime-init-1.5.1-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.2/dist/f5-bigip-runtime-init-1.5.2-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   cfeS3Bucket:
@@ -1084,6 +1084,70 @@ Resources:
           Value: !Ref 'bigIpPeerHostname'
         - Key: hostname
           Value: !Ref 'hostname'
+        - Key: vip1Addr
+          Value: !If
+            - associateVip1
+            - !If
+              - useDynamicExternalIpAddr
+              - !Select
+                - '0'
+                - !GetAtt
+                  - BigipExternalInterface
+                  - SecondaryPrivateIpAddresses
+              - !Select
+                - '0'
+                - !GetAtt
+                  - BigipStaticExternalInterface
+                  - SecondaryPrivateIpAddresses
+            - 'NOT_USED'
+        - Key: vip2Addr
+          Value: !If
+            - associateVip2
+            - !If
+              - useDynamicExternalIpAddr
+              - !Select
+                - '1'
+                - !GetAtt
+                  - BigipExternalInterface
+                  - SecondaryPrivateIpAddresses
+              - !Select
+                - '1'
+                - !GetAtt
+                  - BigipStaticExternalInterface
+                  - SecondaryPrivateIpAddresses
+            - 'NOT_USED'
+        - Key: vip3Addr
+          Value: !If
+            - associateVip3
+            - !If
+              - useDynamicExternalIpAddr
+              - !Select
+                - '2'
+                - !GetAtt
+                  - BigipExternalInterface
+                  - SecondaryPrivateIpAddresses
+              - !Select
+                - '2'
+                - !GetAtt
+                  - BigipStaticExternalInterface
+                  - SecondaryPrivateIpAddresses
+            - 'NOT_USED'
+        - Key: vip4Addr
+          Value: !If
+            - associateVip4
+            - !If
+              - useDynamicExternalIpAddr
+              - !Select
+                - '3'
+                - !GetAtt
+                  - BigipExternalInterface
+                  - SecondaryPrivateIpAddresses
+              - !Select
+                - '3'
+                - !GetAtt
+                  - BigipStaticExternalInterface
+                  - SecondaryPrivateIpAddresses
+            - 'NOT_USED'
       UserData: !Base64
         Fn::Join:
           - ''
@@ -1274,6 +1338,70 @@ Resources:
           Value: !Ref 'bigIpPeerHostname'
         - Key: hostname
           Value: !Ref 'hostname'
+        - Key: vip1Addr
+          Value: !If
+            - associateVip1
+            - !If
+              - useDynamicExternalIpAddr
+              - !Select
+                - '0'
+                - !GetAtt
+                  - BigipExternalInterface
+                  - SecondaryPrivateIpAddresses
+              - !Select
+                - '0'
+                - !GetAtt
+                  - BigipStaticExternalInterface
+                  - SecondaryPrivateIpAddresses
+            - 'NOT_USED'
+        - Key: vip2Addr
+          Value: !If
+            - associateVip2
+            - !If
+              - useDynamicExternalIpAddr
+              - !Select
+                - '1'
+                - !GetAtt
+                  - BigipExternalInterface
+                  - SecondaryPrivateIpAddresses
+              - !Select
+                - '1'
+                - !GetAtt
+                  - BigipStaticExternalInterface
+                  - SecondaryPrivateIpAddresses
+            - 'NOT_USED'
+        - Key: vip3Addr
+          Value: !If
+            - associateVip3
+            - !If
+              - useDynamicExternalIpAddr
+              - !Select
+                - '2'
+                - !GetAtt
+                  - BigipExternalInterface
+                  - SecondaryPrivateIpAddresses
+              - !Select
+                - '2'
+                - !GetAtt
+                  - BigipStaticExternalInterface
+                  - SecondaryPrivateIpAddresses
+            - 'NOT_USED'
+        - Key: vip4Addr
+          Value: !If
+            - associateVip4
+            - !If
+              - useDynamicExternalIpAddr
+              - !Select
+                - '3'
+                - !GetAtt
+                  - BigipExternalInterface
+                  - SecondaryPrivateIpAddresses
+              - !Select
+                - '3'
+                - !GetAtt
+                  - BigipStaticExternalInterface
+                  - SecondaryPrivateIpAddresses
+            - 'NOT_USED'
       UserData: !Base64
         Fn::Join:
           - ''
@@ -1458,6 +1586,70 @@ Resources:
           Value: !Ref 'bigIpPeerHostname'
         - Key: hostname
           Value: !Ref 'hostname'
+        - Key: vip1Addr
+          Value: !If
+            - associateVip1
+            - !If
+              - useDynamicManagementIpAddr
+              - !Select
+                - '0'
+                - !GetAtt
+                  - BigipManagementInterface
+                  - SecondaryPrivateIpAddresses
+              - !Select
+                - '0'
+                - !GetAtt
+                  - BigipStaticManagementInterface
+                  - SecondaryPrivateIpAddresses
+            - 'NOT_USED'
+        - Key: vip2Addr
+          Value: !If
+            - associateVip2
+            - !If
+              - useDynamicManagementIpAddr
+              - !Select
+                - '1'
+                - !GetAtt
+                  - BigipManagementInterface
+                  - SecondaryPrivateIpAddresses
+              - !Select
+                - '1'
+                - !GetAtt
+                  - BigipStaticManagementInterface
+                  - SecondaryPrivateIpAddresses
+            - 'NOT_USED'
+        - Key: vip3Addr
+          Value: !If
+            - associateVip3
+            - !If
+              - useDynamicManagementIpAddr
+              - !Select
+                - '2'
+                - !GetAtt
+                  - BigipManagementInterface
+                  - SecondaryPrivateIpAddresses
+              - !Select
+                - '2'
+                - !GetAtt
+                  - BigipStaticManagementInterface
+                  - SecondaryPrivateIpAddresses
+            - 'NOT_USED'
+        - Key: vip4Addr
+          Value: !If
+            - associateVip4
+            - !If
+              - useDynamicManagementIpAddr
+              - !Select
+                - '3'
+                - !GetAtt
+                  - BigipManagementInterface
+                  - SecondaryPrivateIpAddresses
+              - !Select
+                - '3'
+                - !GetAtt
+                  - BigipStaticManagementInterface
+                  - SecondaryPrivateIpAddresses
+            - 'NOT_USED'
       UserData: !Base64
         Fn::Join:
           - ''

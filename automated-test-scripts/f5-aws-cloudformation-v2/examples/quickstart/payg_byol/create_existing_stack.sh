@@ -18,11 +18,23 @@ if [[ "<CREATE NEW KEY PAIR>" == 'false' ]]; then
 fi
 echo "Private key: ${private_key}"
 
-mgmtAz=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 2)
-extAz=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 1)
-intAz=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 3)
-vpcId=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="vpcId").OutputValue')
+extAz=''
+intAz=''
 networkBorderGroup=''
+vpcId=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="vpcId").OutputValue')
+mgmtAz=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 2)
+
+case <NIC COUNT> in
+1)
+    echo "Deploying 1 NIC" ;;
+2)
+    extAz=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 1) ;;
+3)
+    extAz=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 1)
+    intAz=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 3) ;;
+*)
+    echo "Unrecognized number of NICs" ;;
+esac
 
 ## for testing local zones (us-west-2 only)
 # mgmtAz='subnet-039af0b70fbdb1064'
@@ -168,10 +180,30 @@ cat <<EOF > parameters.json
     {
         "ParameterKey": "vpcId",
         "ParameterValue": "$vpcId"
+EOF
+if [[ "<DYNAMIC IPS>" == "true" ]]; then
+cat <<EOF >> parameters.json
+    },
+    {
+        "ParameterKey": "bigIpExternalSelfIp",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "bigIpInternalSelfIp",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "bigIpMgmtSelfIp",
+        "ParameterValue": ""
     }
 ]
 EOF
-
+else
+cat <<EOF >> parameters.json
+    }
+]
+EOF
+fi
 cat parameters.json | jq .
 
 aws cloudformation create-stack --disable-rollback --region <REGION> --stack-name <STACK NAME> --tags Key=creator,Value=dewdrop Key=delete,Value=True \

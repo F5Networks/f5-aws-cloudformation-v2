@@ -4,11 +4,11 @@ controls:
 extension_packages:
   install_operations:
     - extensionType: do
-      extensionVersion: 1.33.0
-      extensionHash: 4ac7b7c6eb93320df20f964f32ce7bc6e0454858a36440761f774a8a42a01020
+      extensionVersion: 1.35.0
+      extensionHash: 44df23fab10547d5cb0999689b2f9b2a01d7a82e616898b5ccd57172876d2793
     - extensionType: as3
-      extensionVersion: 3.40.0
-      extensionHash: 708533815cb8e608b4d28fbb730f0ed34617ce5def53c5462c0ab98bd54730fc
+      extensionVersion: 3.42.0
+      extensionHash: dcb869775f00b2d1a4c8a7600beeb596a8da469caa7ddb30df02c4cdc48c37e2
     - extensionType: cf
       extensionVersion: 1.13.0
       extensionHash: 93be496d250838697d8a9aca8bd0e6fe7480549ecd43280279f0a63fc741ab50
@@ -20,8 +20,8 @@ extension_services:
         schemaVersion: 1.0.0
         class: Device
         async: true
-        label: Failover 2NIC BIG-IP declaration for Declarative Onboarding with
-          PAYG license
+        label: Failover 2NIC BIG-IP declaration for Declarative Onboarding with PAYG
+          license
         Common:
           class: Tenant
           My_DbVariables:
@@ -104,8 +104,8 @@ extension_services:
         schemaVersion: 1.0.0
         class: Device
         async: true
-        label: Failover 2NIC BIG-IP declaration for Declarative Onboarding with
-          PAYG license
+        label: Failover 2NIC BIG-IP declaration for Declarative Onboarding with PAYG
+          license
         Common:
           class: Tenant
           My_DbVariables:

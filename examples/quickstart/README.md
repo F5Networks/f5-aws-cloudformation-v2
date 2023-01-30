@@ -207,15 +207,15 @@ By default, this solution creates a single Availability Zone VPC with four subne
 | bigIpCustomImageId | No |   | string | Provide BIG-IP AMI ID you wish to deploy. Otherwise, can leave empty. |
 | bigIpHostname | No | bigip01.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
 | bigIpExternalServiceIps | No | 10.0.1.101,10.0.0.101 | string | A comma seperated list of one or more private IP addresses to apply to the external network interface as secondary private addresses. |      
-| bigIpExternalSelfIp | No | 10.0.0.11 | string | External Private IP Address for the BIG-IP instance. The address must reside in the subnet provided in the bigIpExternalSubnetId parameter. |
-| bigIpExternalSubnetId | **Yes** |   | string | Subnet id used for BIG-IP instance external interface. Required for 2 NIC deployments. |
+| bigIpExternalSelfIp | No | 10.0.0.11 | string | External Private IP Address for the BIG-IP instance. The address must reside in the subnet provided in the bigIpExternalSubnetId parameter. Leave empty to allow cloud provider to assign an IP address |
+| bigIpExternalSubnetId | No |   | string | Subnet id used for BIG-IP instance external interface. Required for 2 NIC deployments. |
 | bigIpImage | No | Best | string | F5 BIG-IP Performance Type. |
 | bigIpInstanceProfile | No |  | string | Enter the name of an existing IAM instance profile with applied IAM policy to be associated to the BIG-IP virtual machine(s). Leave default if not using an instance profile. |
 | bigIpInstanceType | No | m5.xlarge | string | Enter a valid instance type. |
-| bigIpInternalSelfIp | No | 10.0.2.11  | string | Internal Private IP Address for the BIG-IP instance. The address must reside in the subnet provided in the bigIpInternalSubnetId parameter.  |
-| bigIpInternalSubnetId | **Yes** |   | string | Subnet id used for BIG-IP instance internal interface. Required for 3 NIC deployments. |
+| bigIpInternalSelfIp | No | 10.0.2.11  | string | Internal Private IP Address for the BIG-IP instance. The address must reside in the subnet provided in the bigIpInternalSubnetId parameter. Leave empty to allow cloud provider to assign an IP address  |
+| bigIpInternalSubnetId | No |   | string | Subnet id used for BIG-IP instance internal interface. Required for 3 NIC deployments. |
 | bigIpLicenseKey | No |  | string | Supply the F5 BYOL license key for the BIG-IP instance. Leave this parameter blank if deploying the PAYG solution. |
-| bigIpMgmtSelfIp | No | 10.0.1.11 | string | Management Private IP Address for the BIG-IP instance. The address must reside in the subnet provided in the bigIpMgmtSubnetId parameter. |
+| bigIpMgmtSelfIp | No | 10.0.1.11 | string | Management Private IP Address for the BIG-IP instance. The address must reside in the subnet provided in the bigIpMgmtSubnetId parameter. Leave empty to allow cloud provider to assign an IP address |
 | bigIpMgmtSubnetId | **Yes** |   | string | Subnet id used for BIG-IP instance management interface. Required for 1 NIC deployments. |
 | bigIpRuntimeInitConfig | No | https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.6.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg-with-app.yaml | string | URL or JSON string for BIG-IP Runtime Init config. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run | string | Supply a URL to the bigip-runtime-init package |
