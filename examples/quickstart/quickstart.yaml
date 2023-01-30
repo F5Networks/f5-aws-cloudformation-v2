@@ -39,27 +39,27 @@ Conditions:
       - ""
   createKeyPair: !Equals
     - ''
-    - !Ref sshKey
+    - !Ref 'sshKey'
   createSecret: !And
     - !Equals
-      - !Ref provisionSecret
+      - !Ref 'provisionSecret'
       - 'true'
     - !Equals
       - ''
-      - !Ref bigIpSecretArn
+      - !Ref 'bigIpSecretArn'
   useSecretArn: !Not
     - !Equals
       - ''
-      - !Ref bigIpSecretArn
+      - !Ref 'bigIpSecretArn'
   useSecret: !And
     - !Or
-      - !Condition createSecret
-      - !Condition useSecretArn
+      - !Condition 'createSecret'
+      - !Condition 'useSecretArn'
     - !Not
-      - !Condition useBigIpInstanceProfile
+      - !Condition 'useBigIpInstanceProfile'
   useAccess: !Or
-    - !Condition createKeyPair
-    - !Condition useSecret
+    - !Condition 'createKeyPair'
+    - !Condition 'useSecret'
 Mappings:
   AWSBigipThroughput:
     1000Mbps:
@@ -764,12 +764,14 @@ Parameters:
       or JSON format to use for f5-bigip-runtime-init configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.1/dist/f5-bigip-runtime-init-1.5.1-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.2/dist/f5-bigip-runtime-init-1.5.2-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   bigIpSecretArn:
     Default: ''
-    Description: The ARN of an existing AWS Secrets Manager secret where the BIG-IP password used for clustering is stored. If left empty, and provisionSecret is true, a secret will be created.
+    Description: The ARN of an existing AWS Secrets Manager secret where the BIG-IP
+      password used for clustering is stored. If left empty, and provisionSecret is
+      true, a secret will be created.
     Type: String
   cost:
     Default: f5costcenter
@@ -894,7 +896,9 @@ Parameters:
     Type: String
   sshKey:
     Default: ''
-    Description: Supply the public key that will be used for SSH authentication to the BIG-IP, application, and bastion virtual machines. If left empty, one will be created.
+    Description: Supply the public key that will be used for SSH authentication to
+      the BIG-IP, application, and bastion virtual machines. If left empty, one will
+      be created.
     Type: String
   throughput:
     AllowedValues:
@@ -1019,7 +1023,8 @@ Resources:
                 AWSBigipThroughput, !Ref 'throughput', !Ref 'bigIpImage']], !FindInMap [
               !FindInMap [VERSION, !Ref 'version', REGIONMAP], !Ref 'AWS::Region',
               AllTwoBootLocations]], !Ref 'bigIpCustomImageId']
-        instanceProfile: !If [useBigIpInstanceProfile, !Ref 'bigIpInstanceProfile', !If [useSecret, !GetAtt [Access, Outputs.bigIpInstanceProfile], !Ref 'AWS::NoValue']]
+        instanceProfile: !If [useBigIpInstanceProfile, !Ref 'bigIpInstanceProfile',
+          !If [useSecret, !GetAtt [Access, Outputs.bigIpInstanceProfile], !Ref 'AWS::NoValue']]
         instanceType: !Ref 'bigIpInstanceType'
         internalSecurityGroupId: !If [3nic, !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup],
           !Ref 'AWS::NoValue']
@@ -1032,7 +1037,8 @@ Resources:
         mgmtSelfIp: "10.0.1.11"
         mgmtSubnetId: !Select [1, !Split [',', !GetAtt [Network, Outputs.subnetsA]]]
         numSecondaryPrivateIpAddress: 1
-        secretArn: !If [useSecret, !If [createSecret, !GetAtt [Access, Outputs.secretArn], !Ref 'bigIpSecretArn'], !Ref 'AWS::NoValue']
+        secretArn: !If [useSecret, !If [createSecret, !GetAtt [Access, Outputs.secretArn],
+            !Ref 'bigIpSecretArn'], !Ref 'AWS::NoValue']
         sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
         uniqueString: !Ref 'uniqueString'
   Dag:

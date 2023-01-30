@@ -375,7 +375,7 @@ Parameters:
       file in YAML or JSON format to use for f5-bigip-runtime-init configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.1/dist/f5-bigip-runtime-init-1.5.1-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.2/dist/f5-bigip-runtime-init-1.5.2-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   bigIpScaleInCpuThreshold:
@@ -585,7 +585,9 @@ Parameters:
     Default: autoscaling:EC2_INSTANCE_LAUNCH,autoscaling:EC2_INSTANCE_LAUNCH_ERROR
   sshKey:
     Default: ''
-    Description: Supply the public key that will be used for SSH authentication to the BIG-IP, application, and bastion virtual machines. If left empty, one will be created.
+    Description: Supply the public key that will be used for SSH authentication to
+      the BIG-IP, application, and bastion virtual machines. If left empty, one will
+      be created.
     Type: String
   subnetMask:
     ConstraintDescription: 'Subnet mask must be in value of 16-28. Total number of
@@ -625,7 +627,7 @@ Conditions:
     - !Condition 'useLoggingS3Bucket'
   createKeyPair: !Equals
     - ''
-    - !Ref sshKey
+    - !Ref 'sshKey'
   customDashboard: !Not
     - !Equals
       - ''

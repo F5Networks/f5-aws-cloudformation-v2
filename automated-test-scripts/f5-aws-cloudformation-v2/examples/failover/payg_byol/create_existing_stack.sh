@@ -285,7 +285,7 @@ cat <<EOF >> parameters.json
 ]
 EOF
 fi
-cat parameters.json
+cat parameters.json | jq .
 
 aws cloudformation create-stack --disable-rollback --region <REGION> --stack-name <STACK NAME> --tags Key=creator,Value=dewdrop Key=delete,Value=True \
 --template-url https://s3.amazonaws.com/"$bucket_name"/<TEMPLATE NAME> \

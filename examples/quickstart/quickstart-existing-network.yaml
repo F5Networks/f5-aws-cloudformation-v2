@@ -38,24 +38,24 @@ Conditions:
       - ""
   createKeyPair: !Equals
     - ''
-    - !Ref sshKey
+    - !Ref 'sshKey'
   createSecret: !And
     - !Equals
-      - !Ref provisionSecret
+      - !Ref 'provisionSecret'
       - 'true'
     - !Equals
       - ''
-      - !Ref bigIpSecretArn
+      - !Ref 'bigIpSecretArn'
   useSecretArn: !Not
     - !Equals
       - ''
-      - !Ref bigIpSecretArn
+      - !Ref 'bigIpSecretArn'
   useSecret: !Or
-    - !Condition createSecret
-    - !Condition useSecretArn
+    - !Condition 'createSecret'
+    - !Condition 'useSecretArn'
   useAccess: !Or
-    - !Condition createKeyPair
-    - !Condition useSecret
+    - !Condition 'createKeyPair'
+    - !Condition 'useSecret'
 Mappings:
   AWSBigipThroughput:
     1000Mbps:
@@ -746,9 +746,11 @@ Parameters:
       slash (/).'
     Type: String
   bigIpExternalSelfIp:
+    AllowedPattern: '^$|^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     Default: 10.0.0.11
     Description: External Private IP Address for BIGIP instance. The address must
-      reside in the subnet provided in the bigIpExternalSubnetId parameter.
+      reside in the subnet provided in the bigIpExternalSubnetId parameter. Leave
+      empty to allow cloud provider to assign an IP address
     Type: String
   bigIpExternalServiceIps:
     Default: 10.0.1.101,10.0.0.101
@@ -757,21 +759,27 @@ Parameters:
     Type: String
   bigIpExternalSubnetId:
     ConstraintDescription: Must be a valid subnet id
-    Description: Subnet id used for BIGIP external interface
-    Type: AWS::EC2::Subnet::Id
+    Default: ''
+    Description: Subnet id used for BIGIP external interface (required for 2 NIC deployments)
+    Type: String
   bigIpInternalSelfIp:
+    AllowedPattern: '^$|^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     Default: 10.0.2.11
     Description: Internal Private IP Address for BIGIP instance. The address must
-      reside in the subnet provided in the bigIpInternalSubnetId parameter.
+      reside in the subnet provided in the bigIpInternalSubnetId parameter. Leave
+      empty to allow cloud provider to assign an IP address
     Type: String
   bigIpInternalSubnetId:
     ConstraintDescription: Must be a valid subnet id
-    Description: Subnet id used for BIGIP internal interface
-    Type: AWS::EC2::Subnet::Id
+    Default: ''
+    Description: Subnet id used for BIGIP internal interface (required for 3 NIC deployments)
+    Type: String
   bigIpMgmtSelfIp:
+    AllowedPattern: '^$|^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     Default: 10.0.1.11
     Description: Management Private IP Address for BIGIP instance. The address must
-      reside in the subnet provided in the bigIpMgmtSubnetId parameter.
+      reside in the subnet provided in the bigIpMgmtSubnetId parameter. Leave empty
+      to allow cloud provider to assign an IP address
     Type: String
   bigIpMgmtSubnetId:
     ConstraintDescription: Must be a valid subnet id
@@ -795,12 +803,14 @@ Parameters:
       or JSON format to use for f5-bigip-runtime-init configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.1/dist/f5-bigip-runtime-init-1.5.1-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.2/dist/f5-bigip-runtime-init-1.5.2-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   bigIpSecretArn:
     Default: ''
-    Description: The ARN of an existing AWS Secrets Manager secret where the BIG-IP password used for clustering is stored. If left empty, and provisionSecret is true, a secret will be created.
+    Description: The ARN of an existing AWS Secrets Manager secret where the BIG-IP
+      password used for clustering is stored. If left empty, and provisionSecret is
+      true, a secret will be created.
     Type: String
   cost:
     Default: f5costcenter
@@ -911,7 +921,9 @@ Parameters:
     Type: String
   sshKey:
     Default: ''
-    Description: Supply the public key that will be used for SSH authentication to the BIG-IP, application, and bastion virtual machines. If left empty, one will be created.
+    Description: Supply the public key that will be used for SSH authentication to
+      the BIG-IP, application, and bastion virtual machines. If left empty, one will
+      be created.
     Type: String
   throughput:
     AllowedValues:
@@ -993,7 +1005,8 @@ Resources:
                 AWSBigipThroughput, !Ref 'throughput', !Ref 'bigIpImage']], !FindInMap [
               !FindInMap [VERSION, !Ref 'version', REGIONMAP], !Ref 'AWS::Region',
               AllTwoBootLocations]], !Ref 'bigIpCustomImageId']
-        instanceProfile: !If [useBigIpInstanceProfile, !Ref 'bigIpInstanceProfile', !If [useSecret, !GetAtt [Access, Outputs.bigIpInstanceProfile], !Ref 'AWS::NoValue']]
+        instanceProfile: !If [useBigIpInstanceProfile, !Ref 'bigIpInstanceProfile',
+          !If [useSecret, !GetAtt [Access, Outputs.bigIpInstanceProfile], !Ref 'AWS::NoValue']]
         instanceType: !Ref 'bigIpInstanceType'
         internalSecurityGroupId: !If [3nic, !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup],
           !Ref 'AWS::NoValue']
@@ -1005,7 +1018,8 @@ Resources:
         mgmtSelfIp: !Ref 'bigIpMgmtSelfIp'
         mgmtSubnetId: !Ref 'bigIpMgmtSubnetId'
         numSecondaryPrivateIpAddress: 1
-        secretArn: !If [useSecret, !If [createSecret, !GetAtt [Access, Outputs.secretArn], !Ref 'bigIpSecretArn'], !Ref 'AWS::NoValue']
+        secretArn: !If [useSecret, !If [createSecret, !GetAtt [Access, Outputs.secretArn],
+            !Ref 'bigIpSecretArn'], !Ref 'AWS::NoValue']
         sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
         uniqueString: !Ref 'uniqueString'
   Dag:

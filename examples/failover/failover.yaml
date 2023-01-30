@@ -345,7 +345,7 @@ Parameters:
       file in YAML or JSON format to use for f5-bigip-runtime-init configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.1/dist/f5-bigip-runtime-init-1.5.1-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.2/dist/f5-bigip-runtime-init-1.5.2-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   cfeS3Bucket:
@@ -375,13 +375,13 @@ Parameters:
     Description: Environment Tag.
     Type: String
   bigIpExternalSelfIp01:
-    AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
+    AllowedPattern: '^$|^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: External Private IP Address for BIGIP instance A.
     Default: 10.0.0.11
     Type: String
   bigIpExternalSelfIp02:
-    AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
+    AllowedPattern: '^$|^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: External Private IP Address for BIGIP instance B.
     Default: 10.0.4.11
@@ -403,32 +403,33 @@ Parameters:
     Description: Group Tag.
     Type: String
   bigIpInternalSelfIp01:
-    AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
+    AllowedPattern: '^$|^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: Internal Private IP Address for BIGIP instance A.
     Default: 10.0.2.11
     Type: String
   bigIpInternalSelfIp02:
-    AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
+    AllowedPattern: '^$|^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: Internal Private IP Address for BIGIP instance B.
     Default: 10.0.6.11
     Type: String
   bigIpMgmtAddress01:
-    AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
+    AllowedPattern: '^$|^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: Management Private IP Address for BIGIP instance A.
     Default: 10.0.1.11
     Type: String
   bigIpMgmtAddress02:
-    AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
+    AllowedPattern: '^$|^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     ConstraintDescription: IP address parameter must be in the form x.x.x.x
     Description: Management Private IP Address for BIGIP instance B.
     Default: 10.0.5.11
     Type: String
   bigIpSecretArn:
     Default: ''
-    Description: The ARN of an existing AWS Secrets Manager secret where the BIG-IP password used for clustering is stored. If left empty, a secret will be created.
+    Description: The ARN of an existing AWS Secrets Manager secret where the BIG-IP
+      password used for clustering is stored. If left empty, a secret will be created.
     Type: String
   numAzs:
     Default: 2
@@ -505,7 +506,9 @@ Parameters:
     Type: String
   sshKey:
     Default: ''
-    Description: Supply the public key that will be used for SSH authentication to the BIG-IP, application, and bastion virtual machines. If left empty, one will be created.
+    Description: Supply the public key that will be used for SSH authentication to
+      the BIG-IP, application, and bastion virtual machines. If left empty, one will
+      be created.
     Type: String
   subnetMask:
     ConstraintDescription: 'Subnet mask must be in value of 16-28. Total number of
@@ -547,10 +550,10 @@ Conditions:
     - ""
   createKeyPair: !Equals
     - ''
-    - !Ref sshKey
+    - !Ref 'sshKey'
   createSecret: !Equals
     - ''
-    - !Ref bigIpSecretArn
+    - !Ref 'bigIpSecretArn'
   noCustomImageId: !Equals
     - ''
     - !Ref 'bigIpCustomImageId'
@@ -794,7 +797,8 @@ Resources:
             - Outputs.bigIpInstanceProfile
           - !Ref 'bigIpInstanceProfile'
         instanceType: !Ref 'bigIpInstanceType'
-        internalSecurityGroupId: !If [3nic, !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup], !Ref 'AWS::NoValue']
+        internalSecurityGroupId: !If [3nic, !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup],
+          !Ref 'AWS::NoValue']
         internalSelfIp: !If [3nic, !Ref 'bigIpInternalSelfIp01', !Ref 'AWS::NoValue']
         internalSubnetId: !If
           - 3nic
@@ -880,7 +884,8 @@ Resources:
             - Outputs.bigIpInstanceProfile
           - !Ref 'bigIpInstanceProfile'
         instanceType: !Ref 'bigIpInstanceType'
-        internalSecurityGroupId: !If [3nic, !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup], !Ref 'AWS::NoValue']
+        internalSecurityGroupId: !If [3nic, !GetAtt [Dag, Outputs.bigIpInternalSecurityGroup],
+          !Ref 'AWS::NoValue']
         internalSelfIp: !If [3nic, !Ref 'bigIpInternalSelfIp02', !Ref 'AWS::NoValue']
         internalSubnetId: !If
           - 3nic
