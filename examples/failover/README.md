@@ -159,7 +159,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpHostname01 | No | failover01.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
 | bigIpHostname02 | No | failover02.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
 | bigIpInstanceType | No | m5.xlarge | string | Enter a valid instance type. |
-| bigIpImage | No | \*16.1.3.2-0.0.4 PAYG-Best Plus 25Mbps\* | string | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. bigIpImage is required when bigIpCustomImageId is not specified. |
+| bigIpImage | No | \*16.1.3.3-0.0.3 PAYG-Best Plus 25Mbps\* | string | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. bigIpImage is required when bigIpCustomImageId is not specified. |
 | bigIpInstanceProfile | No |  | string | Enter the name of an existing IAM instance profile with applied IAM policy to be associated to the BIG-IP virtual machine(s). Leave default to create a new instance profile. |
 | bigIpCustomImageId | No |   | string | Provide a custom BIG-IP AMI ID you wish to deploy. Otherwise, can leave empty. |
 | bigIpLicenseKey01 | No |  | string | Supply the F5 BYOL license key for BIG-IP instance 01. Leave this parameter blank if deploying the PAYG solution. |
@@ -227,7 +227,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpHostname01 | No | failover01.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
 | bigIpHostname02 | No | failover02.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must be in fqdn format and contain fewer than 63 characters. |
 | bigIpInstanceType | No | m5.xlarge | string | Enter a valid instance type. |
-| bigIpImage | No | \*16.1.3.2-0.0.4 PAYG-Best Plus 25Mbps\* | string | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. bigIpImage is required when bigIpCustomImageId is not specified. |
+| bigIpImage | No | \*16.1.3.3-0.0.3 PAYG-Best Plus 25Mbps\* | string | F5 BIG-IP market place image. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. bigIpImage is required when bigIpCustomImageId is not specified. |
 | bigIpInstanceProfile | No |  | string | Enter the name of an existing IAM instance profile with applied IAM policy to be associated to the BIG-IP virtual machine(s). Leave default to create a new instance profile. |
 | bigIpCustomImageId | No |   | string | Provide a custom BIG-IP AMI ID you wish to deploy. Otherwise, can leave empty. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run | string | Supply a URL to the bigip-runtime-init package. |
@@ -429,7 +429,7 @@ To deploy **BYOL** instances:
       ```json
         {
           "ParameterKey": "bigIpImage",
-          "ParameterValue": "*16.1.3.2-0.0.4**BYOL-All Modules 2Boot*"
+          "ParameterValue": "*16.1.3.3-0.0.3**BYOL-All Modules 2Boot*"
         },
       ```
   2. Update the **bigIpLicenseKey01** and **bigIpLicenseKey02** input parameters to reference the unique registration keys to use when licensing the BIG-IP instances.
@@ -816,8 +816,8 @@ These templates have been tested and validated with the following versions of BI
 
 | AWS BIG-IP Image Version | BIG-IP Version |
 | --- | --- |
-| 16.1.3.2 | 0.0.4 |
-| 14.1.5.2 | 0.0.3 |
+| 16.1.3.3 | 0.0.3 |
+| 14.1.5.3 | 0.0.5 |
 
 
 ## Documentation

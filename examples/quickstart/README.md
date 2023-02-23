@@ -176,7 +176,7 @@ By default, this solution creates a single Availability Zone VPC with four subne
 | sshKey | No |   | string | Supply the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP virtual machines. Example: ``myAWSkey``. If a value is not provided, one will will be created using the value of the uniqueString input parameter. Example: ``uniqueString-keyPair``. |
 | throughput | No | 25Mbps | string | Maximum amount of throughput for BIG-IP VE. |
 | uniqueString | No | myUniqStr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
-| version | No |  16-1-2-2-0028 | string | Select version of BIG-IP you wish to deploy. |
+| version | No |  16-1-3-3-003 | string | Select version of BIG-IP you wish to deploy. |
 
 
 ### Template Outputs
@@ -236,7 +236,7 @@ By default, this solution creates a single Availability Zone VPC with four subne
 | sshKey | No |   | string | Supply the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP virtual machines. Example: ``myAWSkey``. If a value is not provided, one will will be created using the value of the uniqueString input parameter. Example: ``uniqueString-keyPair``. |
 | throughput | No | 25Mbps | string | Maximum amount of throughput for BIG-IP VE. |
 | uniqueString | No | myUniqStr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
-| version | No |  16-1-2-2-0028 | string | Select version of BIG-IP you wish to deploy. |
+| version | No |  16-1-3-3-003 | string | Select version of BIG-IP you wish to deploy. |
 | vpcId | **Yes** |   | string | Id for VPC to use with deployment. |
 
 <br>
@@ -717,8 +717,8 @@ These templates have only been explicitly tested and validated with the followin
 
 | BIG-IP Version | Build Number |
 | --- | --- |
-| 16.1.3.2 | 0.0.4 |
-| 14.1.5.2 | 0.0.3 |
+| 16.1.3.3 | 0.0.3 |
+| 14.1.5.3 | 0.0.5 |
 
 These templates leverage Runtime-Init, which requires BIG-IP Versions 14.1.2.6 and up, and are assumed compatible to work. 
 
