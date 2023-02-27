@@ -12,11 +12,22 @@ echo "bucket_name=$bucket_name"
 artifact_location=$(cat /$PWD/examples/failover/failover.yaml | yq -r .Parameters.artifactLocation.Default)
 echo "artifact_location=$artifact_location"
 
+private_key=''
+if [[ "<CREATE NEW KEY PAIR>" == 'false' ]]; then
+    private_key='<SSH KEY>'
+fi
+echo "Private key: ${private_key}"
+
+secret_arn=''
+if [[ "<CREATE NEW SECRET>" == 'false' ]]; then
+    secret_name=$(aws secretsmanager describe-secret --secret-id <DEWPOINT JOB ID>-secret-runtime --region <REGION> | jq -r .Name)
+    secret_arn=$(aws secretsmanager describe-secret --secret-id <DEWPOINT JOB ID>-secret-runtime --region <REGION> | jq -r .ARN)
+    echo "Secret name: ${secret_name}"
+    echo "Secret arn: ${secret_arn}"
+fi
+
 runtimeConfig01='"<RUNTIME INIT CONFIG 01>"'
 runtimeConfig02='"<RUNTIME INIT CONFIG 02>"'
-secret_name=$(aws secretsmanager describe-secret --secret-id <DEWPOINT JOB ID>-secret-runtime --region <REGION> | jq -r .Name)
-secret_arn=$(aws secretsmanager describe-secret --secret-id <DEWPOINT JOB ID>-secret-runtime --region <REGION> | jq -r .ARN)
-
 region=$(aws s3api get-bucket-location --bucket $bucket_name | jq -r .LocationConstraint)
 
 if [ -z $region ] || [ $region == null ]; then
@@ -38,59 +49,48 @@ if [[ "<PROVISION EXAMPLE APP>" == "true" ]]; then
     do_index=3
 fi
 
-if [[ "<RUNTIME INIT CONFIG 01>" == *{* ]]; then
-    config_with_added_secret_id="${runtimeConfig01/<SECRET_ID>/$secret_name}"
-    config_with_added_ids="${config_with_added_secret_id/<BUCKET_ID>/$bucket_name}"
-    runtimeConfig01=$config_with_added_ids
-    runtimeConfig01="${runtimeConfig01/<ARTIFACT LOCATION>/$artifact_location}"
-
-    config_with_added_secret_id="${runtimeConfig02/<SECRET_ID>/$secret_name}"
-    config_with_added_ids="${config_with_added_secret_id/<BUCKET_ID>/$bucket_name}"
-    runtimeConfig02=$config_with_added_ids
-    runtimeConfig02="${runtimeConfig02/<ARTIFACT LOCATION>/$artifact_location}"
+if [[ "<PROVISION EXAMPLE APP>" == "false" ]]; then
+    declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-<NUMBER NICS>nic-<LICENSE TYPE>-instance01.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-<NUMBER NICS>nic-<LICENSE TYPE>-instance02.yaml)
 else
-    if [[ "<PROVISION EXAMPLE APP>" == "false" ]]; then
-        declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance01.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance02.yaml)
-    else
-        declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance01-with-app.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-3nic-<LICENSE TYPE>-instance02-with-app.yaml)
-    fi
-    counter=1
-    for config_path in "${runtime_init_config_files[@]}"; do
-        # Modify Runtime-init, then upload to s3.
-        cp -avr $config_path <DEWPOINT JOB ID>-0$counter.yaml
-
-        # Create user for login tests
-        /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.class = \"User\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-        /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.password = \"{{{BIGIP_PASSWORD}}}\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-        /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.shell = \"bash\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-        /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.userType = \"regular\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-
-        /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.admin.class = \"User\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-        /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.admin.password = \"{{{BIGIP_PASSWORD}}}\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-        /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.admin.shell = \"bash\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-        /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.admin.userType = \"regular\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-
-        # Update CFE tag
-        /usr/bin/yq e ".extension_services.service_operations.[1].value.externalStorage.scopingTags.f5_cloud_failover_label = \"<DEWPOINT JOB ID>\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-        /usr/bin/yq e ".extension_services.service_operations.[1].value.failoverAddresses.scopingTags.f5_cloud_failover_label = \"<DEWPOINT JOB ID>\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-
-        if [[ "<PROVISION EXAMPLE APP>" == "true" ]]; then
-            /usr/bin/yq e ".extension_services.service_operations.[2].value.Tenant_1.Shared.Custom_WAF_Policy.url = \"https://cdn.f5.com/product/cloudsolutions/solution-scripts/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-        fi
-
-        # print out config file
-        /usr/bin/yq e <DEWPOINT JOB ID>-0$counter.yaml
-
-        # update copy
-        cp <DEWPOINT JOB ID>-0$counter.yaml update_<DEWPOINT JOB ID>-0$counter.yaml
-
-        # upload to s3
-        aws s3 cp --region <REGION> update_<DEWPOINT JOB ID>-0$counter.yaml s3://"$bucket_name"/examples/failover/bigip-configurations/update_<DEWPOINT JOB ID>-0$counter.yaml --acl public-read
-        aws s3 cp --region <REGION> <DEWPOINT JOB ID>-0$counter.yaml s3://"$bucket_name"/examples/failover/bigip-configurations/<DEWPOINT JOB ID>-0$counter.yaml --acl public-read
-
-        ((counter=counter+1))
-    done
+    declare -a runtime_init_config_files=(/$PWD/examples/failover/bigip-configurations/runtime-init-conf-<NUMBER NICS>nic-<LICENSE TYPE>-instance01-with-app.yaml /$PWD/examples/failover/bigip-configurations/runtime-init-conf-<NUMBER NICS>nic-<LICENSE TYPE>-instance02-with-app.yaml)
 fi
+counter=1
+for config_path in "${runtime_init_config_files[@]}"; do
+    # Modify Runtime-init, then upload to s3.
+    cp -avr $config_path <DEWPOINT JOB ID>-0$counter.yaml
+
+    # Create user for login tests
+    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.class = \"User\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.password = \"{{{BIGIP_PASSWORD}}}\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.shell = \"bash\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[0].value.Common.admin.userType = \"regular\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+
+    /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.admin.class = \"User\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.admin.password = \"{{{BIGIP_PASSWORD}}}\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.admin.shell = \"bash\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.admin.userType = \"regular\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+
+    # Update CFE tag
+    /usr/bin/yq e ".extension_services.service_operations.[1].value.externalStorage.scopingTags.f5_cloud_failover_label = \"<DEWPOINT JOB ID>\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+    /usr/bin/yq e ".extension_services.service_operations.[1].value.failoverAddresses.scopingTags.f5_cloud_failover_label = \"<DEWPOINT JOB ID>\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+
+    # Update WAF policy URL
+    if [[ "<PROVISION EXAMPLE APP>" == "true" ]]; then
+        /usr/bin/yq e ".extension_services.service_operations.[2].value.Tenant_1.Shared.Custom_WAF_Policy.url = \"https://cdn.f5.com/product/cloudsolutions/solution-scripts/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>-0$counter.yaml
+    fi
+
+    # print out config file
+    /usr/bin/yq e <DEWPOINT JOB ID>-0$counter.yaml
+
+    # update copy
+    cp <DEWPOINT JOB ID>-0$counter.yaml update_<DEWPOINT JOB ID>-0$counter.yaml
+
+    # upload to s3
+    aws s3 cp --region <REGION> update_<DEWPOINT JOB ID>-0$counter.yaml s3://"$bucket_name"/examples/failover/bigip-configurations/update_<DEWPOINT JOB ID>-0$counter.yaml --acl public-read
+    aws s3 cp --region <REGION> <DEWPOINT JOB ID>-0$counter.yaml s3://"$bucket_name"/examples/failover/bigip-configurations/<DEWPOINT JOB ID>-0$counter.yaml --acl public-read
+
+    ((counter=counter+1))
+done
 
 # Set Parameters using file to eiliminate issues when passing spaces in parameter values
 cat <<EOF > parameters.json
@@ -144,6 +144,10 @@ cat <<EOF > parameters.json
         "ParameterValue": "<NUMBER AZS>"
     },
     {
+        "ParameterKey": "numNics",
+        "ParameterValue": "<NUMBER NICS>"
+    },
+    {
         "ParameterKey": "numSubnets",
         "ParameterValue": "<NUMBER SUBNETS>"
     },
@@ -185,7 +189,7 @@ cat <<EOF > parameters.json
     },
     {
         "ParameterKey": "sshKey",
-        "ParameterValue": "<SSH KEY>"
+        "ParameterValue": "$private_key"
     },
     {
         "ParameterKey": "subnetMask",
@@ -234,7 +238,7 @@ cat <<EOF >> parameters.json
 ]
 EOF
 fi
-cat parameters.json
+cat parameters.json | jq .
 
 aws cloudformation create-stack --disable-rollback --region <REGION> --stack-name <STACK NAME> --tags Key=creator,Value=dewdrop Key=delete,Value=True \
 --template-url https://s3.amazonaws.com/"$bucket_name"/<TEMPLATE NAME> \

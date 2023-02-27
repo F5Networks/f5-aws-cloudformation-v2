@@ -26,6 +26,18 @@ else
     fi
     echo "BigIp password=$PASSWORD"
 
+    bigip_private_key='/etc/ssl/private/dewpt_private.pem'
+    bastion_private_key='/etc/ssl/private/dewpt_private.pem'
+    if [[ "<CREATE NEW KEY PAIR>" == 'true' ]]; then
+        # created by verify_login.sh
+        bigip_private_key='/etc/ssl/private/new_key.pem'
+        if [[ "<STACK TYPE>" == "full-stack" ]]; then
+            bastion_private_key='/etc/ssl/private/new_key.pem'
+        fi
+    fi
+    echo "Private key: ${bigip_private_key}"
+    echo "Bastion private key: ${bastion_private_key}"
+
     MGMT_PORT='8443'
     group_name=$(aws autoscaling describe-auto-scaling-groups --region <REGION> | jq -r '.AutoScalingGroups[] |select (.AutoScalingGroupARN |contains("<UNIQUESTRING>-bigip"))|.AutoScalingGroupName')
     echo "Autoscale group name: $group_name"
@@ -51,7 +63,7 @@ else
 
         echo "Bastion IP: $bastion_ip"
         echo "BIGIP Private Ip: $bigip_private_ip"
-        AS3_RESPONSE=$(ssh -o "StrictHostKeyChecking=no" -o ConnectTimeout=7 -i /etc/ssl/private/dewpt_private.pem ubuntu@"$bastion_ip" "curl -skvvu 'admin:${PASSWORD}' https://${bigip_private_ip}:${MGMT_PORT}/mgmt/shared/appsvcs/declare" | jq -r .)
+        AS3_RESPONSE=$(ssh -o "StrictHostKeyChecking=no" -o ConnectTimeout=7 -i ${bastion_private_key} ubuntu@"$bastion_ip" "curl -skvvu 'admin:${PASSWORD}' https://${bigip_private_ip}:${MGMT_PORT}/mgmt/shared/appsvcs/declare" | jq -r .)
     else
         test_instance_public_ip=$(aws ec2 describe-instances --region  <REGION> --instance-ids $test_instance_id | jq .Reservations[0].Instances[0].PublicIpAddress | tr -d '"')
 

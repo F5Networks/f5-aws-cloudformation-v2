@@ -12,6 +12,12 @@ echo "bucket_name=$bucket_name"
 artifact_location=$(cat /$PWD/examples/autoscale/<LICENSE TYPE>/autoscale-existing-network.yaml | yq -r .Parameters.artifactLocation.Default)
 echo "artifact_location=$artifact_location"
 
+private_key=''
+if [[ "<CREATE NEW KEY PAIR>" == 'false' ]]; then
+    private_key='<SSH KEY>'
+fi
+echo "Private key: ${private_key}"
+
 vpcId=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="vpcId").OutputValue')
 mgmtAz1=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsA").OutputValue' | cut -d ',' -f 2)
 mgmtAz2=$(aws cloudformation describe-stacks --region <REGION> --stack-name <NETWORK STACK NAME> | jq  -r '.Stacks[0].Outputs[] | select(.OutputKey=="subnetsB").OutputValue' | cut -d ',' -f 2)
@@ -240,7 +246,7 @@ cat <<EOF > parameters.json
     },
     {
         "ParameterKey": "sshKey",
-        "ParameterValue": "<SSH KEY>"
+        "ParameterValue": "$private_key"
     },
     {
         "ParameterKey": "uniqueString",

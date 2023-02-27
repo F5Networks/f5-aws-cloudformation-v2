@@ -32,6 +32,14 @@
     "ParameterValue": "false"
   },
   {
+    "ParameterKey": "createSecret",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "createSshKey",
+    "ParameterValue": "false"
+  },
+  {
     "ParameterKey": "environment",
     "ParameterValue": "f5env"
   },

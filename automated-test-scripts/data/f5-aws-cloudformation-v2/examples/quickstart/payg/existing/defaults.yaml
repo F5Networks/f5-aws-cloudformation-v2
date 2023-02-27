@@ -5,6 +5,7 @@ BIGIP USER: admin
 CIDR: 10.0.0.0/16
 CUSTOM IMAGE: ''
 DOCKER IMAGE: 'f5devcentral/f5-demo-app:latest'
+DYNAMIC IPS: 'false'
 NETWORK STACK NAME: dewdrop-<NETWORK TEMPLATE NAME>-<DEWPOINT JOB ID>
 NETWORK TEMPLATE NAME: network
 LICENSE TYPE: payg
@@ -18,10 +19,11 @@ REGION: us-west-1
 SOLUTION TYPE: standalone
 SSH KEY: dewpt
 STACK NAME: dewdrop-quickstart-<NIC COUNT>nic-payg-<DEWPOINT JOB ID>
+STACK TYPE: existing-stack
 SUBNETMASK: 24
 TEMPLATE NAME: quickstart-3nic-payg
 TEMPLATE URL: 'https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/main/examples/quickstart/quickstart-existing-network.yaml'
 TENANCY: default
 THROUGHPUT: 25Mbps
 UNIQUESTRING: dew<DEWPOINT JOB ID>
-VERSION: 14-1-5-2-003
+VERSION: 14-1-5-3-005
