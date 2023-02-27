@@ -21,6 +21,23 @@ else
 fi
 echo "BigIp password=$PASSWORD"
 
+bigip_private_key='/etc/ssl/private/dewpt_private.pem'
+bastion_private_key='/etc/ssl/private/dewpt_private.pem'
+if [[ "<CREATE NEW KEY PAIR>" == 'true' ]]; then
+    bigip_private_key='/etc/ssl/private/new_key.pem'
+    key_pair_name=$(aws cloudformation describe-stacks --stack-name <STACK NAME> --region <REGION> | jq -r '.Stacks[].Outputs[] | select (.OutputKey=="bigIpKeyPairName") | .OutputValue')
+    key_pair_id=$(aws ec2 describe-key-pairs --key-name ${key_pair_name} --region <REGION> | jq -r .KeyPairs[0].KeyPairId)
+    private_key_value=$(aws ssm get-parameter --name /ec2/keypair/${key_pair_id} --with-decryption --region <REGION> | jq -r .Parameter.Value > ${bigip_private_key})
+    chmod 0600 ${bigip_private_key}
+    echo "Key pair name: ${key_pair_name}"
+    echo "Key pair ID: ${key_pair_id}"
+    if [[ "<STACK TYPE>" == "full-stack" ]]; then
+        bastion_private_key='/etc/ssl/private/new_key.pem'
+    fi
+fi
+echo "Private key: ${bigip_private_key}"
+echo "Bastion private key: ${bastion_private_key}"
+
 MGMT_PORT='8443'
 SSH_PORT='22'
 group_name=$(aws autoscaling describe-auto-scaling-groups --region <REGION> | jq -r '.AutoScalingGroups[] |select (.AutoScalingGroupARN |contains("<UNIQUESTRING>-bigip"))|.AutoScalingGroupName')
@@ -48,8 +65,8 @@ if [[ "<PROVISION PUBLIC IP>" == "false" ]]; then
     echo "Bastion IP: $bastion_ip"
     echo "BIGIP Private Ip: $bigip_private_ip"
 
-    SSH_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i /etc/ssl/private/dewpt_private.pem -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i /etc/ssl/private/dewpt_private.pem -W %h:%p ubuntu@$bastion_ip" admin@"$bigip_private_ip" 'tmsh list auth user admin')
-    PASSWORD_RESPONSE=$(ssh -o "StrictHostKeyChecking=no" -o ConnectTimeout=7 -i /etc/ssl/private/dewpt_private.pem ubuntu@"$bastion_ip" "curl -skvvu 'admin:${PASSWORD}' https://${bigip_private_ip}:${MGMT_PORT}/mgmt/tm/auth/user/admin")
+    SSH_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i ${bigip_private_key} -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i ${bastion_private_key} -W %h:%p ubuntu@$bastion_ip" admin@"$bigip_private_ip" 'tmsh list auth user admin')
+    PASSWORD_RESPONSE=$(ssh -o "StrictHostKeyChecking=no" -o ConnectTimeout=7 -i ${bastion_private_key} ubuntu@"$bastion_ip" "curl -skvvu 'admin:${PASSWORD}' https://${bigip_private_ip}:${MGMT_PORT}/mgmt/tm/auth/user/admin")
 else
     test_instance_public_ip=$(aws ec2 describe-instances --region <REGION> --instance-ids $test_instance_id | jq .Reservations[0].Instances[0].PublicIpAddress | tr -d '"')
 

@@ -4,7 +4,28 @@
 #  replayTimeout = 20
 
 FLAG='FAIL'
+
+bigip_private_key='/etc/ssl/private/dewpt_private.pem'
+bastion_private_key='/etc/ssl/private/dewpt_private.pem'
+if [[ "<CREATE NEW KEY PAIR>" == 'true' ]]; then
+    # created by verify_login.sh
+    bigip_private_key='/etc/ssl/private/new_key.pem'
+    if [[ "<STACK TYPE>" == "full-stack" ]]; then
+        bastion_private_key='/etc/ssl/private/new_key.pem'
+    fi
+fi
+echo "Private key: ${bigip_private_key}"
+echo "Bastion private key: ${bastion_private_key}"
+
 PASSWORD='<SECRET VALUE>'
+if [[ "<CREATE NEW SECRET>" == 'true' ]]; then
+    unique_string=$(aws cloudformation describe-stacks --stack-name <STACK NAME> --region <REGION> | jq -r '.Stacks[].Parameters[] | select (.ParameterKey=="uniqueString") | .ParameterValue')
+    secret_name=${unique_string}-bigIpSecret
+    PASSWORD=$(aws secretsmanager get-secret-value --secret-id ${secret_name} --region <REGION> | jq -r .SecretString)
+    echo "Unique string: ${unique_string}"
+    echo "Secret name: ${secret_name}"
+fi
+echo "PASSWORD: ${PASSWORD}"
 
 bigip1_stackname=$(aws cloudformation describe-stacks --stack-name <STACK NAME> --region <REGION> | jq -r '.Stacks[].Outputs[] | select (.OutputKey=="bigIpInstance01") | .OutputValue')
 bigip1_instance_id=$(aws cloudformation describe-stacks --stack-name  ${bigip1_stackname} --region <REGION> | jq -r '.Stacks[].Outputs[]|select (.OutputKey=="bigIpInstanceId")| .OutputValue')
@@ -29,8 +50,8 @@ if [[ '<PROVISION MGMT PUBLIC IP>' == 'false' ]]; then
     bigip2_private_ip=$(aws cloudformation describe-stacks --stack-name <STACK NAME> --region <REGION> | jq -r '.Stacks[].Outputs[] | select (.OutputKey=="bigIpInstanceMgmtPrivateIp02") | .OutputValue')
     echo "BIGIP2 PRIVATE IP: $bigip2_private_ip"
 
-    state=$(sshpass -p ${PASSWORD} ssh -o "StrictHostKeyChecking no" -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i /etc/ssl/private/dewpt_private.pem -W %h:%p ubuntu@$bastion_public_ip" admin@${bigip1_private_ip} "tmsh show sys failover")
-    state2=$(sshpass -p ${PASSWORD} ssh -o "StrictHostKeyChecking no" -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i /etc/ssl/private/dewpt_private.pem -W %h:%p ubuntu@$bastion_public_ip" admin@${bigip2_private_ip} "tmsh show sys failover")
+    state=$(sshpass -p ${PASSWORD} ssh -o "StrictHostKeyChecking no" -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i ${bastion_private_key} -W %h:%p ubuntu@$bastion_public_ip" admin@${bigip1_private_ip} "tmsh show sys failover")
+    state2=$(sshpass -p ${PASSWORD} ssh -o "StrictHostKeyChecking no" -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i ${bastion_private_key} -W %h:%p ubuntu@$bastion_public_ip" admin@${bigip2_private_ip} "tmsh show sys failover")
 else
     echo 'MGMT PUBLIC IP IS ENABLED'
 

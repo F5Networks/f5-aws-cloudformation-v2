@@ -14,6 +14,8 @@ onStart:
   - ../common/verify_traffic.sh
   - ../common/verify_waf_blocking.sh
   - ../common/verify_as3.sh
+  - ../common/verify_secret_arn.sh
+  - ../common/verify_iam_instance_profile.sh
   - ../../../common/delete_app_stack.sh
   - ../../../common/delete_bastion_stack.sh
   - ../../../common/verify_app_stack_deleted.sh

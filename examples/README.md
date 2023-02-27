@@ -24,7 +24,7 @@ As a basic framework, an example full stack deployment may consist of:
   -  **(Child) Network Template** - creates virtual networks (VPC), subnets, internet/NAT gateways, DHCP options, network ACLs, and other network related resources. 
   -  **(Child) Application Template** - creates a generic application for demonstrating live traffic through the BIG-IP.
   -  **(Child) DAG/Ingress Template** - creates resources required to get traffic to the BIG-IP (for example, Elastic IP Addresses, External and Internal Load Balancers, Security Groups).
-  -  **(Child) Access Template** - creates Identity and Access related resources, like IAM Roles and Instance profiles, with permissions for various use cases (for example, accessing a secret in a cloud vault, S3 buckets, etc.)
+  -  **(Child) Access Template** - creates Identity and Access related resources, like IAM Roles and Instance profiles, with permissions for various use cases (for example, accessing a secret in a cloud vault, S3 buckets, etc.) and SSH keys.
   -  **(Child) Function Template** - creates AWS Lambda functions used for tasks like managing licenses for an AWS Autoscale Group of BIG-IP instances licensed with BIG-IQ, convenience functions like looking up AMIs by name, etc.
   -  **(Child) BIG-IP Template** *(existing-stack)* - creates a BIG-IP instance or instances in an AWS Autoscale Group, failover cluster, etc. 
 
@@ -90,7 +90,7 @@ OR
   For example: 
   ```bash
   aws cloudformation create-stack --region us-east-1 --stack-name myStack \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.6.0.0/examples/quickstart/quickstart.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.7.0.0/examples/quickstart/quickstart.yaml \
   --parameters "ParameterKey=sshKey,ParameterValue=MY-SSH-KEY-NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0" 
   ```
 
