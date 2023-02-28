@@ -322,7 +322,7 @@ Metadata:
         default: EC2 KeyPair
       uniqueString:
         default: Unique string
-  Version: 2.6.0.0
+  Version: 2.7.0.0
 Outputs:
   stackName:
     Description: BIG-IP nested stack name
@@ -1258,7 +1258,7 @@ Resources:
             - |
               # Run
             - |
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.6.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.7.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
             - |2+
 
             - |
@@ -1512,7 +1512,7 @@ Resources:
             - |
               # Run
             - |
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.6.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.7.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
             - |2+
 
             - |
@@ -1760,7 +1760,7 @@ Resources:
             - |
               # Run
             - |
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.6.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.7.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
             - |2+
 
             - |
