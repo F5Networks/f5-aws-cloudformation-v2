@@ -416,7 +416,7 @@ Parameters:
       file in YAML or JSON format to use for f5-bigip-runtime-init configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.0/dist/f5-bigip-runtime-init-1.6.0-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.1/dist/f5-bigip-runtime-init-1.6.1-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   cfeS3Bucket:
@@ -444,11 +444,11 @@ Parameters:
     Type: String
   externalPublicIpIds:
     Default: ''
-    Description: A comma separated list of one or more Public IP addresses to associate
-      to the external network interface secondary private addresses. **Note template
-      only supports up to 4 addresses. numSecondaryPrivateIpAddress parameter needs
-      to be equal to our greater than the number of addresses sent. Leaving default
-      empty will not associate EIPS to secondary addresses.
+    Description: A comma separated list of one or more Public IP address allocation
+      IDs to associate to the external network interface secondary private addresses.
+      **Note template only supports up to 4 addresses. numSecondaryPrivateIpAddress
+      parameter needs to be equal to our greater than the number of addresses sent.
+      Leaving default empty will not associate EIPS to secondary addresses.
     Type: CommaDelimitedList
   externalSecurityGroupId:
     Default: ''

@@ -57,6 +57,7 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | cost | No | f5cost | string | Cost Center Tag. |
 | environment | No | f5env | string | Environment Tag. |
 | externalPrimaryPublicId | No |  | string | The resource ID of the public IP address to apply to the primary IP configuration on the external network interface. The default is an empty string which does not provision public IP. |
+| externalPublicIpIds | No |  | string | A comma separated list of one or more Elastic IP address allocation IDs to associate to the external network interface secondary private addresses. ***Note:*** The template only supports up to 4 addresses. The numSecondaryPrivateIpAddress parameter needs to be equal to our greater than the number of addresses sent. Leaving default empty will not associate EIPs to secondary addresses. |
 | externalSecurityGroupId | No |  | string | The optional resource ID of a security group to apply to the external network interface. |
 | externalSelfIp | No |  | string | The private IP address to apply to external network interfaces as primary private address. The address must reside in the subnet provided in the externalSubnetId parameter. ***Note:*** When set to an empty string, DHCP will be used for allocating the IP address. The default value is empty string. |
 | externalServiceIps | No |  | string | An array of one or more private IP addresses to apply to the secondary external IP configurations. |
