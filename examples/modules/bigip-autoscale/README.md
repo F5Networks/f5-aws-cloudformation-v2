@@ -92,7 +92,7 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | snsEvents | No | autoscaling:EC2_INSTANCE_LAUNCH,autoscaling:EC2_INSTANCE_LAUNCH_ERROR | string | Provide a list of SNS Topics used on Autoscale Group. |
 | sshKey | Yes |  | string | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. | 
 | subnets | Yes |  | string | Public or external subnets for the availability zones. | 
-| uniqueString | No | myUniqStr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+| uniqueString | No | myuniqstr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. Must contain between 1 and 12 lowercase alphanumeric characters with first character as a letter. |
 
 ### Template Outputs
 

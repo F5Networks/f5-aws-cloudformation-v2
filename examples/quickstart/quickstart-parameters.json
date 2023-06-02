@@ -117,7 +117,7 @@
   },
   {
     "ParameterKey": "uniqueString",
-    "ParameterValue": "myUniqStr"
+    "ParameterValue": "myuniqstr"
   },
   {
     "ParameterKey": "version",

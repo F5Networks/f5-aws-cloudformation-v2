@@ -97,7 +97,7 @@
   },
   {
     "ParameterKey": "uniqueString",
-    "ParameterValue": "myUniqStr"
+    "ParameterValue": "myuniqstr"
   },
   {
     "ParameterKey": "vpcCidr",

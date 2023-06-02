@@ -225,9 +225,9 @@ Parameters:
     Description: The private IP address to apply as primary private address. The address must reside in the subnet provided in the subnetId parameter. ***NOTE:*** When set to empty string, DHCP will be used for allocating ip address.
     Type: String
   uniqueString:
-    AllowedPattern: ^[a-zA-Z][a-zA-Z0-9]{1,11}$
-    ConstraintDescription: Must Contain between 1 and 12 alphanumeric characters with first character as a letter.
-    Default: myUniqStr
+    AllowedPattern: ^[a-z][a-z0-9]{1,11}$
+    ConstraintDescription: Must contain between 1 and 12 lowercase alphanumeric characters with first character as a letter.
+    Default: myuniqstr
     Description: Unique String used when creating object names or Tags.
     Type: String
   vpc:

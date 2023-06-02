@@ -13,7 +13,7 @@ Resources:
         owner: f5owner
         setPublicSubnet1: 'false'
         subnetMask: 24
-        uniqueString: myUniqStr
+        uniqueString: myuniqstr
         vpcCidr: 10.0.0.0/16
         vpcTenancy: default
 Outputs:

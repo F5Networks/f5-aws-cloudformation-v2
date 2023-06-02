@@ -179,7 +179,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpSecretArn | No |  | string | The ARN of the AWS secret manager secret where the BIG-IP password used for clustering is stored. If left empty, a secret will be created. |
 | cfeVipTag | No |  10.0.0.101,10.0.4.101 | string | Cloud Failover VIP tag value; provides private IP addresses to be assigned to VIP public IP. |
 | cfeTag | No | bigip_high_availability_solution  | string | Cloud Failover deployment tag value. |
-| cfeS3Bucket | No |   | string | Supply a unique name for a CFE S3 bucket created and used by Cloud Failover Extension. If a value is not provided, a bucket will be created using the value of the uniqueString input parameter. For example: **uniqueString-bigip-high-availability-solution**. |
+| cfeS3Bucket | No |   | string | Supply a unique name for a CFE S3 bucket created and used by Cloud Failover Extension. If a value is not provided, a bucket will be created using the value of the uniqueString input parameter. For example: **uniqueString-bigip-high-availability-solution**. S3 bucket name must be unique, can be between 3 and 63 characters long, and can contain only lower-case characters, numbers, periods, and dashes. It cannot contain underscores, end with a dash, have consecutive periods, or use dashes adjacent to periods. |
 | cost | No | f5cost  | string | Cost Center Tag. |
 | environment | No | f5env  | string | Environment Tag. |
 | group | No | f5group  | string | Group Tag. |
@@ -195,7 +195,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | s3BucketName | No | f5-cft-v2 | string | The S3 bucket name for the modules. The S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-). |
 | sshKey | No |   | string | Supply the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP virtual machines. Example: ``myAWSkey``. If a value is not provided, one will will be created using the value of the uniqueString input parameter. Example: ``uniqueString-keyPair``. |
 | subnetMask | No | 24  | string | Mask for subnets. Valid values include 16-28. Note supernetting of VPC occurs based on mask provided; therefore, number of networks must be >= to the number of subnets created. Mask for subnets. Valid values include 16-28. |
-| uniqueString | No | myUniqStr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+| uniqueString | No | myuniqstr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. Must contain between 1 and 12 lowercase alphanumeric characters with first character as a letter. |
 | vpcCidr | No | 10.0.0.0/16 | string | CIDR block for the VPC. |
 
 <br>
@@ -251,7 +251,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | bigIpSecretArn | No |  | string | The ARN of the AWS secret manager secret where the BIG-IP password used for clustering is stored. If left empty, a secret will be created. |
 | cfeVipTag | No |  10.0.0.101,10.0.4.101 | string | Cloud Failover VIP tag value; provides private IP addresses to be assigned to VIP public IP. |
 | cfeTag | No | bigip_high_availability_solution  | string | Cloud Failover deployment tag value. |
-| cfeS3Bucket | No |  | string | Unique S3 bucket name created and used by Cloud Failover Extension. If a value is not provided, a bucket will be created using the value of the uniqueString input parameter. For example: **uniqueString-bigip-high-availability-solution**. |
+| cfeS3Bucket | No |  | string | Unique S3 bucket name created and used by Cloud Failover Extension. If a value is not provided, a bucket will be created using the value of the uniqueString input parameter. For example: **uniqueString-bigip-high-availability-solution**. S3 bucket name must be unique, can be between 3 and 63 characters long, and can contain only lower-case characters, numbers, periods, and dashes. It cannot contain underscores, end with a dash, have consecutive periods, or use dashes adjacent to periods. |
 | cost | No | f5cost  | string | Cost Center Tag. |
 | environment | No | f5env  | string | Environment Tag. |
 | group | No | f5group  | string | Group Tag. |
@@ -265,7 +265,7 @@ For information about this type of deployment, see the F5 Cloud Failover Extensi
 | s3BucketName | No | f5-cft-v2 | string | The S3 bucket name for the modules. The S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-). |
 | sshKey | No |   | string | Supply the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP virtual machines. Example: ``myAWSkey``. If a value is not provided, one will will be created using the value of the uniqueString input parameter. Example: ``uniqueString-keyPair``. |
 | subnetMask | No | 24  | string | Mask for subnets. Valid values include 16-28. Note supernetting of VPC occurs based on mask provided; therefore, number of networks must be >= to the number of subnets created. Mask for subnets. Valid values include 16-28. |
-| uniqueString | No | myUniqStr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+| uniqueString | No | myuniqstr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. Must contain between 1 and 12 lowercase alphanumeric characters with first character as a letter. |
 | vpcCidr | No | 10.0.0.0/16 | string | CIDR block for the VPC. |
 | vpcId | **Yes** |   | string | ID for VPC to use with deployment. |
 
@@ -539,7 +539,7 @@ From Parent Template Outputs:
       ```bash
       # (Optional) If you did not provide the name of an existing SSH key pair, you must retrieve the private key before connecting
       REGION=us-east-1
-      UNIQUE_STRING=myUniqStr
+      UNIQUE_STRING=myuniqstr
       YOUR_PRIVATE_SSH_KEY=${UNIQUE_STRING}-private-key.pem
 
       # Retrieve the key pair ID

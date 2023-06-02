@@ -189,7 +189,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | snsEvents | No | autoscaling:EC2_INSTANCE_LAUNCH,autoscaling:EC2_INSTANCE_LAUNCH_ERROR  | string | Provides list of SNS Topics used on Autoscale Group. | 
 | sshKey | No |   | string | Supply the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP virtual machines. Example: ``myAWSkey``. If a value is not provided, one will will be created using the value of the uniqueString input parameter. Example: ``uniqueString-keyPair``.  |
 | subnetMask | No | 24 | string | Mask for subnets. Valid values include 16-28. Note: supernetting of VPC occurs based on the mask provided; therefore, number of networks must be greater than or equal to the number of subnets created. |
-| uniqueString | No | myUniqStr  | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+| uniqueString | No | myuniqstr  | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. Must contain between 1 and 12 lowercase alphanumeric characters with first character as a letter. |
 | vpcCidr | No | 10.0.0.0/16 | string | CIDR block for the VPC. |
 
 ### Template Outputs
@@ -264,7 +264,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | snsEvents | No | autoscaling:EC2_INSTANCE_LAUNCH,autoscaling:EC2_INSTANCE_LAUNCH_ERROR  | string | Provides list of SNS Topics used on Autoscale Group. | 
 | sshKey | No |   | string | Supply the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP virtual machines. Example: ``myAWSkey``. If a value is not provided, one will will be created using the value of the uniqueString input parameter. Example: ``uniqueString-keyPair``.  |
 | subnetMask | No | 24 | string | Mask for subnets. Valid values include 16-28. Note: supernetting of VPC occurs based on the mask provided; therefore, number of networks must be greater than or equal to the number of subnets created. |
-| uniqueString | No | myUniqStr  | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+| uniqueString | No | myuniqstr  | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. Must contain between 1 and 12 lowercase alphanumeric characters with first character as a letter. |
 | vpcCidr | No | 10.0.0.0/16 | string | CIDR block for the VPC. |
 | vpcId | **Yes** |   | string | ID for the existing VPC. |
 
@@ -627,7 +627,7 @@ From Template Outputs:
       ```bash
       # (Optional) If you did not provide the name of an existing SSH key pair, you must retrieve the private key before connecting
       REGION=us-east-1
-      UNIQUE_STRING=myUniqStr
+      UNIQUE_STRING=myuniqstr
       YOUR_PRIVATE_SSH_KEY=${UNIQUE_STRING}-private-key.pem
 
       # Retrieve the key pair ID

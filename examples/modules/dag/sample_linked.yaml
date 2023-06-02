@@ -22,7 +22,7 @@ Resources:
         restrictedSrcPort: 443
         subnetAz1: subnet-0000000000001
         subnetAz2: subnet-0000000000002
-        uniqueString: myUniqStr
+        uniqueString: myuniqstr
         vpc: vpc-0c740ea960d66b7ef
 Outputs:
   stackName:
