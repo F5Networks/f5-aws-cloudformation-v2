@@ -538,12 +538,12 @@ Parameters:
     MinValue: 16
     Type: Number
   uniqueString:
-    ConstraintDescription: 'Must Contain between 1 and 12 alphanumeric characters
+    ConstraintDescription: 'Must contain between 1 and 12 lowercase alphanumeric characters
       with first character as a letter.'
-    AllowedPattern: ^[a-zA-Z][a-zA-Z0-9]{1,11}$
+    AllowedPattern: ^[a-z][a-z0-9]{1,11}$
     Description: Unique String used when creating object names or Tags.
     Type: String
-    Default: myUniqStr
+    Default: myuniqstr
   vpcCidr:
     AllowedPattern: '^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$'
     ConstraintDescription: CIDR block parameter must be in the form x.x.x.x/16-28

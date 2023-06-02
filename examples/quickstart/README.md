@@ -175,7 +175,7 @@ By default, this solution creates a single Availability Zone VPC with four subne
 | s3BucketName | No | f5-cft-v2 | string | The S3 bucket containing the templates. The S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-). |
 | sshKey | No |   | string | Supply the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP virtual machines. Example: ``myAWSkey``. If a value is not provided, one will will be created using the value of the uniqueString input parameter. Example: ``uniqueString-keyPair``. |
 | throughput | No | 25Mbps | string | Maximum amount of throughput for BIG-IP VE. |
-| uniqueString | No | myUniqStr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+| uniqueString | No | myuniqstr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. Must contain between 1 and 12 lowercase alphanumeric characters with first character as a letter. |
 | version | No |  16-1-3-3-003 | string | Select version of BIG-IP you wish to deploy. |
 
 
@@ -235,7 +235,7 @@ By default, this solution creates a single Availability Zone VPC with four subne
 | s3BucketName | No | f5-cft-v2 | string | The S3 bucket containing the templates. The S3 bucket name can include numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen (-). |
 | sshKey | No |   | string | Supply the key pair name as listed in AWS that will be used for SSH authentication to the BIG-IP virtual machines. Example: ``myAWSkey``. If a value is not provided, one will will be created using the value of the uniqueString input parameter. Example: ``uniqueString-keyPair``. |
 | throughput | No | 25Mbps | string | Maximum amount of throughput for BIG-IP VE. |
-| uniqueString | No | myUniqStr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+| uniqueString | No | myuniqstr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. Must contain between 1 and 12 lowercase alphanumeric characters with first character as a letter. |
 | version | No |  16-1-3-3-003 | string | Select version of BIG-IP you wish to deploy. |
 | vpcId | **Yes** |   | string | Id for VPC to use with deployment. |
 
@@ -483,7 +483,7 @@ From Parent Template Outputs:
      ```bash
       # (Optional) If you did not provide the name of an existing SSH key pair, you must retrieve the private key before connecting
       REGION=us-east-1
-      UNIQUE_STRING=myUniqStr
+      UNIQUE_STRING=myuniqstr
       YOUR_PRIVATE_SSH_KEY=${UNIQUE_STRING}-private-key.pem
 
       # Retrieve the key pair ID

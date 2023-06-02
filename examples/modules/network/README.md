@@ -44,7 +44,7 @@ This AWS template creates a virtual network and subnets required to support F5 s
 | owner | No | f5owner | string | Application Tag. |
 | setSubnet1Public | No | false | boolean | The value 'true' sets subnet1 in each AZ as a public subnet. The value 'false' sets subnet1 as a private network. |
 | subnetMask | No | 24 | integer | Mask for subnets. Valid values include 16-28. Note: supernetting of VPC occurs based on mask provided; therefore, the number of networks must be >= to the number of subnets created. |
-| uniqueString | Yes | myUniqStr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+| uniqueString | Yes | myuniqstr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. Must contain between 1 and 12 lowercase alphanumeric characters with first character as a letter. |
 | vpcCidr | No | 10.0.0.0/16 | string | CIDR block for the VPC. |
 | vpcTenancy | No | default | string | The allowed tenancy of instances launched into the VPC. Valid values include 'default' or 'dedicated' |
 

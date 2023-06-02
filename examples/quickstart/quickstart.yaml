@@ -912,10 +912,10 @@ Parameters:
     Description: Maximum amount of throughput for BIG-IP VE.
     Type: String
   uniqueString:
-    AllowedPattern: '^[a-zA-Z][a-zA-Z0-9]{1,11}$'
-    ConstraintDescription: Must Contain between 1 and 12 alphanumeric characters with
+    AllowedPattern: '^[a-z][a-z0-9]{1,11}$'
+    ConstraintDescription: Must contain between 1 and 12 lowercase alphanumeric characters with
       first character as a letter.
-    Default: myUniqStr
+    Default: myuniqstr
     Description: Unique String used when creating object names or Tags.
     Type: String
   version:
