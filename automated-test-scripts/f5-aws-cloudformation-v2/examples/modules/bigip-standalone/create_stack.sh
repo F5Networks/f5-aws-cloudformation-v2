@@ -47,10 +47,10 @@ if [[ '<NUM SECONDARY PRIVATE IP>' == '1' || '<NUM SECONDARY PRIVATE IP>' == '2'
     extArray+=("$(aws cloudformation describe-stacks --region <REGION> --stack-name <DAG STACK NAME> | jq -r '.Stacks[].Outputs[] | select(.OutputKey=="bigIpExternalEipAllocationId01") | .OutputValue')")
     oldIFS="$IFS"
     IFS=','
-    externalPublicIpIds=$(echo "${extArray[*]}")
+    externalServicePublicIpIds=$(echo "${extArray[*]}")
     IFS="$oldIFS"
 else
-    externalPublicIpIds=''
+    externalServicePublicIpIds=''
     bigiExternalPublicIpAllocationId=''
 fi
 
@@ -122,8 +122,8 @@ ParameterKey=allowUsageAnalytics,ParameterValue=false \
 ParameterKey=instanceProfile,ParameterValue=$bigIpInstanceProfile \
 ParameterKey=bigIpRuntimeInitConfig,ParameterValue=$runtimeConfig \
 ParameterKey=bigIpRuntimeInitPackageUrl,ParameterValue=<RUNTIME_URL> \
-ParameterKey=externalPrimaryPublicId,ParameterValue=$bigiExternalPublicIpAllocationId \
-ParameterKey=externalPublicIpIds,ParameterValue=\"${externalPublicIpIds}\" \
+ParameterKey=externalSelfPublicIpId,ParameterValue=$bigiExternalPublicIpAllocationId \
+ParameterKey=externalServicePublicIpIds,ParameterValue=\"${externalServicePublicIpIds}\" \
 ParameterKey=mgmtSecurityGroupId,ParameterValue=$bigIpMgmtSecurityGroup \
 ParameterKey=externalSecurityGroupId,ParameterValue=$bigIpExternalSecurityGroup \
 ParameterKey=internalSecurityGroupId,ParameterValue=$bigIpInternalSecurityGroup \
@@ -135,9 +135,10 @@ ParameterKey=instanceType,ParameterValue=<BIGIP INSTANCE TYPE> \
 ParameterKey=internalSelfIp,ParameterValue=$internalSelfIp \
 ParameterKey=internalSubnetId,ParameterValue=$subnet3Az1 \
 ParameterKey=mgmtPublicIpId,ParameterValue=$bigiMgmtPublicIpAllocationId \
-ParameterKey=mgmtSelfIp,ParameterValue=$mgmt_ip \
+ParameterKey=mgmtAddress,ParameterValue=$mgmt_ip \
 ParameterKey=mgmtSubnetId,ParameterValue=$subnet1Az1 \
-ParameterKey=numSecondaryPrivateIpAddress,ParameterValue=<NUM SECONDARY PRIVATE IP> \
+ParameterKey=numExternalPublicIpAddresses,ParameterValue=<NUMBER PUBLIC EXTERNAL IPS> \
+ParameterKey=numSecondaryPrivateIpAddresses,ParameterValue=<NUM SECONDARY PRIVATE IP> \
 ParameterKey=sshKey,ParameterValue=<SSH KEY> \
 ParameterKey=uniqueString,ParameterValue=<UNIQUESTRING>"
 

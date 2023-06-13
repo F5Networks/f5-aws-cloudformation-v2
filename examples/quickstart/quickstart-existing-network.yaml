@@ -553,14 +553,17 @@ Metadata:
       - Label:
           default: Network Configuration
         Parameters:
-          - vpcCidr
           - vpcId
-          - bigipExternalSelfIp
-          - bigIpExternalSubnetId
-          - bigIpInternalSelfIp
-          - bigIpInternalSubnetId
-          - bigIpMgmtSelfIp
+          - vpcCidr
           - bigIpMgmtSubnetId
+          - bigIpMgmtAddress
+          - bigIpExternalSubnetId
+          - bigIpExternalSelfIp
+          - bigIpExternalServiceIps
+          - bigIpInternalSubnetId
+          - bigIpInternalSelfIp
+          - numExternalPublicIpAddresses
+          - numSecondaryPrivateIpAddresses
           - networkBorderGroup
       - Label:
           default: Amazon EC2 Configuration
@@ -615,6 +618,8 @@ Metadata:
         default: Instance Type
       bigIpExternalSelfIp:
         default: BIGIP external interface Self IP
+      bigIpExternalServiceIps:
+        default: Secondary Private IPs (virtual services) on the external interface
       bigIpExternalSubnetId:
         default: BIGIP external interface Subnet ID
       bigIpInternalSelfIp:
@@ -623,8 +628,8 @@ Metadata:
         default: BIGIP internal interface Subnet ID
       bigIpLicenseKey:
         default: License key for BIG-IP instance
-      bigIpMgmtSelfIp:
-        default: BIGIP management interface Self IP
+      bigIpMgmtAddress:
+        default: BIGIP management interface IP address
       bigIpMgmtSubnetId:
         default: BIGIP management interface Subnet ID
       bigIpRuntimeInitConfig:
@@ -647,6 +652,12 @@ Metadata:
         default: Name of the network border group for the local zone.
       numNics:
         default: Interfaces
+      numExternalPublicIpAddresses:
+        default: Total number of Public IP addresses for the Self-IP and virtual services
+          on the external interface
+      numSecondaryPrivateIpAddresses:
+        default: Number of Secondary Private IPs for virtual services on the external
+          interface
       owner:
         default: Owner
       provisionPublicIp:
@@ -753,9 +764,11 @@ Parameters:
       empty to allow cloud provider to assign an IP address
     Type: String
   bigIpExternalServiceIps:
-    Default: 10.0.1.101,10.0.0.101
-    Description: An array of one or more private IP addresses to apply to the external
-      network interface as secondary private addresses.
+    Default: 10.0.0.101
+    Description: A private IP address to apply to the external (2/3 nic) or management
+      (1 nic) network interface as a secondary private address. **NOTE:** This address
+      will be applied to the network interface **only** when a value is provided for
+      the bigIpExternalSelfIp (2/3 nic) or bigIpMgmtAddress (1 nic) parameter.
     Type: String
   bigIpExternalSubnetId:
     ConstraintDescription: Must be a valid subnet id
@@ -774,7 +787,7 @@ Parameters:
     Default: ''
     Description: Subnet id used for BIGIP internal interface (required for 3 NIC deployments)
     Type: String
-  bigIpMgmtSelfIp:
+  bigIpMgmtAddress:
     AllowedPattern: '^$|^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
     Default: 10.0.1.11
     Description: Management Private IP Address for BIGIP instance. The address must
@@ -869,6 +882,22 @@ Parameters:
     Description: Number of interfaces to create on BIG-IP instance. Maximum of 3 allowed.
       Minimum of 1 allowed.
     Type: Number
+  numExternalPublicIpAddresses:
+    Default: 2
+    Description: Total number of external Public IP addresses to create (for the Self-IP
+      and virtual services) on the external (2/3 NIC) or Management interface (1 NIC).
+    MaxValue: 5
+    MinValue: 0
+    Type: Number
+  numSecondaryPrivateIpAddresses:
+    Default: 1
+    Description: The number of secondary private IP addresses to associate to the
+      external (2/3 nic) or management (1 nic) network interface. Dynamic IP addresses
+      will be created only when the externalSelfIp (2/3 nic) or mgmtAddress (1 nic)
+      parameter is left blank. If providing a value for bigIpExternalServiceIps, this
+      number must match the number of IP addresses.
+    MinValue: 0
+    Type: Number
   owner:
     Default: f5owner
     Description: Owner Tag.
@@ -938,8 +967,8 @@ Parameters:
     Type: String
   uniqueString:
     AllowedPattern: '^[a-z][a-z0-9]{1,11}$'
-    ConstraintDescription: Must contain between 1 and 12 lowercase alphanumeric characters with
-      first character as a letter.
+    ConstraintDescription: Must contain between 1 and 12 lowercase alphanumeric characters
+      with first character as a letter.
     Default: myuniqstr
     Description: Unique String used when creating object names or Tags.
     Type: String
@@ -991,13 +1020,12 @@ Resources:
         allowUsageAnalytics: !Ref 'allowUsageAnalytics'
         bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig'
-        externalPrimaryPublicId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01]
-        externalPublicIpIds: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId02]
+        externalSelfPublicIpId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01]
+        externalServicePublicIpIds: !GetAtt [Dag, Outputs.bigIpVipAllocationIds]
         externalSecurityGroupId: !If [2nic, !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup],
           !Ref 'AWS::NoValue']
         externalSelfIp: !If [2nic, !Ref 'bigIpExternalSelfIp', !Ref 'AWS::NoValue']
-        externalServiceIps: !If [1nic, !Select [0, !Split [',', !Ref 'bigIpExternalServiceIps']],
-          !Select [1, !Split [',', !Ref 'bigIpExternalServiceIps']]]
+        externalServiceIps: !Ref 'bigIpExternalServiceIps'
         externalSubnetId: !If [2nic, !Ref 'bigIpExternalSubnetId', !Ref 'AWS::NoValue']
         hostname: !Ref 'bigIpHostname'
         imageId: !If [noCustomImageId, !If [isPaygLicensing, !FindInMap [!FindInMap [
@@ -1015,9 +1043,10 @@ Resources:
         licenseKey: !Ref 'bigIpLicenseKey'
         mgmtPublicIpId: !If [noPublicIp, !Ref 'AWS::NoValue', !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId01]]
         mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpMgmtSecurityGroup]
-        mgmtSelfIp: !Ref 'bigIpMgmtSelfIp'
+        mgmtAddress: !Ref 'bigIpMgmtAddress'
         mgmtSubnetId: !Ref 'bigIpMgmtSubnetId'
-        numSecondaryPrivateIpAddress: 1
+        numExternalPublicIpAddresses: !Ref 'numExternalPublicIpAddresses'
+        numSecondaryPrivateIpAddresses: !Ref 'numSecondaryPrivateIpAddresses'
         secretArn: !If [useSecret, !If [createSecret, !GetAtt [Access, Outputs.secretArn],
             !Ref 'bigIpSecretArn'], !Ref 'AWS::NoValue']
         sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
@@ -1039,7 +1068,7 @@ Resources:
         environment: !Ref 'environment'
         group: !Ref 'group'
         networkBorderGroup: !Ref 'networkBorderGroup'
-        numberPublicExternalIpAddresses: 2
+        numberPublicExternalIpAddresses: !Ref 'numExternalPublicIpAddresses'
         numberPublicMgmtIpAddresses: !If [noPublicIp, 0, 1]
         restrictedSrcAddressApp: !Ref 'restrictedSrcAddressApp'
         restrictedSrcAddressMgmt: !Ref 'restrictedSrcAddressMgmt'

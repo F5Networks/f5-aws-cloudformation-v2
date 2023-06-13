@@ -913,8 +913,8 @@ Parameters:
     Type: String
   uniqueString:
     AllowedPattern: '^[a-z][a-z0-9]{1,11}$'
-    ConstraintDescription: Must contain between 1 and 12 lowercase alphanumeric characters with
-      first character as a letter.
+    ConstraintDescription: Must contain between 1 and 12 lowercase alphanumeric characters
+      with first character as a letter.
     Default: myuniqstr
     Description: Unique String used when creating object names or Tags.
     Type: String
@@ -1009,8 +1009,8 @@ Resources:
       Parameters:
         allowUsageAnalytics: !Ref 'allowUsageAnalytics'
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig'
-        externalPrimaryPublicId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01]
-        externalPublicIpIds: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId02]
+        externalSelfPublicIpId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01]
+        externalServicePublicIpIds: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId02]
         externalSecurityGroupId: !If [2nic, !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup],
           !Ref 'AWS::NoValue']
         externalSelfIp: !If [2nic, "10.0.0.11", !Ref 'AWS::NoValue']
@@ -1034,9 +1034,10 @@ Resources:
         licenseKey: !Ref 'bigIpLicenseKey'
         mgmtPublicIpId: !If [noPublicIp, !Ref 'AWS::NoValue', !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId01]]
         mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpMgmtSecurityGroup]
-        mgmtSelfIp: "10.0.1.11"
+        mgmtAddress: "10.0.1.11"
         mgmtSubnetId: !Select [1, !Split [',', !GetAtt [Network, Outputs.subnetsA]]]
-        numSecondaryPrivateIpAddress: 1
+        numExternalPublicIpAddresses: 2
+        numSecondaryPrivateIpAddresses: 1
         secretArn: !If [useSecret, !If [createSecret, !GetAtt [Access, Outputs.secretArn],
             !Ref 'bigIpSecretArn'], !Ref 'AWS::NoValue']
         sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']

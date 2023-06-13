@@ -14,8 +14,8 @@ Resources:
         cfeS3Bucket: ''
         cfeTag: ''
         customImageId: ami-id
-        externalPrimaryPublicId: eip-000003
-        externalPublicIpIds: 'eip-00003,eip-00004,eip-00005'
+        externalSelfPublicIpId: eip-000003
+        externalServicePublicIpIds: 'eip-00003,eip-00004,eip-00005'
         externalSecurityGroupId: nsg-00002
         externalSelfIp: ''
         externalServiceIps: ''
@@ -27,7 +27,7 @@ Resources:
         internalSubnetId: sub-00003
         mgmtPublicIpId: eip-00002
         mgmtSecurityGroupId: nsg-000001
-        mgmtSelfIp: ''
+        mgmtAddress: ''
         mgmtSubnetId: sub-00001
         numSecondaryPrivateIpAddress: 2
         sshKey: example-ssh-key-name

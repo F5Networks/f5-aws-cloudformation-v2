@@ -44,11 +44,11 @@
     "ParameterValue": "f5env"
   },
   {
-    "ParameterKey": "externalPrimaryPublicId",
+    "ParameterKey": "externalSelfPublicIpId",
     "ParameterValue": ""
   },
   {
-    "ParameterKey": "externalPublicIpIds",
+    "ParameterKey": "externalServicePublicIpIds",
     "ParameterValue": ""
   },
   {
@@ -112,7 +112,7 @@
     "ParameterValue": ""
   },
   {
-    "ParameterKey": "mgmtSelfIp",
+    "ParameterKey": "mgmtAddress",
     "ParameterValue": ""
   },
   {
@@ -120,7 +120,11 @@
     "ParameterValue": ""
   },
   {
-    "ParameterKey": "numSecondaryPrivateIpAddress",
+    "ParameterKey": "numExternalPublicIpAddresses",
+    "ParameterValue": "2"
+  },
+  {
+    "ParameterKey": "numSecondaryPrivateIpAddresses",
     "ParameterValue": "1"
   },
   {
