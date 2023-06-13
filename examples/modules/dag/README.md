@@ -58,7 +58,7 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | internalSubnetAz1 | No |  | string | Availability Zone 1 Internal Subnet ID. Required if you are provisioning an internal load balancer. |
 | internalSubnetAz2 | No |  | string | Availability Zone 2 Internal Subnet ID. Required if you are provisioning an internal load balancer. |
 | networkBorderGroup | No |  | string | Supply the name of the AWS Network Border Group for the [AWS Local Zone](https://aws.amazon.com/about-aws/global-infrastructure/localzones) where the BIG-IP subnets are located. ex. 'us-east-1-bos'. |
-| numberPublicExternalIpAddresses | No | 0 | integer | Number of external public IP addresses to create. Value must be minimum 0 and maximum 4. |
+| numberPublicExternalIpAddresses | No | 0 | integer | Number of external public IP addresses to create. Value must be minimum 0 and maximum 5. |
 | numberPublicMgmtIpAddresses | No | 0 | integer | Number of public management IP addresses to create. Value must be minimum 0 and maximum 4.  |
 | owner | No | f5owner | string | Application Tag. |
 | provisionExternalBigipLoadBalancer | No | false | boolean | Flag to provision external Load Balancer |
@@ -104,6 +104,7 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | bigIpExternalSecurityGroup | None | string | BIG-IP External Security Group ID. |
 | bigIpInternalSecurityGroup | None | string | BIG-IP Internal Security Group ID. |
 | bigIpMgmtSecurityGroup | None | string | BIG-IP Management Security Group ID. |
+| bigIpVipAllocationIds | None | array | Allocation Ids for all Elastic IPs for BIG-IP Virtual Servers |
 | appSecurityGroupId | None | string | Application Security Group ID. |
 | bastionSecurityGroupId | None | string | Bastion Security Group ID. |
 

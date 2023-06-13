@@ -15,8 +15,8 @@ Metadata:
       - Label:
           default: Network Configuration
         Parameters:
-          - vpcCidr
           - vpcId
+          - vpcCidr
           - bigIpSubnetAz1
           - bigIpSubnetAz2
           - externalSubnetAz1

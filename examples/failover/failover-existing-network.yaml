@@ -15,21 +15,21 @@ Metadata:
       - Label:
           default: Network Configuration
         Parameters:
-          - vpcCidr
           - vpcId
+          - vpcCidr
           - bigIpMgmtSubnetId01
-          - bigIpExternalSubnetId01
-          - bigIpInternalSubnetId01
-          - bigIpMgmtSubnetId02
-          - bigIpExternalSubnetId02
-          - bigIpInternalSubnetId02
           - bigIpMgmtAddress01
+          - bigIpMgmtSubnetId02
+          - bigIpMgmtAddress02
+          - bigIpExternalSubnetId01
           - bigIpExternalSelfIp01
           - bigIpExternalVip01
-          - bigIpInternalSelfIp01
-          - bigIpMgmtAddress02
+          - bigIpExternalSubnetId02
           - bigIpExternalSelfIp02
           - bigIpExternalVip02
+          - bigIpInternalSubnetId01
+          - bigIpInternalSelfIp01
+          - bigIpInternalSubnetId02
           - bigIpInternalSelfIp02
           - bigIpPeerAddr
       - Label:
@@ -347,7 +347,10 @@ Parameters:
     Type: String
   cfeS3Bucket:
     AllowedPattern: '^$|^(?=.{1,61}$)[0-9a-z]+([0-9a-z-.]*[0-9a-z])*$'
-    ConstraintDescription: 'S3 bucket name must be unique, can be between 3 and 63 characters long, and can contain only lower-case characters, numbers, periods, and dashes. It cannot contain underscores, end with a dash, have consecutive periods, or use dashes adjacent to periods.'
+    ConstraintDescription: 'S3 bucket name must be unique, can be between 3 and 63
+      characters long, and can contain only lower-case characters, numbers, periods,
+      and dashes. It cannot contain underscores, end with a dash, have consecutive
+      periods, or use dashes adjacent to periods.'
     Default: ''
     Description: 'Supply a unique name for a CFE S3 bucket created and used by Cloud
       Failover Extension.'
@@ -629,8 +632,8 @@ Resources:
               - '-bigip-high-availability-solution'
           - !Ref 'cfeS3Bucket'
         cfeTag: !Ref 'cfeTag'
-        externalPrimaryPublicId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01]
-        externalPublicIpIds: !If [usePublicIpVip, !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId03],
+        externalSelfPublicIpId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01]
+        externalServicePublicIpIds: !If [usePublicIpVip, !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId03],
           '']
         externalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup]
         externalSelfIp: !Ref 'bigIpExternalSelfIp01'
@@ -659,9 +662,10 @@ Resources:
         mgmtPublicIpId: !If [usePublicIpMgmt, !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId01],
           '']
         mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpMgmtSecurityGroup]
-        mgmtSelfIp: !Ref 'bigIpMgmtAddress01'
+        mgmtAddress: !Ref 'bigIpMgmtAddress01'
         mgmtSubnetId: !Ref 'bigIpMgmtSubnetId01'
-        numSecondaryPrivateIpAddress: !If [usePublicIpVip, 1, 0]
+        numExternalPublicIpAddresses: !If [usePublicIpVip, 2, 1]
+        numSecondaryPrivateIpAddresses: !If [usePublicIpVip, 1, 0]
         secretArn: !If [createSecret, !GetAtt [Access, Outputs.secretArn], !Ref 'bigIpSecretArn']
         sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
         uniqueString: !Ref 'uniqueString'
@@ -679,8 +683,8 @@ Resources:
         bigIpPeerAddr: !Ref 'bigIpPeerAddr'
         bigIpPeerHostname: !Ref 'bigIpHostname01'
         cfeTag: !Ref 'cfeTag'
-        externalPrimaryPublicId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId02]
-        externalPublicIpIds: ''
+        externalSelfPublicIpId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId02]
+        externalServicePublicIpIds: ''
         externalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup]
         externalSelfIp: !Ref 'bigIpExternalSelfIp02'
         externalServiceIps: !If [usePublicIpVip, !Ref 'bigIpExternalVip02', '']
@@ -708,9 +712,10 @@ Resources:
         mgmtPublicIpId: !If [usePublicIpMgmt, !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId02],
           '']
         mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpMgmtSecurityGroup]
-        mgmtSelfIp: !Ref 'bigIpMgmtAddress02'
+        mgmtAddress: !Ref 'bigIpMgmtAddress02'
         mgmtSubnetId: !Ref 'bigIpMgmtSubnetId02'
-        numSecondaryPrivateIpAddress: 0
+        numExternalPublicIpAddresses: 1
+        numSecondaryPrivateIpAddresses: !If [usePublicIpVip, 1, 0]
         secretArn: !If [createSecret, !GetAtt [Access, Outputs.secretArn], !Ref 'bigIpSecretArn']
         sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
         uniqueString: !Ref 'uniqueString'

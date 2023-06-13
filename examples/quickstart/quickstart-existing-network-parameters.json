@@ -17,7 +17,7 @@
   },
   {
     "ParameterKey": "bigIpExternalServiceIps",
-    "ParameterValue": "10.0.1.101,10.0.0.101"
+    "ParameterValue": "10.0.0.101"
   },
   {
     "ParameterKey": "bigIpExternalSubnetId",
@@ -32,7 +32,7 @@
     "ParameterValue": ""
   },
   {
-    "ParameterKey": "bigIpMgmtSelfIp",
+    "ParameterKey": "bigIpMgmtAddress",
     "ParameterValue": "10.0.1.11"
   },
   {
@@ -98,6 +98,14 @@
   {
     "ParameterKey": "numNics",
     "ParameterValue": "3"
+  },
+  {
+    "ParameterKey": "numExternalPublicIpAddresses",
+    "ParameterValue": "2"
+  },
+  {
+    "ParameterKey": "numSecondaryPrivateIpAddresses",
+    "ParameterValue": "1"
   },
   {
     "ParameterKey": "owner",
