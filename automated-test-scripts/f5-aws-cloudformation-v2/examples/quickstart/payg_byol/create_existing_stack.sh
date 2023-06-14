@@ -134,6 +134,18 @@ cat <<EOF > parameters.json
         "ParameterValue": "<NIC COUNT>"
     },
     {
+        "ParameterKey": "bigIpExternalServiceIps",
+        "ParameterValue": "<EXTERNAL SERVICE IPS>"
+    },
+    {
+        "ParameterKey": "numSecondaryPrivateIpAddresses",
+        "ParameterValue": "<NUMBER SECONDARY PRIVATE IPS>"
+    },
+    {
+        "ParameterKey": "numExternalPublicIpAddresses",
+        "ParameterValue": "<NUMBER PUBLIC EXTERNAL IPS>"
+    },
+    {
         "ParameterKey": "provisionPublicIp",
         "ParameterValue": "<PROVISION PUBLIC IP>"
     },
@@ -193,7 +205,7 @@ cat <<EOF >> parameters.json
         "ParameterValue": ""
     },
     {
-        "ParameterKey": "bigIpMgmtSelfIp",
+        "ParameterKey": "bigIpMgmtAddress",
         "ParameterValue": ""
     }
 ]

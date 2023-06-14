@@ -40,12 +40,26 @@ Conditions:
         - !Ref 'mgmtSubnetId'
         - ''
   noExternalServiceIPs: !Equals
-    - !Join ['', !Ref 'externalServiceIps']
-    - ''
-  hasExternalServiceIPs: !Not
+    - !Ref 'numSecondaryPrivateIpAddresses'
+    - '0'
+  hasOneExternalServiceIPs: !Or
     - !Equals
-      - !Join ['', !Ref 'externalServiceIps']
-      - ''
+      - !Ref 'numSecondaryPrivateIpAddresses'
+      - '1'
+    - Condition: hasTwoExternalServiceIPs
+  hasTwoExternalServiceIPs: !Or
+    - !Equals
+      - !Ref 'numSecondaryPrivateIpAddresses'
+      - '2'
+    - Condition: hasThreeExternalServiceIPs
+  hasThreeExternalServiceIPs: !Or
+    - !Equals
+      - !Ref 'numSecondaryPrivateIpAddresses'
+      - '3'
+    - Condition: hasFourExternalServiceIPs
+  hasFourExternalServiceIPs: !Equals
+    - !Ref 'numSecondaryPrivateIpAddresses'
+    - '4'
   useMgmtSecondary: !Or
     - !Condition 'useDynamicExternalIpAddr'
     - !Condition 'useStaticExternalIpAddr'
@@ -82,7 +96,7 @@ Conditions:
       - !Ref 'internalSecurityGroupId'
       - ''
   useDynamicManagementIpAddr: !Equals
-    - !Ref 'mgmtSelfIp'
+    - !Ref 'mgmtAddress'
     - ''
   useMgmtPublicIP: !Not
     - !Equals
@@ -90,58 +104,38 @@ Conditions:
       - ''
   associateVip1: !And
     - !Condition 'useExternalPublicIP'
+    - !Condition 'hasOneExternalServiceIPs'
     - !Or
       - !Equals
-        - !Ref 'numSecondaryPrivateIpAddress'
-        - '1'
-      - !Equals
-        - !Ref 'numSecondaryPrivateIpAddress'
+        - !Ref 'numExternalPublicIpAddresses'
         - '2'
-      - !Equals
-        - !Ref 'numSecondaryPrivateIpAddress'
-        - '3'
-      - !Equals
-        - !Ref 'numSecondaryPrivateIpAddress'
-        - '4'
       - !Condition 'associateVip2'
   associateVip2: !And
     - !Condition 'useExternalPublicIP'
+    - !Condition 'hasTwoExternalServiceIPs'
     - !Or
       - !Equals
-        - !Ref 'numSecondaryPrivateIpAddress'
-        - '2'
+        - !Ref 'numExternalPublicIpAddresses'
+        - '3'
       - !Condition 'associateVip3'
-    - !Not
-      - !Condition 'useStaticExternalIpAddr'
   associateVip3: !And
     - !Condition 'useExternalPublicIP'
+    - !Condition 'hasThreeExternalServiceIPs'
     - !Or
       - !Equals
-        - !Ref 'numSecondaryPrivateIpAddress'
-        - '3'
+        - !Ref 'numExternalPublicIpAddresses'
+        - '4'
       - !Condition 'associateVip4'
-    - !Not
-      - !Condition 'useStaticExternalIpAddr'
   associateVip4: !And
     - !Condition 'useExternalPublicIP'
-    - !Not
-      - !Equals
-        - !Ref 'numSecondaryPrivateIpAddress'
-        - '3'
-    - !Not
-      - !Equals
-        - !Ref 'numSecondaryPrivateIpAddress'
-        - '2'
-    - !Not
-      - !Equals
-        - !Ref 'numSecondaryPrivateIpAddress'
-        - '1'
-    - !Not
-      - !Condition 'useStaticExternalIpAddr'
+    - !Condition 'hasFourExternalServiceIPs'
+    - !Equals
+      - !Ref 'numExternalPublicIpAddresses'
+      - '5'
   useExternalPublicIP: !And
     - !Not
       - !Equals
-        - !Ref 'externalPrimaryPublicId'
+        - !Ref 'externalSelfPublicIpId'
         - ''
     - !Not
       - !Equals
@@ -187,7 +181,7 @@ Conditions:
         - ''
   useStaticManagementIpAddr: !Not
     - !Equals
-      - !Ref 'mgmtSelfIp'
+      - !Ref 'mgmtAddress'
       - ''
   useBigIpInstanceProfile: !Not
     - !Equals
@@ -217,8 +211,9 @@ Metadata:
           - instanceIndex
           - instanceType
           - imageId
-          - externalPublicIpIds
-          - numSecondaryPrivateIpAddress
+          - externalServicePublicIpIds
+          - numExternalPublicIpAddresses
+          - numSecondaryPrivateIpAddresses
           - sshKey
           - instanceProfile
       - Label:
@@ -229,14 +224,14 @@ Metadata:
           - externalSubnetId
           - internalSelfIp
           - internalSubnetId
-          - mgmtSelfIp
+          - mgmtAddress
           - mgmtSubnetId
           - bigIpPeerAddr
       - Label:
           default: Disaggregation
         Parameters:
           - mgmtPublicIpId
-          - externalPrimaryPublicId
+          - externalSelfPublicIpId
           - mgmtSecurityGroupId
           - externalSecurityGroupId
           - internalSecurityGroupId
@@ -274,16 +269,18 @@ Metadata:
         default: Image Id
       environment:
         default: Environment
-      externalPrimaryPublicId:
-        default: External Primary Public Id
-      externalPublicIpIds:
-        default: Public IP IDs
+      externalSelfPublicIpId:
+        default: Public IP ID for for the Primary Private IP (Self-IP) on the external
+          interface
+      externalServicePublicIpIds:
+        default: Public IP IDs for the Secondary Private IPs (virtual services) on
+          the external interface
       externalSecurityGroupId:
         default: External Security Group Id
       externalSelfIp:
         default: External Private IP Address
       externalServiceIps:
-        default: External private IP's
+        default: Secondary Private IPs (virtual services) on the external interface
       externalSubnetId:
         default: External Subnet Id
       group:
@@ -308,12 +305,16 @@ Metadata:
         default: Management Public Ip Id
       mgmtSecurityGroupId:
         default: Management Security Group Id
-      mgmtSelfIp:
+      mgmtAddress:
         default: Management Private IP Address
       mgmtSubnetId:
         default: Management Subnet Id
-      numSecondaryPrivateIpAddress:
-        default: Number of Secondary Private Ips
+      numExternalPublicIpAddresses:
+        default: Total number of Public IP addresses for the Self-IP and virtual services
+          on the external interface
+      numSecondaryPrivateIpAddresses:
+        default: Number of Secondary Private IPs for virtual services on the external
+          interface
       owner:
         default: Owner
       secretArn:
@@ -322,7 +323,7 @@ Metadata:
         default: EC2 KeyPair
       uniqueString:
         default: Unique string
-  Version: 2.7.0.0
+  Version: 3.0.0.0
 Outputs:
   stackName:
     Description: BIG-IP nested stack name
@@ -416,7 +417,7 @@ Parameters:
       file in YAML or JSON format to use for f5-bigip-runtime-init configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.0/dist/f5-bigip-runtime-init-1.6.0-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.1/dist/f5-bigip-runtime-init-1.6.1-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   cfeS3Bucket:
@@ -436,19 +437,19 @@ Parameters:
     Default: f5env
     Description: Environment Tag.
     Type: String
-  externalPrimaryPublicId:
+  externalSelfPublicIpId:
     Default: ''
     Description: The allocation ID of the public IP address to apply to the primary
-      IP configuration on the external network interface. Default is empty which does
-      not provision public ip.
+      IP configuration (for the Self-IP) on the external network interface. Default
+      is empty which does not provision public ip.
     Type: String
-  externalPublicIpIds:
+  externalServicePublicIpIds:
     Default: ''
-    Description: A comma separated list of one or more Public IP addresses to associate
-      to the external network interface secondary private addresses. **Note template
-      only supports up to 4 addresses. numSecondaryPrivateIpAddress parameter needs
-      to be equal to our greater than the number of addresses sent. Leaving default
-      empty will not associate EIPS to secondary addresses.
+    Description: A comma separated list of one or more Public IP address allocation
+      IDs to associate to the external network interface secondary private addresses
+      (for virtual services). Note template only supports up to 4 addresses. numSecondaryPrivateIpAddresses
+      parameter needs to be equal to or greater than the number of addresses sent.
+      Leaving default empty will not associate EIPs to secondary addresses.
     Type: CommaDelimitedList
   externalSecurityGroupId:
     Default: ''
@@ -464,8 +465,9 @@ Parameters:
     Type: String
   externalServiceIps:
     Default: ''
-    Description: An array of one or more private IP addresses to apply to the external
-      network interface as secondary private addresses.
+    Description: A comma-delimited list of up to 4 private IP addresses to apply to
+      the external (2/3 NIC) or management (1 NIC) network interface as secondary
+      private addresses (for virtual services).
     Type: CommaDelimitedList
   externalSubnetId:
     Default: ''
@@ -530,7 +532,7 @@ Parameters:
     Description: REQUIRED - The resource ID of a security group to apply to the management
       network interface.
     Type: String
-  mgmtSelfIp:
+  mgmtAddress:
     Default: ''
     Description: 'The private IP address to apply to the management network interface.
       The address must reside in the subnet provided in the mgmtSubnetId parameter.
@@ -544,10 +546,22 @@ Parameters:
       subnet id provided, 2NIC - Mgmt and Externa subnets id providedl, 3NIC - Mgmt,
       External and Internal subnets id provided).'
     Type: String
-  numSecondaryPrivateIpAddress:
+  numExternalPublicIpAddresses:
+    Default: 2
+    Description: Total number of external Public IP addresses to create (for the Self-IP
+      and virtual services) on the external (2/3 NIC) or Management interface (1 NIC).
+    MaxValue: 5
+    MinValue: 0
+    Type: Number
+  numSecondaryPrivateIpAddresses:
     Default: 1
-    Description: The number of dynamic secondary private IP's to associate to external
-      nic.
+    Description: The number of secondary private IP addresses to associate to the
+      external (2/3 NIC) or management (1 NIC) network interface (for virtual services).
+      Dynamic IP addresses will be created only when the externalSelfIp (2/3 NIC)
+      or mgmtAddress (1 NIC) parameter is left blank. If providing a value for externalServiceIps
+      or externalServicePublicIpIds, this number must match the number of IP addresses
+      and EIP associations.
+    MaxValue: 4
     MinValue: 0
     Type: Number
   owner:
@@ -565,10 +579,10 @@ Parameters:
       to the BIG-IP and application virtual machines.
     Type: 'AWS::EC2::KeyPair::KeyName'
   uniqueString:
-    AllowedPattern: '^[a-zA-Z][a-zA-Z0-9]{1,11}$'
-    ConstraintDescription: Must Contain between 1 and 12 alphanumeric characters with
-      first character as a letter.
-    Default: myUniqStr
+    AllowedPattern: '^[a-z][a-z0-9]{1,11}$'
+    ConstraintDescription: Must contain between 1 and 12 lowercase alphanumeric characters
+      with first character as a letter.
+    Default: myuniqstr
     Description: Unique String used when creating object names or Tags.
     Type: String
 Resources:
@@ -643,7 +657,7 @@ Resources:
       SecondaryPrivateIpAddressCount: !If
         - useMgmtSecondary
         - 0
-        - !Ref 'numSecondaryPrivateIpAddress'
+        - !Ref 'numSecondaryPrivateIpAddresses'
       GroupSet:
         - !Ref 'mgmtSecurityGroupId'
       SubnetId: !Ref 'mgmtSubnetId'
@@ -667,7 +681,7 @@ Resources:
     Condition: useDynamicExternalIpAddr
     Properties:
       Description: Public External Interface for the BIG-IP
-      SecondaryPrivateIpAddressCount: !Ref 'numSecondaryPrivateIpAddress'
+      SecondaryPrivateIpAddressCount: !Ref 'numSecondaryPrivateIpAddresses'
       GroupSet:
         - !Ref 'externalSecurityGroupId'
       SubnetId: !Ref 'externalSubnetId'
@@ -738,33 +752,54 @@ Resources:
     Condition: useStaticManagementIpAddr
     Properties:
       Description: Management Interface for the BIG-IP
-      SecondaryPrivateIpAddressCount: !If
-        - is1Nic
-        - !If
-          - noExternalServiceIPs
-          - !Ref 'numSecondaryPrivateIpAddress'
-          - !Ref 'AWS::NoValue'
-        - !Ref 'AWS::NoValue'
       GroupSet:
         - !Ref 'mgmtSecurityGroupId'
       PrivateIpAddress: !If
         - is1Nic
         - !If
           - noExternalServiceIPs
-          - !Ref 'mgmtSelfIp'
+          - !Ref 'mgmtAddress'
           - !Ref 'AWS::NoValue'
-        - !Ref 'mgmtSelfIp'
+        - !Ref 'mgmtAddress'
       PrivateIpAddresses: !If
         - is1Nic
         - !If
-          - hasExternalServiceIPs
+          - hasFourExternalServiceIPs
           - - Primary: true
-              PrivateIpAddress: !Ref 'mgmtSelfIp'
+              PrivateIpAddress: !Ref 'mgmtAddress'
             - Primary: false
-              PrivateIpAddress: !Select
-                - '0'
-                - !Ref 'externalServiceIps'
-          - !Ref 'AWS::NoValue'
+              PrivateIpAddress: !Select [0, !Ref 'externalServiceIps']
+            - Primary: false
+              PrivateIpAddress: !Select [1, !Ref 'externalServiceIps']
+            - Primary: false
+              PrivateIpAddress: !Select [2, !Ref 'externalServiceIps']
+            - Primary: false
+              PrivateIpAddress: !Select [3, !Ref 'externalServiceIps']
+          - !If
+            - hasThreeExternalServiceIPs
+            - - Primary: true
+                PrivateIpAddress: !Ref 'mgmtAddress'
+              - Primary: false
+                PrivateIpAddress: !Select [0, !Ref 'externalServiceIps']
+              - Primary: false
+                PrivateIpAddress: !Select [1, !Ref 'externalServiceIps']
+              - Primary: false
+                PrivateIpAddress: !Select [2, !Ref 'externalServiceIps']
+            - !If
+              - hasTwoExternalServiceIPs
+              - - Primary: true
+                  PrivateIpAddress: !Ref 'mgmtAddress'
+                - Primary: false
+                  PrivateIpAddress: !Select [0, !Ref 'externalServiceIps']
+                - Primary: false
+                  PrivateIpAddress: !Select [1, !Ref 'externalServiceIps']
+              - !If
+                - hasOneExternalServiceIPs
+                - - Primary: true
+                    PrivateIpAddress: !Ref 'mgmtAddress'
+                  - Primary: false
+                    PrivateIpAddress: !Select [0, !Ref 'externalServiceIps']
+                - - !Ref 'AWS::NoValue'
         - !Ref 'AWS::NoValue'
       SubnetId: !Ref 'mgmtSubnetId'
       Tags:
@@ -794,14 +829,42 @@ Resources:
         - !Ref 'externalSelfIp'
         - !Ref 'AWS::NoValue'
       PrivateIpAddresses: !If
-        - hasExternalServiceIPs
+        - hasFourExternalServiceIPs
         - - Primary: true
             PrivateIpAddress: !Ref 'externalSelfIp'
           - Primary: false
-            PrivateIpAddress: !Select
-              - '0'
-              - !Ref 'externalServiceIps'
-        - !Ref 'AWS::NoValue'
+            PrivateIpAddress: !Select [0, !Ref 'externalServiceIps']
+          - Primary: false
+            PrivateIpAddress: !Select [1, !Ref 'externalServiceIps']
+          - Primary: false
+            PrivateIpAddress: !Select [2, !Ref 'externalServiceIps']
+          - Primary: false
+            PrivateIpAddress: !Select [3, !Ref 'externalServiceIps']
+        - !If
+          - hasThreeExternalServiceIPs
+          - - Primary: true
+              PrivateIpAddress: !Ref 'externalSelfIp'
+            - Primary: false
+              PrivateIpAddress: !Select [0, !Ref 'externalServiceIps']
+            - Primary: false
+              PrivateIpAddress: !Select [1, !Ref 'externalServiceIps']
+            - Primary: false
+              PrivateIpAddress: !Select [2, !Ref 'externalServiceIps']
+          - !If
+            - hasTwoExternalServiceIPs
+            - - Primary: true
+                PrivateIpAddress: !Ref 'externalSelfIp'
+              - Primary: false
+                PrivateIpAddress: !Select [0, !Ref 'externalServiceIps']
+              - Primary: false
+                PrivateIpAddress: !Select [1, !Ref 'externalServiceIps']
+            - !If
+              - hasOneExternalServiceIPs
+              - - Primary: true
+                  PrivateIpAddress: !Ref 'externalSelfIp'
+                - Primary: false
+                  PrivateIpAddress: !Select [0, !Ref 'externalServiceIps']
+              - - !Ref 'AWS::NoValue'
       SubnetId: !Ref 'externalSubnetId'
       Tags:
         - Key: costcenter
@@ -832,7 +895,7 @@ Resources:
   BigipVipEipAssociation:
     Condition: bigipVipEipAssociation
     Properties:
-      AllocationId: !Ref 'externalPrimaryPublicId'
+      AllocationId: !Ref 'externalSelfPublicIpId'
       NetworkInterfaceId: !If
         - useDynamicExternalIpAddr
         - !Ref 'BigipExternalInterface'
@@ -843,7 +906,7 @@ Resources:
     Properties:
       AllocationId: !Select
         - '0'
-        - !Ref 'externalPublicIpIds'
+        - !Ref 'externalServicePublicIpIds'
       NetworkInterfaceId: !If
         - is1Nic
         - !If
@@ -886,7 +949,7 @@ Resources:
     Properties:
       AllocationId: !Select
         - '1'
-        - !Ref 'externalPublicIpIds'
+        - !Ref 'externalServicePublicIpIds'
       NetworkInterfaceId: !If
         - is1Nic
         - !If
@@ -929,7 +992,7 @@ Resources:
     Properties:
       AllocationId: !Select
         - '2'
-        - !Ref 'externalPublicIpIds'
+        - !Ref 'externalServicePublicIpIds'
       NetworkInterfaceId: !If
         - is1Nic
         - !If
@@ -972,7 +1035,7 @@ Resources:
     Properties:
       AllocationId: !Select
         - '3'
-        - !Ref 'externalPublicIpIds'
+        - !Ref 'externalServicePublicIpIds'
       NetworkInterfaceId: !If
         - is1Nic
         - !If
@@ -1086,7 +1149,7 @@ Resources:
           Value: !Ref 'hostname'
         - Key: vip1Addr
           Value: !If
-            - associateVip1
+            - hasOneExternalServiceIPs
             - !If
               - useDynamicExternalIpAddr
               - !Select
@@ -1102,7 +1165,7 @@ Resources:
             - 'NOT_USED'
         - Key: vip2Addr
           Value: !If
-            - associateVip2
+            - hasTwoExternalServiceIPs
             - !If
               - useDynamicExternalIpAddr
               - !Select
@@ -1118,7 +1181,7 @@ Resources:
             - 'NOT_USED'
         - Key: vip3Addr
           Value: !If
-            - associateVip3
+            - hasThreeExternalServiceIPs
             - !If
               - useDynamicExternalIpAddr
               - !Select
@@ -1134,7 +1197,7 @@ Resources:
             - 'NOT_USED'
         - Key: vip4Addr
           Value: !If
-            - associateVip4
+            - hasFourExternalServiceIPs
             - !If
               - useDynamicExternalIpAddr
               - !Select
@@ -1258,7 +1321,7 @@ Resources:
             - |
               # Run
             - |
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.7.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v3.0.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
             - |2+
 
             - |
@@ -1340,7 +1403,7 @@ Resources:
           Value: !Ref 'hostname'
         - Key: vip1Addr
           Value: !If
-            - associateVip1
+            - hasOneExternalServiceIPs
             - !If
               - useDynamicExternalIpAddr
               - !Select
@@ -1356,7 +1419,7 @@ Resources:
             - 'NOT_USED'
         - Key: vip2Addr
           Value: !If
-            - associateVip2
+            - hasTwoExternalServiceIPs
             - !If
               - useDynamicExternalIpAddr
               - !Select
@@ -1372,7 +1435,7 @@ Resources:
             - 'NOT_USED'
         - Key: vip3Addr
           Value: !If
-            - associateVip3
+            - hasThreeExternalServiceIPs
             - !If
               - useDynamicExternalIpAddr
               - !Select
@@ -1388,7 +1451,7 @@ Resources:
             - 'NOT_USED'
         - Key: vip4Addr
           Value: !If
-            - associateVip4
+            - hasFourExternalServiceIPs
             - !If
               - useDynamicExternalIpAddr
               - !Select
@@ -1512,7 +1575,7 @@ Resources:
             - |
               # Run
             - |
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.7.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v3.0.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
             - |2+
 
             - |
@@ -1588,7 +1651,7 @@ Resources:
           Value: !Ref 'hostname'
         - Key: vip1Addr
           Value: !If
-            - associateVip1
+            - hasOneExternalServiceIPs
             - !If
               - useDynamicManagementIpAddr
               - !Select
@@ -1604,7 +1667,7 @@ Resources:
             - 'NOT_USED'
         - Key: vip2Addr
           Value: !If
-            - associateVip2
+            - hasTwoExternalServiceIPs
             - !If
               - useDynamicManagementIpAddr
               - !Select
@@ -1620,7 +1683,7 @@ Resources:
             - 'NOT_USED'
         - Key: vip3Addr
           Value: !If
-            - associateVip3
+            - hasThreeExternalServiceIPs
             - !If
               - useDynamicManagementIpAddr
               - !Select
@@ -1636,7 +1699,7 @@ Resources:
             - 'NOT_USED'
         - Key: vip4Addr
           Value: !If
-            - associateVip4
+            - hasFourExternalServiceIPs
             - !If
               - useDynamicManagementIpAddr
               - !Select
@@ -1760,7 +1823,7 @@ Resources:
             - |
               # Run
             - |
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v2.7.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v3.0.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
             - |2+
 
             - |

@@ -6,14 +6,14 @@ Resources:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: >-
-        https://cdn.f5.com/product/cloudsolutions/f5-aws-cloudformation-v2/v2.7.0.0/examples/modules/network/network.yaml
+        https://cdn.f5.com/product/cloudsolutions/f5-aws-cloudformation-v2/v3.0.0.0/examples/modules/network/network.yaml
       Parameters:
         numAzs: 2
         numSubnets: 2
         owner: f5owner
         setPublicSubnet1: 'false'
         subnetMask: 24
-        uniqueString: myUniqStr
+        uniqueString: myuniqstr
         vpcCidr: 10.0.0.0/16
         vpcTenancy: default
 Outputs:

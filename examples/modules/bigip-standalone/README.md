@@ -56,10 +56,11 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | cfeTag | No |  | string | Cloud Failover deployment tag value. |
 | cost | No | f5cost | string | Cost Center Tag. |
 | environment | No | f5env | string | Environment Tag. |
-| externalPrimaryPublicId | No |  | string | The resource ID of the public IP address to apply to the primary IP configuration on the external network interface. The default is an empty string which does not provision public IP. |
+| externalSelfPublicIpId | No |  | string | The allocation ID of the public IP address to apply to the primary IP configuration (for the Self-IP) on the external network interface. Default is empty which does not provision public ip. |
+| externalServicePublicIpIds | No |  | string | A comma separated list of one or more Public IP address allocation IDs to associate to the external network interface secondary private addresses (for virtual services). Note template only supports up to 4 addresses. numSecondaryPrivateIpAddresses parameter needs to be equal to or greater than the number of addresses sent. Leaving default empty will not associate EIPs to secondary addresses. |
 | externalSecurityGroupId | No |  | string | The optional resource ID of a security group to apply to the external network interface. |
 | externalSelfIp | No |  | string | The private IP address to apply to external network interfaces as primary private address. The address must reside in the subnet provided in the externalSubnetId parameter. ***Note:*** When set to an empty string, DHCP will be used for allocating the IP address. The default value is empty string. |
-| externalServiceIps | No |  | string | An array of one or more private IP addresses to apply to the secondary external IP configurations. |
+| externalServiceIps | No |  | string | A comma-delimited list of up to 4 private IP addresses to apply to the external (2/3 NIC) or management (1 NIC) network interface as secondary private addresses (for virtual services). ***Note:*** These addresses will be applied to the network interface **only** when a value is provided for the externalSelfIp (2/3 nic) or mgmtAddress (1 nic) parameter. If no value is provided for the self IPs, addresses will be created dynamically based on the value  of the numSecondaryPrivateIpAddresses parameter. |
 | externalSubnetId | No |  | string | The resource ID of the external subnet. ***Note:*** SubnetId parameters used for identifying number of network interfaces. Example: *1NIC* - only Mgmt subnet ID provided; *2NIC* - Mgmt and External subnets ID provided; *3NIC* - Mgmt, External, and Internal subnets ID provided. |
 | group | No | f5group | string | Group Tag. |
 | hostname | No | bigip01.local | string | Supply the hostname you would like to use for the BIG-IP instance. The hostname must contain fewer than 63 characters. |
@@ -73,12 +74,14 @@ This solution uses an AWS CloudFormation template to launch a stack for provisio
 | licenseKey | No |  | string | Supply the F5 BYOL license key for the BIG-IP instance. Leave this parameter blank if deploying the PAYG solution. |
 | mgmtPublicIpId | No |  | string | The resource ID of the public IP address to apply to the management network interface. Leave this parameter blank to create a management network interface without a public IP address. Default is empty string which does not provision public IP. |
 | mgmtSecurityGroupId | Yes |  | string | The resource ID of a security group to apply to the management network interface. |
-| mgmtSelfIp | No |  | string | The private IP address to apply to the primary IP configuration on the management network interface. The address must reside in the subnet provided in the mgmtSubnetId parameter. ***Note:*** When set to empty string, DHCP will be used for allocating ip address. |
+| mgmtAddress | No |  | string | The private IP address to apply to the primary IP configuration on the management network interface. The address must reside in the subnet provided in the mgmtSubnetId parameter. ***Note:*** When set to empty string, DHCP will be used for allocating ip address. |
 | mgmtSubnetId | Yes |  | string | The resource ID of the management subnet. ***Note:*** SubnetId parameters used for identifying number of network interfaces. Example: *1NIC* - only Mgmt subnet ID provided; *2NIC* - Mgmt and External subnets ID provided; *3NIC* - Mgmt, External and Internal subnets ID provided.|
+| numExternalPublicIpAddresses | No | 2 | string | Total number of external Public IP addresses to create (for the Self-IP and virtual services) on the external (2/3 NIC) or Management interface (1 NIC). |
+| numSecondaryPrivateIpAddresses | No | 1 | string | The number of secondary private IP addresses to associate to the external (2/3 NIC) or management (1 NIC) network interface (for virtual services). Dynamic IP addresses will be created only when the externalSelfIp (2/3 NIC) or mgmtAddress (1 NIC) parameter is left blank. If providing a value for externalServiceIps or externalServicePublicIpIds, this number must match the number of IP addresses and EIP associations. |
 | owner | No | f5owner | string | Application Tag. |
 | secretArn | No |  | string | The ARN of a Secrets Manager secret to create READ permissions for. For example, if customizing your runtime-init config with an admin password, logging credential, etc. |
 | sshKey | Yes |  | string | Supply the public key that will be used for SSH authentication to the BIG-IP and application virtual machines. | 
-| uniqueString | Yes | myUniqStr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. |
+| uniqueString | Yes | myuniqstr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. Must contain between 1 and 12 lowercase alphanumeric characters with first character as a letter. |
 
 ### Template Outputs
 

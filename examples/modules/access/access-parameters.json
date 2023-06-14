@@ -69,6 +69,6 @@
   },
   {
     "ParameterKey": "uniqueString",
-    "ParameterValue": "myUniqStr"
+    "ParameterValue": "myuniqstr"
   }
 ]

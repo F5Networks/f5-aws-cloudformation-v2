@@ -25,7 +25,7 @@
   },
   {
     "ParameterKey": "bigIpRuntimeInitPackageUrl",
-    "ParameterValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.0/dist/f5-bigip-runtime-init-1.6.0-1.gz.run"
+    "ParameterValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.1/dist/f5-bigip-runtime-init-1.6.1-1.gz.run"
   },
   {
     "ParameterKey": "cfeS3Bucket",
@@ -44,11 +44,11 @@
     "ParameterValue": "f5env"
   },
   {
-    "ParameterKey": "externalPrimaryPublicId",
+    "ParameterKey": "externalSelfPublicIpId",
     "ParameterValue": ""
   },
   {
-    "ParameterKey": "externalPublicIpIds",
+    "ParameterKey": "externalServicePublicIpIds",
     "ParameterValue": ""
   },
   {
@@ -112,7 +112,7 @@
     "ParameterValue": ""
   },
   {
-    "ParameterKey": "mgmtSelfIp",
+    "ParameterKey": "mgmtAddress",
     "ParameterValue": ""
   },
   {
@@ -120,7 +120,11 @@
     "ParameterValue": ""
   },
   {
-    "ParameterKey": "numSecondaryPrivateIpAddress",
+    "ParameterKey": "numExternalPublicIpAddresses",
+    "ParameterValue": "2"
+  },
+  {
+    "ParameterKey": "numSecondaryPrivateIpAddresses",
     "ParameterValue": "1"
   },
   {
@@ -137,6 +141,6 @@
   },
   {
     "ParameterKey": "uniqueString",
-    "ParameterValue": "myUniqStr"
+    "ParameterValue": "myuniqstr"
   }
 ]

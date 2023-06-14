@@ -45,8 +45,25 @@ Conditions:
       - '3'
       - !Ref numberPublicExternalIpAddresses
     - !Condition createExternalPublicIP04
-  createExternalPublicIP04: !Equals
+  createExternalPublicIP04: !Or
+    - !Equals
+      - '4'
+      - !Ref numberPublicExternalIpAddresses
+    - !Condition createExternalPublicIP05
+  createExternalPublicIP05: !Equals
+    - '5'
+    - !Ref numberPublicExternalIpAddresses
+  createExternalVip02: !Equals
+    - '2'
+    - !Ref numberPublicExternalIpAddresses
+  createExternalVip03: !Equals
+    - '3'
+    - !Ref numberPublicExternalIpAddresses
+  createExternalVip04: !Equals
     - '4'
+    - !Ref numberPublicExternalIpAddresses
+  createExternalVip05: !Equals
+    - '5'
     - !Ref numberPublicExternalIpAddresses
   createAppSecurityGroup: !Equals
     - 'true'
@@ -164,7 +181,7 @@ Metadata:
         default: Unique string
       vpc:
         default: VPC Id
-  Version: 2.7.0.0
+  Version: 3.0.0.0
 Outputs:
   stackName:
     Description: dag nested stack name
@@ -285,6 +302,32 @@ Outputs:
     Value: !GetAtt
       - BigipExternalEipAddress04
       - AllocationId
+  bigIpExternalEipAddress05:
+    Description: Elastic IP 05 for BIG-IP External Interface
+    Condition: createExternalPublicIP05
+    Value: !Ref BigipExternalEipAddress05
+  bigIpExternalEipAllocationId05:
+    Description: Allocation Id for Elastic IP 05 for BIG-IP External Interface
+    Condition: createExternalPublicIP05
+    Value: !GetAtt
+      - BigipExternalEipAddress05
+      - AllocationId
+  bigIpVipAllocationIds:
+    Description: Allocation Ids for all Elastic IPs for BIG-IP Virtual Servers
+    Value: 
+      !If
+        - createExternalVip05
+        - !Join [',', [!GetAtt [BigipExternalEipAddress02, AllocationId], !GetAtt [BigipExternalEipAddress03, AllocationId], !GetAtt [BigipExternalEipAddress04, AllocationId], !GetAtt [BigipExternalEipAddress05, AllocationId]]]
+        - !If
+            - createExternalVip04
+            - !Join [',', [!GetAtt [BigipExternalEipAddress02, AllocationId], !GetAtt [BigipExternalEipAddress03, AllocationId], !GetAtt [BigipExternalEipAddress04, AllocationId]]]
+            - !If
+                - createExternalVip03
+                - !Join [',', [!GetAtt [BigipExternalEipAddress02, AllocationId], !GetAtt [BigipExternalEipAddress03, AllocationId]]]
+                - !If
+                    - createExternalVip02
+                    - !GetAtt [BigipExternalEipAddress02, AllocationId]
+                    - ''
   bigIpExternalSecurityGroup:
     Condition: createExternalSecurityGroup
     Description: BIG-IP Security Group ID (External or Public)
@@ -386,8 +429,8 @@ Parameters:
     Type: String
   numberPublicExternalIpAddresses:
     Default: 0
-    Description: Number of external public ip address to create.
-    MaxValue: 4
+    Description: Number of external public ip addresses to create.
+    MaxValue: 5
     MinValue: 0
     Type: Number
   numberPublicMgmtIpAddresses:
@@ -434,9 +477,9 @@ Parameters:
     Description: The management port used for BIG-IP management GUI.
     Type: Number
   uniqueString:
-    AllowedPattern: ^[a-zA-Z][a-zA-Z0-9]{1,11}$
-    ConstraintDescription: Must Contain between 1 and 12 alphanumeric characters with first character as a letter.
-    Default: myUniqStr
+    AllowedPattern: ^[a-z][a-z0-9]{1,11}$
+    ConstraintDescription: Must contain between 1 and 12 lowercase alphanumeric characters with first character as a letter.
+    Default: myuniqstr
     Description: Unique String used when creating object names or Tags.
     Type: String
   vpcCidr:
@@ -860,6 +903,38 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-bigip-external-eip-04'
+        - Key: owner
+          Value: !Ref owner
+    Type: 'AWS::EC2::EIP'
+  BigipExternalEipAddress05:
+    Condition: createExternalPublicIP05
+    Properties:
+      Domain: vpc
+      NetworkBorderGroup: !If [useLocalZone, !Ref 'networkBorderGroup', !Ref 'AWS::Region']
+      Tags:
+        - Key: costcenter
+          Value: !Ref cost
+        - Key: environment
+          Value: !Ref environment
+        - 'Fn::If':
+            - Failover
+            -
+              Key: f5_cloud_failover_label
+              Value: !Ref cfeTag
+            - !Ref 'AWS::NoValue'
+        - 'Fn::If':
+            - Failover
+            -
+              Key:  f5_cloud_failover_vips
+              Value: !Ref cfeVipTag
+            - !Ref 'AWS::NoValue'
+        - Key: group
+          Value: !Ref group
+        - Key: Name
+          Value: !Join
+            - ''
+            - - !Ref uniqueString
+              - '-bigip-external-eip-05'
         - Key: owner
           Value: !Ref owner
     Type: 'AWS::EC2::EIP'
