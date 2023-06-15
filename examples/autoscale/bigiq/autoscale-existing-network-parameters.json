@@ -9,7 +9,7 @@
   },
   {
     "ParameterKey": "artifactLocation",
-    "ParameterValue": "f5-aws-cloudformation-v2/v2.7.0.0/examples/"
+    "ParameterValue": "f5-aws-cloudformation-v2/v3.0.0.0/examples/"
   },
   {
     "ParameterKey": "bigIpSubnetAz1",
@@ -65,7 +65,7 @@
   },
   {
     "ParameterKey": "bigIpRuntimeInitConfig",
-    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v2.7.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml"
+    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.0.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml"
   },
   {
     "ParameterKey": "bigIpRuntimeInitPackageUrl",

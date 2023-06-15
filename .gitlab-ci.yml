@@ -906,7 +906,7 @@ verify_reg_key_counts:
     - build/regkey-count-job/regkey-count-checker.py
 
 publish_to_github:
-  image: ${ARTIFACTORY_SERVER}/dockerhub-remote/node:8
+  image: ${ARTIFACTORY_SERVER}/dockerhub-remote/node:14
   stage: release
   only:
     - /(^publish-(v\d*[1-9]*\.)(\d).(\d).(\d))/
