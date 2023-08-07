@@ -560,9 +560,9 @@ Resources:
               # Optional optimizations required as early as possible in boot sequence
               before MCDP starts up.
             - |
-              /usr/bin/setdb provision.extramb 1000
+              /usr/bin/setdb provision.extramb 1000 || true
             - |
-              /usr/bin/setdb restjavad.useextramb true
+              /usr/bin/setdb provision.restjavad.extramb 1384 || /usr/bin/setdb restjavad.useextramb true || true
             - |
               /usr/bin/setdb iapplxrpm.timeout 300 || true
             - |
