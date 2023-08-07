@@ -109,11 +109,11 @@ extension_services:
               enabled: true
               algorithm: AES256
           scopingTags:
-            f5_cloud_failover_label: bigip_high_availability_solution
+            f5_cloud_failover_label: "{{{FAILOVER_TAG}}}"
         failoverAddresses:
           enabled: true
           scopingTags:
-            f5_cloud_failover_label: bigip_high_availability_solution
+            f5_cloud_failover_label: "{{{FAILOVER_TAG}}}"
           requireScopingTags: false
     - extensionType: as3
       type: inline
@@ -345,6 +345,11 @@ runtime_parameters:
     tagProvider:
       environment: aws
       key: bigIpPeerHostname
+  - name: FAILOVER_TAG
+    type: tag
+    tagProvider:
+      environment: aws
+      key: failoverTag
   - name: SELF_IP_EXTERNAL
     type: metadata
     metadataProvider:
