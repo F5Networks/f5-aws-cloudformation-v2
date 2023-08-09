@@ -339,7 +339,7 @@ As an alternative to deploying through the AWS Console (GUI), each solution prov
 
 ### Deploying via the AWS CLI
 
-By default, the templates in this repository are also publicly hosted on S3 at [https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/[VERSION]/](https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/). If you want deploy the template using the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html), provide url of the parent template and REQUIRED parameters:
+By default, the templates in this repository are also publicly hosted on S3 at https[]()://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/[VERSION]. If you want deploy the template using the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html), provide url of the parent template and REQUIRED parameters:
 
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
