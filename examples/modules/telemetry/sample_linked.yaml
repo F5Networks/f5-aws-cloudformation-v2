@@ -5,7 +5,7 @@ Resources:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: >-
-        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v3.0.0.0/examples/modules/telemetry/telemetry.yaml
+        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v3.1.0.0/examples/modules/telemetry/telemetry.yaml
       Parameters:
         cloudWatchLogGroupName: 'f5telemetry'
         cloudWatchLogStreamName: 'f5-waf-logs'

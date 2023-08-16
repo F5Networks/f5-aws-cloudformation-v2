@@ -125,7 +125,7 @@ Metadata:
         default: CloudWatch Log Group Name
       metricNameSpace:
         default: CloudWatch Metrics Namespace
-  Version: 3.0.0.0
+  Version: 3.1.0.0
 Outputs:
   stackName:
     Description: Access nested stack name

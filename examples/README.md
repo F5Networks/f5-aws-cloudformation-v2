@@ -90,7 +90,7 @@ OR
   For example: 
   ```bash
   aws cloudformation create-stack --region us-east-1 --stack-name myStack \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.0.0.0/examples/quickstart/quickstart.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.1.0.0/examples/quickstart/quickstart.yaml \
   --parameters "ParameterKey=sshKey,ParameterValue=MY-SSH-KEY-NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0" 
   ```
 
