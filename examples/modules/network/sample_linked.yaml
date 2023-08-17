@@ -6,7 +6,7 @@ Resources:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: >-
-        https://cdn.f5.com/product/cloudsolutions/f5-aws-cloudformation-v2/v3.0.0.0/examples/modules/network/network.yaml
+        https://cdn.f5.com/product/cloudsolutions/f5-aws-cloudformation-v2/v3.1.0.0/examples/modules/network/network.yaml
       Parameters:
         numAzs: 2
         numSubnets: 2

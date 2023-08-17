@@ -96,10 +96,6 @@ for config_path in "${runtime_init_config_files[@]}"; do
     /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.admin.shell = \"bash\"" -i <DEWPOINT JOB ID>-0$counter.yaml
     /usr/bin/yq e ".extension_services.service_operations.[${do_index}].value.Common.admin.userType = \"regular\"" -i <DEWPOINT JOB ID>-0$counter.yaml
 
-    # Update CFE tag
-    /usr/bin/yq e ".extension_services.service_operations.[1].value.externalStorage.scopingTags.f5_cloud_failover_label = \"<DEWPOINT JOB ID>\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-    /usr/bin/yq e ".extension_services.service_operations.[1].value.failoverAddresses.scopingTags.f5_cloud_failover_label = \"<DEWPOINT JOB ID>\"" -i <DEWPOINT JOB ID>-0$counter.yaml
-
     # Update WAF policy URL
     if [[ "<PROVISION EXAMPLE APP>" == "true" ]]; then
         /usr/bin/yq e ".extension_services.service_operations.[2].value.Tenant_1.Shared.Custom_WAF_Policy.url = \"https://cdn.f5.com/product/cloudsolutions/solution-scripts/Rapid_Deployment_Policy_13_1.xml\"" -i <DEWPOINT JOB ID>-0$counter.yaml

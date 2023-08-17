@@ -21,7 +21,7 @@
   },
   {
     "ParameterKey": "artifactLocation",
-    "ParameterValue": "f5-aws-cloudformation-v2/v3.0.0.0/examples/"
+    "ParameterValue": "f5-aws-cloudformation-v2/v3.1.0.0/examples/"
   },
   {
     "ParameterKey": "bastionScalingMaxSize",
@@ -61,11 +61,11 @@
   },
   {
     "ParameterKey": "bigIpRuntimeInitConfig",
-    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.0.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml"
+    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.1.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml"
   },
   {
     "ParameterKey": "bigIpRuntimeInitPackageUrl",
-    "ParameterValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.1/dist/f5-bigip-runtime-init-1.6.1-1.gz.run"
+    "ParameterValue": "https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.2/dist/f5-bigip-runtime-init-1.6.2-1.gz.run"
   },
   {
     "ParameterKey": "bigIpScaleInCpuThreshold",

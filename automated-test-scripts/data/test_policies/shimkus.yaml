@@ -60,7 +60,7 @@ aws-failover-byol-existing-test:
 aws-failover-payg-existing-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/failover/payg_byol/daily_test_existing.yaml"
   run: "random"
-  random-num-of-tests: 2
+  random-num-of-tests: 1
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/existing/demo.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/existing/demo_app.yaml"
@@ -82,7 +82,7 @@ aws-failover-byol-example-test:
 aws-failover-payg-example-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/failover/payg_byol/daily_test_full.yaml"
   run: "random"
-  random-num-of-tests: 2
+  random-num-of-tests: 1
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/full/demo.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/full/demo_app.yaml"

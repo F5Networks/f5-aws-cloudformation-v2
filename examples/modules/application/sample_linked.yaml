@@ -5,7 +5,7 @@ Resources:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: >-
-        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v3.0.0.0/examples/modules/application/application.yaml
+        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v3.1.0.0/examples/modules/application/application.yaml
       Parameters:
         appContainerName: f5devcentral/f5-demo-app:latest
         appSecurityGroupId: app-00002

@@ -164,7 +164,7 @@ Metadata:
         default: Public or external subnets for the availability zones
       uniqueString:
         default: Unique string
-  Version: 3.0.0.0
+  Version: 3.1.0.0
 Outputs:
   stackName:
     Description: bigip-autoscale nested stack name
@@ -199,7 +199,7 @@ Parameters:
       file in YAML or JSON format to use for f5-bigip-runtime-init configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.1/dist/f5-bigip-runtime-init-1.6.1-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.2/dist/f5-bigip-runtime-init-1.6.2-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   bigIqLicenseRevokeSnsTopic:
@@ -560,9 +560,9 @@ Resources:
               # Optional optimizations required as early as possible in boot sequence
               before MCDP starts up.
             - |
-              /usr/bin/setdb provision.extramb 1000
+              /usr/bin/setdb provision.extramb 1000 || true
             - |
-              /usr/bin/setdb restjavad.useextramb true
+              /usr/bin/setdb provision.restjavad.extramb 1384 || /usr/bin/setdb restjavad.useextramb true || true
             - |
               /usr/bin/setdb iapplxrpm.timeout 300 || true
             - |
@@ -636,7 +636,7 @@ Resources:
             - |
               # Run
             - |
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v3.0.0.0/examples/modules/bigip-autoscale/bigip-autoscale.yaml'
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v3.1.0.0/examples/modules/bigip-autoscale/bigip-autoscale.yaml'
             - |2+
 
             - |
