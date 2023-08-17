@@ -147,7 +147,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | application | No | f5app | string | Application Tag. |
 | appScalingMaxSize | No | 50 | string | Maximum number of Application instances (2-50) that can be created in the Autoscale Group. |
 | appScalingMinSize | No | 1 | string | Minimum number of Application instances (1-49) you want available in the Autoscale Group. |
-| artifactLocation | No | f5-aws-cloudformation-v2/v3.0.0.0/examples/  | string | The path in the S3Bucket where the modules folder is located. |
+| artifactLocation | No | f5-aws-cloudformation-v2/v3.1.0.0/examples/  | string | The path in the S3Bucket where the modules folder is located. |
 | bastionScalingMaxSize | No | 2 | string | Maximum number of Bastion instances (2-10) that can be created in the Autoscale Group. |
 | bastionScalingMinSize | No | 1 | string | Minimum number of Bastion instances (1-9) you want available in the Autoscale Group. |
 | bigIpCustomImageId | No |  | string | Provide BIG-IP AMI ID you wish to deploy. bigIpCustomImageId is required when bigIpImage is not specified. Otherwise, can leave empty. |
@@ -157,7 +157,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | bigIpMaxBatchSize | No | 5  | string | Specifies the maximum number of instances that CloudFormation updates. |
 | bigIpMinInstancesInService | No | 1 | string | Specifies the minimum number of instances that must be in service within the Auto Scaling group while CloudFormation updates old instances. |
 | bigIpPauseTime | No | 480  | string | The amount of time in seconds that CloudFormation pauses after making a change to a batch of instances to give those instances time to start software applications. |
-| bigIpRuntimeInitConfig | No | https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.0.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg-with-app.yaml | string | Enter a URL to the bigip-runtime-init configuration file in YAML or JSON format. |
+| bigIpRuntimeInitConfig | No | https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.1.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg-with-app.yaml | string | Enter a URL to the bigip-runtime-init configuration file in YAML or JSON format. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run | string | Enter a URL to the bigip-runtime-init package. |
 | bigIpScaleInCpuThreshold | No | 20  | string | Low CPU Percentage threshold to begin scaling in BIG-IP VE instances. | 
 | bigIpScaleInThroughputThreshold | No | 10000000 | string | Incoming bytes threshold to begin scaling in BIG-IP VE instances. | 
@@ -216,7 +216,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | application | No | f5app | string | Application Tag. |
 | appScalingMaxSize | No | 50 | string | Maximum number of Application instances (2-50) that can be created in the Autoscale Group. |
 | appScalingMinSize | No | 1 | string | Minimum number of Application instances (1-49) you want available in the Autoscale Group. |
-| artifactLocation | No | f5-aws-cloudformation-v2/v3.0.0.0/examples/  | string | The path in the S3Bucket where the modules folder is located. |
+| artifactLocation | No | f5-aws-cloudformation-v2/v3.1.0.0/examples/  | string | The path in the S3Bucket where the modules folder is located. |
 | bastionScalingMaxSize | No | 2 | string | Maximum number of Bastion instances (2-10) that can be created in the Autoscale Group. |
 | bastionScalingMinSize | No | 1 | string | Minimum number of Bastion instances (1-9) you want available in the Autoscale Group. |
 | bigIpCustomImageId | No |  | string | Provide BIG-IP AMI ID you wish to deploy. bigIpCustomImageId is required when bigIpImage is not specified. Otherwise, can leave empty. |
@@ -226,7 +226,7 @@ This solution leverages more traditional Autoscale configuration management prac
 | bigIpMaxBatchSize | No | 5  | string | Specifies the maximum number of instances that CloudFormation updates. |
 | bigIpMinInstancesInService | No | 1 | string | Specifies the minimum number of instances that must be in service within the Auto Scaling group while CloudFormation updates old instances. |
 | bigIpPauseTime | No | 480  | string | The amount of time in seconds that CloudFormation pauses after making a change to a batch of instances to give those instances time to start software applications. |
-| bigIpRuntimeInitConfig | No | https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.0.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg-with-app.yaml  | string | Enter a URL to the bigip-runtime-init configuration file in YAML or JSON format. |
+| bigIpRuntimeInitConfig | No | https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.1.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg-with-app.yaml  | string | Enter a URL to the bigip-runtime-init configuration file in YAML or JSON format. |
 | bigIpRuntimeInitPackageUrl | No | https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.5.0/dist/f5-bigip-runtime-init-1.5.0-1.gz.run | string |Enter a URL to the bigip-runtime-init package. |
 | bigIpScaleInCpuThreshold | No | 20  | string | Low CPU Percentage threshold to begin scaling in BIG-IP VE instances. | 
 | bigIpScaleInThroughputThreshold | No | 10000000 | string | Incoming bytes threshold to begin scaling in BIG-IP VE instances. | 
@@ -295,11 +295,11 @@ The easiest way to deploy this CloudFormation template is to use the Launch butt
 **Important**: By default, the link takes you to an AWS console set to the us-east-1 region. Select the AWS region (upper right) in which you want to deploy after clicking the Launch Stack button. 
 
 **Full Stack**
-<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Autoscale-WAF-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.0.0.0/examples/autoscale/payg/autoscale.yaml">
+<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Autoscale-WAF-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.1.0.0/examples/autoscale/payg/autoscale.yaml">
     <img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png"/></a>
 
 **Existing Stack**
-<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Autoscale-WAF-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.0.0.0/examples/autoscale/payg/autoscale-existing-network.yaml">
+<a href="https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=BigIp-Autoscale-WAF-Example&templateURL=https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.1.0.0/examples/autoscale/payg/autoscale-existing-network.yaml">
     <img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png"/></a>
 
 *Step 1: Specify template* 
@@ -335,7 +335,7 @@ By default, the templates in this repository are also publicly hosted on S3 at [
 
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.0.0.0/examples/autoscale/payg/autoscale.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.1.0.0/examples/autoscale/payg/autoscale.yaml \
   --parameters "ParameterKey=<KEY>,ParameterValue=<VALUE> ParameterKey=<KEY>,ParameterValue=<VALUE>" \
   --capabilities CAPABILITY_NAMED_IAM
 ```
@@ -343,7 +343,7 @@ By default, the templates in this repository are also publicly hosted on S3 at [
 or with a local parameters file (see `autoscale-parameters.json` example in this directory):
 ```bash
  aws cloudformation create-stack --region ${REGION} --stack-name ${STACK_NAME} \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.0.0.0/examples/autoscale/payg/autoscale.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.1.0.0/examples/autoscale/payg/autoscale.yaml \
   --parameters file://autoscale-parameters.json \
   --capabilities CAPABILITY_NAMED_IAM
 ```
@@ -353,14 +353,14 @@ Example:
 **Full Stack**
 ```bash
  aws cloudformation create-stack --region us-east-1 --stack-name mywaf \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.0.0.0/examples/autoscale/payg/autoscale.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.1.0.0/examples/autoscale/payg/autoscale.yaml \
   --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0 ParameterKey=uniqueString,ParameterValue=mywaf ParameterKey=notificationEmail,ParameterValue=myemail@example.com" \
   --capabilities CAPABILITY_NAMED_IAM
 ```
 **Existing Stack**
 ```bash
  aws cloudformation create-stack --region us-east-1 --stack-name mywaf \
-  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.0.0.0/examples/autoscale/payg/autoscale-existing-network.yaml \
+  --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.1.0.0/examples/autoscale/payg/autoscale-existing-network.yaml \
   --parameters "ParameterKey=sshKey,ParameterValue=MY_SSH_KEY_NAME ParameterKey=restrictedSrcAddressMgmt,ParameterValue=55.55.55.55/32 ParameterKey=restrictedSrcAddressApp,ParameterValue=0.0.0.0/0 ParameterKey=uniqueString,ParameterValue=mywaf ParameterKey=notificationEmail,ParameterValue=myemail@example.com ParameterKey=bigIpSubnetAz1,ParameterValue=<SUBNET ID> ParameterKey=bigIpSubnetAz2,ParameterValue=<SUBNET ID> ParameterKey=vpcId,ParameterValue=<VPC ID>" \
   --capabilities CAPABILITY_NAMED_IAM
 ```
@@ -377,7 +377,7 @@ Example from autoscale-parameters.json
 ```json
   {
     "ParameterKey": "bigIpRuntimeInitConfig",
-    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.0.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg-with-app.yaml"
+    "ParameterValue": "https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.1.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-payg-with-app.yaml"
   },
 ```
   - **IMPORTANT**: Any URLs pointing to git **must** use the raw file format (for example, "raw.githubusercontent.com")
@@ -733,7 +733,7 @@ To update the BIG-IP configuration:
   4. Update the CloudFormation Stack with new **bigIpRuntimeInitConfig** parameter:
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
-        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.0.0.0/examples/autoscale/payg/autoscale.yaml \
+        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.1.0.0/examples/autoscale/payg/autoscale.yaml \
         --parameters "ParameterKey=bigIpRuntimeInitConfig,ParameterValue=https://<YOUR_NEW_LOCATION> ParameterKey=<KEY>,ParameterValue=<VALUE>"
       ```
 
@@ -743,7 +743,7 @@ To update the BIG-IP OS version:
   1. Update the CloudFormation Stack with new **bigIpImage** parameter:
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
-        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.0.0.0/examples/autoscale/payg/autoscale.yaml \
+        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.1.0.0/examples/autoscale/payg/autoscale.yaml \
         --parameters "ParameterKey=bigIpImage,ParameterValue=${bigIpImage} ParameterKey=<KEY>,ParameterValue=<VALUE>"
       ```
 
@@ -751,7 +751,7 @@ To update the BIG-IP instance size:
   1. Update the CloudFormation Stack with new **instanceType** parameter:
       ```bash
       aws cloudformation update-stack --region ${REGION} --stack-name ${STACK_NAME} \
-        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.0.0.0/examples/autoscale/payg/autoscale.yaml \
+        --template-url https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.1.0.0/examples/autoscale/payg/autoscale.yaml \
         --parameters "ParameterKey=instanceSize,ParameterValue=${instanceType} ParameterKey=<KEY>,ParameterValue=<VALUE>"
       ```
 

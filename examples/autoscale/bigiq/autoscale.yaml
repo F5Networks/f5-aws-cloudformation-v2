@@ -219,7 +219,7 @@ Metadata:
         default: Unique string
       vpcCidr:
         default: VPC CIDR
-  Version: 3.0.0.0
+  Version: 3.1.0.0
 Outputs:
   wafExternalDnsName:
     Condition: externalLB
@@ -307,7 +307,7 @@ Parameters:
     AllowedPattern: ^.*[0-9a-zA-Z]+/$
     ConstraintDescription: key prefix can include numbers, lowercase letters, uppercase
       letters, hyphens (-), and forward slash (/).
-    Default: f5-aws-cloudformation-v2/v3.0.0.0/examples/
+    Default: f5-aws-cloudformation-v2/v3.1.0.0/examples/
     Description: The path in the S3Bucket where the modules folder is located. Can
       include numbers, lowercase letters, uppercase letters, hyphens (-), and forward
       slash (/).
@@ -370,12 +370,12 @@ Parameters:
     MinValue: 0
     Type: Number
   bigIpRuntimeInitConfig:
-    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.0.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml'
+    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.1.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
       file in YAML or JSON format to use for f5-bigip-runtime-init configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.1/dist/f5-bigip-runtime-init-1.6.1-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.2/dist/f5-bigip-runtime-init-1.6.2-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   bigIpScaleInCpuThreshold:

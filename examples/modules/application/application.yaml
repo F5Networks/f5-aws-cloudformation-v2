@@ -140,7 +140,7 @@ Metadata:
         default: Unique string
       vpc:
         default: VPC ID
-  Version: 3.0.0.0
+  Version: 3.1.0.0
 Outputs:
   stackName:
     Description: application nested stack name

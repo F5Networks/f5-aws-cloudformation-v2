@@ -6,11 +6,11 @@ Resources:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
       TemplateURL: >-
-        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v3.0.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml
+        https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v3.1.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml
       Parameters:
         instanceProfile: ''
         bigIpRuntimeInitConfig: 'https://some-delivery-locatoion.com/config.yaml'
-        bigIpRuntimeInitPackageUrl: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.1/dist/f5-bigip-runtime-init-1.6.1-1.gz.run'
+        bigIpRuntimeInitPackageUrl: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.2/dist/f5-bigip-runtime-init-1.6.2-1.gz.run'
         cfeS3Bucket: ''
         cfeTag: ''
         customImageId: ami-id
