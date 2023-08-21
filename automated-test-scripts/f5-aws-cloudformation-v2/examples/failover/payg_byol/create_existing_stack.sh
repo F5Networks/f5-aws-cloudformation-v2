@@ -199,6 +199,10 @@ cat <<EOF > parameters.json
         "ParameterValue": "<PROVISION MGMT PUBLIC IP>"
     },
     {
+        "ParameterKey": "provisionPublicIpExternal",
+        "ParameterValue": "<PROVISION EXT PUBLIC IP>"
+    },
+    {
         "ParameterKey": "provisionPublicIpVip",
         "ParameterValue": "<PROVISION EXAMPLE APP>"
     },

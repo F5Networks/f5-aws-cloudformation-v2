@@ -156,6 +156,10 @@
     "ParameterValue": "false"
   },
   {
+    "ParameterKey": "provisionPublicIpExternal",
+    "ParameterValue": "true"
+  },
+  {
     "ParameterKey": "provisionPublicIpMgmt",
     "ParameterValue": "false"
   },
