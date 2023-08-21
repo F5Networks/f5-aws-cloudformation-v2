@@ -476,8 +476,16 @@ Parameters:
       - 'true'
       - 'false'
     Default: 'false'
-    Description: Whether or not to provision public IP addresses for the BIGIP's external
-      network interface. IP's are used for application traffic.
+    Description: Whether or not to provision secondary public IP addresses for the BIG-IP external
+      network interfaces. IPs are used for application traffic. You must choose false when provisionPublicIpExternal is also false.
+    Type: String
+  provisionPublicIpExternal:
+    AllowedValues:
+      - 'true'
+      - 'false'
+    Default: 'true'
+    Description: Whether or not to provision primary public IP addresses for the BIG-IP external
+      network interfaces. IPs are used to source outbound traffic from the BIG-IPs.
     Type: String
   provisionPublicIpMgmt:
     AllowedValues:
@@ -575,6 +583,9 @@ Conditions:
   usePublicIpVip: !Equals
     - 'true'
     - !Ref 'provisionPublicIpVip'
+  usePublicIpExternal: !Equals
+    - 'true'
+    - !Ref 'provisionPublicIpExternal'
 Resources:
   Access:
     Type: 'AWS::CloudFormation::Stack'
@@ -632,7 +643,8 @@ Resources:
               - '-bigip-high-availability-solution'
           - !Ref 'cfeS3Bucket'
         cfeTag: !Ref 'cfeTag'
-        externalSelfPublicIpId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01]
+        externalSelfPublicIpId: !If [usePublicIpExternal, !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01],
+          '']
         externalServicePublicIpIds: !If [usePublicIpVip, !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId03],
           '']
         externalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup]
@@ -664,7 +676,7 @@ Resources:
         mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpMgmtSecurityGroup]
         mgmtAddress: !Ref 'bigIpMgmtAddress01'
         mgmtSubnetId: !Ref 'bigIpMgmtSubnetId01'
-        numExternalPublicIpAddresses: !If [usePublicIpVip, 2, 1]
+        numExternalPublicIpAddresses: !If [usePublicIpVip, 2, !If [usePublicIpExternal, 1, 0]]
         numSecondaryPrivateIpAddresses: !If [usePublicIpVip, 1, 0]
         secretArn: !If [createSecret, !GetAtt [Access, Outputs.secretArn], !Ref 'bigIpSecretArn']
         sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
@@ -683,7 +695,8 @@ Resources:
         bigIpPeerAddr: !Ref 'bigIpPeerAddr'
         bigIpPeerHostname: !Ref 'bigIpHostname01'
         cfeTag: !Ref 'cfeTag'
-        externalSelfPublicIpId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId02]
+        externalSelfPublicIpId: !If [usePublicIpExternal, !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId02],
+          '']
         externalServicePublicIpIds: ''
         externalSecurityGroupId: !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup]
         externalSelfIp: !Ref 'bigIpExternalSelfIp02'
@@ -714,7 +727,7 @@ Resources:
         mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpMgmtSecurityGroup]
         mgmtAddress: !Ref 'bigIpMgmtAddress02'
         mgmtSubnetId: !Ref 'bigIpMgmtSubnetId02'
-        numExternalPublicIpAddresses: 1
+        numExternalPublicIpAddresses: !If [usePublicIpExternal, 1, 0]
         numSecondaryPrivateIpAddresses: !If [usePublicIpVip, 1, 0]
         secretArn: !If [createSecret, !GetAtt [Access, Outputs.secretArn], !Ref 'bigIpSecretArn']
         sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
@@ -742,7 +755,7 @@ Resources:
         group: !Ref 'group'
         internalSubnetAz1: !If [3nic, !Ref 'bigIpInternalSubnetId01', !Ref 'AWS::NoValue']
         internalSubnetAz2: !If [3nic, !Ref 'bigIpInternalSubnetId02', !Ref 'AWS::NoValue']
-        numberPublicExternalIpAddresses: !If [usePublicIpVip, 3, 2]
+        numberPublicExternalIpAddresses: !If [usePublicIpVip, 3, !If [usePublicIpExternal, 2, 0]]
         numberPublicMgmtIpAddresses: !If [usePublicIpMgmt, 2, 0]
         provisionExternalBigipLoadBalancer: false
         provisionInternalBigipLoadBalancer: false

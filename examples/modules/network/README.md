@@ -42,7 +42,7 @@ This AWS template creates a virtual network and subnets required to support F5 s
 | numAzs | No | 2 | integer | Number of Availability Zones to use in the VPC. Region must support number of availability  zones entered. The minimum is 1 and maximum is 4.  |
 | numSubnets | No | 3 | integer | Indicate the number of subnets to create. A minimum of 4 subnets required when provisionExampleApp = false |
 | owner | No | f5owner | string | Application Tag. |
-| setSubnet1Public | No | false | boolean | The value 'true' sets subnet1 in each AZ as a public subnet. The value 'false' sets subnet1 as a private network. |
+| setPublicSubnet1 | No | false | boolean | The value 'true' sets subnet1 in each AZ as a public subnet. The value 'false' sets subnet1 as a private network. |
 | subnetMask | No | 24 | integer | Mask for subnets. Valid values include 16-28. Note: supernetting of VPC occurs based on mask provided; therefore, the number of networks must be >= to the number of subnets created. |
 | uniqueString | Yes | myuniqstr | string | A prefix that will be used to name template resources. Because some resources require globally unique names, we recommend using a unique value. Must contain between 1 and 12 lowercase alphanumeric characters with first character as a letter. |
 | vpcCidr | No | 10.0.0.0/16 | string | CIDR block for the VPC. |
@@ -57,10 +57,10 @@ This AWS template creates a virtual network and subnets required to support F5 s
 | natEipB | numAzs > 1 | string | IP address used for NAT gateway assigned to subnets in availability zone B. |
 | natEipC | numAzs > 2 | string | IP address used for NAT gateway assigned to subnets in availability zone C. |
 | natEipD | numAzs > 3 | string | IP address used for NAT gateway assigned to subnets in availability zone D. |
-| privateRouteTableIdA | setSubnet1Public = true or numSubnets > 2 | string | Route table ID assigned to private subnets in availability zone A. |
-| privateRouteTableIdB | setSubnet1Public or numSubnets > 2 and numAzs > 1 | string | Route table ID assigned to private subnets in availability zone B. |
-| privateRouteTableIdC | setSubnet1Public or numSubnets > 2 and numAzs > 2 | string |  Route table ID assigned to private subnets in availability zone C. |
-| privateRouteTableIdD | setSubnet1Public or numSubnets > 2 and numAzs > 3 | string | Route table ID assigned to private subnets in availability zone D. |
+| privateRouteTableIdA | setPublicSubnet1 = true or numSubnets > 2 | string | Route table ID assigned to private subnets in availability zone A. |
+| privateRouteTableIdB | setPublicSubnet1 or numSubnets > 2 and numAzs > 1 | string | Route table ID assigned to private subnets in availability zone B. |
+| privateRouteTableIdC | setPublicSubnet1 or numSubnets > 2 and numAzs > 2 | string |  Route table ID assigned to private subnets in availability zone C. |
+| privateRouteTableIdD | setPublicSubnet1 or numSubnets > 2 and numAzs > 3 | string | Route table ID assigned to private subnets in availability zone D. |
 | publicSubnetRouteTableId | N/A | string | Route table ID assigned to public subnets. |
 | subnetsA |  numAzs > 0 | array | Comma separated list of subnet IDs created for availability zone A. IDs listed in order of subnet numerical value. For example: subnet0 1st value, subnet1 2nd value, etc. |
 | subnetsB | numAzs > 1 | array | Comma separated list of subnet IDs created for availability zone B. IDs listed in order of subnet numerical value. For example: subnet0 1st value, subnet1 2nd value, etc. |
