@@ -750,15 +750,9 @@ Resources:
         cfeTag: !Ref 'cfeTag'
         cfeVipTag: !Ref 'cfeVipTag'
         environment: !Ref 'environment'
-        externalSubnetAz1: !Ref 'bigIpExternalSubnetId01'
-        externalSubnetAz2: !Ref 'bigIpExternalSubnetId02'
         group: !Ref 'group'
-        internalSubnetAz1: !If [3nic, !Ref 'bigIpInternalSubnetId01', !Ref 'AWS::NoValue']
-        internalSubnetAz2: !If [3nic, !Ref 'bigIpInternalSubnetId02', !Ref 'AWS::NoValue']
         numberPublicExternalIpAddresses: !If [usePublicIpVip, 3, !If [usePublicIpExternal, 2, 0]]
         numberPublicMgmtIpAddresses: !If [usePublicIpMgmt, 2, 0]
-        provisionExternalBigipLoadBalancer: false
-        provisionInternalBigipLoadBalancer: false
         restrictedSrcAddressApp: !Ref 'restrictedSrcAddressApp'
         restrictedSrcAddressMgmt: !Ref 'restrictedSrcAddressMgmt'
         restrictedSrcPort: 443
