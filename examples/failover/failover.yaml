@@ -435,8 +435,8 @@ Parameters:
   numAzs:
     Default: 2
     Description: Number of Availability Zones to use in the VPC. Region must support
-      number of availability  zones entered. Min 1 Max 4.
-    MaxValue: 4
+      number of availability zones entered. Min 1 Max 2.
+    MaxValue: 2
     MinValue: 1
     Type: Number
   numNics:
@@ -561,6 +561,9 @@ Conditions:
   noPublicIp: !Equals
     - 'false'
     - !Ref 'provisionPublicIpMgmt'
+  sameAz: !Equals
+    - '1'
+    - !Ref 'numAzs'
   useDefaultCfeS3Bucket: !Equals
     - !Ref 'cfeS3Bucket'
     - ''
@@ -637,48 +640,6 @@ Resources:
                   - !GetAtt
                     - Network
                     - Outputs.subnetsA
-        applicationSubnets: !Join
-          - ','
-          - - !If
-              - usePublicIpVip
-              - !Join
-                - ','
-                - - !Select
-                    - '3'
-                    - !Split
-                      - ','
-                      - !GetAtt
-                        - Network
-                        - Outputs.subnetsA
-              - !Join
-                - ','
-                - - !Select
-                    - '4'
-                    - !Split
-                      - ','
-                      - !GetAtt
-                        - Network
-                        - Outputs.subnetsA
-            - !If
-              - usePublicIpVip
-              - !Join
-                - ','
-                - - !Select
-                    - '3'
-                    - !Split
-                      - ','
-                      - !GetAtt
-                        - Network
-                        - Outputs.subnetsB
-              - !Join
-                - ','
-                - - !Select
-                    - '4'
-                    - !Split
-                      - ','
-                      - !GetAtt
-                        - Network
-                        - Outputs.subnetsB
         appSecurityGroupId: !GetAtt [Dag, Outputs.appSecurityGroupId]
         cost: !Ref 'cost'
         environment: !Ref 'environment'
@@ -708,22 +669,6 @@ Resources:
                 - !GetAtt
                   - Network
                   - Outputs.subnetsA
-        mgmtSubnets: !Join
-          - ','
-          - - !Select
-              - '0'
-              - !Split
-                - ','
-                - !GetAtt
-                  - Network
-                  - Outputs.subnetsA
-            - !Select
-              - '0'
-              - !Split
-                - ','
-                - !GetAtt
-                  - Network
-                  - Outputs.subnetsB
         bastionSecurityGroupId: !GetAtt
           - Dag
           - Outputs.bastionSecurityGroupId
@@ -859,18 +804,14 @@ Resources:
                 - '0'
                 - !Split
                   - ','
-                  - !GetAtt
-                    - Network
-                    - Outputs.subnetsB
+                  - !If [sameAz, !GetAtt [Network, Outputs.subnetsA], !GetAtt [Network, Outputs.subnetsB]]
           - !Join
             - ','
             - - !Select
                 - '3'
                 - !Split
                   - ','
-                  - !GetAtt
-                    - Network
-                    - Outputs.subnetsB
+                  - !If [sameAz, !GetAtt [Network, Outputs.subnetsA], !GetAtt [Network, Outputs.subnetsB]]
         hostname: !Ref 'bigIpHostname02'
         imageId: !If
           - noCustomImageId
@@ -897,9 +838,7 @@ Resources:
                 - '2'
                 - !Split
                   - ','
-                  - !GetAtt
-                    - Network
-                    - Outputs.subnetsB
+                  - !If [sameAz, !GetAtt [Network, Outputs.subnetsA], !GetAtt [Network, Outputs.subnetsB]]
           - !Ref 'AWS::NoValue'
         licenseKey: !Ref 'bigIpLicenseKey02'
         mgmtPublicIpId: !If [usePublicIpMgmt, !GetAtt [Dag, Outputs.bigIpManagementEipAllocationId02],
@@ -912,9 +851,7 @@ Resources:
               - '1'
               - !Split
                 - ','
-                - !GetAtt
-                  - Network
-                  - Outputs.subnetsB
+                - !If [sameAz, !GetAtt [Network, Outputs.subnetsA], !GetAtt [Network, Outputs.subnetsB]]
         numExternalPublicIpAddresses: 1
         numSecondaryPrivateIpAddresses: !If [usePublicIpVip, 1, 0]
         secretArn: !If [createSecret, !GetAtt [Access, Outputs.secretArn], !Ref 'bigIpSecretArn']
@@ -938,67 +875,7 @@ Resources:
         cfeTag: !Ref 'cfeTag'
         cfeVipTag: !Ref 'cfeVipTag'
         environment: !Ref 'environment'
-        externalSubnetAz1: !If
-          - usePublicIpVip
-          - !Join
-            - ','
-            - - !Select
-                - '0'
-                - !Split
-                  - ','
-                  - !GetAtt
-                    - Network
-                    - Outputs.subnetsA
-          - !Join
-            - ','
-            - - !Select
-                - '3'
-                - !Split
-                  - ','
-                  - !GetAtt
-                    - Network
-                    - Outputs.subnetsA
-        externalSubnetAz2: !If
-          - usePublicIpVip
-          - !Join
-            - ','
-            - - !Select
-                - '0'
-                - !Split
-                  - ','
-                  - !GetAtt
-                    - Network
-                    - Outputs.subnetsB
-          - !Join
-            - ','
-            - - !Select
-                - '3'
-                - !Split
-                  - ','
-                  - !GetAtt
-                    - Network
-                    - Outputs.subnetsB
         group: !Ref 'group'
-        internalSubnetAz1: !If
-          - 3nic
-          - !Select
-            - '0'
-            - !Split
-              - ','
-              - !GetAtt
-                - Network
-                - Outputs.subnetsA
-          - !Ref 'AWS::NoValue'
-        internalSubnetAz2: !If
-          - 3nic
-          - !Select
-            - '0'
-            - !Split
-              - ','
-              - !GetAtt
-                - Network
-                - Outputs.subnetsB
-          - !Ref 'AWS::NoValue'
         numberPublicExternalIpAddresses: !If [usePublicIpVip, 3, 2]
         numberPublicMgmtIpAddresses: !If [usePublicIpMgmt, 2, 0]
         provisionExternalBigipLoadBalancer: false
