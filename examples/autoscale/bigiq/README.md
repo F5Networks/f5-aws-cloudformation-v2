@@ -69,6 +69,7 @@ This solution leverages more traditional Autoscale configuration management prac
 ## Diagram
 
 ![Configuration Example](diagrams/diagram.png)
+
 ## Prerequisites
 
 - A location to host your custom BIG-IP config (runtime-init.conf) with your BIG-IQ LM and logging information. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for customization details.
@@ -91,6 +92,8 @@ This solution leverages more traditional Autoscale configuration management prac
 ## Important Configuration Notes
 
 -  This solution requires you to customize and host your own runtime-init configurations. For your customized the Runtime Configurations, use the **bigIpRuntimeInitConfig** input parameter to specify the new location of the BIG-IP Runtime-Init config. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details.
+
+- If you have customized the Runtime configurations, use the **bigIpRuntimeInitConfig** input parameter to specify the new location of the BIG-IP Runtime-Init config. See [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more BIG-IP customization details.
 
 - To change the BIG-IP image, update the  **bigIpImage** parameter. See [Understanding AMI Lookup Function](../../modules/function/README.md#understanding-ami-lookup-function) for valid string options. For non marketplace custom images (for example clones, or those created by the [F5 BIG-IP Image Generator](https://github.com/f5devcentral/f5-bigip-image-generator/)), update the **bigIpCustomImageId** parameter.
 
@@ -122,6 +125,8 @@ This solution leverages more traditional Autoscale configuration management prac
   - logstream: f5-waf-logs
 
   The default metrics and logging values in this template can only be used once per account as CloudWatch resources must be unique. To deploy more than one of these per account, you must supply unique values for the metricNameSpace, cloudWatchLogGroupName, and cloudWatchLogStreamName input parameters. There also are many possible logging destinations. See AWS [documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/Working-with-log-groups-and-streams.html) and [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for more details.
+
+- Because this solution does not utilize BIG-IP Device Service Clustering (DSC), synchronizing ASM WAF cookie protection settings across instances is not supported. If you are deploying this solution into a production environment, F5 recommends customizing the default runtime-init configuration to install the cookie protection string on each BIG-IP instance at provisioning time. This requires creating an additional AWS Secrets Manager secret containing the cookie protection string. See customization example #1 under [Changing the BIG-IP Deployment](#changing-the-big-ip-deployment) for step-by-step instructions.
 
 - This solution requires Internet Access for: 
     - Downloading additional F5 software components used for onboarding and configuring the BIG-IP (via GitHub.com). By default, and as a convenience, this solution provisions Public IPs to enable this, but in a production environment outbound access should be provided by a `routed` SNAT service (for example NAT Gateway, custom firewall, etc.). *NOTE: access via web proxy is not currently supported. Other options include 1) hosting the file locally and modifying the runtime-init package URL and configuration files to point to local URLs instead or 2) baking them into a custom image, using the [F5 Image Generation Tool](https://clouddocs.f5.com/cloud/public/v1/ve-image-gen_index.html) (BYOL only).*
@@ -422,6 +427,48 @@ By default, this solution references the `runtime-init-conf-bigiq-with-app.yaml`
   
 **Example Customization 1:**
 
+To install the ASM WAF cookie protection string on each BIG-IP instance:
+
+  1. Export the cookie protection string from a running BIG-IP ASM WAF instance.
+      Example:
+      ```bash
+      BIGIP="192.168.1.245"
+      TOKEN=$(curl -sk https://${BIGIP}/mgmt/shared/authn/login -d '{"username": "admin", "password": "myBigIpPassword"}' | jq -r.token.token)
+
+      TASK_ID=$(curl -sk -X POST https://${BIGIP}/mgmt/tm/asm/tasks/export-data-protection -H "X-F5-Auth-Token: ${TOKEN}" -d'{"inline": true}' | jq -r .id)
+      COOKIE_PROTECTION=$(curl -sk -X GET https://${BIGIP}/mgmt/tm/asm/tasks/export-data-protection/${TASK_ID} -H "X-F5-Auth-Token: ${TOKEN}"  | jq .result.file)
+      ```
+  2. Create an AWS Secrets Manager secret using the previously acquired cookie protection string value. This step requires the AWS CLI; you can also create the secret via the **AWS Console > Secrets Manager > Store a new secret** menu.
+      Example:
+      ```bash
+      aws secretsmanager create-secret --region ${REGION} --name mySecret --secret-string ${COOKIE_PROTECTION}
+      ```
+  3. Edit/modify the runtime-init config file [runtime-init-conf-bigiq-with-app.yaml](../bigip-configurations/runtime-init-conf-bigiq-with-app.yaml) with the new `COOKIE_PROTECTION` runtime parameter and post_onboard_enabled values. 
+
+      Example:
+      ```yaml
+      runtime_parameters:  
+        - name: COOKIE_PROTECTION
+          type: secret
+          secretProvider:
+            environment: aws
+            secretId: mySecret
+            type: SecretsManager
+            version: AWSCURRENT
+      ```
+      ```yaml
+      post_onboard_enabled:
+        - name: import_data_protection
+          type: inline
+          commands:
+            - "id=$(curl -su 'admin:admin' -X POST http://localhost:8100/mgmt/tm/asm/tasks/import-data-protection -d '{\"importText\": \"{{{COOKIE_PROTECTION}}}\"}' | jq -r .id) && sleep 10 && echo data protection id: ${id} && status=$(curl -su 'admin:admin' http://localhost:8100/mgmt/tm/asm/tasks/import-data-protection/${id} | jq -r .status) && echo data protection status: ${status}"
+      ```
+  4. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, git, S3, etc.).
+  5. Update the **bigIpRuntimeInitConfig** input parameter to reference the URL of the customized configuration file.
+  6. If you are installing the cookie protection string to an existing deployment, follow the steps at [Updating this Solution](#updating-this-solution) to redeploy instances using the new configuration.
+
+**Example Customization 2:**
+
 To change the BIG-IQ Licensing configuration:
 
   1. Edit/modify the Declarative Onboarding (DO) declaration in the runtime-init config file [runtime-init-conf-bigiq-with-app.yaml](../bigip-configurations/runtime-init-conf-bigiq-with-app.yaml) with the new `License` values. 
@@ -449,7 +496,7 @@ To change the BIG-IQ Licensing configuration:
       - **bigIqSubnetId**
 
 
-**Example Customization 2:**
+**Example Customization 3:**
 
 To change the Virtual Service configuration:
   1. Edit/modify the Application Services 3 (AS3) declaration in the example runtime-init config file ` [runtime-init-conf-payg-with-app.yaml](../bigip-configurations/runtime-init-conf-payg-with-app.yaml) to point at your own application. 
@@ -504,7 +551,7 @@ To change the Virtual Service configuration:
   3. Publish/host the customized runtime-init config file at a location reachable by the BIG-IP at deploy time (for example, S3, git, etc.).
   4. Update the **bigIpRuntimeInitConfig** input parameter to reference the URL of the customized configuration file.
 
-**Example Customization 3:**
+**Example Customization 4:**
 
 By default, this solution sends metrics and logs to the following CloudWatch destinations: 
   - metricsNamespace: f5-scaling-metrics 
