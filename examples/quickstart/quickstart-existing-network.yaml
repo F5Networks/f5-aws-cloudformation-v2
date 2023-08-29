@@ -20,6 +20,11 @@ Conditions:
   1nicPublic: !And
     - !Condition '1nic'
     - !Condition 'publicIp'
+  1nicPrivate: !And
+    - !Condition '1nic'
+    - !Condition 'noPublicIp'
+  not1nicPrivate: !Not
+    - !Condition '1nicPrivate'
   noPublicIp: !Equals
     - 'false'
     - !Ref 'provisionPublicIp'
@@ -729,11 +734,19 @@ Outputs:
     Description: Secret ARN
     Value: !GetAtt [Access, Outputs.secretArn]
   vipPublicUrl:
+    Condition: not1nicPrivate
     Description: url to public vip address
     Value: !Join
       - ''
       - - 'https://'
         - !GetAtt [Dag, Outputs.bigIpExternalEipAddress02]
+  vipPrivateUrl:
+    Condition: 1nicPrivate
+    Description: url to private vip address
+    Value: !Join
+      - ''
+      - - 'https://'
+        - !Ref bigIpExternalServiceIps
 Parameters:
   allowUsageAnalytics:
     AllowedValues:
@@ -1020,8 +1033,8 @@ Resources:
         allowUsageAnalytics: !Ref 'allowUsageAnalytics'
         bigIpRuntimeInitPackageUrl: !Ref 'bigIpRuntimeInitPackageUrl'
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig'
-        externalSelfPublicIpId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01]
-        externalServicePublicIpIds: !GetAtt [Dag, Outputs.bigIpVipAllocationIds]
+        externalSelfPublicIpId: !If [1nicPrivate, !Ref 'AWS::NoValue', !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01]]
+        externalServicePublicIpIds: !If [1nicPrivate, !Ref 'AWS::NoValue', !GetAtt [Dag, Outputs.bigIpVipAllocationIds]]
         externalSecurityGroupId: !If [2nic, !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup],
           !Ref 'AWS::NoValue']
         externalSelfIp: !If [2nic, !Ref 'bigIpExternalSelfIp', !Ref 'AWS::NoValue']
@@ -1045,7 +1058,7 @@ Resources:
         mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpMgmtSecurityGroup]
         mgmtAddress: !Ref 'bigIpMgmtAddress'
         mgmtSubnetId: !Ref 'bigIpMgmtSubnetId'
-        numExternalPublicIpAddresses: !Ref 'numExternalPublicIpAddresses'
+        numExternalPublicIpAddresses: !If [1nicPrivate, 0, !Ref 'numExternalPublicIpAddresses']
         numSecondaryPrivateIpAddresses: !Ref 'numSecondaryPrivateIpAddresses'
         secretArn: !If [useSecret, !If [createSecret, !GetAtt [Access, Outputs.secretArn],
             !Ref 'bigIpSecretArn'], !Ref 'AWS::NoValue']
@@ -1068,7 +1081,7 @@ Resources:
         environment: !Ref 'environment'
         group: !Ref 'group'
         networkBorderGroup: !Ref 'networkBorderGroup'
-        numberPublicExternalIpAddresses: !Ref 'numExternalPublicIpAddresses'
+        numberPublicExternalIpAddresses: !If [1nicPrivate, 0, !Ref 'numExternalPublicIpAddresses']
         numberPublicMgmtIpAddresses: !If [noPublicIp, 0, 1]
         restrictedSrcAddressApp: !Ref 'restrictedSrcAddressApp'
         restrictedSrcAddressMgmt: !Ref 'restrictedSrcAddressMgmt'
