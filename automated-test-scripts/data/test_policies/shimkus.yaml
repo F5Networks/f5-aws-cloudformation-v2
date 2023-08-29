@@ -60,7 +60,7 @@ aws-failover-byol-existing-test:
 aws-failover-payg-existing-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/failover/payg_byol/daily_test_existing.yaml"
   run: "random"
-  random-num-of-tests: 1
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/existing/demo.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/existing/demo_app.yaml"
@@ -82,7 +82,7 @@ aws-failover-byol-example-test:
 aws-failover-payg-example-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/failover/payg_byol/daily_test_full.yaml"
   run: "random"
-  random-num-of-tests: 1
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/full/demo.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/failover/payg/full/demo_app.yaml"
@@ -99,8 +99,7 @@ aws-quickstart-byol-example-test:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/full/demo_app_1nic.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/full/demo_app_2nic.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/full/demo_app_3nic.yaml"
-    # excluding 1nic prod app tests until EC-129 is resolved
-    # - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/full/prod_app_1nic.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/full/prod_app_1nic.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/full/prod_app_2nic.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/full/prod_app_3nic.yaml"
 
@@ -108,12 +107,12 @@ aws-quickstart-byol-example-test:
 aws-quickstart-payg-example-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/daily_test_full.yaml"
   run: "random"
-  random-num-of-tests: 0
+  random-num-of-tests: 3
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/full/demo_app_1nic.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/full/demo_app_2nic.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/full/demo_app_3nic.yaml"
-    # - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/full/prod_app_1nic.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/full/prod_app_1nic.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/full/prod_app_2nic.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/full/prod_app_3nic.yaml"
 
@@ -126,7 +125,7 @@ aws-quickstart-byol-existing-test:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/existing/demo_app_1nic.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/existing/demo_app_2nic.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/existing/demo_app_3nic.yaml"
-    # - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/existing/prod_app_1nic.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/existing/prod_app_1nic.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/existing/prod_app_2nic.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/byol/existing/prod_app_3nic.yaml"
 
@@ -134,12 +133,12 @@ aws-quickstart-byol-existing-test:
 aws-quickstart-payg-existing-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/daily_test_existing.yaml"
   run: "random"
-  random-num-of-tests: 0
+  random-num-of-tests: 3
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/existing/demo_app_1nic.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/existing/demo_app_2nic.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/existing/demo_app_3nic.yaml"
-    # - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/existing/prod_app_1nic.yaml"
+    - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/existing/prod_app_1nic.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/existing/prod_app_2nic.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/existing/prod_app_3nic.yaml"
 

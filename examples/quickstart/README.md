@@ -193,6 +193,7 @@ By default, this solution creates a single Availability Zone VPC with four subne
 | bigIpManagementUrl443 | Dag Module | string | URL to public management address |
 | bigIpManagementUrl8443 | Dag Module | string | URL to public management address |
 | bigIpSecretArn | Secrets Manager secret | string | Secret ARN. |
+| vipPrivateUrl | Dag Module | string | URL to private application address (when deploying 1NIC instance without a public management IP address) |
 | vipPublicUrl | Dag Module | string | URL to public application address |
 
 
@@ -256,6 +257,7 @@ By default, this solution creates a single Availability Zone VPC with four subne
 | bigIpManagementUrl443 | Dag Module | string | URL to public management address |
 | bigIpManagementUrl8443 | Dag Module | string | URL to public management address |
 | bigIpSecretArn | Secrets Manager secret | string | Secret ARN. |
+| vipPrivateUrl | Dag Module | string | URL to private application address (when deploying 1NIC instance without a public management IP address) |
 | vipPublicUrl | Dag Module | string | URL to public application address |
 
 
@@ -584,13 +586,18 @@ To test the WAF service, perform the following steps:
 1. Obtain the address of the WAF service:
   - **Console**: Navigate to **CloudFormation > *STACK_NAME* > Outputs > *vip1PublicUrl***. 
   - **AWS CLI**: 
-      ```bash 
-      aws --region ${REGION}  cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='vip1PublicUrl'].OutputValue" --output text
-      ```
+    - 3-NIC (default): 
+        ```bash
+        aws --region ${REGION}  cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='vip1PublicUrl'].OutputValue" --output text
+        ```
+    - 1-NIC (when **provisionPublicIP** = **false**): 
+        ```bash
+        aws --region ${REGION}  cloudformation describe-stacks --stack-name ${STACK_NAME} --query  "Stacks[0].Outputs[?OutputKey=='vip1PrivateUrl'].OutputValue" --output text
 
 2. Verify the application is responding:
   - Paste the IP address in a browser: ```https://${IP_ADDRESS_FROM_OUTPUT}```
       - *NOTE: By default, the Virtual Service starts with a self-signed cert. Follow your browsers instructions for accepting self-signed certs (for example, if using Chrome, click inside the page and type this "thisisunsafe". If using Firefox, click "Advanced" button, click "Accept Risk and Continue", etc.).*
+      - *NOTE: You must connect to the application IP address from a bastion host when **numNics** = **1** and  **provisionPublicIP** = **false**.*
   - Use curl: 
       ```shell
        curl -sko /dev/null -w '%{response_code}\n' https://${IP_ADDRESS_FROM_OUTPUT}
