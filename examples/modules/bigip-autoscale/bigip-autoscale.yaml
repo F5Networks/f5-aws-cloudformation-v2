@@ -435,6 +435,9 @@ Resources:
             TopicARN: !Ref 'bigIqLicenseRevokeSnsTopic'
           - !Ref 'AWS::NoValue'
       Tags:
+        - Key: application
+          PropagateAtLaunch: true
+          Value: !Ref application
         - Key: cloudWatchLogGroup
           PropagateAtLaunch: true
           Value: !Ref 'cloudWatchLogGroupName'

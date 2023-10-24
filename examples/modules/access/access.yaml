@@ -351,6 +351,8 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-copy-zips-role'
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -417,6 +419,8 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-lambda-access-role'
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -465,6 +469,8 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-lambda-ami-execution-role'
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -498,6 +504,8 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-bigiq-notification-role'
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -578,6 +586,8 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-bigip-standard-access-role'
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -676,6 +686,8 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-bigip-secret-access-role'
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -776,6 +788,8 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-bigip-s3-access-role'
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -891,6 +905,8 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-bigip-secret-s3-access-role'
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -1063,6 +1079,8 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-bigip-high-availability-access-role'
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment

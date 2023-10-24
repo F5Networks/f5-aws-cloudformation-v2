@@ -164,6 +164,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Ref s3BucketName
+        - Key: application
+          Value: !Ref application
         - Key: cost
           Value: !Ref cost
         - Key: environment
@@ -180,6 +182,8 @@ Resources:
       Tags:
         - Key: Name
           Value: !Ref cloudWatchLogGroupName
+        - Key: application
+          Value: !Ref application
         - Key: cost
           Value: !Ref cost
         - Key: environment
