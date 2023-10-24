@@ -945,16 +945,17 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        application: !Ref 'application'
-        cost: !Ref 'cost'
-        environment: !Ref 'environment'
-        group: !Ref 'group'
         createBigIpRoles: !If [useSecret, 'true', 'false']
         createSecret: !If [createSecret, 'true', 'false']
         createSshKey: !If [createKeyPair, 'true', 'false']
         secretArn: !If [useSecretArn, !Ref 'bigIpSecretArn', !Ref 'AWS::NoValue']
         solutionType: !If [useSecret, 'secret', 'standard']
         uniqueString: !Ref 'uniqueString'
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   Application:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -964,12 +965,8 @@ Resources:
           S3Bucket: !Ref 's3BucketName'
       Parameters:
         appContainerName: !Ref 'appContainerName'
-        application: !Ref 'application'
         applicationSubnet: !Select [3, !Split [',', !GetAtt [Network, Outputs.subnetsA]]]
         appSecurityGroupId: !GetAtt [Dag, Outputs.appSecurityGroupId]
-        cost: !Ref 'cost'
-        environment: !Ref 'environment'
-        group: !Ref 'group'
         restrictedSrcAddress: !Ref 'restrictedSrcAddressApp'
         sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
         staticIp: "10.0.3.4"
@@ -977,6 +974,11 @@ Resources:
         vpc: !GetAtt
           - Network
           - Outputs.vpcId
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   Bastion:
     Type: 'AWS::CloudFormation::Stack'
     Condition: noPublicIp
@@ -986,7 +988,6 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        application: !Ref 'application'
         mgmtSubnet: !Join
           - ','
           - - !Select
@@ -999,16 +1000,18 @@ Resources:
         bastionSecurityGroupId: !GetAtt
           - Dag
           - Outputs.bastionSecurityGroupId
-        cost: !Ref 'cost'
         createAutoscaleGroup: 'false'
-        environment: !Ref 'environment'
-        group: !Ref 'group'
         sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
         restrictedSrcAddress: !Ref 'restrictedSrcAddressMgmt'
         uniqueString: !Ref 'uniqueString'
         vpc: !GetAtt
           - Network
           - Outputs.vpcId
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   BigipStandalone:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -1052,6 +1055,11 @@ Resources:
             !Ref 'bigIpSecretArn'], !Ref 'AWS::NoValue']
         sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
         uniqueString: !Ref 'uniqueString'
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   Dag:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -1060,14 +1068,10 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        application: !Ref 'application'
-        cost: !Ref 'cost'
         createAppSecurityGroup: 'true'
         createBastionSecurityGroup: !If [noPublicIp, 'true', 'false']
         createExternalSecurityGroup: !If [2nic, 'true', 'false']
         createInternalSecurityGroup: !If [3nic, 'true', 'false']
-        environment: !Ref 'environment'
-        group: !Ref 'group'
         numberPublicExternalIpAddresses: !If [1nicPrivate, 0, 2]
         numberPublicMgmtIpAddresses: !If [noPublicIp, 0, 1]
         restrictedSrcAddressApp: !Ref 'restrictedSrcAddressApp'
@@ -1078,6 +1082,11 @@ Resources:
         vpc: !GetAtt
           - Network
           - Outputs.vpcId
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   Network:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -1086,12 +1095,14 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        cost: !Ref 'cost'
-        environment: !Ref 'environment'
-        group: !Ref 'group'
         numAzs: !Ref 'numAzs'
         numSubnets: !Ref 'numSubnets'
         setPublicSubnet1: !Ref 'provisionPublicIp'
         subnetMask: 24
         uniqueString: !Ref 'uniqueString'
         vpcCidr: 10.0.0.0/16
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'

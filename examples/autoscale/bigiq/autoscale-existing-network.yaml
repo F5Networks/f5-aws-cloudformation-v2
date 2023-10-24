@@ -628,7 +628,6 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        application: !Ref 'application'
         bigIqSecretArn: !Ref 'bigIqSecretArn'
         cloudWatchLogGroup: !If
           - createLogDestination
@@ -636,14 +635,11 @@ Resources:
             - Telemetry
             - Outputs.cloudWatchLogGroup
           - !Ref 'AWS::NoValue'
-        cost: !Ref 'cost'
         createAmiRole: 'true'
         createBigIpRoles: !If [createBigIpInstanceProfile, 'true', 'false']
         createBigIqRoles: 'true'
         createSecret: 'false'
         createSshKey: !If [createKeyPair, 'true', 'false']
-        environment: !Ref 'environment'
-        group: !Ref 'group'
         metricNameSpace: !If [customNameSpace, !Ref 'metricNameSpace', 'f5-scaling-metrics']
         s3Bucket: !If
           - createLoggingS3Bucket
@@ -657,6 +653,11 @@ Resources:
         secretArn: !If [useSecretArn, !Ref 'bigIpSecretArn', !Ref 'AWS::NoValue']
         solutionType: !If [useLoggingS3Bucket, secretS3, secret]
         uniqueString: !Ref 'uniqueString'
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   AmiInfo:
     Type: 'Custom::AMIInfo'
     Properties:
@@ -673,7 +674,6 @@ Resources:
           S3Bucket: !Ref 's3BucketName'
       Parameters:
         allowUsageAnalytics: !Ref 'allowUsageAnalytics'
-        application: !Ref 'application'
         bigIpExternalSecurityGroup: !GetAtt
           - Dag
           - Outputs.bigIpMgmtSecurityGroup
@@ -692,12 +692,10 @@ Resources:
           - Access
           - Outputs.bigIqNotificationRole
         bigIqSecretArn: !Ref 'bigIqSecretArn'
-        cost: !Ref 'cost'
         cloudWatchLogGroupName: !If [customLogGroup, !Ref 'cloudWatchLogGroupName',
           'f5telemetry']
         cloudWatchLogStreamName: !If [customLogStream, !Ref 'cloudWatchLogStreamName',
           'f5-waf-logs']
-        environment: !Ref 'environment'
         externalTargetGroupHttp: !If
           - externalLB
           - !GetAtt
@@ -710,7 +708,6 @@ Resources:
             - Dag
             - Outputs.externalTargetGroupHttps
           - !Ref 'AWS::NoValue'
-        group: !Ref 'group'
         imageId: !If
           - noCustomImageId
           - !GetAtt
@@ -751,6 +748,11 @@ Resources:
           - - !Ref 'bigIpSubnetAz1'
             - !Ref 'bigIpSubnetAz2'
         uniqueString: !Ref 'uniqueString'
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   Dag:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -759,16 +761,12 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        application: !Ref 'application'
-        cost: !Ref 'cost'
         createAppSecurityGroup: 'true'
         createBastionSecurityGroup: !If [noPublicIp, 'true', 'false']
         createExternalSecurityGroup: 'false'
         createInternalSecurityGroup: 'false'
-        environment: !Ref 'environment'
         externalSubnetAz1: !If [externalLB, !Ref 'externalSubnetAz1', !Ref 'AWS::NoValue']
         externalSubnetAz2: !If [externalLB, !Ref 'externalSubnetAz2', !Ref 'AWS::NoValue']
-        group: !Ref 'group'
         internalSubnetAz1: !If [internalLB, !Ref 'internalSubnetAz1', !Ref 'AWS::NoValue']
         internalSubnetAz2: !If [internalLB, !Ref 'internalSubnetAz2', !Ref 'AWS::NoValue']
         numberPublicMgmtIpAddresses: 0
@@ -780,6 +778,11 @@ Resources:
         uniqueString: !Ref 'uniqueString'
         vpc: !Ref 'vpcId'
         vpcCidr: !Ref 'vpcCidr'
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   Function:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -799,17 +802,19 @@ Resources:
         copyZipsRole: !GetAtt
           - Access
           - Outputs.copyZipsRole
-        cost: !Ref 'cost'
         createAmiLookupFunction: 'true'
         createRevokeFunction: 'true'
-        environment: !Ref 'environment'
-        group: !Ref 'group'
         lambdaAccessRole: !GetAtt
           - Access
           - Outputs.lambdaAccessRole
         lambdaS3BucketName: !Ref 'lambdaS3BucketName'
         lambdaS3Key: !Ref 'lambdaS3Key'
         uniqueString: !Ref 'uniqueString'
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   Telemetry:
     Type: 'AWS::CloudFormation::Stack'
     Condition: createLogDestination
@@ -819,11 +824,6 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        application: !Ref 'application'
-        cost: !Ref 'cost'
-        environment: !Ref 'environment'
-        group: !Ref 'group'
-        owner: !Ref 'owner'
         cloudWatchLogGroupName: !If [customLogGroup, !Ref 'cloudWatchLogGroupName',
           'f5telemetry']
         cloudWatchLogStreamName: !If [customLogStream, !Ref 'cloudWatchLogStreamName',
@@ -836,3 +836,8 @@ Resources:
         createS3Bucket: !If [createLoggingS3Bucket, 'true', 'false']
         metricNameSpace: !If [customNameSpace, !Ref 'metricNameSpace', 'f5-scaling-metrics']
         s3BucketName: !If [createLoggingS3Bucket, !Ref 'loggingS3BucketName', !Ref 'AWS::NoValue']
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'

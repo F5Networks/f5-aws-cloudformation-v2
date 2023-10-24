@@ -597,6 +597,8 @@ Resources:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: 'AES256'
       Tags:
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref 'cost'
         - Key: environment
@@ -625,6 +627,8 @@ Resources:
           - !Ref 'AWS::NoValue'
       SubnetId: !Ref 'internalSubnetId'
       Tags:
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref 'cost'
         - Key: environment
@@ -662,6 +666,8 @@ Resources:
         - !Ref 'mgmtSecurityGroupId'
       SubnetId: !Ref 'mgmtSubnetId'
       Tags:
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref 'cost'
         - Key: environment
@@ -686,6 +692,8 @@ Resources:
         - !Ref 'externalSecurityGroupId'
       SubnetId: !Ref 'externalSubnetId'
       Tags:
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref 'cost'
         - Key: environment
@@ -723,6 +731,8 @@ Resources:
       PrivateIpAddress: !Ref 'internalSelfIp'
       SubnetId: !Ref 'internalSubnetId'
       Tags:
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref 'cost'
         - Key: environment
@@ -803,6 +813,8 @@ Resources:
         - !Ref 'AWS::NoValue'
       SubnetId: !Ref 'mgmtSubnetId'
       Tags:
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref 'cost'
         - Key: environment
@@ -867,6 +879,8 @@ Resources:
               - - !Ref 'AWS::NoValue'
       SubnetId: !Ref 'externalSubnetId'
       Tags:
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref 'cost'
         - Key: environment
@@ -1127,6 +1141,8 @@ Resources:
             - !Ref 'BigipInternalInterface'
             - !Ref 'BigipStaticInternalInterface'
       Tags:
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref 'cost'
         - Key: environment
@@ -1383,6 +1399,8 @@ Resources:
             - !Ref 'BigipExternalInterface'
             - !Ref 'BigipStaticExternalInterface'
       Tags:
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref 'cost'
         - Key: environment
@@ -1633,6 +1651,8 @@ Resources:
             - !Ref 'BigipManagementInterface'
             - !Ref 'BigipStaticManagementInterface'
       Tags:
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref 'cost'
         - Key: environment

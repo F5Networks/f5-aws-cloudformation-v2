@@ -1012,16 +1012,17 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        application: !Ref 'application'
-        cost: !Ref 'cost'
-        environment: !Ref 'environment'
-        group: !Ref 'group'
         createBigIpRoles: !If [useSecret, 'true', 'false']
         createSecret: !If [createSecret, 'true', 'false']
         createSshKey: !If [createKeyPair, 'true', 'false']
         secretArn: !If [useSecretArn, !Ref 'bigIpSecretArn', !Ref 'AWS::NoValue']
         solutionType: !If [useSecret, 'secret', 'standard']
         uniqueString: !Ref 'uniqueString'
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   BigipStandalone:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -1064,6 +1065,11 @@ Resources:
             !Ref 'bigIpSecretArn'], !Ref 'AWS::NoValue']
         sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
         uniqueString: !Ref 'uniqueString'
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   Dag:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -1072,14 +1078,10 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        application: !Ref 'application'
-        cost: !Ref 'cost'
         createAppSecurityGroup: 'true'
         createBastionSecurityGroup: !If [noPublicIp, 'true', 'false']
         createExternalSecurityGroup: !If [2nic, 'true', 'false']
         createInternalSecurityGroup: !If [3nic, 'true', 'false']
-        environment: !Ref 'environment'
-        group: !Ref 'group'
         networkBorderGroup: !Ref 'networkBorderGroup'
         numberPublicExternalIpAddresses: !If [1nicPrivate, 0, !Ref 'numExternalPublicIpAddresses']
         numberPublicMgmtIpAddresses: !If [noPublicIp, 0, 1]
@@ -1089,3 +1091,8 @@ Resources:
         uniqueString: !Ref 'uniqueString'
         vpcCidr: !Ref 'vpcCidr'
         vpc: !Ref 'vpcId'
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'

@@ -595,11 +595,7 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        application: !Ref 'application'
         cfeTag: !Ref 'cfeTag'
-        cost: !Ref 'cost'
-        environment: !Ref 'environment'
-        group: !Ref 'group'
         createAmiRole: 'true'
         createBigIpRoles: !If [createBigIpInstanceProfile, 'true', 'false']
         createSecret: !If [createSecret, 'true', 'false']
@@ -614,6 +610,11 @@ Resources:
         secretArn: !If [createSecret, !Ref 'AWS::NoValue', !Ref 'bigIpSecretArn']
         solutionType: failover
         uniqueString: !Ref 'uniqueString'
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   AmiInfo:
     Type: 'Custom::AMIInfo'
     Condition: noCustomImageId
@@ -681,6 +682,11 @@ Resources:
         secretArn: !If [createSecret, !GetAtt [Access, Outputs.secretArn], !Ref 'bigIpSecretArn']
         sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
         uniqueString: !Ref 'uniqueString'
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   BigIpInstance02:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -732,6 +738,11 @@ Resources:
         secretArn: !If [createSecret, !GetAtt [Access, Outputs.secretArn], !Ref 'bigIpSecretArn']
         sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
         uniqueString: !Ref 'uniqueString'
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   Dag:
     Type: AWS::CloudFormation::Stack
     Properties:
@@ -740,8 +751,6 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        application: !Ref 'application'
-        cost: !Ref 'cost'
         createAppSecurityGroup: true
         createFailoverIngress: true
         createInternalSecurityGroup: !If [3nic, 'true', 'false']
@@ -749,8 +758,6 @@ Resources:
         createBastionSecurityGroup: !If [usePublicIpMgmt, false, true]
         cfeTag: !Ref 'cfeTag'
         cfeVipTag: !Ref 'cfeVipTag'
-        environment: !Ref 'environment'
-        group: !Ref 'group'
         numberPublicExternalIpAddresses: !If [usePublicIpVip, 3, !If [usePublicIpExternal, 2, 0]]
         numberPublicMgmtIpAddresses: !If [usePublicIpMgmt, 2, 0]
         restrictedSrcAddressApp: !Ref 'restrictedSrcAddressApp'
@@ -759,6 +766,11 @@ Resources:
         uniqueString: !Ref 'uniqueString'
         vpc: !Ref 'vpcId'
         vpcCidr: !Ref 'vpcCidr'
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   Function:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -772,3 +784,8 @@ Resources:
           - Outputs.lambdaAmiExecutionRole
         createAmiLookupFunction: 'true'
         uniqueString: !Ref 'uniqueString'
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'

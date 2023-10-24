@@ -316,11 +316,14 @@ Metadata:
           default: Resources Tags
         Parameters:
           - uniqueString
+          - application
           - cost
           - environment
           - group
           - owner
     ParameterLabels:
+      application:
+        default: application tag
       cost:
         default: cost tag
       environment:
@@ -442,6 +445,10 @@ Outputs:
     Export:
       Name: !Sub '${AWS::StackName}-privateSubnetRouteIdD'
 Parameters:
+  application:
+    Default: f5app
+    Description: Application Tag.
+    Type: String
   cost:
     Default: f5cost
     Description: Cost Center Tag.
@@ -517,6 +524,8 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-vpc'
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -543,6 +552,8 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-dhcp-options'
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -570,6 +581,8 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-ig'
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -649,6 +662,8 @@ Resources:
               - '-subnet-0A'
         - Key: Network
           Value: Public
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -728,6 +743,8 @@ Resources:
             - subnet1PrivateA
             - Private
             - Public
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -804,6 +821,8 @@ Resources:
               - '-subnet-2A'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -879,6 +898,8 @@ Resources:
               - '-subnet-3A'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -954,6 +975,8 @@ Resources:
               - '-subnet-4A'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -1029,6 +1052,8 @@ Resources:
               - '-subnet-5A'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -1104,6 +1129,8 @@ Resources:
               - '-subnet-6A'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -1179,6 +1206,8 @@ Resources:
               - '-subnet-7A'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -1254,6 +1283,8 @@ Resources:
               - '-subnet-0B'
         - Key: Network
           Value: Public
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -1333,6 +1364,8 @@ Resources:
             - subnet1PrivateB
             - Private
             - Public
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -1409,6 +1442,8 @@ Resources:
               - '-subnet-2B'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -1484,6 +1519,8 @@ Resources:
               - '-subnet-3B'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -1559,6 +1596,8 @@ Resources:
               - '-subnet-4B'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -1634,6 +1673,8 @@ Resources:
               - '-subnet-5B'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -1709,6 +1750,8 @@ Resources:
               - '-subnet-6B'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -1784,6 +1827,8 @@ Resources:
               - '-subnet-7B'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -1859,6 +1904,8 @@ Resources:
               - '-subnet-0C'
         - Key: Network
           Value: Public
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -1938,6 +1985,8 @@ Resources:
             - subnet1PrivateC
             - Private
             - Public
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -2014,6 +2063,8 @@ Resources:
               - '-subnet-2C'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -2089,6 +2140,8 @@ Resources:
               - '-subnet-3C'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -2164,6 +2217,8 @@ Resources:
               - '-subnet-4C'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -2239,6 +2294,8 @@ Resources:
               - '-subnet-5C'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -2314,6 +2371,8 @@ Resources:
               - '-subnet-6C'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -2389,6 +2448,8 @@ Resources:
               - '-subnet-7C'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -2464,6 +2525,8 @@ Resources:
               - '-subnet-0D'
         - Key: Network
           Value: Public
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -2543,6 +2606,8 @@ Resources:
             - subnet1PrivateD
             - Private
             - Public
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -2619,6 +2684,8 @@ Resources:
               - '-subnet-2D'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -2695,6 +2762,8 @@ Resources:
               - '-subnet-3D'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -2770,6 +2839,8 @@ Resources:
               - '-subnet-4D'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -2845,6 +2916,8 @@ Resources:
               - '-subnet-5D'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -2920,6 +2993,8 @@ Resources:
               - '-subnet-6D'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -2995,6 +3070,8 @@ Resources:
               - '-subnet-7D'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3015,6 +3092,8 @@ Resources:
               - '-public-rt'
         - Key: Network
           Value: Public
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3066,6 +3145,8 @@ Resources:
               - '-private-rt-A'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3094,6 +3175,8 @@ Resources:
               - '-private-nacl-A'
         - Key: Network
           Value: NACL Protected
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3197,6 +3280,8 @@ Resources:
               - '-private-rt-B'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3225,6 +3310,8 @@ Resources:
               - '-private-nacl-B'
         - Key: Network
           Value: NACL Protected
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3328,6 +3415,8 @@ Resources:
               - '-private-rt-C'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3356,6 +3445,8 @@ Resources:
               - '-private-nacl-C'
         - Key: Network
           Value: NACL Protected
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3459,6 +3550,8 @@ Resources:
               - '-private-rt-D'
         - Key: Network
           Value: Private
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3487,6 +3580,8 @@ Resources:
               - '-private-nacl-D'
         - Key: Network
           Value: NACL Protected
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3769,6 +3864,8 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-nat-eip-A'
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3789,6 +3886,8 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-nat-eip-B'
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3809,6 +3908,8 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-nat-eip-C'
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3829,6 +3930,8 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-nat-eip-D'
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3852,6 +3955,8 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-nat-gw-A'
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3875,6 +3980,8 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-nat-gw-B'
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3898,6 +4005,8 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-nat-gw-C'
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -3921,6 +4030,8 @@ Resources:
             - ''
             - - !Ref uniqueString
               - '-nat-gw-D'
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
