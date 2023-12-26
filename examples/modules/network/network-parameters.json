@@ -1,5 +1,9 @@
 [
   {
+    "ParameterKey": "application",
+    "ParameterValue": "f5app"
+  },
+  {
     "ParameterKey": "cost",
     "ParameterValue": "f5cost"
   },

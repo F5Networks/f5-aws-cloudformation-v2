@@ -323,7 +323,7 @@ Metadata:
         default: EC2 KeyPair
       uniqueString:
         default: Unique string
-  Version: 3.1.0.0
+  Version: 3.2.0.0
 Outputs:
   stackName:
     Description: BIG-IP nested stack name
@@ -417,7 +417,7 @@ Parameters:
       file in YAML or JSON format to use for f5-bigip-runtime-init configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.2/dist/f5-bigip-runtime-init-1.6.2-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v2.0.1/dist/f5-bigip-runtime-init-2.0.1-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   cfeS3Bucket:
@@ -597,6 +597,8 @@ Resources:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: 'AES256'
       Tags:
+        - Key: application
+          Value: !Ref 'application'
         - Key: costcenter
           Value: !Ref 'cost'
         - Key: environment
@@ -625,6 +627,8 @@ Resources:
           - !Ref 'AWS::NoValue'
       SubnetId: !Ref 'internalSubnetId'
       Tags:
+        - Key: application
+          Value: !Ref 'application'
         - Key: costcenter
           Value: !Ref 'cost'
         - Key: environment
@@ -662,6 +666,8 @@ Resources:
         - !Ref 'mgmtSecurityGroupId'
       SubnetId: !Ref 'mgmtSubnetId'
       Tags:
+        - Key: application
+          Value: !Ref 'application'
         - Key: costcenter
           Value: !Ref 'cost'
         - Key: environment
@@ -686,6 +692,8 @@ Resources:
         - !Ref 'externalSecurityGroupId'
       SubnetId: !Ref 'externalSubnetId'
       Tags:
+        - Key: application
+          Value: !Ref 'application'
         - Key: costcenter
           Value: !Ref 'cost'
         - Key: environment
@@ -723,6 +731,8 @@ Resources:
       PrivateIpAddress: !Ref 'internalSelfIp'
       SubnetId: !Ref 'internalSubnetId'
       Tags:
+        - Key: application
+          Value: !Ref 'application'
         - Key: costcenter
           Value: !Ref 'cost'
         - Key: environment
@@ -803,6 +813,8 @@ Resources:
         - !Ref 'AWS::NoValue'
       SubnetId: !Ref 'mgmtSubnetId'
       Tags:
+        - Key: application
+          Value: !Ref 'application'
         - Key: costcenter
           Value: !Ref 'cost'
         - Key: environment
@@ -867,6 +879,8 @@ Resources:
               - - !Ref 'AWS::NoValue'
       SubnetId: !Ref 'externalSubnetId'
       Tags:
+        - Key: application
+          Value: !Ref 'application'
         - Key: costcenter
           Value: !Ref 'cost'
         - Key: environment
@@ -1127,6 +1141,8 @@ Resources:
             - !Ref 'BigipInternalInterface'
             - !Ref 'BigipStaticInternalInterface'
       Tags:
+        - Key: application
+          Value: !Ref 'application'
         - Key: costcenter
           Value: !Ref 'cost'
         - Key: environment
@@ -1323,7 +1339,7 @@ Resources:
             - |
               # Run
             - |
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v3.1.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v3.2.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
             - |2+
 
             - |
@@ -1383,6 +1399,8 @@ Resources:
             - !Ref 'BigipExternalInterface'
             - !Ref 'BigipStaticExternalInterface'
       Tags:
+        - Key: application
+          Value: !Ref 'application'
         - Key: costcenter
           Value: !Ref 'cost'
         - Key: environment
@@ -1579,7 +1597,7 @@ Resources:
             - |
               # Run
             - |
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v3.1.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v3.2.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
             - |2+
 
             - |
@@ -1633,6 +1651,8 @@ Resources:
             - !Ref 'BigipManagementInterface'
             - !Ref 'BigipStaticManagementInterface'
       Tags:
+        - Key: application
+          Value: !Ref 'application'
         - Key: costcenter
           Value: !Ref 'cost'
         - Key: environment
@@ -1829,7 +1849,7 @@ Resources:
             - |
               # Run
             - |
-              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v3.1.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
+              bash "/var/config/rest/downloads/${PACKAGE_URL##*/}" -- '--cloud aws --telemetry-params templateName:v3.2.0.0/examples/modules/bigip-standalone/bigip-standalone.yaml'
             - |2+
 
             - |

@@ -49,7 +49,7 @@ Metadata:
         default: Owner
       uniqueString:
         default: Unique string
-  Version: 3.1.0.0
+  Version: 3.2.0.0
 Outputs:
   stackName:
     Description: function nested stack name
@@ -233,6 +233,8 @@ Resources:
       Runtime: python3.7
       Timeout: 30
       Tags:
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -256,6 +258,8 @@ Resources:
         - - !Ref uniqueString
           - '-lambda-zips-bucket'
       Tags:
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -341,6 +345,8 @@ Resources:
                   timer.cancel()
                   cfnresponse.send(event, context, status, {}, None)
       Tags:
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -374,6 +380,8 @@ Resources:
         - v1.2.0/lambda_bigiq_revoke.zip
         - v1.2.0/layer.zip
       Tags:
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -463,6 +471,8 @@ Resources:
             - !Ref 'AWS::NoValue'
             - !Ref bigIqSubnetId
       Tags:
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -492,6 +502,8 @@ Resources:
       region: !Ref 'AWS::Region'
       bucketName: !Ref LambdaZipsBucket
       Tags:
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -571,6 +583,8 @@ Resources:
       Runtime: python3.7
       Timeout: 300
       Tags:
+        - Key: application
+          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment

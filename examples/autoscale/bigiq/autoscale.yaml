@@ -219,7 +219,7 @@ Metadata:
         default: Unique string
       vpcCidr:
         default: VPC CIDR
-  Version: 3.1.0.0
+  Version: 3.2.0.0
 Outputs:
   wafExternalDnsName:
     Condition: externalLB
@@ -307,7 +307,7 @@ Parameters:
     AllowedPattern: ^.*[0-9a-zA-Z]+/$
     ConstraintDescription: key prefix can include numbers, lowercase letters, uppercase
       letters, hyphens (-), and forward slash (/).
-    Default: f5-aws-cloudformation-v2/v3.1.0.0/examples/
+    Default: f5-aws-cloudformation-v2/v3.2.0.0/examples/
     Description: The path in the S3Bucket where the modules folder is located. Can
       include numbers, lowercase letters, uppercase letters, hyphens (-), and forward
       slash (/).
@@ -335,7 +335,7 @@ Parameters:
     Type: String
   bigIpImage:
     ConstraintDescription: Must be a valid F5 BIG-IP market place image
-    Default: '*16.1.3.3-0.0.3**BYOL-All Modules 2Boot*'
+    Default: '*17.1.1-0.2.6**BYOL-All Modules 2Boot*'
     Description: F5 BIG-IP market place image
     Type: String
   bigIpInstanceProfile:
@@ -370,12 +370,12 @@ Parameters:
     MinValue: 0
     Type: Number
   bigIpRuntimeInitConfig:
-    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.1.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml'
+    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.2.0.0/examples/autoscale/bigip-configurations/runtime-init-conf-bigiq-with-app.yaml'
     Description: 'REQUIRED - Supply a URL to the bigip-runtime-init configuration
       file in YAML or JSON format to use for f5-bigip-runtime-init configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.2/dist/f5-bigip-runtime-init-1.6.2-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v2.0.1/dist/f5-bigip-runtime-init-2.0.1-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   bigIpScaleInCpuThreshold:
@@ -673,7 +673,6 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        application: !Ref 'application'
         bigIqSecretArn: !Ref 'bigIqSecretArn'
         cloudWatchLogGroup: !If
           - createLogDestination
@@ -681,14 +680,11 @@ Resources:
             - Telemetry
             - Outputs.cloudWatchLogGroup
           - !Ref 'AWS::NoValue'
-        cost: !Ref 'cost'
         createAmiRole: 'true'
         createBigIpRoles: !If [createBigIpInstanceProfile, 'true', 'false']
         createBigIqRoles: 'true'
         createSecret: 'false'
         createSshKey: !If [createKeyPair, 'true', 'false']
-        environment: !Ref 'environment'
-        group: !Ref 'group'
         metricNameSpace: !If [customNameSpace, !Ref 'metricNameSpace', 'f5-scaling-metrics']
         s3Bucket: !If
           - createLoggingS3Bucket
@@ -702,6 +698,11 @@ Resources:
         secretArn: !If [useSecretArn, !Ref 'bigIpSecretArn', !Ref 'AWS::NoValue']
         solutionType: !If [useLoggingS3Bucket, secretS3, secret]
         uniqueString: !Ref 'uniqueString'
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   AmiInfo:
     Type: 'Custom::AMIInfo'
     Properties:
@@ -718,7 +719,6 @@ Resources:
           S3Bucket: !Ref 's3BucketName'
       Parameters:
         appContainerName: !Ref 'appContainerName'
-        application: !Ref 'application'
         applicationSubnet: !Join
           - ','
           - - !Select
@@ -745,10 +745,7 @@ Resources:
                   - Network
                   - Outputs.subnetsB
         appSecurityGroupId: !GetAtt [Dag, Outputs.appSecurityGroupId]
-        cost: !Ref 'cost'
         createAutoscaleGroup: 'true'
-        environment: !Ref 'environment'
-        group: !Ref 'group'
         sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
         restrictedSrcAddress: !Ref 'restrictedSrcAddressApp'
         scalingMinSize: !Ref 'appScalingMinSize'
@@ -758,6 +755,11 @@ Resources:
         vpc: !GetAtt
           - Network
           - Outputs.vpcId
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   Bastion:
     Type: 'AWS::CloudFormation::Stack'
     Condition: noPublicIp
@@ -767,7 +769,6 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        application: !Ref 'application'
         mgmtSubnet: !Join
           - ','
           - - !Select
@@ -796,10 +797,7 @@ Resources:
         bastionSecurityGroupId: !GetAtt
           - Dag
           - Outputs.bastionSecurityGroupId
-        cost: !Ref 'cost'
         createAutoscaleGroup: 'true'
-        environment: !Ref 'environment'
-        group: !Ref 'group'
         sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
         restrictedSrcAddress: !Ref 'restrictedSrcAddressMgmt'
         scalingMinSize: !Ref 'bastionScalingMinSize'
@@ -808,6 +806,11 @@ Resources:
         vpc: !GetAtt
           - Network
           - Outputs.vpcId
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   BigipAutoscale:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -817,7 +820,6 @@ Resources:
           S3Bucket: !Ref 's3BucketName'
       Parameters:
         allowUsageAnalytics: !Ref 'allowUsageAnalytics'
-        application: !Ref 'application'
         bigIpExternalSecurityGroup: !GetAtt
           - Dag
           - Outputs.bigIpMgmtSecurityGroup
@@ -840,8 +842,6 @@ Resources:
           'f5telemetry']
         cloudWatchLogStreamName: !If [customLogStream, !Ref 'cloudWatchLogStreamName',
           'f5-waf-logs']
-        cost: !Ref 'cost'
-        environment: !Ref 'environment'
         externalTargetGroupHttp: !If
           - externalLB
           - !GetAtt
@@ -854,7 +854,6 @@ Resources:
             - Dag
             - Outputs.externalTargetGroupHttps
           - !Ref 'AWS::NoValue'
-        group: !Ref 'group'
         imageId: !If
           - noCustomImageId
           - !GetAtt
@@ -907,6 +906,11 @@ Resources:
                   - Network
                   - Outputs.subnetsB
         uniqueString: !Ref 'uniqueString'
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   Dag:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -915,13 +919,10 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        application: !Ref 'application'
-        cost: !Ref 'cost'
         createAppSecurityGroup: 'true'
         createBastionSecurityGroup: !If [noPublicIp, 'true', 'false']
         createExternalSecurityGroup: 'false'
         createInternalSecurityGroup: 'false'
-        environment: !Ref 'environment'
         externalSubnetAz1: !Select
           - '0'
           - !Split
@@ -936,7 +937,6 @@ Resources:
             - !GetAtt
               - Network
               - Outputs.subnetsB
-        group: !Ref 'group'
         internalSubnetAz1: !Select
           - '0'
           - !Split
@@ -962,6 +962,11 @@ Resources:
           - Network
           - Outputs.vpcId
         vpcCidr: !Ref 'vpcCidr'
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   Function:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -981,17 +986,19 @@ Resources:
         copyZipsRole: !GetAtt
           - Access
           - Outputs.copyZipsRole
-        cost: !Ref 'cost'
         createAmiLookupFunction: 'true'
         createRevokeFunction: 'true'
-        environment: !Ref 'environment'
-        group: !Ref 'group'
         lambdaAccessRole: !GetAtt
           - Access
           - Outputs.lambdaAccessRole
         lambdaS3BucketName: !Ref 'lambdaS3BucketName'
         lambdaS3Key: !Ref 'lambdaS3Key'
         uniqueString: !Ref 'uniqueString'
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   Network:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -1000,9 +1007,6 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        cost: !Ref 'cost'
-        environment: !Ref 'environment'
-        group: !Ref 'group'
         numAzs: !Ref 'numAzs'
         numSubnets: !Ref 'numSubnets'
         setPublicSubnet1: !Ref 'provisionPublicIp'
@@ -1010,6 +1014,11 @@ Resources:
         uniqueString: !Ref 'uniqueString'
         vpcCidr: !Ref 'vpcCidr'
         vpcTenancy: default
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   Telemetry:
     Type: 'AWS::CloudFormation::Stack'
     Condition: createLogDestination
@@ -1019,11 +1028,6 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        application: !Ref 'application'
-        cost: !Ref 'cost'
-        environment: !Ref 'environment'
-        group: !Ref 'group'
-        owner: !Ref 'owner'
         cloudWatchLogGroupName: !If [customLogGroup, !Ref 'cloudWatchLogGroupName',
           'f5telemetry']
         cloudWatchLogStreamName: !If [customLogStream, !Ref 'cloudWatchLogStreamName',
@@ -1036,3 +1040,8 @@ Resources:
         createS3Bucket: !If [createLoggingS3Bucket, 'true', 'false']
         metricNameSpace: !If [customNameSpace, !Ref 'metricNameSpace', 'f5-scaling-metrics']
         s3BucketName: !If [createLoggingS3Bucket, !Ref 'loggingS3BucketName', !Ref 'AWS::NoValue']
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
