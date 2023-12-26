@@ -21,6 +21,11 @@ Conditions:
   1nicPublic: !And
     - !Condition '1nic'
     - !Condition 'publicIp'
+  1nicPrivate: !And
+    - !Condition '1nic'
+    - !Condition 'noPublicIp'
+  not1nicPrivate: !Not
+    - !Condition '1nicPrivate'
   noPublicIp: !Equals
     - 'false'
     - !Ref 'provisionPublicIp'
@@ -79,472 +84,472 @@ Mappings:
     10000Mbps:
       Best: Best10000Mbps
   VERSION:
-    16-1-3-3-003:
-      REGIONMAP: TMOS16133003
-    14-1-5-3-005:
-      REGIONMAP: TMOS14153005
-  TMOS16133003:
+    17-1-1-026:
+      REGIONMAP: TMOS1711026
+    16-1-4-1-0535:
+      REGIONMAP: TMOS161440535
+  TMOS1711026:
     af-south-1:
-      AdvancedWaf200Mbps: ami-070f1a1fea1b9777d
-      AdvancedWaf25Mbps: ami-06db47e500e495705
-      AdvancedWaf3000Mbps: ami-0477aa8717a278c8e
-      AllTwoBootLocations: ami-0389d429fd6e6da75
-      Best10000Mbps: ami-0d10a5bb4de5a43e7
-      Best1000Mbps: ami-04d6c340d5a47b5f2
-      Best200Mbps: ami-03332898156d6d3b0
-      Best25Mbps: ami-05439b4f901538378
-      Best5000Mbps: ami-0c52dcc16b5c22660
+      AdvancedWaf200Mbps: ami-0be65a722af2ceeb8
+      AdvancedWaf25Mbps: ami-09883534856120d03
+      AdvancedWaf3000Mbps: ami-024467f34a80213ec
+      AllTwoBootLocations: ami-0c3763e49f0b139e8
+      Best10000Mbps: ami-0e66b79b7d06cd33a
+      Best1000Mbps: ami-0f1ad36742d15e9cc
+      Best200Mbps: ami-059c86b4152df2e6f
+      Best25Mbps: ami-05804ab193c80cbc0
+      Best5000Mbps: ami-0b8ce703da30249d4
     ap-east-1:
-      AdvancedWaf200Mbps: ami-0d4cc05bba9442811
-      AdvancedWaf25Mbps: ami-0b312d2819df85a34
-      AdvancedWaf3000Mbps: ami-01b818c49f9d77718
-      AllTwoBootLocations: ami-0dced9cb298df2fc5
-      Best10000Mbps: ami-086a73a18a9c27ba8
-      Best1000Mbps: ami-0b0e119f85a21c08a
-      Best200Mbps: ami-03d3a875f6a6033dd
-      Best25Mbps: ami-0edf345aa33e6ed99
-      Best5000Mbps: ami-02515a02ea2fe623a
+      AdvancedWaf200Mbps: ami-010163be5114afe3a
+      AdvancedWaf25Mbps: ami-0a0e986b1bd65e6f0
+      AdvancedWaf3000Mbps: ami-00b70bcab088b471a
+      AllTwoBootLocations: ami-001ee6e05d83e3e51
+      Best10000Mbps: ami-045826308c707a9db
+      Best1000Mbps: ami-0bd8d7c1c65439429
+      Best200Mbps: ami-098371051fc9f898b
+      Best25Mbps: ami-09d49dcf3cb0c5880
+      Best5000Mbps: ami-0bd5e0afae9fb4c64
     ap-northeast-1:
-      AdvancedWaf200Mbps: ami-0712dc07e69253d2e
-      AdvancedWaf25Mbps: ami-003710c8f57fadc37
-      AdvancedWaf3000Mbps: ami-0d22d4b8d570e48fd
-      AllTwoBootLocations: ami-0b997255a8403f24e
-      Best10000Mbps: ami-06abd15e279ded339
-      Best1000Mbps: ami-043c399b6eaf097c2
-      Best200Mbps: ami-0d418e2f7b1f5451c
-      Best25Mbps: ami-0a513498a5f6c72eb
-      Best5000Mbps: ami-001715861ae73c66a
+      AdvancedWaf200Mbps: ami-0fcf23eaf5d399dd8
+      AdvancedWaf25Mbps: ami-0c47d493c39ed3760
+      AdvancedWaf3000Mbps: ami-091b0c07cbbf1a1f9
+      AllTwoBootLocations: ami-02e4e1a8646018052
+      Best10000Mbps: ami-04d177b430409a7cc
+      Best1000Mbps: ami-042a158c53a8a62d2
+      Best200Mbps: ami-039c4c57105314f64
+      Best25Mbps: ami-0fda4b1fea13823b6
+      Best5000Mbps: ami-0f40a13f8069e23a7
     ap-northeast-2:
-      AdvancedWaf200Mbps: ami-0f360d6ca24186b9c
-      AdvancedWaf25Mbps: ami-005d1524f1a5ebba9
-      AdvancedWaf3000Mbps: ami-0f2149f8a50b30857
-      AllTwoBootLocations: ami-01e721f12ae7f976f
-      Best10000Mbps: ami-0167d6d016db04113
-      Best1000Mbps: ami-08e2e8f114115a5bd
-      Best200Mbps: ami-0ba826fb20912afdd
-      Best25Mbps: ami-0caf11b8de1714a82
-      Best5000Mbps: ami-0c1f6bdaa98a70c93
+      AdvancedWaf200Mbps: ami-0f9530aacc6fcd2ef
+      AdvancedWaf25Mbps: ami-0a82e8caaaa06be55
+      AdvancedWaf3000Mbps: ami-07e343672906fcc54
+      AllTwoBootLocations: ami-0c59b992749071ab5
+      Best10000Mbps: ami-0eda364580b4eac65
+      Best1000Mbps: ami-02533899b1c5b67ff
+      Best200Mbps: ami-0f0b1d284fe47c076
+      Best25Mbps: ami-0b90e0d46de7b43e6
+      Best5000Mbps: ami-0f850280ffdb3fb0d
     ap-northeast-3:
-      AdvancedWaf200Mbps: ami-0a5c692e5907abfb8
-      AdvancedWaf25Mbps: ami-0757fbb73c2c33e08
-      AdvancedWaf3000Mbps: ami-00b107369a4779b9e
-      AllTwoBootLocations: ami-006253035126eab1a
-      Best10000Mbps: ami-0408abd05304dd653
-      Best1000Mbps: ami-0474f74857aeb7855
-      Best200Mbps: ami-012b91cea669a50fa
-      Best25Mbps: ami-0c3064dc5281efd26
-      Best5000Mbps: ami-03a15e50ff42d68c9
+      AdvancedWaf200Mbps: ami-090a61c8b7f9ad6b6
+      AdvancedWaf25Mbps: ami-0e826ae7aa32022cc
+      AdvancedWaf3000Mbps: ami-0cd1b4dea8be9887a
+      AllTwoBootLocations: ami-02d9ea860a0c7eeb7
+      Best10000Mbps: ami-0e4c1e8006b4a8177
+      Best1000Mbps: ami-02f100a9b855cdd04
+      Best200Mbps: ami-0858706049a53a501
+      Best25Mbps: ami-0f7338927d6789642
+      Best5000Mbps: ami-08d516db7f75e631a
     ap-south-1:
-      AdvancedWaf200Mbps: ami-062b3427aefa71537
-      AdvancedWaf25Mbps: ami-090966dde9d503364
-      AdvancedWaf3000Mbps: ami-024a88912c25b5106
-      AllTwoBootLocations: ami-0792b496db3b9ad2b
-      Best10000Mbps: ami-002d7788f657b4b5f
-      Best1000Mbps: ami-007087828280a3a54
-      Best200Mbps: ami-04518dcc924e9fe39
-      Best25Mbps: ami-065113dfe943167a6
-      Best5000Mbps: ami-0f44975030b5ce1fd
+      AdvancedWaf200Mbps: ami-0c4b1227000c1e031
+      AdvancedWaf25Mbps: ami-049fc54063497f5e6
+      AdvancedWaf3000Mbps: ami-0defeb160596ffa7a
+      AllTwoBootLocations: ami-081c5d3dd5503c432
+      Best10000Mbps: ami-07c1e9180a8d7ff55
+      Best1000Mbps: ami-0b15a63e920175bf0
+      Best200Mbps: ami-0d77a91d05a42b6d0
+      Best25Mbps: ami-0e78645f2e3d41735
+      Best5000Mbps: ami-065f169a7b22f3fdc
     ap-southeast-1:
-      AdvancedWaf200Mbps: ami-02126b28fc7bcc913
-      AdvancedWaf25Mbps: ami-0b6e730f82b00e771
-      AdvancedWaf3000Mbps: ami-0aed05a5843deaa05
-      AllTwoBootLocations: ami-0f1b1e0bdc0b9714b
-      Best10000Mbps: ami-0547ae308bf7400a8
-      Best1000Mbps: ami-05568981ab4127f23
-      Best200Mbps: ami-0032844743e8d5f79
-      Best25Mbps: ami-07163e9a56596e00b
-      Best5000Mbps: ami-0b334e70308af892c
+      AdvancedWaf200Mbps: ami-0bf4d136a73eb34e2
+      AdvancedWaf25Mbps: ami-09b5bbef1b4c02073
+      AdvancedWaf3000Mbps: ami-0951fa86bb3543a14
+      AllTwoBootLocations: ami-09a5f901fbfb2d971
+      Best10000Mbps: ami-05326d0ba4539c22f
+      Best1000Mbps: ami-06bfdca39caa9059e
+      Best200Mbps: ami-0b34d3f7428d565b5
+      Best25Mbps: ami-0b851f57e68a14db0
+      Best5000Mbps: ami-0d009969baedf885c
     ap-southeast-2:
-      AdvancedWaf200Mbps: ami-0f6e30ee1c3f38b8b
-      AdvancedWaf25Mbps: ami-011957d5192f37e72
-      AdvancedWaf3000Mbps: ami-0142b7cff0f15b1aa
-      AllTwoBootLocations: ami-0d674b0f4e7d11171
-      Best10000Mbps: ami-078bd0a228e421cb7
-      Best1000Mbps: ami-04ed02f9a3e3d15ee
-      Best200Mbps: ami-0e41ae3a973ad9304
-      Best25Mbps: ami-02b2292710355a406
-      Best5000Mbps: ami-09456381e33139543
+      AdvancedWaf200Mbps: ami-0ce2ae444bc217179
+      AdvancedWaf25Mbps: ami-0694d2149ceb1ef23
+      AdvancedWaf3000Mbps: ami-0d969b850f2ae58a3
+      AllTwoBootLocations: ami-00309bb415a04820e
+      Best10000Mbps: ami-02828b6e4785331ee
+      Best1000Mbps: ami-0ddfa0a0e65c6dca3
+      Best200Mbps: ami-03fbe7dd4b39f5bc4
+      Best25Mbps: ami-0a2734f05dc835bb7
+      Best5000Mbps: ami-0d35a1f2b6353b6f9
     ca-central-1:
-      AdvancedWaf200Mbps: ami-05196bdf946cbaef2
-      AdvancedWaf25Mbps: ami-0556b8fc7d51a810d
-      AdvancedWaf3000Mbps: ami-0e44410938d52363f
-      AllTwoBootLocations: ami-0495a0ea4e8e728c2
-      Best10000Mbps: ami-00dcfb4a064be93c0
-      Best1000Mbps: ami-04ec646f8c1b8ea86
-      Best200Mbps: ami-0761572a77193af7f
-      Best25Mbps: ami-0038e22360a0c5832
-      Best5000Mbps: ami-04fe500206eeca546
+      AdvancedWaf200Mbps: ami-0ae5cd89abd49ba79
+      AdvancedWaf25Mbps: ami-0d96f1ef5b0016ea6
+      AdvancedWaf3000Mbps: ami-06f1341beae883040
+      AllTwoBootLocations: ami-088ac15138a11956f
+      Best10000Mbps: ami-0d7ac938813722f64
+      Best1000Mbps: ami-09c54ee2e3078920c
+      Best200Mbps: ami-0a8da953aa88b85b1
+      Best25Mbps: ami-0ba85d4c46409ffa2
+      Best5000Mbps: ami-0f4a6409afe15b305
     eu-central-1:
-      AdvancedWaf200Mbps: ami-02abcb1e6317c72af
-      AdvancedWaf25Mbps: ami-0171cd5b6e3e8792d
-      AdvancedWaf3000Mbps: ami-0bab1074127df65ea
-      AllTwoBootLocations: ami-0eb34fa66458d36c0
-      Best10000Mbps: ami-0b4e5302513521043
-      Best1000Mbps: ami-098bacae7d7f40f96
-      Best200Mbps: ami-00d987a8b4df5ea6e
-      Best25Mbps: ami-08aa3b6b2fa2acdad
-      Best5000Mbps: ami-0f9eaa8fa28f80361
+      AdvancedWaf200Mbps: ami-0cd45f012f408d907
+      AdvancedWaf25Mbps: ami-0e3b820726b9b7547
+      AdvancedWaf3000Mbps: ami-0c18c6a81aa22cf26
+      AllTwoBootLocations: ami-0b6f43ccd46952865
+      Best10000Mbps: ami-00171e53d9c32c823
+      Best1000Mbps: ami-0a9cda328fad639d1
+      Best200Mbps: ami-0b315e92566a2f67b
+      Best25Mbps: ami-020a026a5959b4f64
+      Best5000Mbps: ami-09b6e061acb7b6681
     eu-north-1:
-      AdvancedWaf200Mbps: ami-0bb351dbe87b2c177
-      AdvancedWaf25Mbps: ami-033eeb51a1c37b769
-      AdvancedWaf3000Mbps: ami-0e430cc4bbf0b295e
-      AllTwoBootLocations: ami-0d55dc320a9c7965c
-      Best10000Mbps: ami-0ceeeccc3b48ae01c
-      Best1000Mbps: ami-06ab37fff48ba8d82
-      Best200Mbps: ami-06606b4741ce83093
-      Best25Mbps: ami-0036801cdc2aae460
-      Best5000Mbps: ami-04bdec371ebbbd17a
+      AdvancedWaf200Mbps: ami-08d1b25238491a0f9
+      AdvancedWaf25Mbps: ami-0d5a5c77a377e908d
+      AdvancedWaf3000Mbps: ami-0e610915012be9248
+      AllTwoBootLocations: ami-01f381855ffe45331
+      Best10000Mbps: ami-0aa59a6114b607b52
+      Best1000Mbps: ami-04d8546e5d1f3e063
+      Best200Mbps: ami-0f9161be5676d8e9b
+      Best25Mbps: ami-0b91e10c8161f8098
+      Best5000Mbps: ami-0734ae6fba17039a1
     eu-south-1:
-      AdvancedWaf200Mbps: ami-019bd56ffda3ce2f0
-      AdvancedWaf25Mbps: ami-004f712702aa9d840
-      AdvancedWaf3000Mbps: ami-03139909602c7e579
-      AllTwoBootLocations: ami-005780e8784783c11
-      Best10000Mbps: ami-0fd7b3f9e0a8a8a52
-      Best1000Mbps: ami-0718b95e5def151c0
-      Best200Mbps: ami-06240dddce6464063
-      Best25Mbps: ami-055463560f7f6b4dd
-      Best5000Mbps: ami-09746094e65cbfe26
+      AdvancedWaf200Mbps: ami-0659796b109744c50
+      AdvancedWaf25Mbps: ami-0ce1028aea4c911a1
+      AdvancedWaf3000Mbps: ami-06d6c2fbf212c60ef
+      AllTwoBootLocations: ami-061bcdab9215accdd
+      Best10000Mbps: ami-0a9813caf60f0b4c7
+      Best1000Mbps: ami-0affa0f1a28992997
+      Best200Mbps: ami-0441372b9115122d6
+      Best25Mbps: ami-098e121a6a6efc99f
+      Best5000Mbps: ami-0216adfd5f6a4254b
     eu-west-1:
-      AdvancedWaf200Mbps: ami-06fdd253072726e0b
-      AdvancedWaf25Mbps: ami-01c12bc2c9e2c2df4
-      AdvancedWaf3000Mbps: ami-0a533e90eb6e07753
-      AllTwoBootLocations: ami-0010007114b96b8de
-      Best10000Mbps: ami-058b7289b92246841
-      Best1000Mbps: ami-0b9924287f5813815
-      Best200Mbps: ami-0875f7ae53ff8c7c8
-      Best25Mbps: ami-05fe9d55e3eddfe4d
-      Best5000Mbps: ami-0fad6cee1e7259dd9
+      AdvancedWaf200Mbps: ami-0551a51b199b5de82
+      AdvancedWaf25Mbps: ami-0c49aab522c168837
+      AdvancedWaf3000Mbps: ami-04d58b62aa9bf73b2
+      AllTwoBootLocations: ami-0b8377ba34550d082
+      Best10000Mbps: ami-0e965b8161d586165
+      Best1000Mbps: ami-07ca25de11d0065ec
+      Best200Mbps: ami-010e9a99e74e58704
+      Best25Mbps: ami-07bf43ab874190567
+      Best5000Mbps: ami-05e75ed42766c9426
     eu-west-2:
-      AdvancedWaf200Mbps: ami-0a92ac240a396d391
-      AdvancedWaf25Mbps: ami-05e60d09985c6558f
-      AdvancedWaf3000Mbps: ami-029b312d7725a71d9
-      AllTwoBootLocations: ami-004454650f4c0f0bf
-      Best10000Mbps: ami-091fb528b9f577d52
-      Best1000Mbps: ami-07b0a9b74703cd0bd
-      Best200Mbps: ami-0c8b4a3be60a088db
-      Best25Mbps: ami-09aaf20bf41c4406c
-      Best5000Mbps: ami-0b59ec60ff6c4c68a
+      AdvancedWaf200Mbps: ami-0800bb44ba57517d0
+      AdvancedWaf25Mbps: ami-08a35ba5dd4fab7bb
+      AdvancedWaf3000Mbps: ami-0b9c6fdd93665ccdd
+      AllTwoBootLocations: ami-00f526b1d42006bfa
+      Best10000Mbps: ami-0503e5c02885c5b19
+      Best1000Mbps: ami-086409856eaedb533
+      Best200Mbps: ami-0b95959b72666ef2d
+      Best25Mbps: ami-02147d61c4bc6c77c
+      Best5000Mbps: ami-09e486ab22cecf60a
     eu-west-3:
-      AdvancedWaf200Mbps: ami-06f8b48fe6737578a
-      AdvancedWaf25Mbps: ami-0d4f249f34034e9f9
-      AdvancedWaf3000Mbps: ami-09ff8a33418d21a63
-      AllTwoBootLocations: ami-0997c7acca71528ff
-      Best10000Mbps: ami-09fc6139bfc135cda
-      Best1000Mbps: ami-0ca06a78d08941f32
-      Best200Mbps: ami-0ad95a3570b17995a
-      Best25Mbps: ami-06046941961bf2064
-      Best5000Mbps: ami-0396b4e8cbdaa325b
+      AdvancedWaf200Mbps: ami-0e8c36b9806609f1f
+      AdvancedWaf25Mbps: ami-0b2e1e11b4b30a3d8
+      AdvancedWaf3000Mbps: ami-0e34dd98961b7aea2
+      AllTwoBootLocations: ami-0388d52313e6cad44
+      Best10000Mbps: ami-09a7a22733fa7d92b
+      Best1000Mbps: ami-04c4fe73f6c06a02d
+      Best200Mbps: ami-0ddd201299d692212
+      Best25Mbps: ami-0a7c9d5fc5ee117d9
+      Best5000Mbps: ami-015d92b3e04adbadb
     me-south-1:
-      AdvancedWaf200Mbps: ami-0aedf53d5332a8b91
-      AdvancedWaf25Mbps: ami-0cbf8867bf8199c22
-      AdvancedWaf3000Mbps: ami-03bea04d72197d392
-      AllTwoBootLocations: ami-034069a9ac53b3a3b
-      Best10000Mbps: ami-08bf5d28c40403a15
-      Best1000Mbps: ami-08259c0e102f1c106
-      Best200Mbps: ami-0a983104d6a649856
-      Best25Mbps: ami-09b16dff7299868af
-      Best5000Mbps: ami-0d6033cea15edffe7
+      AdvancedWaf200Mbps: ami-046370773a46b2d60
+      AdvancedWaf25Mbps: ami-0e6cb771b5f535710
+      AdvancedWaf3000Mbps: ami-0db46a668681f8b19
+      AllTwoBootLocations: ami-00ebb6ca9bc90e696
+      Best10000Mbps: ami-03f86078daebb20fa
+      Best1000Mbps: ami-0024bce1b7ac01975
+      Best200Mbps: ami-0c0528b4fd8d0b3ee
+      Best25Mbps: ami-09f398d8e8afc75e5
+      Best5000Mbps: ami-0cd43b29ec9fe4307
     sa-east-1:
-      AdvancedWaf200Mbps: ami-09a84ec7a00894773
-      AdvancedWaf25Mbps: ami-042c884ab9371628e
-      AdvancedWaf3000Mbps: ami-045ec55c4a7c62355
-      AllTwoBootLocations: ami-06347f9b1f5c46911
-      Best10000Mbps: ami-0dd998fc1e17b0817
-      Best1000Mbps: ami-0551322023a1720df
-      Best200Mbps: ami-0b14c073bfa34f7e6
-      Best25Mbps: ami-0cb1a94adfdad321f
-      Best5000Mbps: ami-0e20339cc98cb71a8
+      AdvancedWaf200Mbps: ami-08048f80c49aa9081
+      AdvancedWaf25Mbps: ami-0b14fa24f8084f68f
+      AdvancedWaf3000Mbps: ami-025c3e5b46fbf7c39
+      AllTwoBootLocations: ami-02f712adc014786c7
+      Best10000Mbps: ami-08b1ef5b2de404319
+      Best1000Mbps: ami-0cb1b792878457b79
+      Best200Mbps: ami-0029784545478de53
+      Best25Mbps: ami-0efe71c4132e1a3fe
+      Best5000Mbps: ami-0c9637e95c3199a28
     us-east-1:
-      AdvancedWaf200Mbps: ami-005bc7b8a626a77c0
-      AdvancedWaf25Mbps: ami-0be5f6d3cd2af8ffe
-      AdvancedWaf3000Mbps: ami-0f3c4dbe787dc61cd
-      AllTwoBootLocations: ami-0d500f8c9aad3913d
-      Best10000Mbps: ami-0b106df253be770d6
-      Best1000Mbps: ami-0c9fbe5643df17e44
-      Best200Mbps: ami-05e88b5e0fe482d30
-      Best25Mbps: ami-041ae549e4ada56b1
-      Best5000Mbps: ami-0d1d3f05e8d1f0cff
+      AdvancedWaf200Mbps: ami-07ee55eae25efee54
+      AdvancedWaf25Mbps: ami-07ec9601ad832280d
+      AdvancedWaf3000Mbps: ami-058bd0181f6648170
+      AllTwoBootLocations: ami-0d31d197395c83e61
+      Best10000Mbps: ami-00ab6b7f3705d48c8
+      Best1000Mbps: ami-0753c8640fec81fbe
+      Best200Mbps: ami-0c264f0d32f15b118
+      Best25Mbps: ami-0c5d796e0753476b2
+      Best5000Mbps: ami-06ac31d38815424ee
     us-east-2:
-      AdvancedWaf200Mbps: ami-01a50399dcc2ea03e
-      AdvancedWaf25Mbps: ami-022027c63b7e67eba
-      AdvancedWaf3000Mbps: ami-06edaaf65ff3d4c38
-      AllTwoBootLocations: ami-0726e773e8271b122
-      Best10000Mbps: ami-0ec05d14e00e27ef0
-      Best1000Mbps: ami-05cb065f22f1372ba
-      Best200Mbps: ami-0abea1f8c456d2836
-      Best25Mbps: ami-0d97ddbbbfcc2400a
-      Best5000Mbps: ami-0911c9998c0cca9a0
-    us-west-1:
-      AdvancedWaf200Mbps: ami-020c2cf0635c2da2e
-      AdvancedWaf25Mbps: ami-079e4151fff2a688f
-      AdvancedWaf3000Mbps: ami-047d0245b0c061ec8
-      AllTwoBootLocations: ami-0c66d66ec164873a3
-      Best10000Mbps: ami-00da91f2e7c0fa317
-      Best1000Mbps: ami-0929b63fb95378721
-      Best200Mbps: ami-0f311998221ffb570
-      Best25Mbps: ami-0ca078ae217ecb1ef
-      Best5000Mbps: ami-0138c0d7c86e9dbef
-    us-west-2:
-      AdvancedWaf200Mbps: ami-0ad4a9823b5db8d1e
-      AdvancedWaf25Mbps: ami-0e7588ac353b61db9
-      AdvancedWaf3000Mbps: ami-0f31f19dc2a186b88
-      AllTwoBootLocations: ami-0712c12f459a9fea5
-      Best10000Mbps: ami-0bab30ab1428aa069
-      Best1000Mbps: ami-07f3f2ce6a7525bf3
-      Best200Mbps: ami-051c2ed71aef463f3
-      Best25Mbps: ami-0bd5efbcfbfabc942
-      Best5000Mbps: ami-0102d124b40d9bd23
-    us-gov-west-1:
-      AdvancedWaf200Mbps: ami-03b81ab076fec7d67
-      AdvancedWaf25Mbps: ami-0cb8404383786a549
-      AdvancedWaf3000Mbps: ami-0dd0e753d3cc35369
-      AllTwoBootLocations: ami-0f99c5a1f854fb776
-      Best10000Mbps: ami-090c25f464bb6d23a
-      Best1000Mbps: ami-0fca55cfe7e1ed032
-      Best200Mbps: ami-0ff1e25fee9c8191e
-      Best25Mbps: ami-071c6317ab2631d73
-      Best5000Mbps: ami-0835ef6aa4f4a9b8e
+      AdvancedWaf200Mbps: ami-0658d157471e9c24a
+      AdvancedWaf25Mbps: ami-06703ce66e890f8c7
+      AdvancedWaf3000Mbps: ami-0203a61ba7e8a0f0d
+      AllTwoBootLocations: ami-0358f3b9dc92ee58c
+      Best10000Mbps: ami-07399dfa5eb63db7b
+      Best1000Mbps: ami-001f9583fbf8976d0
+      Best200Mbps: ami-09262ed4519d09204
+      Best25Mbps: ami-01622de4dedecb649
+      Best5000Mbps: ami-09debf8ff39f1d0f8
     us-gov-east-1:
-      AdvancedWaf200Mbps: ami-0222a5e756d69ca90
-      AdvancedWaf25Mbps: ami-0abb0d1d350157d31
-      AdvancedWaf3000Mbps: ami-0feb6128c5e40fe91
-      AllTwoBootLocations: ami-0abcfcd4c2bd42318
-      Best10000Mbps: ami-035ce4d2aea9c68af
-      Best1000Mbps: ami-0bf47a3c614457a07
-      Best200Mbps: ami-04008199bda311434
-      Best25Mbps: ami-0afd61aecc9c7ec4a
-      Best5000Mbps: ami-037809a9a41297f4c
-  TMOS14153005:
+      AdvancedWaf200Mbps: ami-0ca7a743e1e9291fe
+      AdvancedWaf25Mbps: ami-0b1aaed98754bed79
+      AdvancedWaf3000Mbps: ami-019007320bf6443d2
+      AllTwoBootLocations: ami-0ce41178f8977fdcd
+      Best10000Mbps: ami-0a947400997049877
+      Best1000Mbps: ami-03784c3f16556c46f
+      Best200Mbps: ami-0950b9845cb395de6
+      Best25Mbps: ami-03b30ad318939d483
+      Best5000Mbps: ami-070414e813165fa31
+    us-gov-west-1:
+      AdvancedWaf200Mbps: ami-09134ce2671ea8e8a
+      AdvancedWaf25Mbps: ami-0830e2d50dbbe0985
+      AdvancedWaf3000Mbps: ami-08a2a3025dd895d51
+      AllTwoBootLocations: ami-09101d663e7607abe
+      Best10000Mbps: ami-079295b2b8984567b
+      Best1000Mbps: ami-04fab18d7cc5ee936
+      Best200Mbps: ami-0193ffd9287c2b033
+      Best25Mbps: ami-0fbe7b3edbcc66edf
+      Best5000Mbps: ami-08c0b26128d103ca1
+    us-west-1:
+      AdvancedWaf200Mbps: ami-024619b8886c8f5ec
+      AdvancedWaf25Mbps: ami-09b50abb14b7a706d
+      AdvancedWaf3000Mbps: ami-02a3eec3ae517de4c
+      AllTwoBootLocations: ami-0ccbf7ea8b590405c
+      Best10000Mbps: ami-0767ff1728420218e
+      Best1000Mbps: ami-0936fd27a8167d8a2
+      Best200Mbps: ami-04cb0918d5b8102a9
+      Best25Mbps: ami-028cbb082e63ec515
+      Best5000Mbps: ami-0a231cc66ef9858b0
+    us-west-2:
+      AdvancedWaf200Mbps: ami-0da2c5f7eac210efd
+      AdvancedWaf25Mbps: ami-032f7048af64a1e90
+      AdvancedWaf3000Mbps: ami-0e84e1f07b2885ec7
+      AllTwoBootLocations: ami-0e1baff14b669262c
+      Best10000Mbps: ami-075ab2cff0b2de996
+      Best1000Mbps: ami-07bde69c76cf2d171
+      Best200Mbps: ami-0af29214281b7a799
+      Best25Mbps: ami-069720f0fd8e8890c
+      Best5000Mbps: ami-0c5bba6660b8388f3
+  TMOS161440535:
     af-south-1:
-      AdvancedWaf200Mbps: ami-09d42a1179edd3816
-      AdvancedWaf25Mbps: ami-088b6b2c03949bd8b
-      AdvancedWaf3000Mbps: ami-0ce8a69e5e02d041b
-      AllTwoBootLocations: ami-0ce11e39bcd97cd9f
-      Best10000Mbps: ami-0011f5dc768feb1c7
-      Best1000Mbps: ami-0500f7d06470b8e65
-      Best200Mbps: ami-0e38fde853cd4f292
-      Best25Mbps: ami-08ea109ff80a449a7
-      Best5000Mbps: ami-0f3e8f132a798c881
+      AdvancedWaf200Mbps: ami-012af84e11140ecab
+      AdvancedWaf25Mbps: ami-090f17d1e52857a6a
+      AdvancedWaf3000Mbps: ami-0fcc74421e8cfecf0
+      AllTwoBootLocations: ami-03355359202a3d2ff
+      Best10000Mbps: ami-03142fad995db9c38
+      Best1000Mbps: ami-01b2000af822417ae
+      Best200Mbps: ami-04a3c9c4f16aed4fc
+      Best25Mbps: ami-0d8b4a5ab549ccdbd
+      Best5000Mbps: ami-0b4f0f8fc1f59ecbb
     ap-east-1:
-      AdvancedWaf200Mbps: ami-018000572f401b2ff
-      AdvancedWaf25Mbps: ami-05a36160f873db80c
-      AdvancedWaf3000Mbps: ami-099cfcb84a557599c
-      AllTwoBootLocations: ami-0fc914e39e9b7a303
-      Best10000Mbps: ami-05276c7f87f1a39cc
-      Best1000Mbps: ami-00800fb65f51c6c7b
-      Best200Mbps: ami-04a16decd3d0e20ba
-      Best25Mbps: ami-073e7b7a95e2608dd
-      Best5000Mbps: ami-0d90e398659213608
+      AdvancedWaf200Mbps: ami-03734a39571ec07b0
+      AdvancedWaf25Mbps: ami-03decbbba4d277e5b
+      AdvancedWaf3000Mbps: ami-0ffd1a42c3d91fe36
+      AllTwoBootLocations: ami-080f699000ba28564
+      Best10000Mbps: ami-0ceb02a419f7ce688
+      Best1000Mbps: ami-0036392a0bbeaf65e
+      Best200Mbps: ami-088949790bed486d6
+      Best25Mbps: ami-044bad157c9812fca
+      Best5000Mbps: ami-023b604061702bfc6
     ap-northeast-1:
-      AdvancedWaf200Mbps: ami-088ae58f61563b1c1
-      AdvancedWaf25Mbps: ami-09b117b5c8c5ab268
-      AdvancedWaf3000Mbps: ami-02be18995d701b6a9
-      AllTwoBootLocations: ami-0e358e7d02261e616
-      Best10000Mbps: ami-0f5e95a14dc039ece
-      Best1000Mbps: ami-063920a48d6495f18
-      Best200Mbps: ami-0fa1e22d9156998f4
-      Best25Mbps: ami-0751b8ee6a026252f
-      Best5000Mbps: ami-086c370dd433b711d
+      AdvancedWaf200Mbps: ami-07849d6cd2949a59f
+      AdvancedWaf25Mbps: ami-03f8926dad011fbc2
+      AdvancedWaf3000Mbps: ami-0d06488548768dd72
+      AllTwoBootLocations: ami-0ed2ae263adc52ced
+      Best10000Mbps: ami-07736ecd44f1d50d7
+      Best1000Mbps: ami-04199c7cbbea2c3a7
+      Best200Mbps: ami-0dbd7000db1a6c77a
+      Best25Mbps: ami-02d19c7ab15ac04ab
+      Best5000Mbps: ami-096eeac0c269e908a
     ap-northeast-2:
-      AdvancedWaf200Mbps: ami-0b116020e4fcd66b7
-      AdvancedWaf25Mbps: ami-00efe8e892321547e
-      AdvancedWaf3000Mbps: ami-0253983833393f066
-      AllTwoBootLocations: ami-01eb6618645ec811a
-      Best10000Mbps: ami-09f01a0131a7987bd
-      Best1000Mbps: ami-010e4701039dadff7
-      Best200Mbps: ami-0349176d4b26cb939
-      Best25Mbps: ami-0f04eb4184af5844c
-      Best5000Mbps: ami-0326536cf517104a0
+      AdvancedWaf200Mbps: ami-0d25f56c9d65875f6
+      AdvancedWaf25Mbps: ami-056aa74a85ac28803
+      AdvancedWaf3000Mbps: ami-0a875d5811aa73593
+      AllTwoBootLocations: ami-0beaaeb363b04a884
+      Best10000Mbps: ami-0e963e51e2cd46daa
+      Best1000Mbps: ami-0f716140a6b2f36e6
+      Best200Mbps: ami-0c2be85f98d4fefbf
+      Best25Mbps: ami-047e862ef21a0bdd0
+      Best5000Mbps: ami-08d87349b125b677d
     ap-northeast-3:
-      AdvancedWaf200Mbps: ami-01a8c7553238e1b91
-      AdvancedWaf25Mbps: ami-0db50d1ebb57d3d1f
-      AdvancedWaf3000Mbps: ami-0e796b09bfba5ada3
-      AllTwoBootLocations: ami-0b1e7baa59c1205f2
-      Best10000Mbps: ami-062bece221a6e55ff
-      Best1000Mbps: ami-0fc6cb19306aa83a5
-      Best200Mbps: ami-04cce9f5beeabb358
-      Best25Mbps: ami-0687fbb6c8b9b999a
-      Best5000Mbps: ami-0100cbe0606b15240
+      AdvancedWaf200Mbps: ami-0f24afd7cba86a358
+      AdvancedWaf25Mbps: ami-00263717c4c5d9fd8
+      AdvancedWaf3000Mbps: ami-0684fd14bc8c03070
+      AllTwoBootLocations: ami-0762ce989c94fa8c1
+      Best10000Mbps: ami-0486a351db89f95a6
+      Best1000Mbps: ami-0dab584a429398084
+      Best200Mbps: ami-0425a1ee2cbfad890
+      Best25Mbps: ami-0bb3d1f122290cefa
+      Best5000Mbps: ami-056511e22e15fbedd
     ap-south-1:
-      AdvancedWaf200Mbps: ami-05a779473b03450f4
-      AdvancedWaf25Mbps: ami-00b2f11deb61c3f9d
-      AdvancedWaf3000Mbps: ami-0628ad63de9ba0e15
-      AllTwoBootLocations: ami-0fb24df24f3b7c320
-      Best10000Mbps: ami-03605d332d1a1e7ab
-      Best1000Mbps: ami-0b62bac2864b0ce8a
-      Best200Mbps: ami-0c011ec0a8bc5c7c6
-      Best25Mbps: ami-0bda59badbe1bdaa7
-      Best5000Mbps: ami-0172241e91cc466ad
+      AdvancedWaf200Mbps: ami-02285ccbe1ed2764b
+      AdvancedWaf25Mbps: ami-0b5e773aa3fe6db3d
+      AdvancedWaf3000Mbps: ami-091ffe10535782917
+      AllTwoBootLocations: ami-0feae4e9f9de3c0e7
+      Best10000Mbps: ami-0c41bb16f6dfd1527
+      Best1000Mbps: ami-042acb423285afe8b
+      Best200Mbps: ami-0fba04cc797e37888
+      Best25Mbps: ami-04267a7dea66cbc34
+      Best5000Mbps: ami-0ff70d89ad607d2d1
     ap-southeast-1:
-      AdvancedWaf200Mbps: ami-03a43c275ba3a1490
-      AdvancedWaf25Mbps: ami-0c4be398b959ea19a
-      AdvancedWaf3000Mbps: ami-0a2b161009a7f2db0
-      AllTwoBootLocations: ami-049dd1850cfd71e7f
-      Best10000Mbps: ami-0df7bbe29278a21fd
-      Best1000Mbps: ami-08f97862b536244bb
-      Best200Mbps: ami-0cf39ccb0a162802b
-      Best25Mbps: ami-0adcff01f9cbcc0ae
-      Best5000Mbps: ami-0838bec7022be6288
+      AdvancedWaf200Mbps: ami-0d231328960feef8d
+      AdvancedWaf25Mbps: ami-09a910c02526e2d3f
+      AdvancedWaf3000Mbps: ami-01d56cf7757ce89b7
+      AllTwoBootLocations: ami-09d2c3d9773de2db7
+      Best10000Mbps: ami-0489e16a0399d74c7
+      Best1000Mbps: ami-0497b2699c3c1aed2
+      Best200Mbps: ami-09f2db86d9b585078
+      Best25Mbps: ami-07ee971581b04e973
+      Best5000Mbps: ami-086211a3075253489
     ap-southeast-2:
-      AdvancedWaf200Mbps: ami-0d7e313d89cff2156
-      AdvancedWaf25Mbps: ami-09e321c5a4ce32a24
-      AdvancedWaf3000Mbps: ami-0c12dbd50ccacacae
-      AllTwoBootLocations: ami-0719feb6f1f45de04
-      Best10000Mbps: ami-0884ef21dc3eaa507
-      Best1000Mbps: ami-068ca0f130cb402c3
-      Best200Mbps: ami-09c682b3db24a3b45
-      Best25Mbps: ami-049d8a03d6c77e7ce
-      Best5000Mbps: ami-048dac1a2f2dde3b9
+      AdvancedWaf200Mbps: ami-0c454936ac77506b2
+      AdvancedWaf25Mbps: ami-059165e3917907952
+      AdvancedWaf3000Mbps: ami-04a91816e69459929
+      AllTwoBootLocations: ami-0e4bfcd862ac342c4
+      Best10000Mbps: ami-0c00e5fd0b03d261f
+      Best1000Mbps: ami-07fe8fd74e74eb7d0
+      Best200Mbps: ami-0e547fc48dca00d37
+      Best25Mbps: ami-0e35bd70cc71bf444
+      Best5000Mbps: ami-0faa61e054bf8efd7
     ca-central-1:
-      AdvancedWaf200Mbps: ami-0ae1bf8c937e0d062
-      AdvancedWaf25Mbps: ami-02ee3bf1e28568568
-      AdvancedWaf3000Mbps: ami-06cdca239c2b50341
-      AllTwoBootLocations: ami-0e6e1cc64c904e093
-      Best10000Mbps: ami-0096757597566b8d3
-      Best1000Mbps: ami-0c7299eda6316c708
-      Best200Mbps: ami-0a8b4ced41bc92862
-      Best25Mbps: ami-08716a6753fcc3fdd
-      Best5000Mbps: ami-01209de4cac369248
+      AdvancedWaf200Mbps: ami-010e481f49c615cbe
+      AdvancedWaf25Mbps: ami-00771ea36be60b5c7
+      AdvancedWaf3000Mbps: ami-08f589c4595d2f1cf
+      AllTwoBootLocations: ami-0ee38d7f85c219a3e
+      Best10000Mbps: ami-0c4d12f3f1bf710df
+      Best1000Mbps: ami-011a7ec80070c0f19
+      Best200Mbps: ami-00c49acb6192aa9f0
+      Best25Mbps: ami-054b67e5b6506981a
+      Best5000Mbps: ami-07ee3e6ef5045df9a
     eu-central-1:
-      AdvancedWaf200Mbps: ami-0cb5108f1ecd4f83d
-      AdvancedWaf25Mbps: ami-0054b4c5cb64c0035
-      AdvancedWaf3000Mbps: ami-0f455c59791bdaaea
-      AllTwoBootLocations: ami-00e577a7c723a2584
-      Best10000Mbps: ami-0e1e5e54552fa6d7e
-      Best1000Mbps: ami-05c3bacf92ec25f29
-      Best200Mbps: ami-080a307f74062ba86
-      Best25Mbps: ami-0ca6c3430728cfe9e
-      Best5000Mbps: ami-0d0964f6cbaeb534c
+      AdvancedWaf200Mbps: ami-0a7b4a05e4dab976b
+      AdvancedWaf25Mbps: ami-0ec48bfb082b26f56
+      AdvancedWaf3000Mbps: ami-0c939392ce7bb9ca6
+      AllTwoBootLocations: ami-0a8de2b4dcd4094ff
+      Best10000Mbps: ami-09ed4d8afe61cff9b
+      Best1000Mbps: ami-049c10e9ba930da0a
+      Best200Mbps: ami-00a7a91cee424fcbb
+      Best25Mbps: ami-0013f6b5a258d7ee3
+      Best5000Mbps: ami-0fadb40d2fa9bc345
     eu-north-1:
-      AdvancedWaf200Mbps: ami-0ca8fd032ed3cfc4c
-      AdvancedWaf25Mbps: ami-02558502aa4e8bb79
-      AdvancedWaf3000Mbps: ami-01c05bedceeef1409
-      AllTwoBootLocations: ami-051ee10f6044b818f
-      Best10000Mbps: ami-04bf451b0e39f840b
-      Best1000Mbps: ami-079c89b1989969823
-      Best200Mbps: ami-027ad58663f06cf0c
-      Best25Mbps: ami-06e3a80def42feb11
-      Best5000Mbps: ami-0f78b44f5b7f4972f
+      AdvancedWaf200Mbps: ami-07ac515b07290bfb4
+      AdvancedWaf25Mbps: ami-0e1c043b75fb55281
+      AdvancedWaf3000Mbps: ami-0f4f5d79a576ea785
+      AllTwoBootLocations: ami-09a60cfc21a2ecc0e
+      Best10000Mbps: ami-0c0720e97029d0595
+      Best1000Mbps: ami-00da1677d1da69667
+      Best200Mbps: ami-0ae15c53db0728075
+      Best25Mbps: ami-02f648e96fbff839f
+      Best5000Mbps: ami-09314dcfc8e60cf4a
     eu-south-1:
-      AdvancedWaf200Mbps: ami-06556ec2716f79040
-      AdvancedWaf25Mbps: ami-0f81024ed7165b05a
-      AdvancedWaf3000Mbps: ami-0fbac20d156258a99
-      AllTwoBootLocations: ami-0d43d9c88f0beaba4
-      Best10000Mbps: ami-0f1a78bd9d5063b42
-      Best1000Mbps: ami-0ac17d206072f3f49
-      Best200Mbps: ami-0484bf59f117b8458
-      Best25Mbps: ami-0a6159dfb258e8c7e
-      Best5000Mbps: ami-0d17d96cef823db47
+      AdvancedWaf200Mbps: ami-0b378324bcffc7d81
+      AdvancedWaf25Mbps: ami-034db211b3ced4320
+      AdvancedWaf3000Mbps: ami-03759a041f536f0e7
+      AllTwoBootLocations: ami-0cc7868b5434aa9c9
+      Best10000Mbps: ami-0a7a9a4b188ffeaad
+      Best1000Mbps: ami-06a8267b0421bbf4a
+      Best200Mbps: ami-01e0c85bd19836ea5
+      Best25Mbps: ami-0c5e551b882ce03d4
+      Best5000Mbps: ami-09878b9cd691be213
     eu-west-1:
-      AdvancedWaf200Mbps: ami-0990d0bb4ad3f00b5
-      AdvancedWaf25Mbps: ami-0e9596f7bb67e4eed
-      AdvancedWaf3000Mbps: ami-09fdecd7047d10f36
-      AllTwoBootLocations: ami-0b425a39447fc0aa8
-      Best10000Mbps: ami-01fbc19395097c436
-      Best1000Mbps: ami-0ad4935bdad3cfd75
-      Best200Mbps: ami-0b433c74f3f8f5452
-      Best25Mbps: ami-002731a9033c3cb15
-      Best5000Mbps: ami-04e6fb9a4fc9ae422
+      AdvancedWaf200Mbps: ami-0df742d79f1e23937
+      AdvancedWaf25Mbps: ami-0179990050f53d86d
+      AdvancedWaf3000Mbps: ami-0a7d2ba8e9049df43
+      AllTwoBootLocations: ami-06952f9b2ebe39c8b
+      Best10000Mbps: ami-0cb60795246a20c22
+      Best1000Mbps: ami-09b4bc76ddf41557e
+      Best200Mbps: ami-0c837979984adb752
+      Best25Mbps: ami-075b739e0301cb641
+      Best5000Mbps: ami-0073c474c95c5eb47
     eu-west-2:
-      AdvancedWaf200Mbps: ami-05e64ca384076e2df
-      AdvancedWaf25Mbps: ami-0efd84d8fb6cac4e7
-      AdvancedWaf3000Mbps: ami-0ec663758b486a51c
-      AllTwoBootLocations: ami-0b3d88b2abe98e279
-      Best10000Mbps: ami-07a3ee4d69268d0b8
-      Best1000Mbps: ami-021daf37817cdcd57
-      Best200Mbps: ami-04f51a5e6acd853fb
-      Best25Mbps: ami-0f02fa5a46f192c05
-      Best5000Mbps: ami-09581c887f51474f0
+      AdvancedWaf200Mbps: ami-0c3185a52412724e7
+      AdvancedWaf25Mbps: ami-020c9bde44f9d5a08
+      AdvancedWaf3000Mbps: ami-01c96af279e321602
+      AllTwoBootLocations: ami-072c56fe21200550f
+      Best10000Mbps: ami-0d62246cbc6fc09a3
+      Best1000Mbps: ami-081b96d29e0739402
+      Best200Mbps: ami-0cdc51b643e538e30
+      Best25Mbps: ami-04417b42950cd2365
+      Best5000Mbps: ami-0730305e8cb1d96c0
     eu-west-3:
-      AdvancedWaf200Mbps: ami-0162c8d76afd75a71
-      AdvancedWaf25Mbps: ami-078f713f49aa24d89
-      AdvancedWaf3000Mbps: ami-07757e6fdf1c38734
-      AllTwoBootLocations: ami-0c09152f7a27a5e3d
-      Best10000Mbps: ami-06c4e087c53332cb1
-      Best1000Mbps: ami-0e8b01b1b846fe315
-      Best200Mbps: ami-024603af967b19b64
-      Best25Mbps: ami-05e4558a737873d57
-      Best5000Mbps: ami-0e333563b3a45307b
+      AdvancedWaf200Mbps: ami-03f0a9fd1819d9384
+      AdvancedWaf25Mbps: ami-010d4ec48ee23c887
+      AdvancedWaf3000Mbps: ami-076545c738d487617
+      AllTwoBootLocations: ami-0d46522ba069d2d2d
+      Best10000Mbps: ami-06ca53099b383818d
+      Best1000Mbps: ami-0011b613f10699670
+      Best200Mbps: ami-06dbbc0a00c264666
+      Best25Mbps: ami-074f134bbcf072de9
+      Best5000Mbps: ami-0667b168cb4218388
     me-south-1:
-      AdvancedWaf200Mbps: ami-087a1ca0995b474dd
-      AdvancedWaf25Mbps: ami-02a099323eb475695
-      AdvancedWaf3000Mbps: ami-0a0e84a5f8f7bf2d3
-      AllTwoBootLocations: ami-0c6a340e017ee1bfa
-      Best10000Mbps: ami-029815229c15c6c5d
-      Best1000Mbps: ami-0c33eec3dc9eec377
-      Best200Mbps: ami-01e10152ddb1595de
-      Best25Mbps: ami-01a868a7adf866328
-      Best5000Mbps: ami-0121c5f5e8a4545d6
+      AdvancedWaf200Mbps: ami-05801570b02898905
+      AdvancedWaf25Mbps: ami-04e3a76c9ee9c6ec5
+      AdvancedWaf3000Mbps: ami-0e48d28f65c761e7f
+      AllTwoBootLocations: ami-0687b5592c73bc50e
+      Best10000Mbps: ami-08043df118cf17e06
+      Best1000Mbps: ami-0dd9e30dbf95529df
+      Best200Mbps: ami-0d7f27fc29139b2e0
+      Best25Mbps: ami-0579677aaae7c7bdb
+      Best5000Mbps: ami-0805f232b2e71ad18
     sa-east-1:
-      AdvancedWaf200Mbps: ami-0b8cf5b3848e92bf9
-      AdvancedWaf25Mbps: ami-0f142b653e7e6c0f5
-      AdvancedWaf3000Mbps: ami-020c81b22078119bd
-      AllTwoBootLocations: ami-0e41b54602abfe20b
-      Best10000Mbps: ami-03f91f4ce8b77a99a
-      Best1000Mbps: ami-08aba378fdf6d2e24
-      Best200Mbps: ami-059d432ed06baee7f
-      Best25Mbps: ami-0fcbbc4f8eb73662c
-      Best5000Mbps: ami-034f34aafc69e7a91
+      AdvancedWaf200Mbps: ami-0065fe106c6c6c7e1
+      AdvancedWaf25Mbps: ami-0c551e2e010674d8f
+      AdvancedWaf3000Mbps: ami-071f88e15c8a48f6a
+      AllTwoBootLocations: ami-0a13bc5838bba284b
+      Best10000Mbps: ami-07c92a9ce02946aad
+      Best1000Mbps: ami-0ee35794bf5f35a5d
+      Best200Mbps: ami-04cf8919c18acb1cd
+      Best25Mbps: ami-04923d4a0ac193c8d
+      Best5000Mbps: ami-0b6bb0f920117287d
     us-east-1:
-      AdvancedWaf200Mbps: ami-0b3442cdb849413bf
-      AdvancedWaf25Mbps: ami-04c17b4263c7103a4
-      AdvancedWaf3000Mbps: ami-03ca33d2a7c57c981
-      AllTwoBootLocations: ami-083a01b1c1f36af9c
-      Best10000Mbps: ami-019e0c102fe26f99a
-      Best1000Mbps: ami-0efa7efac4da920d0
-      Best200Mbps: ami-08e0a89360cce8b3a
-      Best25Mbps: ami-04090ea7c0b10b56a
-      Best5000Mbps: ami-0a97a2f4fd9e30089
+      AdvancedWaf200Mbps: ami-083cc9a56681a9ad6
+      AdvancedWaf25Mbps: ami-0009189c8b7204eb8
+      AdvancedWaf3000Mbps: ami-0faf4c36d4224f788
+      AllTwoBootLocations: ami-046cc6c6fe1c4868d
+      Best10000Mbps: ami-06c3f75e1a7877194
+      Best1000Mbps: ami-0768391ca2b30505d
+      Best200Mbps: ami-00389f4c48d410c63
+      Best25Mbps: ami-0e73be2d1c886368f
+      Best5000Mbps: ami-0819a62499a49710c
     us-east-2:
-      AdvancedWaf200Mbps: ami-00931fd54ec28b684
-      AdvancedWaf25Mbps: ami-033780a3c06bd731c
-      AdvancedWaf3000Mbps: ami-0a4d3e4ad0e9788ca
-      AllTwoBootLocations: ami-064265572b64875ca
-      Best10000Mbps: ami-0f17862b5e085e136
-      Best1000Mbps: ami-053678f205580548d
-      Best200Mbps: ami-0c731b0efdda9464c
-      Best25Mbps: ami-09de98757638c45ac
-      Best5000Mbps: ami-0d4f7892b9dbbe6f5
-    us-west-1:
-      AdvancedWaf200Mbps: ami-0a1d276f68687df02
-      AdvancedWaf25Mbps: ami-09c9bd7934fef59d1
-      AdvancedWaf3000Mbps: ami-0325e34d7f028c903
-      AllTwoBootLocations: ami-0726d69d2b50af5c4
-      Best10000Mbps: ami-0f883c414410bd336
-      Best1000Mbps: ami-05f45688a31221a50
-      Best200Mbps: ami-05712e61faa7eae0e
-      Best25Mbps: ami-0eb3c84741bc873dd
-      Best5000Mbps: ami-04a8bdc70cb18cdb2
-    us-west-2:
-      AdvancedWaf200Mbps: ami-0c20bd6924ddb8277
-      AdvancedWaf25Mbps: ami-0c3d8bf3a2440bcd4
-      AdvancedWaf3000Mbps: ami-0e2e387980bb170dd
-      AllTwoBootLocations: ami-09561c46c53a98051
-      Best10000Mbps: ami-098e3a7b89541fc19
-      Best1000Mbps: ami-01bace4ff96ee82eb
-      Best200Mbps: ami-008b24ca66cd54b70
-      Best25Mbps: ami-029a74008d86dc827
-      Best5000Mbps: ami-06eaaef6d44a3418c
-    us-gov-west-1:
-      AdvancedWaf200Mbps: ami-02e21360c5d57336a
-      AdvancedWaf25Mbps: ami-05bd36f9d89d528a9
-      AdvancedWaf3000Mbps: ami-0b8d6cb6e4865bf66
-      AllTwoBootLocations: ami-0169780adf8496132
-      Best10000Mbps: ami-074260bf680a4fe40
-      Best1000Mbps: ami-08e06a21f8e481262
-      Best200Mbps: ami-074f8343468bdb020
-      Best25Mbps: ami-06c4130e0c7a1accb
-      Best5000Mbps: ami-0a4d5041b69f585d9
+      AdvancedWaf200Mbps: ami-0291281cab026a6d9
+      AdvancedWaf25Mbps: ami-0fda42ccf046ef323
+      AdvancedWaf3000Mbps: ami-0e204db40975ec2a2
+      AllTwoBootLocations: ami-0fd3f2f2a8ecf37a5
+      Best10000Mbps: ami-0358cfe64a5da3c7c
+      Best1000Mbps: ami-0d12258d971c77b14
+      Best200Mbps: ami-0fc9c3203d2fae274
+      Best25Mbps: ami-074b7ad96b6feb999
+      Best5000Mbps: ami-0b27ece27746a666b
     us-gov-east-1:
-      AdvancedWaf200Mbps: ami-06e5de7f76a71d1b9
-      AdvancedWaf25Mbps: ami-034155c53ae1bca7c
-      AdvancedWaf3000Mbps: ami-0c536d7b0897323fe
-      AllTwoBootLocations: ami-01346ea9f903eb05c
-      Best10000Mbps: ami-0d12ebceb39684a4c
-      Best1000Mbps: ami-0ba410545e72d18aa
-      Best200Mbps: ami-04ba3f6a3feb118cd
-      Best25Mbps: ami-0e61493659ddd2c12
-      Best5000Mbps: ami-03f744c933821e3bb
+      AdvancedWaf200Mbps: ami-0004603b42a1d265c
+      AdvancedWaf25Mbps: ami-091986ff1bbf2a3a0
+      AdvancedWaf3000Mbps: ami-0584b658ba04290ce
+      AllTwoBootLocations: ami-0a814cc2eb416df93
+      Best10000Mbps: ami-04dc75e366f43febd
+      Best1000Mbps: ami-0b50daba7d46d9d0f
+      Best200Mbps: ami-04d2405ed1d7b3e74
+      Best25Mbps: ami-00e9386d94debfb22
+      Best5000Mbps: ami-008449596309c8a08
+    us-gov-west-1:
+      AdvancedWaf200Mbps: ami-01601b1036dedfcef
+      AdvancedWaf25Mbps: ami-0ba329ae49ab8ebb1
+      AdvancedWaf3000Mbps: ami-02c0213c93504f9ed
+      AllTwoBootLocations: ami-0ec6dc07c282d3de2
+      Best10000Mbps: ami-0d07d28f563558162
+      Best1000Mbps: ami-0fd45b44369ee5786
+      Best200Mbps: ami-0b0e4bcc341c58760
+      Best25Mbps: ami-073a20260f95725a1
+      Best5000Mbps: ami-030a3108b62a1ddd3
+    us-west-1:
+      AdvancedWaf200Mbps: ami-0392458ef64cbb92b
+      AdvancedWaf25Mbps: ami-05ba7ab3a63f5d808
+      AdvancedWaf3000Mbps: ami-0dc763a3fd3dd7b9c
+      AllTwoBootLocations: ami-041c3b45963c481b1
+      Best10000Mbps: ami-0a4fae21aa8a96670
+      Best1000Mbps: ami-0797bb423be4c99de
+      Best200Mbps: ami-0adeca12d6290a717
+      Best25Mbps: ami-0d2712be6f20dd64f
+      Best5000Mbps: ami-04a3c8dea10c42f6f
+    us-west-2:
+      AdvancedWaf200Mbps: ami-02ae9282ec3367c1a
+      AdvancedWaf25Mbps: ami-0d83c6e4063a1ffb7
+      AdvancedWaf3000Mbps: ami-0a431b56a9becaeda
+      AllTwoBootLocations: ami-07e9d2edf0659a17e
+      Best10000Mbps: ami-05d385d49bab5d366
+      Best1000Mbps: ami-005245abba6e3b52a
+      Best200Mbps: ami-0fdba3d5b2546340f
+      Best25Mbps: ami-0c0285f0990bb65ba
+      Best5000Mbps: ami-02831911edf600134
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
@@ -660,7 +665,7 @@ Metadata:
         default: Unique String
       version:
         default: BIG-IP Version
-  Version: 3.1.0.0
+  Version: 3.2.0.0
 Outputs:
   bigIpInstanceId:
     Description: bigip's instance-id
@@ -715,11 +720,16 @@ Outputs:
     Description: Secret ARN
     Value: !GetAtt [Access, Outputs.secretArn]
   vipPublicUrl:
+    Condition: not1nicPrivate
     Description: url to public vip address
     Value: !Join
       - ''
       - - 'https://'
         - !GetAtt [Dag, Outputs.bigIpExternalEipAddress02]
+  vipPrivateUrl:
+    Condition: 1nicPrivate
+    Description: url to private vip address
+    Value: 'https://10.0.1.101'
 Parameters:
   allowUsageAnalytics:
     AllowedValues:
@@ -741,7 +751,7 @@ Parameters:
     AllowedPattern: ^.*[0-9a-zA-Z]+/$
     ConstraintDescription: 'key prefix can include numbers, lowercase letters, uppercase
       letters, hyphens (-), and forward slash (/).'
-    Default: f5-aws-cloudformation-v2/v3.1.0.0/examples/
+    Default: f5-aws-cloudformation-v2/v3.2.0.0/examples/
     Description: 'The path in the S3Bucket where the modules folder is located. Can
       include numbers, lowercase letters, uppercase letters, hyphens (-), and forward
       slash (/).'
@@ -759,12 +769,12 @@ Parameters:
       parameter blank if deploying the PAYG solution.
     Type: String
   bigIpRuntimeInitConfig:
-    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.1.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg-with-app.yaml'
+    Default: 'https://f5-cft-v2.s3.amazonaws.com/f5-aws-cloudformation-v2/v3.2.0.0/examples/quickstart/bigip-configurations/runtime-init-conf-3nic-payg-with-app.yaml'
     Description: 'Supply a URL to the bigip-runtime-init configuration file in YAML
       or JSON format to use for f5-bigip-runtime-init configuration.'
     Type: String
   bigIpRuntimeInitPackageUrl:
-    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v1.6.2/dist/f5-bigip-runtime-init-1.6.2-1.gz.run'
+    Default: 'https://cdn.f5.com/product/cloudsolutions/f5-bigip-runtime-init/v2.0.1/dist/f5-bigip-runtime-init-2.0.1-1.gz.run'
     Description: URL for BIG-IP Runtime Init package.
     Type: String
   bigIpSecretArn:
@@ -920,9 +930,9 @@ Parameters:
     Type: String
   version:
     AllowedValues:
-      - 16-1-3-3-003
-      - 14-1-5-3-005
-    Default: 16-1-3-3-003
+      - 17-1-1-026
+      - 16-1-4-1-0535
+    Default: 17-1-1-026
     Description: Select version of BIG-IP you wish to deploy.
     Type: String
 Resources:
@@ -935,16 +945,17 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        application: !Ref 'application'
-        cost: !Ref 'cost'
-        environment: !Ref 'environment'
-        group: !Ref 'group'
         createBigIpRoles: !If [useSecret, 'true', 'false']
         createSecret: !If [createSecret, 'true', 'false']
         createSshKey: !If [createKeyPair, 'true', 'false']
         secretArn: !If [useSecretArn, !Ref 'bigIpSecretArn', !Ref 'AWS::NoValue']
         solutionType: !If [useSecret, 'secret', 'standard']
         uniqueString: !Ref 'uniqueString'
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   Application:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -954,12 +965,8 @@ Resources:
           S3Bucket: !Ref 's3BucketName'
       Parameters:
         appContainerName: !Ref 'appContainerName'
-        application: !Ref 'application'
         applicationSubnet: !Select [3, !Split [',', !GetAtt [Network, Outputs.subnetsA]]]
         appSecurityGroupId: !GetAtt [Dag, Outputs.appSecurityGroupId]
-        cost: !Ref 'cost'
-        environment: !Ref 'environment'
-        group: !Ref 'group'
         restrictedSrcAddress: !Ref 'restrictedSrcAddressApp'
         sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
         staticIp: "10.0.3.4"
@@ -967,6 +974,11 @@ Resources:
         vpc: !GetAtt
           - Network
           - Outputs.vpcId
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   Bastion:
     Type: 'AWS::CloudFormation::Stack'
     Condition: noPublicIp
@@ -976,7 +988,6 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        application: !Ref 'application'
         mgmtSubnet: !Join
           - ','
           - - !Select
@@ -989,16 +1000,18 @@ Resources:
         bastionSecurityGroupId: !GetAtt
           - Dag
           - Outputs.bastionSecurityGroupId
-        cost: !Ref 'cost'
         createAutoscaleGroup: 'false'
-        environment: !Ref 'environment'
-        group: !Ref 'group'
         sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
         restrictedSrcAddress: !Ref 'restrictedSrcAddressMgmt'
         uniqueString: !Ref 'uniqueString'
         vpc: !GetAtt
           - Network
           - Outputs.vpcId
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   BigipStandalone:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -1009,8 +1022,10 @@ Resources:
       Parameters:
         allowUsageAnalytics: !Ref 'allowUsageAnalytics'
         bigIpRuntimeInitConfig: !Ref 'bigIpRuntimeInitConfig'
-        externalSelfPublicIpId: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId01]
-        externalServicePublicIpIds: !GetAtt [Dag, Outputs.bigIpExternalEipAllocationId02]
+        externalSelfPublicIpId: !If [1nicPrivate, !Ref 'AWS::NoValue', !GetAtt [Dag,
+            Outputs.bigIpExternalEipAllocationId01]]
+        externalServicePublicIpIds: !If [1nicPrivate, !Ref 'AWS::NoValue', !GetAtt [
+            Dag, Outputs.bigIpExternalEipAllocationId02]]
         externalSecurityGroupId: !If [2nic, !GetAtt [Dag, Outputs.bigIpExternalSecurityGroup],
           !Ref 'AWS::NoValue']
         externalSelfIp: !If [2nic, "10.0.0.11", !Ref 'AWS::NoValue']
@@ -1036,12 +1051,17 @@ Resources:
         mgmtSecurityGroupId: !GetAtt [Dag, Outputs.bigIpMgmtSecurityGroup]
         mgmtAddress: "10.0.1.11"
         mgmtSubnetId: !Select [1, !Split [',', !GetAtt [Network, Outputs.subnetsA]]]
-        numExternalPublicIpAddresses: 2
+        numExternalPublicIpAddresses: !If [1nicPrivate, 0, 2]
         numSecondaryPrivateIpAddresses: 1
         secretArn: !If [useSecret, !If [createSecret, !GetAtt [Access, Outputs.secretArn],
             !Ref 'bigIpSecretArn'], !Ref 'AWS::NoValue']
         sshKey: !If [createKeyPair, !GetAtt [Access, Outputs.keyPairName], !Ref 'sshKey']
         uniqueString: !Ref 'uniqueString'
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   Dag:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -1050,15 +1070,11 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        application: !Ref 'application'
-        cost: !Ref 'cost'
         createAppSecurityGroup: 'true'
         createBastionSecurityGroup: !If [noPublicIp, 'true', 'false']
         createExternalSecurityGroup: !If [2nic, 'true', 'false']
         createInternalSecurityGroup: !If [3nic, 'true', 'false']
-        environment: !Ref 'environment'
-        group: !Ref 'group'
-        numberPublicExternalIpAddresses: 2
+        numberPublicExternalIpAddresses: !If [1nicPrivate, 0, 2]
         numberPublicMgmtIpAddresses: !If [noPublicIp, 0, 1]
         restrictedSrcAddressApp: !Ref 'restrictedSrcAddressApp'
         restrictedSrcAddressMgmt: !Ref 'restrictedSrcAddressMgmt'
@@ -1068,6 +1084,11 @@ Resources:
         vpc: !GetAtt
           - Network
           - Outputs.vpcId
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
   Network:
     Type: 'AWS::CloudFormation::Stack'
     Properties:
@@ -1076,12 +1097,14 @@ Resources:
         - S3Region: !Ref 's3BucketRegion'
           S3Bucket: !Ref 's3BucketName'
       Parameters:
-        cost: !Ref 'cost'
-        environment: !Ref 'environment'
-        group: !Ref 'group'
         numAzs: !Ref 'numAzs'
         numSubnets: !Ref 'numSubnets'
         setPublicSubnet1: !Ref 'provisionPublicIp'
         subnetMask: 24
         uniqueString: !Ref 'uniqueString'
         vpcCidr: 10.0.0.0/16
+        application: !Ref 'application'
+        cost: !Ref 'cost'
+        environment: !Ref 'environment'
+        group: !Ref 'group'
+        owner: !Ref 'owner'
