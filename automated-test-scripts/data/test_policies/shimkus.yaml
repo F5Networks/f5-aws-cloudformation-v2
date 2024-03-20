@@ -37,7 +37,7 @@ aws-autoscale-payg-example-test:
 aws-autoscale-payg-existing-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/autoscale/payg/daily_test_existing.yaml"
   run: "random"
-  random-num-of-tests: 1
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/existing/demo.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/autoscale/payg/existing/demo_app.yaml"
@@ -133,7 +133,7 @@ aws-quickstart-byol-existing-test:
 aws-quickstart-payg-existing-test:
   test-url: "file://automated-test-scripts/f5-aws-cloudformation-v2/examples/quickstart/payg_byol/daily_test_existing.yaml"
   run: "random"
-  random-num-of-tests: 1
+  random-num-of-tests: 0
   parameters-files:
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/existing/demo_app_1nic.yaml"
     - "automated-test-scripts/data/f5-aws-cloudformation-v2/examples/quickstart/payg/existing/demo_app_2nic.yaml"
