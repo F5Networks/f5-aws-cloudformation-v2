@@ -459,6 +459,10 @@ Resources:
                 Action:
                   - 'ec2:DescribeImages'
                 Resource: '*'
+              - Effect: Allow
+                Action:
+                  - 'lambda:GetLayerVersion'
+                Resource: '*'
       RoleName: !Join
         - ''
         - - !Ref uniqueString
