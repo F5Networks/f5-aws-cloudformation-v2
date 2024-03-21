@@ -49,7 +49,7 @@ Metadata:
         default: Owner
       uniqueString:
         default: Unique string
-  Version: 3.2.0.0
+  Version: 3.3.0.0
 Outputs:
   stackName:
     Description: function nested stack name
@@ -160,8 +160,9 @@ Resources:
         ZipFile: !Sub |
           import json
           import boto3
-          from botocore.vendored import requests
-          from botocore.config import Config
+          import requests
+          #from botocore.vendored import requests
+          #from botocore.config import Config
 
           ec2_client = boto3.client('ec2')
           def lambda_handler(event, context):
@@ -230,8 +231,14 @@ Resources:
         - - index
           - .lambda_handler
       Role: !Ref amiLookupRole
-      Runtime: python3.7
+      Runtime: python3.12
       Timeout: 30
+      Layers:
+        - !Join
+          - ''
+          - - 'arn:aws:lambda:'
+            - !Ref AWS::Region
+            - ':770693421928:layer:Klayers-p312-requests:3'
       Tags:
         - Key: application
           Value: !Ref application
@@ -258,8 +265,6 @@ Resources:
         - - !Ref uniqueString
           - '-lambda-zips-bucket'
       Tags:
-        - Key: application
-          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -282,7 +287,7 @@ Resources:
         - - !Ref uniqueString
           - '-copy-zips-fn'
       Handler: index.handler
-      Runtime: python3.7
+      Runtime: python3.12
       Role: !Ref copyZipsRole
       Timeout: 240
       Code:
@@ -345,8 +350,6 @@ Resources:
                   timer.cancel()
                   cfnresponse.send(event, context, status, {}, None)
       Tags:
-        - Key: application
-          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -380,8 +383,6 @@ Resources:
         - v1.2.0/lambda_bigiq_revoke.zip
         - v1.2.0/layer.zip
       Tags:
-        - Key: application
-          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -424,7 +425,7 @@ Resources:
     Type: AWS::Lambda::LayerVersion
     Properties:
       CompatibleRuntimes:
-        - python3.7
+        - python3.12
       Content:
         S3Bucket: !Ref 'LambdaZipsBucket'
         S3Key: !Sub '${lambdaS3Key}v1.2.0/layer.zip'
@@ -450,7 +451,7 @@ Resources:
         S3Key: !Sub '${lambdaS3Key}v1.2.0/lambda_bigiq_revoke.zip'
       Layers: 
         - !Ref 'LambdaBiqIqRevokeLayer'
-      Runtime: python3.7
+      Runtime: python3.12
       Environment:
         Variables:
           BIGIP_RUNTIME_INIT_CONFIG: !Ref bigIpRuntimeInitConfig
@@ -471,8 +472,6 @@ Resources:
             - !Ref 'AWS::NoValue'
             - !Ref bigIqSubnetId
       Tags:
-        - Key: application
-          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -502,8 +501,6 @@ Resources:
       region: !Ref 'AWS::Region'
       bucketName: !Ref LambdaZipsBucket
       Tags:
-        - Key: application
-          Value: !Ref application
         - Key: costcenter
           Value: !Ref cost
         - Key: environment
@@ -580,7 +577,7 @@ Resources:
       Handler: index.handler
       MemorySize: 1536
       Role: !Ref copyZipsRole
-      Runtime: python3.7
+      Runtime: python3.12
       Timeout: 300
       Tags:
         - Key: application

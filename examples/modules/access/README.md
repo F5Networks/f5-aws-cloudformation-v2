@@ -98,6 +98,7 @@ These are the IAM permissions produced by each type of solution supported by thi
 | ec2:ReplaceRoute | failover |
 | ec2:UnassignIpv6Addresses | failover |
 | ec2:UnassignPrivateIpAddresses | failover |
+| lambda:GetLayerVersion |  standard, secret, s3, secrets3, failover |
 | logs:DescribeLogGroups | standard, secret, s3, secrets3, failover | 
 | logs:DescribeLogStreams | standard, secret, s3, secrets3, failover | 
 | logs:PutLogEvents | standard, secret, s3, secrets3, failover | 
