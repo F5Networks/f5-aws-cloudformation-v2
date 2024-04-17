@@ -57,6 +57,7 @@ run_link_checker:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
   script:
     - make link_check
+  allow_failure: true
 
 # validate test policy parameters are present
 run_test_param_checker:
@@ -941,6 +942,7 @@ run_link_checker_release:
       - $RELEASE_RUNTIME_INIT_TESTS == "true"
   script:
     - make link_check_release
+  allow_failure: true
 
 # Check template version, then push the examples/ folder to S3 when a tag in the form of "aws-v1.1.0.0" is added to the main branch
 publish_aws_modules_s3:

@@ -145,7 +145,7 @@ extension_services:
               xForwardedFor: true
             Custom_WAF_Policy:
               class: WAF_Policy
-              url: https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v3.3.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
+              url: https://raw.githubusercontent.com/F5Networks/f5-aws-cloudformation-v2/v3.4.0.0/examples/autoscale/bigip-configurations/Rapid_Deployment_Policy_13_1.xml
               enforcementMode: blocking
               ignoreChanges: false
             Service_Address_01_A:
