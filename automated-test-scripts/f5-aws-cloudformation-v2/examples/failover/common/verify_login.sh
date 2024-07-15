@@ -57,15 +57,15 @@ if [[ '<PROVISION MGMT PUBLIC IP>' == 'false' ]]; then
     bigip2_private_ip=$(aws ec2 describe-instances --region  <REGION> --instance-ids $bigip2_instance_id | jq -r .Reservations[0].Instances[0].PrivateIpAddress)
     echo "BIGIP2 PRIVATE IP: $bigip2_private_ip"
 
-    BIGIP1_SSH_RESPONSE=$(sshpass -p ${PASSWORD} ssh -o "StrictHostKeyChecking no" -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i ${bastion_private_key} -W %h:%p ubuntu@$bastion_public_ip" admin@${bigip1_private_ip} "tmsh list auth user admin")
+    BIGIP1_SSH_RESPONSE=$(sshpass -p ${PASSWORD} ssh -o "StrictHostKeyChecking no" -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i ${bastion_private_key} -W %h:%p ec2-user@$bastion_public_ip" admin@${bigip1_private_ip} "tmsh list auth user admin")
     echo "BIGIP1_RESPONSE: ${BIGIP1_SSH_RESPONSE}"
-    BIGIP2_SSH_RESPONSE=$(sshpass -p ${PASSWORD} ssh -o "StrictHostKeyChecking no" -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i ${bastion_private_key} -W %h:%p ubuntu@$bastion_public_ip" admin@${bigip2_private_ip} "tmsh list auth user admin")
+    BIGIP2_SSH_RESPONSE=$(sshpass -p ${PASSWORD} ssh -o "StrictHostKeyChecking no" -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i ${bastion_private_key} -W %h:%p ec2-user@$bastion_public_ip" admin@${bigip2_private_ip} "tmsh list auth user admin")
     echo "BIGIP2_RESPONSE: ${BIGIP2_SSH_RESPONSE}"
 
-    BIGIP1_RESPONSE=$(ssh -i ${bastion_private_key} ubuntu@$bastion_public_ip "curl -sku admin:${PASSWORD} https://${bigip1_private_ip}:443/mgmt/tm/auth/user/admin" | jq -r .description)
+    BIGIP1_RESPONSE=$(ssh -i ${bastion_private_key} ec2-user@$bastion_public_ip "curl -sku admin:${PASSWORD} https://${bigip1_private_ip}:443/mgmt/tm/auth/user/admin" | jq -r .description)
     echo "BIGIP1_RESPONSE: ${BIGIP1_RESPONSE}"
 
-    BIGIP2_RESPONSE=$(ssh -i ${bastion_private_key} ubuntu@$bastion_public_ip "curl -sku admin:${PASSWORD} https://${bigip2_private_ip}:443/mgmt/tm/auth/user/admin" | jq -r .description)
+    BIGIP2_RESPONSE=$(ssh -i ${bastion_private_key} ec2-user@$bastion_public_ip "curl -sku admin:${PASSWORD} https://${bigip2_private_ip}:443/mgmt/tm/auth/user/admin" | jq -r .description)
     echo "BIGIP2_RESPONSE: ${BIGIP2_RESPONSE}"
 
 else

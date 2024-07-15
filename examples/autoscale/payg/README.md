@@ -688,14 +688,14 @@ From Template Outputs:
 
         From your desktop client/shell, create an SSH tunnel:
         ```bash
-        ssh -i ${YOUR_PRIVATE_SSH_KEY} -o ProxyCommand="ssh -i ${YOUR_PRIVATE_SSH_KEY} -W %h:%p ubuntu@[BASTION-HOST-PUBLIC-IP]" admin@[BIG-IP-MGMT-PRIVATE-IP]
+        ssh -i ${YOUR_PRIVATE_SSH_KEY} -o ProxyCommand="ssh -i ${YOUR_PRIVATE_SSH_KEY} -W %h:%p ec2-user@[BASTION-HOST-PUBLIC-IP]" admin@[BIG-IP-MGMT-PRIVATE-IP]
         ```
 
         Replace the variables in brackets before submitting the command.
 
         For example:
         ```bash
-        ssh -i ~/.ssh/mykey.pem -o ProxyCommand="ssh -i ~/.ssh/mykey.pem -W %h:%p ubuntu@34.82.102.190" admin@10.0.1.11
+        ssh -i ~/.ssh/mykey.pem -o ProxyCommand="ssh -i ~/.ssh/mykey.pem -W %h:%p ec2-user@34.82.102.190" admin@10.0.1.11
 
 #### WebUI 
 
@@ -717,11 +717,11 @@ From Template Outputs:
 
         From your desktop client/shell, create an SSH tunnel:
         ```bash
-        ssh -i [keyname-passed-to-template.pem] ubuntu@[BASTION-HOST-PUBLIC-IP] -L 8443:[BIG-IP-MGMT-PRIVATE-IP]:[BIGIP-GUI-PORT]
+        ssh -i [keyname-passed-to-template.pem] ec2-user@[BASTION-HOST-PUBLIC-IP] -L 8443:[BIG-IP-MGMT-PRIVATE-IP]:[BIGIP-GUI-PORT]
         ```
         For example:
         ```bash
-        ssh -i ~/.ssh/mykey.pem ubuntu@34.82.102.190 -L 8443:10.0.1.11:8443
+        ssh -i ~/.ssh/mykey.pem ec2-user@34.82.102.190 -L 8443:10.0.1.11:8443
         ```
 
         You should now be able to open a browser to the BIG-IP UI from your desktop:
