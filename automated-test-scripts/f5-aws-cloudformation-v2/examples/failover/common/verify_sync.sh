@@ -54,9 +54,9 @@ if [[ <PROVISION MGMT PUBLIC IP> == 'false' ]]; then
     echo "BIGIP2 PRIVATE IP: $bigip2_private_ip"
 
 
-    BIGIP1_SSH_RESPONSE=$(sshpass -p ${PASSWORD} ssh -o "StrictHostKeyChecking no" -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i ${bastion_private_key} -W %h:%p ubuntu@$bastion_public_ip" admin@${bigip1_private_ip} "tmsh show cm sync-status")
+    BIGIP1_SSH_RESPONSE=$(sshpass -p ${PASSWORD} ssh -o "StrictHostKeyChecking no" -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i ${bastion_private_key} -W %h:%p ec2-user@$bastion_public_ip" admin@${bigip1_private_ip} "tmsh show cm sync-status")
     echo "BIGIP1_SSH_RESPONSE: ${BIGIP1_SSH_RESPONSE}"
-    BIGIP2_SSH_RESPONSE=$(sshpass -p ${PASSWORD} ssh -o "StrictHostKeyChecking no" -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i ${bastion_private_key} -W %h:%p ubuntu@$bastion_public_ip" admin@${bigip2_private_ip} "tmsh show cm sync-status")
+    BIGIP2_SSH_RESPONSE=$(sshpass -p ${PASSWORD} ssh -o "StrictHostKeyChecking no" -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i ${bastion_private_key} -W %h:%p ec2-user@$bastion_public_ip" admin@${bigip2_private_ip} "tmsh show cm sync-status")
     echo "BIGIP2_RESPONSE: ${BIGIP2_SSH_RESPONSE}"
 
 else

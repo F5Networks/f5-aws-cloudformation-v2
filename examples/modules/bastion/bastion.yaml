@@ -24,50 +24,50 @@ Conditions:
       - !Ref createAutoscaleGroup
 Mappings:
   imageRegionMap:
-    af-south-1:
-      AMI: ami-022666956ad401a16
-    ap-northeast-1:
-      AMI: ami-015f1a68ce825a8d2
-    ap-northeast-2:
-      AMI: ami-0be9734c9e68b99f4
-    ap-south-1:
-      AMI: ami-00aaac1f2ef4ce965
-    ap-southeast-1:
-      AMI: ami-0012ffabeb7413479
-    ap-southeast-2:
-      AMI: ami-03ec1fe05b3849c74
-    ca-central-1:
-      AMI: ami-04c56d394d31cdeac
-    eu-central-1:
-      AMI: ami-0980c5102b5ef10cc
-    me-south-1:
-      AMI: ami-03cc0b5db8321f2e5
-    ap-east-1:
-      AMI: ami-0c7e5903bee96ef81
-    eu-north-1:
-      AMI: ami-0663a4867a210287a
-    eu-south-1:
-      AMI: ami-035e213233577516f
-    eu-west-1:
-      AMI: ami-0213344887e47003a
-    eu-west-2:
-      AMI: ami-0add0a5a0cf9afc6c
-    eu-west-3:
-      AMI: ami-01019e7343a5f361d
-    sa-east-1:
-      AMI: ami-0312c74c38dc7bae6
-    us-east-1:
-      AMI: ami-0db6c6238a40c0681
     us-east-2:
-      AMI: ami-03b6c8bd55e00d5ed
+      AMI: ami-0ab8744dca8137bde
+    us-east-1:
+      AMI: ami-00543d76373f96fe7
     us-gov-east-1:
-      AMI: ami-0e54ab9730eacf59c
+      AMI: ami-08db47abb3873cf32
     us-gov-west-1:
-      AMI: ami-0193b9d2e1d40243c
+      AMI: ami-023d2b48de48d500d
     us-west-1:
-      AMI: ami-0f5868930cb63c89c
+      AMI: ami-04bdbbe85ee49bfa4
     us-west-2:
-      AMI: ami-038a0ccaaedae6406
+      AMI: ami-0f2058e5300317758
+    af-south-1:
+      AMI: ami-08098e0f3576e4a5b
+    ap-east-1:
+      AMI: ami-053c7215ee0315735
+    ap-south-1:
+      AMI: ami-0c90942fd0daf9bc5
+    ap-northeast-1:
+      AMI: ami-0448a132eb2ded7b8
+    ap-northeast-2:
+      AMI: ami-006b0b933762bbcef
+    ap-southeast-1:
+      AMI: ami-084952bed7e34d3de
+    ap-southeast-2:
+      AMI: ami-071e2a45ff7eda67a
+    ca-central-1:
+      AMI: ami-059972b88fabb1811
+    eu-central-1:
+      AMI: ami-0022e2e80fa74c5d7
+    eu-west-1:
+      AMI: ami-05145bc4cc62a2a9a
+    eu-west-2:
+      AMI: ami-0ad9754b60e77a766
+    eu-west-3:
+      AMI: ami-03756f8c316f89afb
+    eu-south-1:
+      AMI: ami-050515e83b5887c23
+    eu-north-1:
+      AMI: ami-0356765f5ba4892f5
+    me-south-1:
+      AMI: ami-09f2ee1ca942a02ca
+    sa-east-1:
+      AMI: ami-006c2c053c07213b2
 Metadata:
   'AWS::CloudFormation::Interface':
     ParameterGroups:
@@ -130,7 +130,7 @@ Metadata:
         default: Unique string
       vpc:
         default: VPC ID
-  Version: 3.5.0.0
+  Version: 3.6.0.0
 Outputs:
   stackName:
     Description: bastion nested stack name

@@ -32,7 +32,7 @@ This template deploys a simple example application. It launches a CentOS Linux V
 - Public IPs will not be provisioned for this template.
 - This template downloads and renders custom configs (i.e. cloud-init or bash script) as external files and therefore, the custom configs must be reachable from the Virtual Machine (i.e. routing to any remotely hosted files must be provided for outside of this template).
 - Examples of custom configs are provided under the scripts directory.
-- This template uses the Linux CentOS 7 as Virtual Machine operational system.
+- This template uses the Linux CentOS 9 as Virtual Machine operational system.
 
 
 ### Template Input Parameters

@@ -29,49 +29,49 @@ Conditions:
 Mappings:
   imageRegionMap:
     us-east-2:
-      AMI: ami-0a75b786d9a7f8144
+      AMI: ami-0ab8744dca8137bde
     us-east-1:
-      AMI: ami-06cf02a98a61f9f5e
+      AMI: ami-00543d76373f96fe7
     us-gov-east-1:
-      AMI: ami-00e30c71
+      AMI: ami-08db47abb3873cf32
     us-gov-west-1:
-      AMI: ami-bbba86da
+      AMI: ami-023d2b48de48d500d
     us-west-1:
-      AMI: ami-02676464a065c9c05
+      AMI: ami-04bdbbe85ee49bfa4
     us-west-2:
-      AMI: ami-0a248ce88bcc7bd23
+      AMI: ami-0f2058e5300317758
     af-south-1:
-      AMI: ami-03bfd033c9d776adc
+      AMI: ami-08098e0f3576e4a5b
     ap-east-1:
-      AMI: ami-09a8f7cf3b1b73e57
+      AMI: ami-053c7215ee0315735
     ap-south-1:
-      AMI: ami-0dd861ee19fd50a16
+      AMI: ami-0c90942fd0daf9bc5
     ap-northeast-1:
-      AMI: ami-0d09d267328197c99
+      AMI: ami-0448a132eb2ded7b8
     ap-northeast-2:
-      AMI: ami-0cf8e67d10c823f2e
+      AMI: ami-006b0b933762bbcef
     ap-southeast-1:
-      AMI: ami-056251cdd6fd1c8eb
+      AMI: ami-084952bed7e34d3de
     ap-southeast-2:
-      AMI: ami-05f50d9ec7e4c3b02
+      AMI: ami-071e2a45ff7eda67a
     ca-central-1:
-      AMI: ami-0252eebc56636a56b
+      AMI: ami-059972b88fabb1811
     eu-central-1:
-      AMI: ami-095e1a4d3d632d215
+      AMI: ami-0022e2e80fa74c5d7
     eu-west-1:
-      AMI: ami-0d4002a13019b7703
+      AMI: ami-05145bc4cc62a2a9a
     eu-west-2:
-      AMI: ami-0aa3620fadad9198e
+      AMI: ami-0ad9754b60e77a766
     eu-west-3:
-      AMI: ami-04552009264cbe9f4
+      AMI: ami-03756f8c316f89afb
     eu-south-1:
-      AMI: ami-0a84267606bcea16b
+      AMI: ami-050515e83b5887c23
     eu-north-1:
-      AMI: ami-026f0eb2e8006617d
+      AMI: ami-0356765f5ba4892f5
     me-south-1:
-      AMI: ami-0c49e56e4c204cc4c
+      AMI: ami-09f2ee1ca942a02ca
     sa-east-1:
-      AMI: ami-0c52a0227804a4318
+      AMI: ami-006c2c053c07213b2
 Metadata:
   'AWS::CloudFormation::Interface':
     ParameterGroups:
@@ -140,7 +140,7 @@ Metadata:
         default: Unique string
       vpc:
         default: VPC ID
-  Version: 3.5.0.0
+  Version: 3.6.0.0
 Outputs:
   stackName:
     Description: application nested stack name
@@ -295,9 +295,13 @@ Resources:
           - - |
               #!/bin/bash
             - |
-              yum -y install docker
+              yum install -y yum-utils
             - |
-              service docker start
+              yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+            - |
+              yum install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+            - |
+              systemctl start docker
             - 'docker run --name f5demo -p 80:80 -p 443:443 -d '
             - !Ref appContainerName
             - |+

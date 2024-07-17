@@ -53,7 +53,7 @@ else
         echo "Bastion IP: $bastion_ip"
         echo "BIGIP Private Ip: $bigip_private_ip"
 
-        AS3_RESPONSE=$(ssh -o "StrictHostKeyChecking=no" -o ConnectTimeout=7 -i ${bastion_private_key} ubuntu@"$bastion_ip" "curl -skvvu <BIGIP USER>:${PASSWORD} https://${bigip_private_ip}:${MGMT_PORT}/mgmt/shared/appsvcs/declare" | jq -r .)
+        AS3_RESPONSE=$(ssh -o "StrictHostKeyChecking=no" -o ConnectTimeout=7 -i ${bastion_private_key} ec2-user@"$bastion_ip" "curl -skvvu <BIGIP USER>:${PASSWORD} https://${bigip_private_ip}:${MGMT_PORT}/mgmt/shared/appsvcs/declare" | jq -r .)
     else
         test_instance_public_ip=$(aws ec2 describe-instances --region  <REGION> --instance-ids $test_instance_id | jq .Reservations[0].Instances[0].PublicIpAddress | tr -d '"')
 

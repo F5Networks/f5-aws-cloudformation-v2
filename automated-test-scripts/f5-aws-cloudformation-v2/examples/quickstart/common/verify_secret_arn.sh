@@ -50,7 +50,7 @@ if [[ "<CREATE NEW SECRET>" == 'true' ]]; then
         echo "Bastion IP: $bastion_public_ip"
         echo "BIGIP Private Ip: $bigip_private_ip"
 
-        SECRET_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i ${bigip_private_key} -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i ${bastion_private_key} -W %h:%p ubuntu@$bastion_public_ip" admin@"$bigip_private_ip" 'cat /config/cloud/secret_id')
+        SECRET_RESPONSE=$(ssh -o "StrictHostKeyChecking no" -i ${bigip_private_key} -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i ${bastion_private_key} -W %h:%p ec2-user@$bastion_public_ip" admin@"$bigip_private_ip" 'cat /config/cloud/secret_id')
     else
         test_instance_public_ip=$(aws ec2 describe-instances --region  <REGION> --instance-ids $test_instance_id | jq .Reservations[0].Instances[0].PublicIpAddress | tr -d '"')
 

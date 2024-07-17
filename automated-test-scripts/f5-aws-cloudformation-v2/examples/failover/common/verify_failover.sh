@@ -52,18 +52,18 @@ if [[ '<PROVISION MGMT PUBLIC IP>' == 'false' ]]; then
     bigip2_private_ip=$(aws ec2 describe-instances --region  <REGION> --instance-ids $bigip2_instance_id | jq -r .Reservations[0].Instances[0].PrivateIpAddress)
     echo "BIGIP2 PRIVATE IP: $bigip2_private_ip"
 
-    state=$(sshpass -p ${PASSWORD} ssh -o "StrictHostKeyChecking no" -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i ${bastion_private_key} -W %h:%p ubuntu@$bastion_public_ip" admin@${bigip1_private_ip} "tmsh show sys failover")
+    state=$(sshpass -p ${PASSWORD} ssh -o "StrictHostKeyChecking no" -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i ${bastion_private_key} -W %h:%p ec2-user@$bastion_public_ip" admin@${bigip1_private_ip} "tmsh show sys failover")
     echo "State: $state"
     active=$(echo $state |grep active)
 
     case $active in
     active)
       echo "Current State: $active , nothing to do, grab bigip2 status"
-      result=$(sshpass -p ${PASSWORD} ssh -o "StrictHostKeyChecking no" -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i ${bastion_private_key} -W %h:%p ubuntu@$bastion_public_ip" admin@${bigip2_private_ip} "tmsh show sys failover")  ;;
+      result=$(sshpass -p ${PASSWORD} ssh -o "StrictHostKeyChecking no" -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i ${bastion_private_key} -W %h:%p ec2-user@$bastion_public_ip" admin@${bigip2_private_ip} "tmsh show sys failover")  ;;
     *)
       echo "Current State: $active , setting system to standby on BIGIP2"
-      sshpass -p ${PASSWORD} ssh -o "StrictHostKeyChecking no" -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i ${bastion_private_key} -W %h:%p ubuntu@$bastion_public_ip" admin@${bigip2_private_ip} "tmsh run sys failover standby"
-      result=$(sshpass -p ${PASSWORD} ssh -o "StrictHostKeyChecking no" -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i ${bastion_private_key} -W %h:%p ubuntu@$bastion_public_ip" admin@${bigip2_private_ip} "tmsh show sys failover")  ;;
+      sshpass -p ${PASSWORD} ssh -o "StrictHostKeyChecking no" -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i ${bastion_private_key} -W %h:%p ec2-user@$bastion_public_ip" admin@${bigip2_private_ip} "tmsh run sys failover standby"
+      result=$(sshpass -p ${PASSWORD} ssh -o "StrictHostKeyChecking no" -o ProxyCommand="ssh -o 'StrictHostKeyChecking no' -i ${bastion_private_key} -W %h:%p ec2-user@$bastion_public_ip" admin@${bigip2_private_ip} "tmsh show sys failover")  ;;
     esac
 else
     echo 'MGMT PUBLIC IP IS ENABLED'

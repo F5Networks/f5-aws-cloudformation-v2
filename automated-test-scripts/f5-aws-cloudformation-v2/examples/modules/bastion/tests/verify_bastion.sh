@@ -19,7 +19,7 @@ if [[ "<CREATE AUTOSCALE GROUP>" == "true" ]]; then
     echo "Bastion IP: $BASTION_IP"
     ## Curl IP for response
     if [ -n "$BASTION_IP" ]; then
-        response=$(ssh -o "StrictHostKeyChecking=no" -o ConnectTimeout=7 -i /etc/ssl/private/dewpt_private.pem ubuntu@"$BASTION_IP" "cat /etc/motd")
+        response=$(ssh -o "StrictHostKeyChecking=no" -o ConnectTimeout=7 -i /etc/ssl/private/dewpt_private.pem ec2-user@"$BASTION_IP" "cat /etc/motd")
     fi
 
 	if echo $response | grep "Welcome to Bastion Host"; then
@@ -36,7 +36,7 @@ else
     echo "Bastion IP: $BASTION_IP"
     ## Curl IP for response
     if [ -n "$BASTION_IP" ]; then
-        response=$(ssh -o "StrictHostKeyChecking=no" -o ConnectTimeout=7 -i /etc/ssl/private/dewpt_private.pem ubuntu@"$BASTION_IP" "cat /etc/motd")
+        response=$(ssh -o "StrictHostKeyChecking=no" -o ConnectTimeout=7 -i /etc/ssl/private/dewpt_private.pem ec2-user@"$BASTION_IP" "cat /etc/motd")
     fi
 
 	if echo $response | grep "Welcome to Bastion Host"; then
