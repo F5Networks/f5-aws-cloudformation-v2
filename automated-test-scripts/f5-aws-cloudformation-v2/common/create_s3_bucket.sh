@@ -14,9 +14,9 @@ curl -k file://$PWD/automated-test-scripts/f5-aws-cloudformation-v2/bigiq/templa
 # r=$(date +%s | sha256sum | base64 | head -c 32)
 bucket_name=`echo <STACK NAME>|cut -c -60|tr '[:upper:]' '[:lower:]'| sed 's:-*$::'`
 aws s3 mb --region <REGION> s3://"$bucket_name"
-aws s3api put-bucket-tagging --bucket $bucket_name  --tagging 'TagSet=[{Key=delete,Value=True},{Key=creator,Value=dewdrop}]'
+aws s3api put-bucket-tagging --region <REGION> --bucket $bucket_name  --tagging 'TagSet=[{Key=delete,Value=True},{Key=creator,Value=dewdrop}]'
 aws s3api put-bucket-ownership-controls --region <REGION> --bucket $bucket_name --ownership-controls "Rules=[{ObjectOwnership=BucketOwnerPreferred}]"
-aws s3api delete-public-access-block --bucket $bucket_name
+aws s3api delete-public-access-block --region <REGION> --bucket $bucket_name
 #aws s3 cp /tmp/<TEMPLATE NAME> s3://"$bucket_name"
 OUTPUT=$(aws s3 cp --region <REGION> /tmp/<DEWPOINT JOB ID>/<TEMPLATE NAME> s3://"$bucket_name" 2>&1)
 BIGIQ_OUTPUT=$(aws s3 cp --region <REGION> /tmp/<DEWPOINT JOB ID>/f5-existing-stack-byol-2nic-bigiq-licmgmt.template s3://"$bucket_name" 2>&1)
