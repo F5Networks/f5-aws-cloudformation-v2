@@ -178,12 +178,15 @@ Resources:
                   sendResponse(event, context, responseStatus, responseData)
               else:
                 # find the most recent AMI version
+                version = event['ResourceProperties']['OSName']
+                owner = event['ResourceProperties']['OwnerId']
+                region = event['ResourceProperties']['Region']
                 print("Using values Filter:" + event['ResourceProperties']['OSName'] + "Region:" + event['ResourceProperties']['Region'] + "OwnerId:" + event['ResourceProperties']['OwnerId'])
                 ami_response = ec2_client.describe_images(Filters=[{'Name': 'description', 'Values': [event['ResourceProperties']['OSName']]}],Owners=[event['ResourceProperties']['OwnerId']])
                 if not ami_response['Images']:
-                    print(f'AMIs for {val} have not been found on AWS Marketplace.')
+                    print(f'AMIs for {version} in region {region} owned by {owner} have not been found on AWS Marketplace.')
                     responseStatus = 'FAILED'
-                    responseData = {'Failed': f'AMIs for {val} have not been found on AWS Marketplace.'}
+                    responseData = {'Failed': f'AMIs for {version} in region {region} owned by {owner} have not been found on AWS Marketplace.'}
                     sendResponse(event, context, responseStatus, responseData)
                 else:
                     latest_ami_id = ''
@@ -238,7 +241,7 @@ Resources:
           - ''
           - - 'arn:aws:lambda:'
             - !Ref AWS::Region
-            - ':770693421928:layer:Klayers-p312-requests:3'
+            - ':089591600128:layer:f5-lambda-requests-layer:2'
       Tags:
         - Key: application
           Value: !Ref application

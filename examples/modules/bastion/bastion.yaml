@@ -64,6 +64,8 @@ Mappings:
       AMI: ami-050515e83b5887c23
     eu-north-1:
       AMI: ami-0356765f5ba4892f5
+    il-central-1:
+      AMI: ami-0b72974188c516a3f
     me-south-1:
       AMI: ami-09f2ee1ca942a02ca
     sa-east-1:
@@ -189,7 +191,7 @@ Parameters:
     Type: String
   instanceType:
     ConstraintDescription: Must be a valid EC2 instance type for BIG-IP
-    Default: t2.small
+    Default: t3.small
     Description: Enter valid instance type.
     Type: String
   owner:

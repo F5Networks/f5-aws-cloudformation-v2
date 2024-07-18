@@ -37,7 +37,7 @@
   },
   {
     "ParameterKey": "instanceType",
-    "ParameterValue": "t2.small"
+    "ParameterValue": "t3.small"
   },
   {
     "ParameterKey": "owner",
