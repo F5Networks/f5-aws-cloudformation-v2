@@ -13,7 +13,7 @@ Resources:
         applicationSubnets: subnet-abcdefg
         createAutoscaleGroup: 'false'
         customImageId: ''
-        instanceType: t2.small
+        instanceType: t3.small
         restrictedSrcAddress: ''
         scalingMaxSize: 2
         scalingMinSize: 1

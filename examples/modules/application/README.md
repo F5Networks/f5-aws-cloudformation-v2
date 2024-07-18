@@ -51,7 +51,7 @@ This template deploys a simple example application. It launches a CentOS Linux V
 | customImageId | No |  | string | Custom Image AMI ID you wish to deploy. |
 | environment | No | f5env | string | Environment Tag. |
 | group | No | f5group | string | Group Tag. |
-| instanceType | No | t2.small | string | App EC2 instance type. For example, 't2.small'. |
+| instanceType | No | t3.small | string | App EC2 instance type. For example, 't3.small'. |
 | owner | No | f5owner | string | Application Tag. |
 | provisionPublicIp | No | false | boolean | To create a Public IP and connect it to the application. |
 | restrictedSrcAddress | Yes |  | string | An IP address or address range (in CIDR notation) used to restrict SSH and management GUI access to the BIG-IP Management or bastion host instances. **IMPORTANT**: The VPC CIDR is automatically added for internal use (access via bastion host, clustering, etc.). Please do NOT use "0.0.0.0/0". Instead, restrict the IP address range to your client or trusted network, for example "55.55.55.55/32". Production should never expose the BIG-IP Management interface to the Internet. |
