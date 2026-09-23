@@ -1,7 +1,10 @@
 # Deploying the BIG-IP VE in AWS - Example Autoscale BIG-IP WAF (LTM + ASM) - Autoscale Group (Frontend via NLB) - BIG-IQ Licensing
 
 [![Releases](https://img.shields.io/github/release/f5networks/f5-aws-cloudformation-v2.svg)](https://github.com/f5networks/f5-aws-cloudformation-v2/releases)
-[![Issues](https://img.shields.io/github/issues/f5networks/f5-aws-cloudformation-v2.svg)](https://github.com/f5networks/f5-aws-cloudformation-v2/issues)
+
+> [!IMPORTANT]
+> **F5 no longer updates this repository** and provides these templates and documentation as-is, without support. They might not work with current AWS or BIG-IP versions. As an alternative, consider the [F5 BIG-IP VE Terraform AWS module](https://github.com/F5Networks/terraform-aws-bigip-module).
+
 
 ## Contents
 
@@ -39,7 +42,6 @@
   - [BIG-IP Versions](#big-ip-versions)
   - [Documentation](#documentation)
   - [Getting Help](#getting-help)
-    - [Filing Issues](#filing-issues)
 
 ## Introduction
 
@@ -915,8 +917,6 @@ There are generally two classes of issues:
 
 If a template in the stack failed, click on the name of a failed stack and then click **Events**. Check the **Status Reason** column for the failed event for details about the cause. 
 
-**When creating a GitHub issue for a template, please include as much information as possible from the failed CloudFormation stack events.**
-
 Common deployment failure causes include:
 - Required fields were left empty or contained incorrect values (input type mismatch, prohibited characters, etc.) causing template validation failure.
 - Insufficient permissions to create the deployment or resources created by a deployment (IAM roles, etc.).
@@ -1019,11 +1019,6 @@ For information on getting started using F5's CloudFormation templates on GitHub
 
 ## Getting Help
 
-Due to the heavy customization requirements of external cloud resources and BIG-IP configurations in these solutions, F5 does not provide technical support for deploying, customizing, or troubleshooting the templates themselves. However, the various underlying products and components used (for example: [F5 BIG-IP Virtual Edition](https://clouddocs.f5.com/cloud/public/v1/), [F5 BIG-IP Runtime Init](https://github.com/F5Networks/f5-bigip-runtime-init), [F5 Automation Toolchain](https://www.f5.com/pdf/products/automation-toolchain-overview.pdf) extensions, and [Cloud Failover Extension (CFE)](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/)) in the solutions located here are F5-supported and capable of being deployed with other orchestration tools. Read more about [Support Policies](https://www.f5.com/company/policies/support-policies). Problems found with the templates deployed as-is should be reported via a GitHub issue.
+Due to the heavy customization requirements of external cloud resources and BIG-IP configurations in these solutions, F5 does not provide technical support for deploying, customizing, or troubleshooting the templates themselves. However, the various underlying products and components used (for example: [F5 BIG-IP Virtual Edition](https://clouddocs.f5.com/cloud/public/v1/), [F5 BIG-IP Runtime Init](https://github.com/F5Networks/f5-bigip-runtime-init), [F5 Automation Toolchain](https://www.f5.com/pdf/products/automation-toolchain-overview.pdf) extensions, and [Cloud Failover Extension (CFE)](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/)) in the solutions located here are F5-supported and capable of being deployed with other orchestration tools. Read more about [Support Policies](https://www.f5.com/company/policies/support-policies).
 
 For help with authoring and support for custom CST2 templates, we recommend engaging F5 Professional Services (PS).
-
-
-### Filing Issues
-
-Use the **Issues** link on the GitHub menu bar in this repository for items such as enhancement or feature requests and bugs found when deploying the example templates as-is. Tell us as much as you can about what you found and how you found it.

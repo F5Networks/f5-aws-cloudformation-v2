@@ -1,5 +1,9 @@
 # Example Templates
 
+> [!IMPORTANT]
+> **F5 no longer updates this repository** and provides these templates and documentation as-is, without support. They might not work with current AWS or BIG-IP versions. As an alternative, consider the [F5 BIG-IP VE Terraform AWS module](https://github.com/F5Networks/terraform-aws-bigip-module).
+
+
 - [Example Templates](#example-templates)
   - [Introduction](#introduction)
   - [Template Types](#template-types)
@@ -10,7 +14,6 @@
   - [Cloud Configuration](#cloud-configuration)
   - [Style Guide](#style-guide)
   - [Getting Help](#getting-help)
-    - [Filing Issues](#filing-issues)
 
 ## Introduction
 
@@ -30,7 +33,7 @@ As a basic framework, an example full stack deployment may consist of:
 
 Together, the Network and Application templates serve as a basic harness to illustrate various BIG-IP solutions. The DAG/Ingress, Access, and Function Templates provide various pre-requisites for the BIG-IP solution. 
 
-***Disclaimer:*** F5 does not require or have any recommendations on leveraging linked stacks in production. They are used here simply to provide useful tested/validated full stack examples and illustrate various solutions' resource dependencies, configurations, etc., which you may want or need to customize, regardless of the deployment method used. 
+***Disclaimer:*** F5 does not require or have any recommendations on leveraging linked stacks in production. They are used here simply to illustrate various solutions' resource dependencies, configurations, etc., which you may want or need to customize, regardless of the deployment method used.
  
 
 ## Template Types
@@ -223,14 +226,7 @@ For convenience, for some examples that are often run in bash (for example, AWS 
 
 ## Getting Help
 
-Due to the heavy customization requirements of external cloud resources and BIG-IP configurations in these solutions, F5 does not provide technical support for deploying, customizing, or troubleshooting the templates themselves. However, the various underlying products and components used (for example: [F5 BIG-IP Virtual Edition](https://clouddocs.f5.com/cloud/public/v1/), [F5 BIG-IP Runtime Init](https://github.com/F5Networks/f5-bigip-runtime-init), [F5 Automation Toolchain](https://www.f5.com/pdf/products/automation-toolchain-overview.pdf) extensions, and [Cloud Failover Extension (CFE)](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/)) in the solutions located here are F5-Supported and capable of being deployed with other orchestration tools. Read more about [Support Policies](https://www.f5.com/company/policies/support-policies). Problems found with the templates deployed as-is should be reported via a GitHub issue.
+Due to the heavy customization requirements of external cloud resources and BIG-IP configurations in these solutions, F5 does not provide technical support for deploying, customizing, or troubleshooting the templates themselves. However, the various underlying products and components used (for example: [F5 BIG-IP Virtual Edition](https://clouddocs.f5.com/cloud/public/v1/), [F5 BIG-IP Runtime Init](https://github.com/F5Networks/f5-bigip-runtime-init), [F5 Automation Toolchain](https://www.f5.com/pdf/products/automation-toolchain-overview.pdf) extensions, and [Cloud Failover Extension (CFE)](https://clouddocs.f5.com/products/extensions/f5-cloud-failover/latest/)) in the solutions located here are F5-Supported and capable of being deployed with other orchestration tools. Read more about [Support Policies](https://www.f5.com/company/policies/support-policies).
 
 
 For help with authoring and support for custom CST2 templates, we recommend engaging F5 Professional Services (PS).
-
-
-### Filing Issues
-
-If you find an issue, we would love to hear about it.
-
-- Use the **[Issues](https://github.com/F5Networks/f5-aws-cloudformation-v2/issues)** link on the GitHub menu bar in this repository for items such as enhancement, feature requests and bug fixes. Tell us as much as you can about what you found and how you found it.

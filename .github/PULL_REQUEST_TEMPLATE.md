@@ -1,9 +1,6 @@
 @<reviewer_id>
 
-#### What issues does this address?
-Fixes #<issueid>
-WIP #<issueid>
-...
+> **Note:** This repository is no longer actively maintained. Pull requests are restricted to collaborators; this template is retained for internal use only.
 
 #### What does this change do?
 
