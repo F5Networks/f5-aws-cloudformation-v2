@@ -31,7 +31,7 @@ Mappings:
     us-east-2:
       AMI: ami-0ab8744dca8137bde
     us-east-1:
-      AMI: ami-00543d76373f96fe7
+      AMI: ami-0c7af5fe939f2677f
     us-gov-east-1:
       AMI: ami-08db47abb3873cf32
     us-gov-west-1:
