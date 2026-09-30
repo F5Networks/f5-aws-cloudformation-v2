@@ -2,7 +2,10 @@
 # Deploying Bastion Template
 
 [![Releases](https://img.shields.io/github/release/f5networks/f5-aws-cloudformation-v2.svg)](https://github.com/f5networks/f5-aws-cloudformation-v2/releases)
-[![Issues](https://img.shields.io/github/issues/f5networks/f5-aws-cloudformation-v2.svg)](https://github.com/f5networks/f5-aws-cloudformation-v2/issues)
+
+> [!IMPORTANT]
+> **F5 no longer updates this repository** and provides these templates and documentation as-is, without support. They might not work with current AWS or BIG-IP versions. As an alternative, consider the [F5 BIG-IP VE Terraform AWS module](https://github.com/F5Networks/terraform-aws-bigip-module).
+
 
 ## Contents
 
